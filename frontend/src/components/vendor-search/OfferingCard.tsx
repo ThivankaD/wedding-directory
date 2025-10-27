@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { FaStar, FaStarHalf, FaRegStar } from "react-icons/fa";
 import Image from "next/image";
 import Link from "next/link";
@@ -53,16 +53,19 @@ const OfferingCard: React.FC<OfferingProps> = ({
   // Convert rating to number and handle invalid values
   const numericRating = Number(rating) || 0;
 
+  const [imgSrc, setImgSrc] = useState(banner || "/images/offeringPlaceholder.webp");
+
   return (
     <div className="flex justify-left bg-white items-start mb-5 border rounded-2xl shadow-lg hover:shadow-xl">
       <div className="flex flex-col w-full p-3">
         <div className="relative w-full h-48 mb-3">
           <Image
-            src={banner}
+            src={imgSrc}
             alt={name}
             className="rounded-lg object-cover"
             fill
             priority
+            onError={() => setImgSrc("/images/offeringPlaceholder.webp")}
           />
         </div>
         <div className="flex flex-col mb-2">

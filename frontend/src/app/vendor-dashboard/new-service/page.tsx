@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import CategoryInput from "@/components/vendor-signup/CategoryInput";
 import Header from "@/components/shared/Headers/Header";
 import { CREATE_SERVICE } from "@/graphql/mutations";
+import { FIND_SERVICES_BY_VENDOR } from "@/graphql/queries";
 import { useMutation } from "@apollo/client";
 import { useVendorAuth } from "@/contexts/VendorAuthContext";
 import toast from "react-hot-toast";
@@ -51,6 +52,11 @@ const AddNewService: React.FC = () => {
             vendor_id: vendor?.id,
           },
         },
+        // Ensure the vendor services list is up-to-date after creation
+        refetchQueries: [
+          { query: FIND_SERVICES_BY_VENDOR, variables: { id: vendor?.id } },
+        ],
+        awaitRefetchQueries: true,
       });
 
       if (response.data) {

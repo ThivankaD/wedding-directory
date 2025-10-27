@@ -37,6 +37,8 @@ const VendorDashBoard: React.FC = () => {
   } = useQuery(FIND_SERVICES_BY_VENDOR, {
     variables: { id: vendor?.id },
     skip: !vendor?.id,
+    fetchPolicy: "network-only",
+    nextFetchPolicy: "cache-first",
   });
 
   // Update services state when servicesData changes
