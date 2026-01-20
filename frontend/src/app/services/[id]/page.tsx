@@ -26,6 +26,7 @@ import QuoteRequestWidget from "@/components/chat/QuoteRequestWidget";
 import GoogleMapComponent from "@/components/vendor-dashboard/dahboard-services/Map";
 import PortfolioImages from "@/components/vendor-dashboard/dahboard-services/PortfolioImages";
 import request from "@/utils/request";
+import PackageReservationModal from "@/components/shared/PackageReservationModal";
 
 // Add this constant at the top of the file with other imports
 const LKR_TO_USD_RATE = 0.0031; // 1 LKR = 0.0031 USD (you should use real-time rates)
@@ -38,6 +39,8 @@ interface Package {
   pricing: number;
   features: string[];
   visible: boolean;
+  requiresReservation: boolean;
+  bookedDates?: string[];
 }
 
 const Service: React.FC = () => {
@@ -72,6 +75,16 @@ const Service: React.FC = () => {
   const [isInMyVendors, setIsInMyVendors] = useState(false);
   const [addToMyVendors] = useMutation(ADD_TO_MY_VENDORS);
   const [removeFromMyVendors] = useMutation(REMOVE_FROM_MY_VENDORS);
+
+  const [selectedPackage, setSelectedPackage] = useState<Package | null>(null);
+
+  const handleBookingClick = (pkg: Package) => {
+    if (!visitor) {
+      toast.error("Please login as a user to book");
+      return;
+    }
+    setSelectedPackage(pkg);
+  };
 
   // Update isInMyVendors when myVendorData changes
   useEffect(() => {
@@ -145,7 +158,7 @@ const Service: React.FC = () => {
     }
   };
 
-  const handlePayAdvance = async (amount: number, packageId: string) => {
+  const handlePayAdvance = async (amount: number, packageId: string, bookingDate?: Date) => {
     try {
       if (!visitor) {
         toast.error("Please login as a user to pay advance");
@@ -167,8 +180,10 @@ const Service: React.FC = () => {
           amount: amountInUSD, // Send amount in USD
           packageId,
           visitorId: visitor.id,
-          vendorId: offering.vendor.id,
+
+
           originalAmountLKR: amount, // Send original LKR amount for reference
+          bookingDate: bookingDate ? bookingDate.toISOString() : undefined,
         }
       );
       window.location.href = data.url;
@@ -206,8 +221,8 @@ const Service: React.FC = () => {
         {/* Add "See More" button if there are additional media items */}
         {((offering?.photo_showcase && offering.photo_showcase.length > 4) ||
           offering?.video_showcase?.length > 0) && (
-          <div className="flex justify-center mt-2 mb-4"></div>
-        )}
+            <div className="flex justify-center mt-2 mb-4"></div>
+          )}
 
         <div className="flex flex-row gap-x-5 mt-4">
           <div className="w-3/4">
@@ -260,90 +275,104 @@ const Service: React.FC = () => {
               {packagesData?.findPackagesByOffering.some(
                 (pkg: Package) => pkg.visible
               ) && (
-                <>
-                  <div className="mb-6 text-2xl font-bold">Packages</div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                    {packagesData?.findPackagesByOffering
-                      .filter((pkg: Package) => pkg.visible)
-                      .map((pkg: Package) => (
-                        <div
-                          key={pkg.id}
-                          className="bg-white rounded-xl border-2 border-gray-200 shadow-md overflow-hidden transition-all hover:shadow-lg"
-                        >
-                          <div className="p-4 text-center bg-gray-50 border-b border-gray-200">
-                            <h3 className="text-xl font-bold text-gray-800">
-                              {pkg.name}
-                            </h3>
-                          </div>
-                          <div className="p-6">
-                            <div className="text-center mb-6">
-                              <div className="text-3xl font-bold text-orange">
-                                <span className="text-sm align-top text-gray-600">
-                                  LKR
-                                </span>{" "}
-                                {pkg.pricing.toLocaleString()}
-                              </div>
-                              <p className="text-gray-600 mt-2">
-                                {pkg.description}
-                              </p>
+                  <>
+                    <div className="mb-6 text-2xl font-bold">Packages</div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                      {packagesData?.findPackagesByOffering
+                        .filter((pkg: Package) => pkg.visible)
+                        .map((pkg: Package) => (
+                          <div
+                            key={pkg.id}
+                            className="bg-white rounded-xl border-2 border-gray-200 shadow-md overflow-hidden transition-all hover:shadow-lg"
+                          >
+                            <div className="p-4 text-center bg-gray-50 border-b border-gray-200">
+                              <h3 className="text-xl font-bold text-gray-800">
+                                {pkg.name}
+                              </h3>
                             </div>
-                            <div className="space-y-3 mb-6 min-h-[100px]">
-                              {pkg.features.map(
-                                (feature: string, idx: number) => (
-                                  <div key={idx} className="flex items-start">
-                                    <svg
-                                      className="w-5 h-5 text-green-500 mr-2 flex-shrink-0"
-                                      fill="currentColor"
-                                      viewBox="0 0 20 20"
-                                    >
-                                      <path
-                                        fillRule="evenodd"
-                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                        clipRule="evenodd"
-                                      />
-                                    </svg>
-                                    <span className="text-gray-700">
-                                      {feature}
-                                    </span>
-                                  </div>
-                                )
-                              )}
-                            </div>
-                            <div className="pt-4 border-t border-gray-100">
-                              <button
-                                onClick={() => {
-                                  if (!visitor) {
-                                    toast.error("Please login as a user to pay advance");
-                                    return;
-                                  }
-                                  const advanceAmount: number =
-                                    pkg.pricing * 0.2;
-                                  handlePayAdvance(advanceAmount, pkg.id);
-                                }}
-                                className="w-full py-3 px-4 rounded-[22px] font-bold bg-orange text-white hover:bg-white hover:text-orange hover:border-2 hover:border-orange transition-colors flex flex-col items-center"
-                              >
-                                <span>Pay 20% Advance</span>
-                                <span className="font-normal">
-                                  LKR {(pkg.pricing * 0.2).toLocaleString()}
-                                </span>
-                                <div className="text-xs mt-1 opacity-80">
-                                  ≈ $
-                                  {(
-                                    pkg.pricing *
-                                    0.2 *
-                                    LKR_TO_USD_RATE
-                                  ).toFixed(2)}{" "}
-                                  USD
+                            <div className="p-6">
+                              <div className="text-center mb-6">
+                                <div className="text-3xl font-bold text-orange">
+                                  <span className="text-sm align-top text-gray-600">
+                                    LKR
+                                  </span>{" "}
+                                  {pkg.pricing.toLocaleString()}
                                 </div>
-                              </button>
+                                <p className="text-gray-600 mt-2">
+                                  {pkg.description}
+                                </p>
+                              </div>
+                              <div className="space-y-3 mb-6 min-h-[100px]">
+                                {pkg.features.map(
+                                  (feature: string, idx: number) => (
+                                    <div key={idx} className="flex items-start">
+                                      <svg
+                                        className="w-5 h-5 text-green-500 mr-2 flex-shrink-0"
+                                        fill="currentColor"
+                                        viewBox="0 0 20 20"
+                                      >
+                                        <path
+                                          fillRule="evenodd"
+                                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                          clipRule="evenodd"
+                                        />
+                                      </svg>
+                                      <span className="text-gray-700">
+                                        {feature}
+                                      </span>
+                                    </div>
+                                  )
+                                )}
+                              </div>
+                              <div className="pt-4 border-t border-gray-100">
+                                <button
+                                  onClick={() => {
+                                    if (!visitor) {
+                                      toast.error("Please login as a user to pay advance");
+                                      return;
+                                    }
+
+                                    if (pkg.requiresReservation) {
+                                      handleBookingClick(pkg);
+                                    } else {
+                                      // For standard packages (no reservation needed), pay immediately
+                                      const advanceAmount: number = pkg.pricing * 0.2;
+                                      handlePayAdvance(advanceAmount, pkg.id);
+                                    }
+                                  }}
+                                  className={`w-full py-3 px-4 rounded-[22px] font-bold text-white hover:border-2 transition-colors flex flex-col items-center ${pkg.requiresReservation
+                                    ? "bg-blue-600 hover:bg-white hover:text-blue-600 hover:border-blue-600"
+                                    : "bg-orange hover:bg-white hover:text-orange hover:border-orange"
+                                    }`}
+                                >
+                                  {pkg.requiresReservation ? (
+                                    <span>See Details & Book</span>
+                                  ) : (
+                                    <>
+                                      <span>Pay 20% Advance</span>
+                                      <span className="font-normal">
+                                        LKR {(pkg.pricing * 0.2).toLocaleString()}
+                                      </span>
+                                      <div className="text-xs mt-1 opacity-80">
+                                        ≈ $
+                                        {(
+                                          pkg.pricing *
+                                          0.2 *
+                                          LKR_TO_USD_RATE
+                                        ).toFixed(2)}{" "}
+                                        USD
+                                      </div>
+                                    </>
+                                  )}
+                                </button>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
-                  </div>
-                  <hr className="border-t border-gray-300 my-6" />
-                </>
-              )}
+                        ))}
+                    </div>
+                    <hr className="border-t border-gray-300 my-6" />
+                  </>
+                )}
 
               <div className="mb-3 text-2xl font-bold">Reviews</div>
               <div>
@@ -386,6 +415,18 @@ const Service: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {selectedPackage && (
+        <PackageReservationModal
+          isOpen={!!selectedPackage}
+          onClose={() => setSelectedPackage(null)}
+          pkg={selectedPackage}
+          onPay={(date) => {
+            const advanceAmount = selectedPackage.pricing * 0.2;
+            handlePayAdvance(advanceAmount, selectedPackage.id, date);
+          }}
+        />
+      )}
     </div>
   );
 };

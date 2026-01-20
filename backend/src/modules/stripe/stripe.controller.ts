@@ -6,6 +6,7 @@ interface CreateCheckoutSessionDto {
   packageId: string;
   visitorId: string;
   vendorId: string;
+  bookingDate?: string;
 }
 
 @Controller('api/stripe')
@@ -22,7 +23,8 @@ export class StripeController {
       body.amount,
       body.packageId,
       body.visitorId,
-      body.vendorId
+      body.vendorId,
+      body.bookingDate
     );
     return { url: session.url };
   }

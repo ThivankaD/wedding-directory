@@ -23,4 +23,6 @@ export class UpdatePackageInput {
 
     @Field(() => Boolean, { defaultValue: false })
     visible: boolean;
+
+
 }

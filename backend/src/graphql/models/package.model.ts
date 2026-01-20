@@ -21,15 +21,20 @@ export class PackageModel {
   @Field(() => Boolean)
   visible: boolean;
 
+  @Field(() => Boolean)
+  requiresReservation: boolean;
+
   @Field()
   createdAt: Date;
 
   @Field()
   updatedAt: Date;
   
-  @Field(() => Boolean)
-  requiresReservation: boolean;
+
 
   @Field(() => OfferingModel)
   offering: OfferingModel;
+
+  @Field(() => [Date], { nullable: true })
+  bookedDates?: Date[];
 }
