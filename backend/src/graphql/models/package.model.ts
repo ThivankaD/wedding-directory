@@ -26,6 +26,9 @@ export class PackageModel {
 
   @Field()
   updatedAt: Date;
+  
+  @Field(() => Boolean)
+  requiresReservation: boolean;
 
   @Field(() => OfferingModel)
   offering: OfferingModel;

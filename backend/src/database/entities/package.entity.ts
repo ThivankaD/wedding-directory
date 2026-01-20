@@ -36,6 +36,8 @@ export class PackageEntity {
     @ManyToOne(() => OfferingEntity, o => o.packages)
     @JoinColumn({ name: 'offering_id' })
     offering: OfferingEntity;
+    @Column({ type: 'boolean', default: false })
+  requiresReservation: boolean;
 
     @OneToMany(() => PaymentEntity, payment => payment.package)
     payments: PaymentEntity[];
