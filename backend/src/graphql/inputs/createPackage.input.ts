@@ -16,4 +16,7 @@ export class CreatePackageInput {
 
     @Field(() => Boolean, { defaultValue: false })
     visible: boolean;
+    
+    @Field(() => Boolean, { defaultValue: false })
+  requiresReservation: boolean;
 }

@@ -3,12 +3,15 @@ import { PackageService } from "../../modules/package/package.service";
 import { PackageModel } from "../models/package.model";
 import { CreatePackageInput } from "../inputs/createPackage.input";
 import { UpdatePackageInput } from "../inputs/updatePackage.input";import { PackageEntity } from "src/database/entities/package.entity";
-import { Query } from "@nestjs/graphql";
+import { Query, ResolveField, Parent } from "@nestjs/graphql";
+import { PaymentService } from "../../modules/payment/payment.service";
 
-@Resolver()
+@Resolver(() => PackageModel)
+
 export class PackageResolver {
   constructor(
     private readonly packageService: PackageService,
+    private readonly paymentService: PaymentService,
   ) {}
 
   @Query(() => [PackageModel])
@@ -33,5 +36,11 @@ export class PackageResolver {
   @Mutation(() => Boolean)
   async deletePackage(@Args('id') id: string): Promise<boolean> {
     return this.packageService.deletePackage(id);
+  }
+
+  @ResolveField(() => [Date], { nullable: true })
+  async bookedDates(@Parent() pkg: PackageEntity): Promise<Date[]> {
+    if (!pkg.requiresReservation) return [];
+    return this.paymentService.findBookedDatesByPackage(pkg.id);
   }
 }

@@ -27,6 +27,9 @@ export class PackageEntity {
     @Column({ type: 'boolean', default: false })
     visible: boolean;
 
+    @Column({ type: 'boolean', default: false })
+    requiresReservation: boolean;
+
     @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
     createdAt: Date;
   
@@ -36,6 +39,7 @@ export class PackageEntity {
     @ManyToOne(() => OfferingEntity, o => o.packages)
     @JoinColumn({ name: 'offering_id' })
     offering: OfferingEntity;
+
 
     @OneToMany(() => PaymentEntity, payment => payment.package)
     payments: PaymentEntity[];

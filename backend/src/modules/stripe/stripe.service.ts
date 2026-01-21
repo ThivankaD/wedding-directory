@@ -16,7 +16,7 @@ export class StripeService {
     });
   }
 
-  async createCheckoutSession(origin: string, amount: number, packageId: string, visitorId: string, vendorId: string) {
+  async createCheckoutSession(origin: string, amount: number, packageId: string, visitorId: string, vendorId: string, bookingDate?: string) {
     const session = await this.stripe.checkout.sessions.create({
       line_items: [
         {
@@ -38,6 +38,7 @@ export class StripeService {
         packageId,
         visitorId,
         vendorId,
+        bookingDate
       },
     });
 
@@ -47,7 +48,8 @@ export class StripeService {
       vendorId,
       packageId,
       amount,
-      session.id
+      session.id,
+      bookingDate ? new Date(bookingDate) : undefined
     );
 
     return session;

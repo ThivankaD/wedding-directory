@@ -294,6 +294,8 @@ export const FIND_PACKAGES_BY_OFFERING = gql`
       pricing
       features
       visible
+      requiresReservation
+      bookedDates
     }
   }
 `;

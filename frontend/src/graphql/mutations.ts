@@ -276,6 +276,7 @@ export const CREATE_PACKAGE = gql`
       pricing
       features
       visible
+      requiresReservation
     }
   }
 `;
@@ -289,6 +290,7 @@ export const UPDATE_PACKAGE = gql`
       pricing
       features
       visible
+      requiresReservation
     }
   }
 `;

@@ -30,6 +30,9 @@ export class PaymentEntity {
   })
   status: 'pending' | 'completed' | 'failed';
 
+  @Column({ type: 'timestamp', nullable: true })
+  bookingDate: Date;
+
   @CreateDateColumn()
   createdAt: Date;
 }
