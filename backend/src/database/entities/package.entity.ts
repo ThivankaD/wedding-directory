@@ -27,7 +27,7 @@ export class PackageEntity {
     @Column({ type: 'boolean', default: false })
     visible: boolean;
 
-    @Column({ type: 'boolean', default: false })
+    @Column({ name: 'requires_reservation', type: 'boolean', default: false })
     requiresReservation: boolean;
 
     @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
