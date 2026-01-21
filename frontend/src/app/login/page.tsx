@@ -27,19 +27,36 @@ const VendorLoginPage = () => {
     // Send login request to backend
     const response = await loginVendorAPI(email, password);
 
-    // ✅ Check if backend returned a token
-    if (response && response.access_token) {
-      const token = response.access_token;
+    // Check if login was successful
+    if (response && response.message === 'Login successful') {
+      // Read token from cookie (backend sets it in cookie)
+      const storedToken = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('access_tokenVendor='));
 
-      // ✅ Store token and trigger context login
-      login(token);
+      if (storedToken) {
+        const token = storedToken.split('=')[1];
+        
+        // Store token and trigger context login
+        login(token);
 
-      // ✅ Redirect to dashboard
-      router.push('/vendor-dashboard');
+        // Show success message
+        toast.success('Login successful!', {
+          style: { background: '#333', color: '#fff' },
+        });
+
+        // Redirect to dashboard
+        router.push('/vendor-dashboard');
+      } else {
+        // Token not found in cookie
+        setError('No token received. Please try again.');
+        toast.error('No token received. Please try again.', {
+          style: { background: '#333', color: '#fff' },
+        });
+      }
     } else {
-      // ❌ No token received from backend
-      setError('No token received. Please try again.');
-      toast.error('No token received. Please try again.', {
+      setError('Login failed. Please try again.');
+      toast.error('Login failed. Please try again.', {
         style: { background: '#333', color: '#fff' },
       });
     }
