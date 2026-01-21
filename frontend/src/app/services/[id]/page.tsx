@@ -341,7 +341,7 @@ const Service: React.FC = () => {
                                     }
                                   }}
                                   className={`w-full py-3 px-4 rounded-[22px] font-bold text-white hover:border-2 transition-colors flex flex-col items-center ${pkg.requiresReservation
-                                    ? "bg-blue-600 hover:bg-white hover:text-blue-600 hover:border-blue-600"
+                                    ? "bg-orange hover:bg-white hover:text-orange hover:border-orange"
                                     : "bg-orange hover:bg-white hover:text-orange hover:border-orange"
                                     }`}
                                 >
