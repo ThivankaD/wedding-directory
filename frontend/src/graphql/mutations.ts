@@ -325,3 +325,9 @@ export const SET_WEDDING_DATE = gql`
     }
   }
 `;
+
+export const SYNC_COMPLETED_PAYMENTS_TO_MY_VENDORS = gql`
+  mutation SyncCompletedPaymentsToMyVendors {
+    syncCompletedPaymentsToMyVendors
+  }
+`;

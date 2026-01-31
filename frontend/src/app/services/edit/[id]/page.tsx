@@ -47,12 +47,7 @@ const EditService = () => {
       <Header />
       <div className="bg-lightYellow min-h-screen">
 
-        <div className="container mx-auto px-4 py-6">
-          {/* Vendor Banner */}
-          <VendorBanner vendor={vendorInfo} />
-        </div>
-
-        <div className="container mx-auto flex space-x-10">
+        <div className="container mx-auto flex space-x-10 px-4 py-6">
           {/* Sidebar (Settings) */}
           <div className="w-1/4">
             <ServicesMenu setActiveSection={setActiveSection} />

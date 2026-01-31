@@ -8,6 +8,7 @@ import {
   FIND_MY_VENDOR_BY_ID,
   FIND_SERVICE_BY_ID,
   FIND_PACKAGES_BY_OFFERING,
+  GET_VISITOR_PAYMENTS,
 } from "@/graphql/queries";
 import { useMutation, useQuery } from "@apollo/client";
 import SocialIcons from "@/components/vendor-dashboard/dahboard-services/socialIcons";
@@ -58,6 +59,14 @@ const Service: React.FC = () => {
 
   const { data: packagesData } = useQuery(FIND_PACKAGES_BY_OFFERING, {
     variables: { offeringId: id },
+    fetchPolicy: "cache-and-network",
+  });
+
+  // Get visitor's payments to check booked packages
+  const { data: paymentsData } = useQuery(GET_VISITOR_PAYMENTS, {
+    variables: { visitorId: visitor?.id },
+    skip: !visitor?.id,
+    fetchPolicy: "cache-and-network",
   });
 
   // Check if offering is in visitor's my vendors
@@ -77,6 +86,28 @@ const Service: React.FC = () => {
   const [removeFromMyVendors] = useMutation(REMOVE_FROM_MY_VENDORS);
 
   const [selectedPackage, setSelectedPackage] = useState<Package | null>(null);
+
+  // Check if a package is already booked by the visitor
+  const isPackageBooked = (packageId: string) => {
+    if (!paymentsData?.visitorPayments) return { booked: false, expired: false, bookingDate: null };
+    
+    const payment = paymentsData.visitorPayments.find(
+      (p: any) => p.package.id === packageId && (p.status === 'completed' || p.status === 'pending')
+    );
+    
+    if (!payment) return { booked: false, expired: false, bookingDate: null };
+    
+    // If there's a booking date, check if it has passed
+    if (payment.bookingDate) {
+      const bookingDate = new Date(payment.bookingDate);
+      const now = new Date();
+      const expired = bookingDate < now;
+      return { booked: true, expired, bookingDate: bookingDate };
+    }
+    
+    // If no booking date (standard package), it's booked and never expires
+    return { booked: true, expired: false, bookingDate: null };
+  };
 
   const handleBookingClick = (pkg: Package) => {
     if (!visitor) {
@@ -180,8 +211,8 @@ const Service: React.FC = () => {
           amount: amountInUSD, // Send amount in USD
           packageId,
           visitorId: visitor.id,
-
-
+          vendorId: offering.vendor.id,
+          offeringId: offering.id,
           originalAmountLKR: amount, // Send original LKR amount for reference
           bookingDate: bookingDate ? bookingDate.toISOString() : undefined,
         }
@@ -276,7 +307,16 @@ const Service: React.FC = () => {
                 (pkg: Package) => pkg.visible
               ) && (
                   <>
-                    <div className="mb-6 text-2xl font-bold">Packages</div>
+                    <div className="mb-6 text-2xl font-bold flex items-center justify-between">
+                      <span>Packages</span>
+                      {isVendorsOffering && (
+                        <Link href={`/services/edit/${offering?.id}`}>
+                          <button className="bg-orange text-white px-4 py-2 rounded-lg hover:bg-white hover:text-orange hover:border-2 hover:border-orange transition-colors font-bold">
+                            Edit Packages
+                          </button>
+                        </Link>
+                      )}
+                    </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                       {packagesData?.findPackagesByOffering
                         .filter((pkg: Package) => pkg.visible)
@@ -325,46 +365,118 @@ const Service: React.FC = () => {
                                 )}
                               </div>
                               <div className="pt-4 border-t border-gray-100">
-                                <button
-                                  onClick={() => {
-                                    if (!visitor) {
-                                      toast.error("Please login as a user to pay advance");
-                                      return;
-                                    }
-
-                                    if (pkg.requiresReservation) {
-                                      handleBookingClick(pkg);
-                                    } else {
-                                      // For standard packages (no reservation needed), pay immediately
-                                      const advanceAmount: number = pkg.pricing * 0.2;
-                                      handlePayAdvance(advanceAmount, pkg.id);
-                                    }
-                                  }}
-                                  className={`w-full py-3 px-4 rounded-[22px] font-bold text-white hover:border-2 transition-colors flex flex-col items-center ${pkg.requiresReservation
-                                    ? "bg-blue-600 hover:bg-white hover:text-blue-600 hover:border-blue-600"
-                                    : "bg-orange hover:bg-white hover:text-orange hover:border-orange"
-                                    }`}
-                                >
-                                  {pkg.requiresReservation ? (
-                                    <span>See Details & Book</span>
-                                  ) : (
-                                    <>
-                                      <span>Pay 20% Advance</span>
-                                      <span className="font-normal">
-                                        LKR {(pkg.pricing * 0.2).toLocaleString()}
-                                      </span>
-                                      <div className="text-xs mt-1 opacity-80">
-                                        ≈ $
-                                        {(
-                                          pkg.pricing *
-                                          0.2 *
-                                          LKR_TO_USD_RATE
-                                        ).toFixed(2)}{" "}
-                                        USD
+                                {(() => {
+                                  const bookingStatus = isPackageBooked(pkg.id);
+                                  
+                                  if (bookingStatus.booked && !bookingStatus.expired) {
+                                    return (
+                                      <div className="w-full py-3 px-4 rounded-[22px] font-bold bg-green-100 text-green-800 border-2 border-green-500 flex flex-col items-center">
+                                        <span className="flex items-center gap-2">
+                                          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                          </svg>
+                                          You Booked This Package
+                                        </span>
+                                        {bookingStatus.bookingDate && (
+                                          <span className="text-sm font-normal mt-1">
+                                            Booking Date: {bookingStatus.bookingDate.toLocaleDateString()}
+                                          </span>
+                                        )}
                                       </div>
-                                    </>
-                                  )}
-                                </button>
+                                    );
+                                  }
+
+                                  if (bookingStatus.expired) {
+                                    return (
+                                      <div className="space-y-2">
+                                        <div className="text-sm text-yellow-600 text-center mb-2">
+                                          Previous booking expired. You can book again.
+                                        </div>
+                                        <button
+                                          onClick={() => {
+                                            if (!visitor) {
+                                              toast.error("Please login as a user to pay advance");
+                                              return;
+                                            }
+
+                                            if (pkg.requiresReservation) {
+                                              handleBookingClick(pkg);
+                                            } else {
+                                              const advanceAmount: number = pkg.pricing * 0.2;
+                                              handlePayAdvance(advanceAmount, pkg.id);
+                                            }
+                                          }}
+                                          className={`w-full py-3 px-4 rounded-[22px] font-bold text-white hover:border-2 transition-colors flex flex-col items-center ${pkg.requiresReservation
+                                            ? "bg-blue-600 hover:bg-white hover:text-blue-600 hover:border-blue-600"
+                                            : "bg-orange hover:bg-white hover:text-orange hover:border-orange"
+                                          }`}
+                                        >
+                                          {pkg.requiresReservation ? (
+                                            <span>Book Again</span>
+                                          ) : (
+                                            <>
+                                              <span>Pay 20% Advance</span>
+                                              <span className="font-normal">
+                                                LKR {(pkg.pricing * 0.2).toLocaleString()}
+                                              </span>
+                                              <div className="text-xs mt-1 opacity-80">
+                                                ≈ $
+                                                {(
+                                                  pkg.pricing *
+                                                  0.2 *
+                                                  LKR_TO_USD_RATE
+                                                ).toFixed(2)}{" "}
+                                                USD
+                                              </div>
+                                            </>
+                                          )}
+                                        </button>
+                                      </div>
+                                    );
+                                  }
+
+                                  return (
+                                    <button
+                                      onClick={() => {
+                                        if (!visitor) {
+                                          toast.error("Please login as a user to pay advance");
+                                          return;
+                                        }
+
+                                        if (pkg.requiresReservation) {
+                                          handleBookingClick(pkg);
+                                        } else {
+                                          const advanceAmount: number = pkg.pricing * 0.2;
+                                          handlePayAdvance(advanceAmount, pkg.id);
+                                        }
+                                      }}
+                                      className={`w-full py-3 px-4 rounded-[22px] font-bold text-white hover:border-2 transition-colors flex flex-col items-center ${pkg.requiresReservation
+                                        ? "bg-blue-600 hover:bg-white hover:text-blue-600 hover:border-blue-600"
+                                        : "bg-orange hover:bg-white hover:text-orange hover:border-orange"
+                                      }`}
+                                    >
+                                      {pkg.requiresReservation ? (
+                                        <span>See Details & Book</span>
+                                      ) : (
+                                        <>
+                                          <span>Pay 20% Advance</span>
+                                          <span className="font-normal">
+                                            LKR {(pkg.pricing * 0.2).toLocaleString()}
+                                          </span>
+                                          <div className="text-xs mt-1 opacity-80">
+                                            ≈ $
+                                            {(
+                                              pkg.pricing *
+                                              0.2 *
+                                              LKR_TO_USD_RATE
+                                            ).toFixed(2)}{" "}
+                                            USD
+                                          </div>
+                                        </>
+                                      )}
+                                    </button>
+                                  );
+                                })()}
                               </div>
                             </div>
                           </div>

@@ -16,6 +16,7 @@ import { Service } from "@/types/serviceTypes";
 import { FiEdit } from "react-icons/fi";
 import QuickActions from "@/components/vendor-dashboard/QuickActions";
 import ToDo from "@/components/vendor-dashboard/ToDo";
+import BookingCalendar from "@/components/vendor-dashboard/BookingCalendar";
 
 const VendorDashBoard: React.FC = () => {
   const { vendor } = useVendorAuth();
@@ -67,9 +68,15 @@ const VendorDashBoard: React.FC = () => {
       <Header />
 
       <div className="container mx-auto px-4 py-6">
-        <VendorBanner vendor={vendorInfo} />
-
-       
+        {/* Banner and Calendar Row */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <div>
+            <VendorBanner vendor={vendorInfo} />
+          </div>
+          <div>
+            <BookingCalendar />
+          </div>
+        </div>
 
         {/* About Section */}
         <div className="flex items-center mt-8 mb-8">
