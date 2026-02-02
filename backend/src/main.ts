@@ -11,6 +11,7 @@ async function bootstrap() {
       'https://sayido.lk',
       'https://sayido-eta.vercel.app',
       'https://sayido.duckdns.org',
+      'https://sayido.easycase.site',
     ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,

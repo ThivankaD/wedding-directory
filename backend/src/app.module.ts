@@ -29,14 +29,14 @@ import { EmbeddingsModule } from "./modules/ai/embeddings.module";
     ConfigModule.forRoot({ isGlobal: true }),
 
     TypeOrmModule.forRoot({
-  type: 'postgres',
-  url: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false,
-  },
-  autoLoadEntities: true,
-  synchronize: process.env.TYPEORM_SYNC === 'true',
-}),
+      type: 'postgres',
+      url: process.env.DATABASE_URL,
+      ssl: process.env.DB_SSL === 'false' ? false : {
+        rejectUnauthorized: false,
+      },
+      autoLoadEntities: true,
+      synchronize: process.env.TYPEORM_SYNC === 'true',
+    }),
     AuthModule,
     MongooseModule.forRoot(process.env.MONGODB_URI),
     ChatModule,
@@ -66,4 +66,4 @@ import { EmbeddingsModule } from "./modules/ai/embeddings.module";
     EmbeddingsModule
   ],
 })
-export class AppModule {}
+export class AppModule { }

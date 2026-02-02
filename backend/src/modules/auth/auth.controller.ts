@@ -1,4 +1,4 @@
-import { Controller, Post, Req, UseGuards, Res, HttpStatus,UnauthorizedException  } from "@nestjs/common";
+import { Controller, Post, Req, UseGuards, Res, HttpStatus, UnauthorizedException } from "@nestjs/common";
 import { RequestWithVisitor } from './request-with-visitor.interface';
 import { RequestWithVendor } from './request-with-vendor.interface';
 import { AuthService } from "./auth.service";
@@ -7,7 +7,7 @@ import { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
-    constructor (private readonly authService: AuthService){}
+    constructor(private readonly authService: AuthService) { }
 
     @UseGuards(LocalAuthGuard)
     @Post('loginVisitor')
@@ -21,7 +21,7 @@ export class AuthController {
 
         // Set access_token as a regular cookie (not HttpOnly, so it is accessible from frontend)
         res.cookie('access_token', access_token, {
-            domain: process.env.COOKIE_DOMAIN === 'localhost' ? 'localhost' : '.duckdns.org',
+            domain: process.env.COOKIE_DOMAIN,
             httpOnly: false,
             secure: process.env.COOKIE_SECURE === 'true',
             sameSite: process.env.COOKIE_SAMESITE === 'lax' ? 'lax' : 'none',
@@ -41,13 +41,13 @@ export class AuthController {
         }
         const { access_token } = this.authService.loginVendor(vendor);
         res.cookie('access_tokenVendor', access_token, {
-            domain: process.env.COOKIE_DOMAIN === 'localhost' ? 'localhost' : '.duckdns.org',
+            domain: process.env.COOKIE_DOMAIN,
             httpOnly: false,
             secure: process.env.COOKIE_SECURE === 'true',
             sameSite: process.env.COOKIE_SAMESITE === 'lax' ? 'lax' : 'none',
             maxAge: 24 * 60 * 60 * 1000, // 1 day expiration
         });
-        
+
         res.status(HttpStatus.OK).json({ message: 'Login successful' });
     }
 }
