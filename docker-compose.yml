@@ -4,25 +4,48 @@ services:
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile
+      dockerfile: dockerfile
+    env_file:
+      - ./backend/.env
+    restart: always
     environment:
-      - NODE_ENV=production
-      - HOSTNAME=0.0.0.0
+      NODE_OPTIONS: --dns-result-order=ipv4first
+      DATABASE_URL: postgres://postgres:postgres@db:5432/wedding-directory
+      DB_SSL: "false"
     ports:
       - "4000:4000"
+    depends_on:
+      - db
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+
+  db:
+    image: postgres:15-alpine
     restart: always
-    
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: wedding-directory
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
-    environment:
-      - NODE_ENV=production
-      - HOSTNAME=0.0.0.0
-      - PORT=3000
+      dockerfile: dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:4000
+        NEXT_PUBLIC_GRAPHQL_URL: http://localhost:4000/graphql
+        NEXT_PUBLIC_BASE_URL: http://localhost:3000
+        NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: AIzaSyC25RuYu0Q2CsEMD231L6pZfuu1icxW2fc
     ports:
       - "3000:3000"
     restart: always
     depends_on:
       - backend
+
+volumes:
+  postgres_data:
