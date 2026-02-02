@@ -5,6 +5,8 @@ import { PaymentEntity } from '../../database/entities/payment.entity';
 import { VisitorEntity } from '../../database/entities/visitor.entity';
 import { VendorEntity } from '../../database/entities/vendor.entity';
 import { PackageEntity } from '../../database/entities/package.entity';
+import { MyVendorsEntity } from '../../database/entities/myVendors.entity';
+import { OfferingEntity } from '../../database/entities/offering.entity';
 
 const USD_TO_LKR_RATE = 322.58; // 1 USD = 322.58 LKR (inverse of LKR_TO_USD_RATE)
 
@@ -19,12 +21,17 @@ export class PaymentService {
     private vendorRepository: Repository<VendorEntity>,
     @InjectRepository(PackageEntity)
     private packageRepository: Repository<PackageEntity>,
+    @InjectRepository(MyVendorsEntity)
+    private myVendorsRepository: Repository<MyVendorsEntity>,
+    @InjectRepository(OfferingEntity)
+    private offeringRepository: Repository<OfferingEntity>,
   ) {}
 
   async createPayment(
     visitorId: string,
     vendorId: string,
     packageId: string,
+    offeringId: string,
     amount: number, // amount in USD
     stripeSessionId: string,
     bookingDate?: Date, 
@@ -32,6 +39,7 @@ export class PaymentService {
     const visitor = await this.visitorRepository.findOneBy({ id: visitorId });
     const vendor = await this.vendorRepository.findOneBy({ id: vendorId });
     const package_ = await this.packageRepository.findOneBy({ id: packageId });
+    const offering = await this.offeringRepository.findOneBy({ id: offeringId });
 
     // Convert USD to LKR and round to 2 decimal places
     const amountInLKR = Number((amount * USD_TO_LKR_RATE).toFixed(2));
@@ -42,30 +50,25 @@ export class PaymentService {
       package: package_,
       amount: amountInLKR, // Save the LKR amount
       stripeSessionId,
-      status: 'pending', // Initial status should be pending? Original was completed. Let's stick to original or fix? 
-      // The original code set it to 'completed' immediately in createPayment line 44!
-      // But StripeService calls createPayment AFTER creating session (line 45).
-      // Then handleWebhook updates it. 
-      // Line 44 in original: `status: 'completed'`. Wait.
-      // Line 66 in StripeService 'handleWebhook' calls 'updatePaymentStatus(..., "completed")'.
-      // If original createPayment sets it to 'completed', why update?
-      // Ah, the original code had `status: 'completed'` in createPayment! That seems like a bug or I misread.
-      // Let's check the view_file output for PaymentService line 44.
-      // It says: `status: 'completed',`. Yes.
-      // And StripeService calls createPayment BEFORE return session? No. 
-      // StripeService:
-      // 44: // Create payment record
-      // 45: await this.paymentService.createPayment(...)
-      // 53: return session;
-      // So it creates it as completed before the user even pays?
-      // That sounds wrong. But `stripe.service.ts` line 66 updates it to completed.
-      // If I look at `payment.entity.ts`, default is `pending`.
-      // I will set it to `pending` in `createPayment`. Ideally it should match the flow.
-      // If I change it to `pending`, existing logic might break if it expects completed?
-      // But `handleWebhook` exists. I'll trust standard Stripe flow and set to `pending`.
-      // Also save bookingDate.
+      status: 'pending',
       bookingDate
     });
+
+    // Add to myVendors if not already added
+    const existingMyVendor = await this.myVendorsRepository.findOne({
+      where: {
+        visitor: { id: visitorId },
+        offering: { id: offeringId }
+      }
+    });
+
+    if (!existingMyVendor && offering) {
+      const myVendor = this.myVendorsRepository.create({
+        visitor,
+        offering
+      });
+      await this.myVendorsRepository.save(myVendor);
+    }
 
     return this.paymentRepository.save(payment);
   }
@@ -89,6 +92,38 @@ export class PaymentService {
   }
 
   async updatePaymentStatus(stripeSessionId: string, status: 'completed' | 'failed') {
+    // If status is completed, ensure vendor is added to myVendors
+    if (status === 'completed') {
+      const payment = await this.paymentRepository.findOne({
+        where: { stripeSessionId },
+        relations: {
+          visitor: true,
+          package: {
+            offering: true
+          }
+        }
+      });
+
+      if (payment && payment.package?.offering) {
+        // Check if already in myVendors
+        const existingMyVendor = await this.myVendorsRepository.findOne({
+          where: {
+            visitor: { id: payment.visitor.id },
+            offering: { id: payment.package.offering.id }
+          }
+        });
+
+        // Add to myVendors if not already added
+        if (!existingMyVendor) {
+          const myVendor = this.myVendorsRepository.create({
+            visitor: payment.visitor,
+            offering: payment.package.offering
+          });
+          await this.myVendorsRepository.save(myVendor);
+        }
+      }
+    }
+
     return this.paymentRepository.update(
       { stripeSessionId },
       { status }
@@ -128,5 +163,52 @@ export class PaymentService {
         vendor: true,
       },
     });
+  }
+
+  // Utility method to sync completed payments to myVendors
+  async syncCompletedPaymentsToMyVendors() {
+    try {
+      const completedPayments = await this.paymentRepository.find({
+        where: { status: 'completed' },
+        relations: {
+          visitor: true,
+          package: {
+            offering: true
+          }
+        }
+      });
+
+      console.log(`Found ${completedPayments.length} completed payments`);
+
+      let syncedCount = 0;
+      for (const payment of completedPayments) {
+        if (payment.package?.offering) {
+          const existingMyVendor = await this.myVendorsRepository.findOne({
+            where: {
+              visitor: { id: payment.visitor.id },
+              offering: { id: payment.package.offering.id }
+            }
+          });
+
+          if (!existingMyVendor) {
+            const myVendor = this.myVendorsRepository.create({
+              visitor: payment.visitor,
+              offering: payment.package.offering
+            });
+            await this.myVendorsRepository.save(myVendor);
+            syncedCount++;
+            console.log(`Added offering ${payment.package.offering.id} to myVendors for visitor ${payment.visitor.id}`);
+          }
+        } else {
+          console.log(`Payment ${payment.id} is missing package or offering relation`);
+        }
+      }
+
+      console.log(`Synced ${syncedCount} payments to myVendors`);
+      return { message: `Synced ${syncedCount} payments to myVendors`, syncedCount };
+    } catch (error) {
+      console.error('Error in syncCompletedPaymentsToMyVendors:', error);
+      throw error;
+    }
   }
 }

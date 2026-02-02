@@ -22,6 +22,8 @@ const QuickActions = () => {
           <Link href="#" className="flex items-center gap-2">
             <FaLink size={24}  /> Edit Portfolio
           </Link>
+        
+     
 
       </div>
     </div>

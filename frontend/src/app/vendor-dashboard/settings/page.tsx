@@ -40,12 +40,6 @@ const VendorDashBoardSettings = () => {
       <Header />
       <div className="bg-lightYellow flex-grow">
 
-        {/* Vendor Banner */}
-        <div className="container mx-auto px-4 py-6">
-          <VendorBanner vendor={vendorInfo} />
-        </div>
-        
-
         <div className="container mx-auto flex px-4 py-6 gap-6">
           {/* Sidebar */}
           <div className="w-1/4">

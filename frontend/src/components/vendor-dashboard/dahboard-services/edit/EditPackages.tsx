@@ -25,15 +25,22 @@ const EditPackages: React.FC = () => {
   const params = useParams();
   const offeringId = params.id as string;
 
-  const { loading, error, data } = useQuery(FIND_PACKAGES_BY_OFFERING, {
+  const { loading, error, data, refetch } = useQuery(FIND_PACKAGES_BY_OFFERING, {
     variables: { offeringId },
+    fetchPolicy: "network-only",
   });
 
   const [packages, setPackages] = useState<Package[]>([]);
 
-  const [createPackage] = useMutation(CREATE_PACKAGE);
-  const [updatePackage] = useMutation(UPDATE_PACKAGE);
-  const [deletePackage] = useMutation(DELETE_PACKAGE);
+  const [createPackage] = useMutation(CREATE_PACKAGE, {
+    refetchQueries: [{ query: FIND_PACKAGES_BY_OFFERING, variables: { offeringId } }],
+  });
+  const [updatePackage] = useMutation(UPDATE_PACKAGE, {
+    refetchQueries: [{ query: FIND_PACKAGES_BY_OFFERING, variables: { offeringId } }],
+  });
+  const [deletePackage] = useMutation(DELETE_PACKAGE, {
+    refetchQueries: [{ query: FIND_PACKAGES_BY_OFFERING, variables: { offeringId } }],
+  });
 
   useEffect(() => {
     if (data?.findPackagesByOffering) {
@@ -121,9 +128,7 @@ const EditPackages: React.FC = () => {
 
         if (result.data?.createPackage) {
           toast.success("Package created successfully!");
-          setPackages((prev) =>
-            prev.map((p) => (p === pkg ? result.data.createPackage : p))
-          );
+          await refetch();
         }
       } else {
         const result = await updatePackage({
@@ -142,11 +147,7 @@ const EditPackages: React.FC = () => {
 
         if (result.data?.updatePackage) {
           toast.success("Package updated successfully!");
-          setPackages((prev) =>
-            prev.map((p) =>
-              p.id === pkg.id ? result.data.updatePackage : p
-            )
-          );
+          await refetch();
         }
       }
     } catch (error: unknown) {
@@ -162,7 +163,7 @@ const EditPackages: React.FC = () => {
 
       if (result.data?.deletePackage) {
         toast.success("Package deleted successfully!");
-        setPackages((prev) => prev.filter((p) => p.id !== packageId));
+        await refetch();
       }
     } catch (error: unknown) {
       const errorMessage =

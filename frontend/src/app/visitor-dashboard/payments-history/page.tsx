@@ -1,14 +1,16 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import Header from "@/components/shared/Headers/Header";
 import { useAuth } from "@/contexts/VisitorAuthContext";
 import LoaderHelix from "@/components/shared/Loaders/LoaderHelix";
 import Footer from "@/components/shared/Footer";
-import { useQuery } from '@apollo/client';
+import { useQuery, useMutation } from '@apollo/client';
 import { GET_VISITOR_PAYMENTS } from '@/graphql/queries';
+import { SYNC_COMPLETED_PAYMENTS_TO_MY_VENDORS } from '@/graphql/mutations';
 import BottomNavigationBar from '@/components/visitor-dashboard/BottomNavigationBar';
 import Breadcrumbs from "@/components/Breadcrumbs";
+import toast from 'react-hot-toast';
 
 interface Payment {
     id: string;
@@ -26,11 +28,28 @@ interface Payment {
 
 const PaymentsHistoryPage = () => {
     const { visitor } = useAuth();
+    const [isSyncing, setIsSyncing] = useState(false);
     
     const { data, loading, error } = useQuery(GET_VISITOR_PAYMENTS, {
         variables: { visitorId: visitor?.id },
         skip: !visitor?.id,
     });
+
+    const [syncPayments] = useMutation(SYNC_COMPLETED_PAYMENTS_TO_MY_VENDORS);
+
+    const handleSyncToMyVendors = async () => {
+        setIsSyncing(true);
+        try {
+            const result = await syncPayments();
+            toast.success(result.data.syncCompletedPaymentsToMyVendors || 'Vendors synced successfully!');
+        } catch (err: any) {
+            const errorMessage = err?.message || err?.graphQLErrors?.[0]?.message || 'Failed to sync vendors';
+            toast.error(errorMessage);
+            console.error('Sync error:', err);
+        } finally {
+            setIsSyncing(false);
+        }
+    };
 
     const getStatusColor = (status: string) => {
         switch (status) {
@@ -73,11 +92,20 @@ const PaymentsHistoryPage = () => {
                         { label: "Payments History", href: "/visitor-dashboard/payments-history" },
                     ]}
                 />
-                <div>
-                    <h1 className="text-4xl md:text-3xl font-bold text-black font-title my-3">
-                        Payments History
-                    </h1>
-                    <p className="font-body text-xl text-black">Track all your wedding service payments.</p>
+                <div className="flex justify-between items-start">
+                    <div>
+                        <h1 className="text-4xl md:text-3xl font-bold text-black font-title my-3">
+                            Payments History
+                        </h1>
+                        <p className="font-body text-xl text-black">Track all your wedding service payments.</p>
+                    </div>
+                    <button
+                        onClick={handleSyncToMyVendors}
+                        disabled={isSyncing}
+                        className="bg-orange text-white px-4 py-2 rounded-lg hover:bg-orange-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                    >
+                        {isSyncing ? 'Syncing...' : 'Sync to My Vendors'}
+                    </button>
                 </div>
             </div>
 

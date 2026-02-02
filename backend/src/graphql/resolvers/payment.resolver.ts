@@ -1,4 +1,4 @@
-import { Resolver, Query, Args } from '@nestjs/graphql';
+import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
 import { PaymentModel } from '../../graphql/models/payment.model';
 import { PaymentService } from '../../modules/payment/payment.service';
 
@@ -19,5 +19,11 @@ export class PaymentResolver {
   @Query(() => [PaymentModel])
   async packagePayments(@Args('packageId') packageId: string) {
     return this.paymentService.findByPackageId(packageId);
+  }
+
+  @Mutation(() => String)
+  async syncCompletedPaymentsToMyVendors() {
+    const result = await this.paymentService.syncCompletedPaymentsToMyVendors();
+    return result.message;
   }
 }

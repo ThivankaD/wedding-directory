@@ -26,6 +26,9 @@ export class PaymentModel {
   @Field()
   status: string;
 
+  @Field({ nullable: true })
+  bookingDate: Date;
+
   @Field()
   createdAt: Date;
 }
