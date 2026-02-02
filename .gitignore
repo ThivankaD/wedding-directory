@@ -52,6 +52,3 @@ out/
 
 # Misc
 .pnpm-debug.log*
-
-#sh
-*.sh
