@@ -36,6 +36,14 @@ export class PaymentService {
     stripeSessionId: string,
     bookingDate?: Date, 
   ) {
+    // Check for date conflicts if bookingDate is provided
+    if (bookingDate) {
+      const hasConflict = await this.checkDateConflict(vendorId, bookingDate);
+      if (hasConflict) {
+        throw new Error('This vendor is already booked for the selected date. Please choose a different date.');
+      }
+    }
+
     const visitor = await this.visitorRepository.findOneBy({ id: visitorId });
     const vendor = await this.vendorRepository.findOneBy({ id: vendorId });
     const package_ = await this.packageRepository.findOneBy({ id: packageId });
@@ -105,6 +113,8 @@ export class PaymentService {
       });
 
       if (payment && payment.package?.offering) {
+        console.log(`\n✅ Payment ${payment.id} completed - Adding to myVendors`);
+        
         // Check if already in myVendors
         const existingMyVendor = await this.myVendorsRepository.findOne({
           where: {
@@ -120,7 +130,12 @@ export class PaymentService {
             offering: payment.package.offering
           });
           await this.myVendorsRepository.save(myVendor);
+          console.log(`✅ Added offering ${payment.package.offering.id} to myVendors for visitor ${payment.visitor.id}`);
+        } else {
+          console.log(`⏭️  Offering ${payment.package.offering.id} already in myVendors for visitor ${payment.visitor.id}`);
         }
+      } else {
+        console.log(`⚠️  Payment ${stripeSessionId} missing package or offering relation`);
       }
     }
 
@@ -128,6 +143,58 @@ export class PaymentService {
       { stripeSessionId },
       { status }
     );
+  }
+
+  // Update payment status by payment ID (for manual testing)
+  async updatePaymentStatusById(paymentId: string, status: 'completed' | 'failed' | 'pending') {
+    const payment = await this.paymentRepository.findOne({
+      where: { id: paymentId },
+      relations: {
+        visitor: true,
+        package: {
+          offering: true
+        }
+      }
+    });
+
+    if (!payment) {
+      throw new Error(`Payment ${paymentId} not found`);
+    }
+
+    // Update the status
+    payment.status = status;
+    await this.paymentRepository.save(payment);
+
+    // If status is completed, ensure vendor is added to myVendors
+    if (status === 'completed') {
+      if (payment.package?.offering) {
+        console.log(`\n✅ Payment ${payment.id} marked as completed - Adding to myVendors`);
+        
+        // Check if already in myVendors
+        const existingMyVendor = await this.myVendorsRepository.findOne({
+          where: {
+            visitor: { id: payment.visitor.id },
+            offering: { id: payment.package.offering.id }
+          }
+        });
+
+        // Add to myVendors if not already added
+        if (!existingMyVendor) {
+          const myVendor = this.myVendorsRepository.create({
+            visitor: payment.visitor,
+            offering: payment.package.offering
+          });
+          await this.myVendorsRepository.save(myVendor);
+          console.log(`✅ Added offering ${payment.package.offering.id} to myVendors for visitor ${payment.visitor.id}`);
+        } else {
+          console.log(`⏭️  Offering ${payment.package.offering.id} already in myVendors for visitor ${payment.visitor.id}`);
+        }
+      } else {
+        console.log(`⚠️  Payment ${paymentId} missing package or offering relation`);
+      }
+    }
+
+    return payment;
   }
 
   async findByVisitorId(visitorId: string) {
@@ -178,11 +245,32 @@ export class PaymentService {
         }
       });
 
+      console.log(`\n=== SYNC PROCESS STARTED ===`);
       console.log(`Found ${completedPayments.length} completed payments`);
 
       let syncedCount = 0;
+      let skippedCount = 0;
+      let errorCount = 0;
+
       for (const payment of completedPayments) {
-        if (payment.package?.offering) {
+        console.log(`\nProcessing payment ${payment.id}:`);
+        console.log(`  - Visitor: ${payment.visitor?.id || 'MISSING'}`);
+        console.log(`  - Package: ${payment.package?.id || 'MISSING'}`);
+        console.log(`  - Offering: ${payment.package?.offering?.id || 'MISSING'}`);
+
+        if (!payment.visitor) {
+          console.log(`  ❌ Missing visitor relation`);
+          errorCount++;
+          continue;
+        }
+
+        if (!payment.package?.offering) {
+          console.log(`  ❌ Missing package or offering relation`);
+          errorCount++;
+          continue;
+        }
+
+        try {
           const existingMyVendor = await this.myVendorsRepository.findOne({
             where: {
               visitor: { id: payment.visitor.id },
@@ -190,25 +278,116 @@ export class PaymentService {
             }
           });
 
-          if (!existingMyVendor) {
+          if (existingMyVendor) {
+            console.log(`  ⏭️  Already in myVendors (id: ${existingMyVendor.id})`);
+            skippedCount++;
+          } else {
             const myVendor = this.myVendorsRepository.create({
               visitor: payment.visitor,
               offering: payment.package.offering
             });
-            await this.myVendorsRepository.save(myVendor);
+            const saved = await this.myVendorsRepository.save(myVendor);
             syncedCount++;
-            console.log(`Added offering ${payment.package.offering.id} to myVendors for visitor ${payment.visitor.id}`);
+            console.log(`  ✅ Added to myVendors (id: ${saved.id})`);
           }
-        } else {
-          console.log(`Payment ${payment.id} is missing package or offering relation`);
+        } catch (err) {
+          console.error(`  ❌ Error processing payment ${payment.id}:`, err.message);
+          errorCount++;
         }
       }
 
-      console.log(`Synced ${syncedCount} payments to myVendors`);
-      return { message: `Synced ${syncedCount} payments to myVendors`, syncedCount };
+      console.log(`\n=== SYNC PROCESS COMPLETED ===`);
+      console.log(`Total payments: ${completedPayments.length}`);
+      console.log(`✅ Newly synced: ${syncedCount}`);
+      console.log(`⏭️  Already existed: ${skippedCount}`);
+      console.log(`❌ Errors: ${errorCount}`);
+      
+      return { 
+        message: `Synced ${syncedCount} new vendors to myVendors. ${skippedCount} already existed. ${errorCount} errors.`, 
+        syncedCount,
+        skippedCount,
+        errorCount,
+        total: completedPayments.length
+      };
     } catch (error) {
-      console.error('Error in syncCompletedPaymentsToMyVendors:', error);
+      console.error('❌ FATAL ERROR in syncCompletedPaymentsToMyVendors:', error);
       throw error;
     }
+  }
+
+  // Cancel a payment (only for pending status)
+  async cancelPayment(paymentId: string, cancelledBy: 'vendor' | 'visitor'): Promise<void> {
+    const payment = await this.paymentRepository.findOne({
+      where: { id: paymentId },
+      relations: ['visitor', 'vendor', 'package']
+    });
+
+    if (!payment) {
+      throw new Error('Payment not found');
+    }
+
+    if (payment.status !== 'pending') {
+      throw new Error('Only pending payments can be cancelled');
+    }
+
+    // Delete the payment from the database
+    await this.paymentRepository.delete({ id: paymentId });
+
+    console.log(`Payment ${paymentId} deleted by ${cancelledBy}`);
+  }
+
+  // Check if a vendor has a booking on a specific date
+  async checkDateConflict(vendorId: string, bookingDate: Date): Promise<boolean> {
+    // Normalize the date to compare only date part (ignore time)
+    const dateOnly = new Date(bookingDate);
+    dateOnly.setHours(0, 0, 0, 0);
+
+    const nextDay = new Date(dateOnly);
+    nextDay.setDate(nextDay.getDate() + 1);
+
+    // Find any completed or pending payments for this vendor on this date
+    const existingBookings = await this.paymentRepository
+      .createQueryBuilder('payment')
+      .where('payment.vendorId = :vendorId', { vendorId })
+      .andWhere('payment.bookingDate >= :startDate', { startDate: dateOnly })
+      .andWhere('payment.bookingDate < :endDate', { endDate: nextDay })
+      .andWhere('payment.status IN (:...statuses)', { statuses: ['pending', 'completed'] })
+      .getCount();
+
+    return existingBookings > 0;
+  }
+
+  // Debug helper to check payment relations
+  async debugPaymentRelations(paymentId: string): Promise<string> {
+    const payment = await this.paymentRepository.findOne({
+      where: { id: paymentId },
+      relations: {
+        visitor: true,
+        vendor: true,
+        package: {
+          offering: true
+        }
+      }
+    });
+
+    if (!payment) {
+      return `Payment ${paymentId} not found`;
+    }
+
+    const result = {
+      paymentId: payment.id,
+      status: payment.status,
+      hasVisitor: !!payment.visitor,
+      visitorId: payment.visitor?.id,
+      hasVendor: !!payment.vendor,
+      vendorId: payment.vendor?.id,
+      hasPackage: !!payment.package,
+      packageId: payment.package?.id,
+      hasOffering: !!payment.package?.offering,
+      offeringId: payment.package?.offering?.id,
+    };
+
+    console.log('Debug Payment Relations:', result);
+    return JSON.stringify(result, null, 2);
   }
 }

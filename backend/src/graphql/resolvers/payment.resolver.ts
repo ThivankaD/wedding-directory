@@ -21,9 +21,46 @@ export class PaymentResolver {
     return this.paymentService.findByPackageId(packageId);
   }
 
+  @Query(() => [String])
+  async getVendorBookedDates(@Args('vendorId') vendorId: string) {
+    const payments = await this.paymentService.findByVendorId(vendorId);
+    
+    // Filter completed and pending payments with booking dates
+    const bookedDates = payments
+      .filter(p => 
+        (p.status === 'completed' || p.status === 'pending') && 
+        p.bookingDate
+      )
+      .map(p => p.bookingDate.toISOString());
+    
+    return bookedDates;
+  }
+
   @Mutation(() => String)
   async syncCompletedPaymentsToMyVendors() {
     const result = await this.paymentService.syncCompletedPaymentsToMyVendors();
     return result.message;
+  }
+
+  @Query(() => String)
+  async debugPaymentRelations(@Args('paymentId') paymentId: string) {
+    return this.paymentService.debugPaymentRelations(paymentId);
+  }
+
+  @Mutation(() => PaymentModel)
+  async updatePaymentStatusById(
+    @Args('paymentId') paymentId: string,
+    @Args('status') status: 'completed' | 'failed' | 'pending'
+  ) {
+    return this.paymentService.updatePaymentStatusById(paymentId, status);
+  }
+
+  @Mutation(() => Boolean)
+  async cancelPayment(
+    @Args('paymentId') paymentId: string,
+    @Args('cancelledBy') cancelledBy: 'vendor' | 'visitor'
+  ) {
+    await this.paymentService.cancelPayment(paymentId, cancelledBy);
+    return true;
   }
 }

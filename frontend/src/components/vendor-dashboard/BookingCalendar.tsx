@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
 import { GET_VENDOR_PAYMENTS } from '@/graphql/queries';
+import { CANCEL_PAYMENT } from '@/graphql/mutations';
 import { useVendorAuth } from '@/contexts/VendorAuthContext';
 import toast from 'react-hot-toast';
 
@@ -37,6 +38,16 @@ const BookingCalendar: React.FC = () => {
   const { data, loading, error, refetch } = useQuery(GET_VENDOR_PAYMENTS, {
     variables: { vendorId: vendor?.id },
     skip: !vendor?.id,
+  });
+
+  const [cancelPayment, { loading: cancelLoading }] = useMutation(CANCEL_PAYMENT, {
+    onCompleted: () => {
+      toast.success('Booking cancelled successfully');
+      refetch(); // Refresh the payments data
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Failed to cancel booking');
+    }
   });
 
   const payments: Payment[] = data?.vendorPayments || [];
@@ -110,6 +121,17 @@ const BookingCalendar: React.FC = () => {
 
   const handleDateClick = (date: Date) => {
     setSelectedDate(date);
+  };
+
+  const handleCancelBooking = async (paymentId: string) => {
+    if (window.confirm('Are you sure you want to cancel this booking?')) {
+      await cancelPayment({
+        variables: {
+          paymentId,
+          cancelledBy: 'vendor'
+        }
+      });
+    }
   };
 
   const selectedDateBookings = selectedDate ? getBookingsForDate(selectedDate) : [];
@@ -229,12 +251,11 @@ const BookingCalendar: React.FC = () => {
                   </div>
                   {booking.status === 'pending' && (
                     <button
-                      onClick={() => {
-                        toast.error('Cancel booking functionality to be implemented');
-                      }}
-                      className="px-2 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600 whitespace-nowrap"
+                      onClick={() => handleCancelBooking(booking.id)}
+                      disabled={cancelLoading}
+                      className="px-2 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600 whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      Cancel
+                      {cancelLoading ? 'Cancelling...' : 'Cancel'}
                     </button>
                   )}
                 </div>

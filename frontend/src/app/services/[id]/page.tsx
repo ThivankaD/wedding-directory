@@ -9,6 +9,7 @@ import {
   FIND_SERVICE_BY_ID,
   FIND_PACKAGES_BY_OFFERING,
   GET_VISITOR_PAYMENTS,
+  GET_VENDOR_BOOKED_DATES,
 } from "@/graphql/queries";
 import { useMutation, useQuery } from "@apollo/client";
 import SocialIcons from "@/components/vendor-dashboard/dahboard-services/socialIcons";
@@ -69,6 +70,13 @@ const Service: React.FC = () => {
     fetchPolicy: "cache-and-network",
   });
 
+  // Get vendor's booked dates for the calendar - MUST be at top level with all hooks
+  const { data: bookedDatesData } = useQuery(GET_VENDOR_BOOKED_DATES, {
+    variables: { vendorId: data?.findOfferingById?.vendor?.id },
+    skip: !data?.findOfferingById?.vendor?.id,
+    fetchPolicy: "cache-and-network",
+  });
+
   // Check if offering is in visitor's my vendors
   const { loading: myVendorLoading, data: myVendorData } = useQuery(
     FIND_MY_VENDOR_BY_ID,
@@ -114,6 +122,14 @@ const Service: React.FC = () => {
       toast.error("Please login as a user to book");
       return;
     }
+
+    // Check if this package is already booked and not expired
+    const bookingStatus = isPackageBooked(pkg.id);
+    if (bookingStatus.booked && !bookingStatus.expired) {
+      toast.error("You have already booked this package. You cannot book it again until your booking expires.");
+      return;
+    }
+
     setSelectedPackage(pkg);
   };
 
@@ -532,7 +548,10 @@ const Service: React.FC = () => {
         <PackageReservationModal
           isOpen={!!selectedPackage}
           onClose={() => setSelectedPackage(null)}
-          pkg={selectedPackage}
+          pkg={{
+            ...selectedPackage,
+            bookedDates: bookedDatesData?.getVendorBookedDates || []
+          }}
           onPay={(date) => {
             const advanceAmount = selectedPackage.pricing * 0.2;
             handlePayAdvance(advanceAmount, selectedPackage.id, date);
