@@ -504,3 +504,9 @@ export const GET_VISITOR_PAYMENTS = gql`
     }
   }
 `;
+
+export const GET_VENDOR_BOOKED_DATES = gql`
+  query GetVendorBookedDates($vendorId: String!) {
+    getVendorBookedDates(vendorId: $vendorId)
+  }
+`;

@@ -331,3 +331,9 @@ export const SYNC_COMPLETED_PAYMENTS_TO_MY_VENDORS = gql`
     syncCompletedPaymentsToMyVendors
   }
 `;
+
+export const CANCEL_PAYMENT = gql`
+  mutation CancelPayment($paymentId: String!, $cancelledBy: String!) {
+    cancelPayment(paymentId: $paymentId, cancelledBy: $cancelledBy)
+  }
+`;
