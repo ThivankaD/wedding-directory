@@ -5,6 +5,9 @@ import { CreatePackageInput } from "../inputs/createPackage.input";
 import { UpdatePackageInput } from "../inputs/updatePackage.input";import { PackageEntity } from "src/database/entities/package.entity";
 import { Query, ResolveField, Parent } from "@nestjs/graphql";
 import { PaymentService } from "../../modules/payment/payment.service";
+import { TrackPackageViewInput } from "../inputs/track-package-view.input";
+import { PackageAnalyticsModel } from "../models/package-analytics.model";
+import { VendorAnalyticsModel } from "../models/vendor-analytics.model";
 
 @Resolver(() => PackageModel)
 
@@ -42,5 +45,35 @@ export class PackageResolver {
   async bookedDates(@Parent() pkg: PackageEntity): Promise<Date[]> {
     if (!pkg.requiresReservation) return [];
     return this.paymentService.findBookedDatesByPackage(pkg.id);
+  }
+
+  @Mutation(() => Boolean)
+  async trackPackageView(
+    @Args('packageId') packageId: string,
+    @Args('visitorId', { nullable: true }) visitorId?: string,
+    @Args('sessionId', { nullable: true }) sessionId?: string,
+    @Args('ipAddress', { nullable: true }) ipAddress?: string,
+  ): Promise<boolean> {
+    const input: TrackPackageViewInput = {
+      visitorId,
+      sessionId,
+      ipAddress,
+    };
+    await this.packageService.trackPackageView(packageId, input);
+    return true;
+  }
+
+  @Query(() => PackageAnalyticsModel)
+  async getPackageAnalytics(
+    @Args('packageId') packageId: string,
+  ): Promise<PackageAnalyticsModel> {
+    return this.packageService.getPackageAnalytics(packageId);
+  }
+
+  @Query(() => VendorAnalyticsModel)
+  async getVendorAnalytics(
+    @Args('vendorId') vendorId: string,
+  ): Promise<VendorAnalyticsModel> {
+    return this.packageService.getVendorAnalytics(vendorId);
   }
 }

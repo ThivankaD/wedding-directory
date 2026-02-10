@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { OfferingEntity } from '../../database/entities/offering.entity';
 import { PackageEntity } from '../../database/entities/package.entity';
+import { PackageViewEntity } from '../../database/entities/package-view.entity';
 import { PackageService } from './package.service';
 import { PackageResolver } from '../../graphql/resolvers/package.resolver';
 import { PaymentModule } from '../payment/payment.module';
@@ -10,7 +11,8 @@ import { PaymentModule } from '../payment/payment.module';
   imports: [
     TypeOrmModule.forFeature([ 
       PackageEntity,
-      OfferingEntity
+      OfferingEntity,
+      PackageViewEntity
     ]),
     PaymentModule
   ],

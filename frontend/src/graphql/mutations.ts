@@ -337,3 +337,19 @@ export const CANCEL_PAYMENT = gql`
     cancelPayment(paymentId: $paymentId, cancelledBy: $cancelledBy)
   }
 `;
+
+export const TRACK_PACKAGE_VIEW = gql`
+  mutation TrackPackageView(
+    $packageId: String!
+    $visitorId: String
+    $sessionId: String
+    $ipAddress: String
+  ) {
+    trackPackageView(
+      packageId: $packageId
+      visitorId: $visitorId
+      sessionId: $sessionId
+      ipAddress: $ipAddress
+    )
+  }
+`;

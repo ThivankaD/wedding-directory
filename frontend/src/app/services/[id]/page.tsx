@@ -21,7 +21,7 @@ import LoaderQuantum from "@/components/shared/Loaders/LoaderQuantum";
 import Comments from "@/components/vendor-dashboard/dahboard-services/reviews/Comments";
 import WriteReview from "@/components/vendor-dashboard/dahboard-services/reviews/WriteReview";
 import { useAuth } from "@/contexts/VisitorAuthContext";
-import { ADD_TO_MY_VENDORS, REMOVE_FROM_MY_VENDORS } from "@/graphql/mutations";
+import { ADD_TO_MY_VENDORS, REMOVE_FROM_MY_VENDORS, TRACK_PACKAGE_VIEW } from "@/graphql/mutations";
 import toast from "react-hot-toast";
 import { FaHeart } from "react-icons/fa";
 import QuoteRequestWidget from "@/components/chat/QuoteRequestWidget";
@@ -29,6 +29,7 @@ import GoogleMapComponent from "@/components/vendor-dashboard/dahboard-services/
 import PortfolioImages from "@/components/vendor-dashboard/dahboard-services/PortfolioImages";
 import request from "@/utils/request";
 import PackageReservationModal from "@/components/shared/PackageReservationModal";
+import { ensureSessionId } from "@/utils/session";
 
 // Add this constant at the top of the file with other imports
 const LKR_TO_USD_RATE = 0.0031; // 1 LKR = 0.0031 USD (you should use real-time rates)
@@ -92,8 +93,52 @@ const Service: React.FC = () => {
   const [isInMyVendors, setIsInMyVendors] = useState(false);
   const [addToMyVendors] = useMutation(ADD_TO_MY_VENDORS);
   const [removeFromMyVendors] = useMutation(REMOVE_FROM_MY_VENDORS);
+  const [trackPackageView] = useMutation(TRACK_PACKAGE_VIEW);
 
   const [selectedPackage, setSelectedPackage] = useState<Package | null>(null);
+  const [clientIp, setClientIp] = useState<string | null>(null);
+
+  // Fetch client IP address on mount
+  useEffect(() => {
+    fetch('/api/client-ip')
+      .then(res => res.json())
+      .then(data => setClientIp(data.ip))
+      .catch(() => setClientIp(null));
+  }, []);
+
+  // Track package views when packages are loaded
+  useEffect(() => {
+    if (packagesData?.findPackagesByOffering && !vendor && clientIp) {
+      // Only track views for non-vendor visitors and when IP is available
+      const sessionId = ensureSessionId();
+      
+      console.log('Tracking package views:', {
+        packagesCount: packagesData.findPackagesByOffering.length,
+        visitorId: visitor?.id,
+        sessionId,
+        ipAddress: clientIp,
+      });
+      
+      // Track each package view (fire and forget)
+      packagesData.findPackagesByOffering.forEach((pkg: Package) => {
+        console.log('Tracking view for package:', pkg.id);
+        trackPackageView({
+          variables: {
+            packageId: pkg.id,
+            visitorId: visitor?.id || null,
+            sessionId,
+            ipAddress: clientIp,
+          },
+        })
+          .then((result) => {
+            console.log('Successfully tracked view for package:', pkg.id, result);
+          })
+          .catch((err) => {
+            console.error("Failed to track package view:", pkg.id, err);
+          });
+      });
+    }
+  }, [packagesData, visitor, vendor, trackPackageView, clientIp]);
 
   // Check if a package is already booked by the visitor
   const isPackageBooked = (packageId: string) => {
