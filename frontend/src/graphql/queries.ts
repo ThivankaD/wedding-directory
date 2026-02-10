@@ -510,3 +510,32 @@ export const GET_VENDOR_BOOKED_DATES = gql`
     getVendorBookedDates(vendorId: $vendorId)
   }
 `;
+
+export const GET_PACKAGE_ANALYTICS = gql`
+  query GetPackageAnalytics($packageId: String!) {
+    getPackageAnalytics(packageId: $packageId) {
+      totalUniqueViews
+      monthlyViews {
+        month
+        views
+      }
+    }
+  }
+`;
+
+export const GET_VENDOR_ANALYTICS = gql`
+  query GetVendorAnalytics($vendorId: String!) {
+    getVendorAnalytics(vendorId: $vendorId) {
+      totalUniqueViews
+      packagesAnalytics {
+        packageId
+        packageName
+        uniqueViews
+      }
+      monthlyViews {
+        month
+        views
+      }
+    }
+  }
+`;
