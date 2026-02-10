@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  backend:
+    # Replace ${DOCKER_USERNAME} with your actual username in the .env file or export it
+    image: vanujak/wedding-backend:latest
+    restart: always
+    env_file:
+      - .env
+    environment:
+      NODE_OPTIONS: --dns-result-order=ipv4first
+      # We override the DATABASE_URL to verify it points to the local container 'db'
+      DATABASE_URL: postgres://postgres:postgres@db:5432/wedding-directory
+      DB_SSL: "false"
+    ports:
+      - "4000:4000"
+    depends_on:
+      - db
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+
+  db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: wedding-directory
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  frontend:
+    image: vanujak/wedding-frontend:latest
+    ports:
+      - "3000:3000"
+    restart: always
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
