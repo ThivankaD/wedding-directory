@@ -5,7 +5,7 @@ import Header from "@/components/shared/Headers/Header";
 import Footer from "@/components/shared/Footer";
 import { useVendorAuth } from "@/contexts/VendorAuthContext";
 import { useQuery } from "@apollo/client";
-import { GET_VENDOR_BY_ID, GET_VENDOR_ANALYTICS } from "@/graphql/queries";
+import { GET_VENDOR_BY_ID, GET_VENDOR_ANALYTICS, GET_VENDOR_PAYMENTS } from "@/graphql/queries";
 import LoaderJelly from "@/components/shared/Loaders/LoaderJelly";
 import { 
   FiTrendingUp, 
@@ -37,7 +37,16 @@ const VendorAnalytics: React.FC = () => {
     skip: !vendor?.id,
   });
 
-  if (vendorLoading || analyticsLoading) {
+  const {
+    data: paymentsData,
+    loading: paymentsLoading,
+    error: paymentsError,
+  } = useQuery(GET_VENDOR_PAYMENTS, {
+    variables: { vendorId: vendor?.id },
+    skip: !vendor?.id,
+  });
+
+  if (vendorLoading || analyticsLoading || paymentsLoading) {
     return (
       <div className="min-h-screen bg-lightYellow">
         <Header />
@@ -49,13 +58,13 @@ const VendorAnalytics: React.FC = () => {
     );
   }
 
-  if (vendorError || analyticsError) {
+  if (vendorError || analyticsError || paymentsError) {
     return (
       <div className="min-h-screen bg-lightYellow">
         <Header />
         <div className="container mx-auto px-4 py-8">
           <p className="text-red-600">
-            Error loading data: {vendorError?.message || analyticsError?.message}
+            Error loading data: {vendorError?.message || analyticsError?.message || paymentsError?.message}
           </p>
         </div>
         <Footer />
@@ -70,13 +79,51 @@ const VendorAnalytics: React.FC = () => {
     monthlyViews: [],
   };
 
+  // Get payment data
+  const payments = paymentsData?.vendorPayments || [];
+  
+  // Calculate revenue from completed payments only
+  const completedPayments = payments.filter((payment: any) => payment.status === 'completed');
+  const totalRevenue = completedPayments.reduce((sum: number, payment: any) => sum + payment.amount, 0);
+  const totalBookings = completedPayments.length;
+
+  // Get unique package count from payments
+  const uniquePackageIds = new Set(completedPayments.map((payment: any) => payment.package?.id).filter(Boolean));
+  const packagesWithBookings = uniquePackageIds.size;
+
+  // Calculate revenue per package
+  const packageRevenue = completedPayments.reduce((acc: any, payment: any) => {
+    const packageId = payment.package?.id;
+    if (packageId) {
+      if (!acc[packageId]) {
+        acc[packageId] = {
+          packageName: payment.package.name,
+          revenue: 0,
+        };
+      }
+      acc[packageId].revenue += payment.amount;
+    }
+    return acc;
+  }, {});
+
+  // Calculate monthly revenue based on createdAt (payment date)
+  const monthlyRevenue = completedPayments.reduce((acc: any, payment: any) => {
+    if (payment.createdAt) {
+      const date = new Date(payment.createdAt);
+      // Format as "Feb" to match backend analytics format
+      const monthAbbr = date.toLocaleDateString('en-US', { month: 'short' });
+      
+      if (!acc[monthAbbr]) {
+        acc[monthAbbr] = 0;
+      }
+      acc[monthAbbr] += payment.amount;
+    }
+    return acc;
+  }, {});
+
   // Sample placeholder data for features not yet implemented
   const placeholderData = {
     totalInquiries: 56,
-    totalBookings: 12,
-    revenue: 45600,
-    avgRating: 4.8,
-    totalReviews: 34,
   };
 
   return (
@@ -122,9 +169,9 @@ const VendorAnalytics: React.FC = () => {
               <h3 className="text-lg font-semibold text-gray-700">Total Bookings</h3>
               <FiUsers className="text-3xl text-green-500" />
             </div>
-            <p className="text-3xl font-bold text-text">{placeholderData.totalBookings}</p>
+            <p className="text-3xl font-bold text-text">{totalBookings}</p>
             <p className="text-sm text-gray-500 mt-2">
-              Coming soon - payment integration
+              Completed bookings from {packagesWithBookings} package{packagesWithBookings !== 1 ? 's' : ''}
             </p>
           </div>
 
@@ -134,11 +181,13 @@ const VendorAnalytics: React.FC = () => {
               <h3 className="text-lg font-semibold text-gray-700">Total Revenue</h3>
               <FiDollarSign className="text-3xl text-orange" />
             </div>
-            <p className="text-3xl font-bold text-text">LKR {placeholderData.revenue.toLocaleString()}</p>
+            <p className="text-3xl font-bold text-text">LKR {totalRevenue.toLocaleString()}</p>
             <p className="text-sm text-gray-500 mt-2">
-              Coming soon - payment integration
+              From {totalBookings} completed booking{totalBookings !== 1 ? 's' : ''}
             </p>
           </div>
+
+
 
           {/* Average Rating Card */}
           <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
@@ -146,9 +195,9 @@ const VendorAnalytics: React.FC = () => {
               <h3 className="text-lg font-semibold text-gray-700">Average Rating</h3>
               <FiStar className="text-3xl text-yellow-500" />
             </div>
-            <p className="text-3xl font-bold text-text">{placeholderData.avgRating}/5.0</p>
+            <p className="text-3xl font-bold text-text">4.8/5.0</p>
             <p className="text-sm text-gray-600 mt-2">
-              Based on {placeholderData.totalReviews} reviews
+              Based on 34 reviews
             </p>
           </div>
 
@@ -175,15 +224,20 @@ const VendorAnalytics: React.FC = () => {
                   <tr className="border-b-2 border-gray-200">
                     <th className="text-left py-3 px-4 font-semibold text-gray-700">Package Name</th>
                     <th className="text-left py-3 px-4 font-semibold text-gray-700">Unique Views</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700">Revenue (LKR)</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {analytics.packagesAnalytics.map((pkg: any, index: number) => (
-                    <tr key={index} className="border-b border-gray-100 hover:bg-gray-50">
-                      <td className="py-3 px-4">{pkg.packageName}</td>
-                      <td className="py-3 px-4">{pkg.uniqueViews}</td>
-                    </tr>
-                  ))}
+                  {analytics.packagesAnalytics.map((pkg: any, index: number) => {
+                    const revenue = packageRevenue[pkg.packageId]?.revenue || 0;
+                    return (
+                      <tr key={index} className="border-b border-gray-100 hover:bg-gray-50">
+                        <td className="py-3 px-4">{pkg.packageName}</td>
+                        <td className="py-3 px-4">{pkg.uniqueViews}</td>
+                        <td className="py-3 px-4">{revenue.toLocaleString()}</td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -200,15 +254,20 @@ const VendorAnalytics: React.FC = () => {
                   <tr className="border-b-2 border-gray-200">
                     <th className="text-left py-3 px-4 font-semibold text-gray-700">Month</th>
                     <th className="text-left py-3 px-4 font-semibold text-gray-700">Total Views</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700">Revenue (LKR)</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {analytics.monthlyViews.map((data: any, index: number) => (
-                    <tr key={index} className="border-b border-gray-100 hover:bg-gray-50">
-                      <td className="py-3 px-4">{data.month}</td>
-                      <td className="py-3 px-4">{data.views}</td>
-                    </tr>
-                  ))}
+                  {analytics.monthlyViews.map((data: any, index: number) => {
+                    const revenue = monthlyRevenue[data.month] || 0;
+                    return (
+                      <tr key={index} className="border-b border-gray-100 hover:bg-gray-50">
+                        <td className="py-3 px-4">{data.month}</td>
+                        <td className="py-3 px-4">{data.views}</td>
+                        <td className="py-3 px-4">{revenue.toLocaleString()}</td>
+                      </tr>
+                    );
+                  })}
               </tbody>
             </table>
           </div>
@@ -233,29 +292,17 @@ const VendorAnalytics: React.FC = () => {
             </div>
             <div className="flex items-start">
               <div className="bg-blue-100 rounded-full p-2 mr-4">
-                <FiEye className="text-blue-600 text-xl" />
+                <FiDollarSign className="text-blue-600 text-xl" />
               </div>
               <div>
-                <h4 className="font-semibold text-gray-800">How Counting Works</h4>
+                <h4 className="font-semibold text-gray-800">Revenue Performance</h4>
                 <p className="text-gray-600">
-                  Each unique person counts as ONE visitor, even if they view multiple packages or visit multiple times. 
-                  We track by login ID, browser session, or IP address for anonymous visitors.
+                  Your total revenue is LKR {totalRevenue.toLocaleString()} from {totalBookings} completed booking{totalBookings !== 1 ? 's' : ''}. 
+                  {totalRevenue === 0 && " Revenue will be tracked automatically when customers complete their payments."}
                 </p>
               </div>
             </div>
-            {placeholderData.avgRating && (
-              <div className="flex items-start">
-                <div className="bg-orange-100 rounded-full p-2 mr-4">
-                  <FiStar className="text-orange text-xl" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-800">Customer Reviews</h4>
-                  <p className="text-gray-600">
-                    Your {placeholderData.avgRating} star rating is helping attract more clients.
-                  </p>
-                </div>
-              </div>
-            )}
+
           </div>
         </div>
       </div>
