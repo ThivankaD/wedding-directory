@@ -10,6 +10,8 @@ interface PackageReservationModalProps {
     pkg: {
         id: string;
         name: string;
+        description?: string;
+        features?: string[];
         pricing: number;
         bookedDates?: string[] | Date[];
     };
@@ -51,56 +53,94 @@ const PackageReservationModal: React.FC<PackageReservationModalProps> = ({
     const advanceAmountUSD = (advanceAmount * currencyRate).toFixed(2);
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-            <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden relative animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 overflow-y-auto">
+            <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl overflow-hidden relative animate-in fade-in zoom-in-95 duration-200 my-8">
                 <button
                     onClick={onClose}
-                    className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 transition-colors"
+                    className="absolute top-4 right-4 p-2 z-10 rounded-full hover:bg-gray-100 transition-colors"
                 >
                     <X className="w-5 h-5 text-gray-500" />
                 </button>
 
-                <div className="p-6">
-                    <h2 className="text-2xl font-bold text-gray-800 mb-2">Book Package</h2>
-                    <p className="text-gray-600 mb-4">
-                        Select a date for <span className="font-semibold text-orange">{pkg.name}</span>
-                    </p>
+                <div className="p-6 md:p-8">
+                    <h2 className="text-2xl font-bold text-gray-800 mb-6">Book Package</h2>
 
-                    <div className="flex justify-center border rounded-lg p-4 mb-6 bg-gray-50">
-                        <Calendar
-                            mode="single"
-                            selected={selectedDate}
-                            onSelect={setSelectedDate}
-                            disabled={isDateDisabled}
-                            className="rounded-md border bg-white shadow-sm"
-                        />
-                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {/* Left Column - Package Details */}
+                        <div className="space-y-6">
+                            <div className="bg-gradient-to-r from-orange/5 to-orange/10 border border-orange/20 rounded-xl p-6">
+                                <h3 className="text-xl font-bold text-gray-800 mb-2">{pkg.name}</h3>
+                                {pkg.description && (
+                                    <p className="text-gray-600 leading-relaxed mb-4">{pkg.description}</p>
+                                )}
 
-                    <div className="space-y-4">
-                        <div className="bg-orange/10 p-4 rounded-lg">
-                            <div className="flex justify-between items-center mb-1">
-                                <span className="text-sm text-gray-600">Package Price</span>
-                                <span className="font-semibold">LKR {pkg.pricing.toLocaleString()}</span>
-                            </div>
-                            <div className="flex justify-between items-center text-orange font-bold text-lg">
-                                <span>Advance (20%)</span>
-                                <span>LKR {advanceAmount.toLocaleString()}</span>
-                            </div>
-                            <div className="text-right text-xs text-gray-500 mt-1">
-                                ≈ ${advanceAmountUSD} USD
+                                {pkg.features && pkg.features.length > 0 && (
+                                    <div className="space-y-3 mt-4 pt-4 border-t border-orange/10">
+                                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Included Features</h4>
+                                        {pkg.features.map((feature, idx) => (
+                                            <div key={idx} className="flex items-start">
+                                                <svg
+                                                    className="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-0.5"
+                                                    fill="currentColor"
+                                                    viewBox="0 0 20 20"
+                                                >
+                                                    <path
+                                                        fillRule="evenodd"
+                                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                                        clipRule="evenodd"
+                                                    />
+                                                </svg>
+                                                <span className="text-gray-700 text-sm">{feature}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         </div>
 
-                        <Button
-                            onClick={handlePay}
-                            disabled={!selectedDate}
-                            className="w-full bg-orange hover:bg-orange-600 text-white font-bold py-6 text-lg rounded-full"
-                        >
-                            {selectedDate ?
-                                `Pay Advance for ${format(selectedDate, 'MMM d, yyyy')}` :
-                                'Select a Date to Continue'
-                            }
-                        </Button>
+                        {/* Right Column - Calendar & Payment */}
+                        <div className="flex flex-col h-full">
+                            <p className="text-gray-600 mb-4">
+                                Select a date for <span className="font-semibold text-orange">{pkg.name}</span>
+                            </p>
+
+                            <div className="flex justify-center border rounded-lg p-4 mb-6 bg-gray-50">
+                                <Calendar
+                                    mode="single"
+                                    selected={selectedDate}
+                                    onSelect={setSelectedDate}
+                                    disabled={isDateDisabled}
+                                    className="rounded-md border bg-white shadow-sm"
+                                />
+                            </div>
+
+                            <div className="mt-auto space-y-4">
+                                <div className="bg-orange/10 p-4 rounded-lg">
+                                    <div className="flex justify-between items-center mb-1">
+                                        <span className="text-sm text-gray-600">Package Price</span>
+                                        <span className="font-semibold">LKR {pkg.pricing.toLocaleString()}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center text-orange font-bold text-lg">
+                                        <span>Advance (20%)</span>
+                                        <span>LKR {advanceAmount.toLocaleString()}</span>
+                                    </div>
+                                    <div className="text-right text-xs text-gray-500 mt-1">
+                                        ≈ ${advanceAmountUSD} USD
+                                    </div>
+                                </div>
+
+                                <Button
+                                    onClick={handlePay}
+                                    disabled={!selectedDate}
+                                    className="w-full bg-orange hover:bg-orange-600 text-white font-bold py-6 text-lg rounded-full"
+                                >
+                                    {selectedDate ?
+                                        `Pay Advance for ${format(selectedDate, 'MMM d, yyyy')}` :
+                                        'Select a Date to Continue'
+                                    }
+                                </Button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

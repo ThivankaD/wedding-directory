@@ -384,14 +384,14 @@ const Service: React.FC = () => {
                         .map((pkg: Package) => (
                           <div
                             key={pkg.id}
-                            className="bg-white rounded-xl border-2 border-gray-200 shadow-md overflow-hidden transition-all hover:shadow-lg"
+                            className="bg-white rounded-xl border-2 border-gray-200 shadow-md overflow-hidden transition-all hover:shadow-lg flex flex-col h-full"
                           >
                             <div className="p-4 text-center bg-gray-50 border-b border-gray-200">
                               <h3 className="text-xl font-bold text-gray-800">
                                 {pkg.name}
                               </h3>
                             </div>
-                            <div className="p-6">
+                            <div className="p-6 flex flex-col flex-grow">
                               <div className="text-center mb-6">
                                 <div className="text-3xl font-bold text-orange">
                                   <span className="text-sm align-top text-gray-600">
@@ -425,7 +425,7 @@ const Service: React.FC = () => {
                                   )
                                 )}
                               </div>
-                              <div className="pt-4 border-t border-gray-100">
+                              <div className="pt-4 border-t border-gray-100 mt-auto">
                                 {(() => {
                                   const bookingStatus = isPackageBooked(pkg.id);
                                   
