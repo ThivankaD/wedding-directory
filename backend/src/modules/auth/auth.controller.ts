@@ -3,7 +3,28 @@ import { RequestWithVisitor } from './request-with-visitor.interface';
 import { RequestWithVendor } from './request-with-vendor.interface';
 import { AuthService } from "./auth.service";
 import { LocalAuthGuard } from "./guards/local-auth.guard";
-import { Response } from 'express';
+import { CookieOptions, Response } from 'express';
+
+const buildCookieOptions = (): CookieOptions => {
+    const configuredDomain = process.env.COOKIE_DOMAIN?.trim();
+    const secure = process.env.COOKIE_SECURE === 'true';
+    const configuredSameSite = process.env.COOKIE_SAMESITE === 'lax' ? 'lax' : 'none';
+
+    const cookieOptions: CookieOptions = {
+        httpOnly: false,
+        secure,
+        // Browsers reject SameSite=None when secure=false.
+        sameSite: secure ? configuredSameSite : 'lax',
+        maxAge: 24 * 60 * 60 * 1000,
+    };
+
+    // Domain=localhost breaks LAN access; omit to let browser use request host.
+    if (configuredDomain && configuredDomain !== 'localhost') {
+        cookieOptions.domain = configuredDomain;
+    }
+
+    return cookieOptions;
+};
 
 @Controller('auth')
 export class AuthController {
@@ -18,18 +39,14 @@ export class AuthController {
         }
 
         const { access_token } = this.authService.loginVisitor(visitor);
+        res.cookie('access_token', access_token, buildCookieOptions());
 
-        // Set access_token as a regular cookie (not HttpOnly, so it is accessible from frontend)
-        res.cookie('access_token', access_token, {
-            domain: process.env.COOKIE_DOMAIN,
-            httpOnly: false,
-            secure: process.env.COOKIE_SECURE === 'true',
-            sameSite: process.env.COOKIE_SAMESITE === 'lax' ? 'lax' : 'none',
-            maxAge: 24 * 60 * 60 * 1000, // 1 day expiration
+        res.status(HttpStatus.OK).json({
+            message: 'Login successful',
+            access_token,
+            visitorId: visitor.id,
+            visitorEmail: visitor.email,
         });
-
-        // Return the access_token in the response as well
-        res.status(HttpStatus.OK).json({ message: 'Login successful' });
     }
 
     @UseGuards(LocalAuthGuard)
@@ -39,15 +56,15 @@ export class AuthController {
         if (!vendor) {
             throw new UnauthorizedException('Invalid credentials for vendor');
         }
-        const { access_token } = this.authService.loginVendor(vendor);
-        res.cookie('access_tokenVendor', access_token, {
-            domain: process.env.COOKIE_DOMAIN,
-            httpOnly: false,
-            secure: process.env.COOKIE_SECURE === 'true',
-            sameSite: process.env.COOKIE_SAMESITE === 'lax' ? 'lax' : 'none',
-            maxAge: 24 * 60 * 60 * 1000, // 1 day expiration
-        });
 
-        res.status(HttpStatus.OK).json({ message: 'Login successful' });
+        const { access_token } = this.authService.loginVendor(vendor);
+        res.cookie('access_tokenVendor', access_token, buildCookieOptions());
+
+        res.status(HttpStatus.OK).json({
+            message: 'Login successful',
+            access_token,
+            vendorId: vendor.id,
+            vendorEmail: vendor.email,
+        });
     }
 }

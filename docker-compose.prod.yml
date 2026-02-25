@@ -9,28 +9,13 @@ services:
       - .env
     environment:
       NODE_OPTIONS: --dns-result-order=ipv4first
-      # We override the DATABASE_URL to verify it points to the local container 'db'
-      DATABASE_URL: postgres://postgres:postgres@db:5432/wedding-directory
-      DB_SSL: "false"
+      DATABASE_URL: ${DATABASE_URL}
+      DB_SSL: ${DB_SSL:-true}
     ports:
       - "4000:4000"
-    depends_on:
-      - db
     dns:
       - 8.8.8.8
       - 1.1.1.1
-
-  db:
-    image: postgres:15-alpine
-    restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: wedding-directory
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
 
   frontend:
     image: vanujak/wedding-frontend:latest
@@ -39,6 +24,3 @@ services:
     restart: always
     depends_on:
       - backend
-
-volumes:
-  postgres_data:
