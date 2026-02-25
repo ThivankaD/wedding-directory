@@ -539,3 +539,26 @@ export const GET_VENDOR_ANALYTICS = gql`
     }
   }
 `;
+
+export const GET_VISITOR_BOOKINGS = gql`
+  query GetVisitorBookings($visitorId: String!) {
+    getVisitorBookings(visitorId: $visitorId) {
+      id
+      title
+      date
+      time
+      status
+      location
+      serviceProvider {
+        id
+        name
+        email
+        phone
+      }
+      packageName
+      offeringName
+      amount
+      createdAt
+    }
+  }
+`;

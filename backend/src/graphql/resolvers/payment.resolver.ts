@@ -1,5 +1,6 @@
 import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
 import { PaymentModel } from '../../graphql/models/payment.model';
+import { BookingModel } from '../../graphql/models/booking.model';
 import { PaymentService } from '../../modules/payment/payment.service';
 
 @Resolver(() => PaymentModel)
@@ -62,5 +63,10 @@ export class PaymentResolver {
   ) {
     await this.paymentService.cancelPayment(paymentId, cancelledBy);
     return true;
+  }
+
+  @Query(() => [BookingModel])
+  async getVisitorBookings(@Args('visitorId') visitorId: string) {
+    return this.paymentService.getVisitorBookings(visitorId);
   }
 }

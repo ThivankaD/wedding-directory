@@ -390,4 +390,61 @@ export class PaymentService {
     console.log('Debug Payment Relations:', result);
     return JSON.stringify(result, null, 2);
   }
+
+  // Get visitor bookings for calendar
+  async getVisitorBookings(visitorId: string): Promise<any[]> {
+    const payments = await this.paymentRepository.find({
+      where: { 
+        visitor: { id: visitorId },
+      },
+      relations: {
+        vendor: true,
+        package: {
+          offering: true
+        }
+      },
+      order: {
+        bookingDate: 'ASC'
+      }
+    });
+
+    // Transform payments to booking format
+    return payments
+      .filter(payment => payment.bookingDate) // Only include payments with dates
+      .map(payment => ({
+        id: payment.id,
+        title: payment.package?.offering?.name || payment.package?.name || 'Wedding Service Booking',
+        date: payment.bookingDate.toISOString().split('T')[0], // Format: YYYY-MM-DD
+        time: payment.bookingDate.toLocaleTimeString('en-US', { 
+          hour: '2-digit', 
+          minute: '2-digit',
+          hour12: true 
+        }),
+        status: this.mapPaymentStatusToBookingStatus(payment.status),
+        location: payment.vendor?.location || payment.vendor?.city || 'Not specified',
+        serviceProvider: {
+          id: payment.vendor?.id,
+          name: payment.vendor?.busname || `${payment.vendor?.fname || ''} ${payment.vendor?.lname || ''}`.trim(),
+          email: payment.vendor?.email,
+          phone: payment.vendor?.phone,
+        },
+        packageName: payment.package?.name,
+        offeringName: payment.package?.offering?.name,
+        amount: payment.amount,
+        createdAt: payment.createdAt,
+      }));
+  }
+
+  private mapPaymentStatusToBookingStatus(status: string): 'Confirmed' | 'Pending' | 'Cancelled' {
+    switch (status) {
+      case 'completed':
+        return 'Confirmed';
+      case 'pending':
+        return 'Pending';
+      case 'failed':
+        return 'Cancelled';
+      default:
+        return 'Pending';
+    }
+  }
 }
