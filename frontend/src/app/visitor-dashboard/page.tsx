@@ -6,6 +6,7 @@ import { useQuery } from "@apollo/client";
 import { useAuth } from "@/contexts/VisitorAuthContext";
 import WeddingCoupleCard from "@/components/visitor-dashboard/WeddingCoupleCard";
 import WeddingPlanningGuide from "@/components/visitor-dashboard/WeddingPlanningGuide";
+import BookingCalendar from "@/components/BookingCalendar";
 import { StaticImageData } from "next/image";
 import {
   GET_VISITOR_BY_ID,
@@ -19,6 +20,7 @@ import LoaderHelix from "@/components/shared/Loaders/LoaderHelix";
 import LeftSideBar from "@/components/visitor-dashboard/LeftSideBar";
 import BottomNavigationBar from "@/components/visitor-dashboard/BottomNavigationBar";
 import DashboardWidgets from "@/components/visitor-dashboard/DashBoardWidgets";
+import "@/styles/calendar.css";
 
 interface Guest {
   id: string;
@@ -190,6 +192,13 @@ const VisitorDashboard = () => {
                 checklistProgress={checklistProgress}
                 visitorId={visitor?.id}
               />
+
+              {/* Wedding Bookings Calendar */}
+              {visitor?.id && (
+                <div className="pt-5">
+                  <BookingCalendar visitorId={visitor.id} />
+                </div>
+              )}
 
               <div className="pt-5 pb-10">
                 <WeddingPlanningGuide />
