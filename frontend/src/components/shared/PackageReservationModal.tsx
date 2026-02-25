@@ -3,12 +3,10 @@ import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { format, isSameDay, parseISO } from "date-fns";
-import { FiSend } from "react-icons/fi";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import { GET_CHAT } from "@/graphql/queries";
 import { SEND_MESSAGE } from "@/graphql/mutations";
 import { useChatSocket } from "@/hooks/useChatSocket";
-import toast from "react-hot-toast";
 
 interface PackageReservationModalProps {
     isOpen: boolean;
@@ -38,39 +36,11 @@ const PackageReservationModal: React.FC<PackageReservationModalProps> = ({
 }) => {
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
     const [note, setNote] = useState("");
-    const [noteSent, setNoteSent] = useState(false);
-    const [sending, setSending] = useState(false);
 
     const { sendMessage: sendSocketMessage } = useChatSocket(visitorId, 'visitor');
 
     const [getChat] = useLazyQuery(GET_CHAT, { fetchPolicy: 'network-only' });
     const [sendMessageMutation] = useMutation(SEND_MESSAGE);
-
-    const handleSendNote = async () => {
-        if (!note.trim() || !visitorId || !offeringId) return;
-        setSending(true);
-        try {
-            const { data } = await getChat({ variables: { visitorId, offeringId } });
-            const chatId = data?.getChat?.chatId;
-            if (!chatId) throw new Error('Could not get chat');
-
-            // Try WebSocket first, fall back to GraphQL mutation
-            try {
-                await sendSocketMessage({ chatId, content: note.trim(), senderId: visitorId, senderType: 'visitor' });
-            } catch {
-                await sendMessageMutation({
-                    variables: { chatId, content: note.trim(), visitorSenderId: visitorId }
-                });
-            }
-            setNote("");
-            setNoteSent(true);
-            toast.success('Note sent to vendor!');
-        } catch {
-            toast.error('Failed to send note. Please try again.');
-        } finally {
-            setSending(false);
-        }
-    };
 
     if (!isOpen) return null;
 
@@ -80,17 +50,35 @@ const PackageReservationModal: React.FC<PackageReservationModalProps> = ({
     );
 
     const isDateDisabled = (date: Date) => {
-        // Disable past dates
         if (date < new Date(new Date().setHours(0, 0, 0, 0))) return true;
-
-        // Disable booked dates
         return bookedDates.some(bookedDate => isSameDay(bookedDate, date));
     };
 
-    const handlePay = () => {
-        if (selectedDate) {
-            onPay(selectedDate);
+    const handlePay = async () => {
+        if (!selectedDate) return;
+
+        // Send the note to the vendor before redirecting to payment
+        if (note.trim() && visitorId && offeringId) {
+            try {
+                const { data } = await getChat({ variables: { visitorId, offeringId } });
+                const chatId = data?.getChat?.chatId;
+                if (chatId) {
+                    const formattedMessage =
+                        `📦 Payment Note — ${pkg.name} | Booking: ${format(selectedDate, 'MMM d, yyyy')}\n\n${note.trim()}`;
+                    try {
+                        await sendSocketMessage({ chatId, content: formattedMessage, senderId: visitorId, senderType: 'visitor' });
+                    } catch {
+                        await sendMessageMutation({
+                            variables: { chatId, content: formattedMessage, visitorSenderId: visitorId }
+                        });
+                    }
+                }
+            } catch {
+                // Note failed silently — don't block payment
+            }
         }
+
+        onPay(selectedDate);
     };
 
     const advanceAmount = pkg.pricing * 0.2;
@@ -141,36 +129,18 @@ const PackageReservationModal: React.FC<PackageReservationModalProps> = ({
                                 )}
                             </div>
 
-                            {/* Send note to vendor */}
+                            {/* Note to vendor - sent automatically on Pay */}
                             {visitorId && offeringId && (
-                                <div className="border border-gray-200 rounded-xl p-4 space-y-3">
-                                    <p className="text-sm font-semibold text-gray-600">Send a note to the vendor</p>
-                                    {noteSent ? (
-                                        <div className="flex items-center gap-2 text-green-600 text-sm py-2">
-                                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                            </svg>
-                                            Note sent! The vendor will reply in your chat.
-                                        </div>
-                                    ) : (
-                                        <>
-                                            <textarea
-                                                value={note}
-                                                onChange={(e) => setNote(e.target.value)}
-                                                placeholder="Ask a question or leave a note before booking..."
-                                                rows={3}
-                                                className="w-full resize-none rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange/30 focus:border-orange"
-                                            />
-                                            <button
-                                                onClick={handleSendNote}
-                                                disabled={!note.trim() || sending}
-                                                className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-orange text-white text-sm font-semibold hover:bg-orange/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                                            >
-                                                <FiSend className="text-base" />
-                                                {sending ? 'Sending...' : 'Send Note'}
-                                            </button>
-                                        </>
-                                    )}
+                                <div className="border border-gray-200 rounded-xl p-4 space-y-2">
+                                    <p className="text-sm font-semibold text-gray-600">Add a note</p>
+                                    
+                                    <textarea
+                                        value={note}
+                                        onChange={(e) => setNote(e.target.value)}
+                                        placeholder="Write a message to the vendor (optional)"
+                                        rows={3}
+                                        className="w-full resize-none rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange/30 focus:border-orange"
+                                    />
                                 </div>
                             )}
                         </div>
