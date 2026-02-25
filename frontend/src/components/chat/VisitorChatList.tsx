@@ -1,9 +1,11 @@
-import { useQuery } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
 import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
 import { GET_OFFERING_DETAILS, GET_VISITOR_CHATS } from "@/graphql/queries";
+import { MARK_CHAT_AS_READ } from "@/graphql/mutations";
 import { FaStore } from "react-icons/fa";
 import { IoLocationSharp } from "react-icons/io5";
+import { useAuth } from "@/contexts/VisitorAuthContext";
 
 interface Message {
   content: string;
@@ -24,6 +26,9 @@ interface VisitorChatListProps {
 }
 
 const ChatItem = ({ chat, visitorId }: { chat: Chat; visitorId: string }) => {
+  const { visitor } = useAuth();
+  const [markChatAsRead] = useMutation(MARK_CHAT_AS_READ);
+
   const { data: offeringData } = useQuery(GET_OFFERING_DETAILS, {
     variables: { id: chat.offeringId },
     skip: !chat.offeringId,
@@ -37,6 +42,13 @@ const ChatItem = ({ chat, visitorId }: { chat: Chat; visitorId: string }) => {
     <Link
       href={`/visitor-dashboard/chats/${visitorId}/${chat.chatId}`}
       className="block hover:bg-gray-50 transition-colors p-4 border-b last:border-b-0"
+      onClick={() => {
+        if (visitor?.id) {
+          markChatAsRead({
+            variables: { chatId: chat.chatId, userId: visitor.id, userType: 'visitor' }
+          }).catch(console.error);
+        }
+      }}
     >
       <div className="flex gap-4">
         <div className="w-12 h-12 flex items-center justify-center bg-accent/10 rounded-full">

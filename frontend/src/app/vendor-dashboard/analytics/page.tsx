@@ -244,34 +244,42 @@ const VendorAnalytics: React.FC = () => {
           </div>
         )}
 
-        {/* Monthly Trends Table */}
+        {/* Monthly Trends Cards */}
         {analytics.monthlyViews.length > 0 && (
           <div className="bg-white rounded-lg shadow-md p-6 mb-8">
             <h2 className="text-2xl font-bold mb-6">Monthly View Trends</h2>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b-2 border-gray-200">
-                    <th className="text-left py-3 px-4 font-semibold text-gray-700">Month</th>
-                    <th className="text-left py-3 px-4 font-semibold text-gray-700">Total Views</th>
-                    <th className="text-left py-3 px-4 font-semibold text-gray-700">Revenue (LKR)</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {analytics.monthlyViews.map((data: any, index: number) => {
-                    const revenue = monthlyRevenue[data.month] || 0;
-                    return (
-                      <tr key={index} className="border-b border-gray-100 hover:bg-gray-50">
-                        <td className="py-3 px-4">{data.month}</td>
-                        <td className="py-3 px-4">{data.views}</td>
-                        <td className="py-3 px-4">{revenue.toLocaleString()}</td>
-                      </tr>
-                    );
-                  })}
-              </tbody>
-            </table>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+              {analytics.monthlyViews.map((data: any, index: number) => {
+                const revenue = monthlyRevenue[data.month] || 0;
+                return (
+                  <div
+                    key={index}
+                    className="bg-lightYellow rounded-xl p-4 flex flex-col gap-3 hover:shadow-md transition-shadow"
+                  >
+                    <span className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+                      {data.month}
+                    </span>
+                    <div>
+                      <div className="flex items-center gap-1 mb-1">
+                        <FiEye className="text-blue-500 text-sm" />
+                        <span className="text-xs text-gray-500">Views</span>
+                      </div>
+                      <p className="text-3xl font-bold text-text">{analytics.totalUniqueViews}</p>
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-1 mb-1">
+                        <FiDollarSign className="text-orange text-sm" />
+                        <span className="text-xs text-gray-500">Revenue</span>
+                      </div>
+                      <p className="text-sm font-bold text-text">
+                        LKR {revenue.toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        </div>
         )}
 
         {/* Performance Insights */}

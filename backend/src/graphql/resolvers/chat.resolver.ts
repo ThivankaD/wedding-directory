@@ -2,10 +2,14 @@ import { Resolver, Query, Args, Mutation } from "@nestjs/graphql";
 import { ChatService } from "../../modules/chat/chat.service";
 import { ChatType } from "../../database/types/chatTypes";
 import { CreateChatInput } from "../inputs/createChat.input";
+import { ChatGateway } from "../../modules/chat/chat.gateway";
 
 @Resolver()
 export class ChatResolver {
-  constructor(private chatService: ChatService) {}
+  constructor(
+    private chatService: ChatService,
+    private chatGateway: ChatGateway,
+  ) {}
 
   // Keep your existing queries
   @Query(() => [ChatType])
@@ -57,5 +61,29 @@ export class ChatResolver {
       visitorSenderId,
       vendorSenderId,
     });
+  }
+
+  @Query(() => Number)
+  async getUnreadMessageCount(
+    @Args("userId") userId: string,
+    @Args("userType") userType: string
+  ) {
+    return this.chatService.getUnreadCount(userId, userType as 'visitor' | 'vendor');
+  }
+
+  @Mutation(() => Boolean)
+  async markChatAsRead(
+    @Args("chatId") chatId: string,
+    @Args("userId") userId: string,
+    @Args("userType") userType: string
+  ) {
+    await this.chatService.markMessagesAsRead(chatId, userId, userType as 'visitor' | 'vendor');
+    
+    // Get updated unread count and emit via WebSocket so badge updates
+    const unreadCount = await this.chatService.getUnreadCount(userId, userType as 'visitor' | 'vendor');
+    console.log(`markChatAsRead: ${userType} ${userId} - new unread count: ${unreadCount}`);
+    this.chatGateway.emitUnreadCount(userId, unreadCount);
+    
+    return true;
   }
 }

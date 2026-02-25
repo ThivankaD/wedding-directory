@@ -1,11 +1,12 @@
 import { useQuery, useMutation } from "@apollo/client";
 import { GET_CHAT_HISTORY } from "@/graphql/queries";
-import { SEND_MESSAGE } from "@/graphql/mutations";
+import { SEND_MESSAGE, MARK_CHAT_AS_READ } from "@/graphql/mutations";
 import { formatDistanceToNow } from "date-fns";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/contexts/VisitorAuthContext";
 import { IoSend } from "react-icons/io5";
 import { FaStore, FaUserCircle } from "react-icons/fa";
+import { useChatSocket } from "@/hooks/useChatSocket";
 
 interface Message {
   content: string;
@@ -20,49 +21,100 @@ interface VisitorChatWindowProps {
 
 const VisitorChatWindow = ({ chatId }: VisitorChatWindowProps) => {
   const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState<Message[]>([]);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const { visitor } = useAuth();
 
-  const { data, loading, refetch } = useQuery(GET_CHAT_HISTORY, {
+  const { connected, sendMessage: sendSocketMessage, joinChat, onNewMessage } =
+    useChatSocket(visitor?.id, 'visitor');
+
+  const [markChatAsRead] = useMutation(MARK_CHAT_AS_READ);
+
+  const { data, loading } = useQuery(GET_CHAT_HISTORY, {
     variables: { chatId },
     skip: !chatId,
-    pollInterval: 1000,
+    fetchPolicy: "network-only",
+    onCompleted: (data) => {
+      if (data?.getChatHistory?.messages) {
+        setMessages(data.getChatHistory.messages);
+      }
+    }
   });
 
-  const [sendMessage] = useMutation(SEND_MESSAGE, {
-    onCompleted: () => {
-      refetch();
-    },
-    onError: (error) => {
-      console.error("Error sending message:", error);
-    },
-  });
+  // Join chat room via WebSocket when connected
+  useEffect(() => {
+    if (chatId && connected) {
+      joinChat(chatId);
+    }
+  }, [chatId, connected]);
+
+  // Mark as read as soon as we have chatId and visitorId
+  useEffect(() => {
+    if (!chatId || !visitor?.id) return;
+    markChatAsRead({
+      variables: { chatId, userId: visitor.id, userType: 'visitor' }
+    }).catch(console.error);
+  }, [chatId, visitor?.id]);
+
+  // Listen for real-time messages via WebSocket
+  useEffect(() => {
+    if (!chatId || !connected) return;
+
+    const unsubscribe = onNewMessage?.((data: any) => {
+      if (data.chatId === chatId) {
+        // Server always sends the authoritative full message list - use it directly
+        setMessages(data.chat.messages || []);
+        // User is actively viewing this chat, mark as read immediately
+        if (visitor?.id) {
+          markChatAsRead({
+            variables: { chatId, userId: visitor.id, userType: 'visitor' }
+          }).catch(console.error);
+        }
+      }
+    });
+
+    return () => { unsubscribe?.(); };
+  }, [chatId, connected, onNewMessage, visitor?.id]);
+
+  // Scroll to bottom when messages change
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!message.trim()) return;
+    if (!message.trim() || !visitor?.id) return;
+
+    const optimisticMsg: Message = {
+      content: message,
+      senderId: visitor.id,
+      senderType: 'visitor',
+      timestamp: new Date().toISOString(),
+    };
+    setMessages((prev) => [...prev, optimisticMsg]);
+    setMessage("");
 
     try {
-      await sendMessage({
-        variables: {
-          chatId,
-          content: message,
-          visitorSenderId: visitor?.id,
-        },
+      await sendSocketMessage({
+        chatId,
+        content: optimisticMsg.content,
+        senderId: visitor.id,
+        senderType: 'visitor',
       });
-      setMessage("");
     } catch (error) {
       console.error("Error sending message:", error);
+      // Rollback optimistic message on failure
+      setMessages((prev) => prev.filter((m) => m !== optimisticMsg));
     }
   };
-  if (loading) {
+
+  if (loading && messages.length === 0) {
     return (
       <div className="h-[600px] flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-accent"></div>
       </div>
     );
   }
-
-  const messages = data?.getChatHistory?.messages || [];
 
    return (
      <div className="flex flex-col h-[600px]">
@@ -111,6 +163,7 @@ const VisitorChatWindow = ({ chatId }: VisitorChatWindowProps) => {
              </div>
            </div>
          ))}
+         <div ref={messagesEndRef} />
        </div>
 
        <div className="border-t p-4 bg-white font-body">

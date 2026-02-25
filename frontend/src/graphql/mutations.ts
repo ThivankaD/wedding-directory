@@ -267,6 +267,12 @@ export const SEND_MESSAGE = gql`
   }
 `;
 
+export const MARK_CHAT_AS_READ = gql`
+  mutation MarkChatAsRead($chatId: String!, $userId: String!, $userType: String!) {
+    markChatAsRead(chatId: $chatId, userId: $userId, userType: $userType)
+  }
+`;
+
 export const CREATE_PACKAGE = gql`
   mutation CreatePackage($input: CreatePackageInput!, $offeringId: String!) {
     createPackage(input: $input, offeringId: $offeringId) {

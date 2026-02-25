@@ -113,12 +113,14 @@ export class ChatService {
     visitorSenderId?: string;
     vendorSenderId?: string;
   }): Promise<IChat> {
+    const senderId = data.visitorSenderId || data.vendorSenderId;
     const message = {
       id: uuid(),
       content: data.content,
-      senderId: data.visitorSenderId || data.vendorSenderId,
+      senderId: senderId,
       senderType: data.visitorSenderId ? "visitor" : "vendor",
       timestamp: new Date(),
+      readBy: [senderId], // Sender has read their own message
     };
 
     return this.chatModel.findOneAndUpdate(
@@ -130,4 +132,82 @@ export class ChatService {
       { new: true }
     );
   }
+
+  async markMessagesAsRead(
+    chatId: string,
+    userId: string,
+    userType: 'visitor' | 'vendor'
+  ): Promise<void> {
+    // Get the chat first
+    const chat = await this.chatModel.findOne({ chatId });
+    
+    if (!chat) {
+      throw new Error('Chat not found');
+    }
+
+    // Update readBy for all messages that don't already include this userId
+    const updatedMessages = chat.messages.map(msg => {
+      if (!msg.readBy) {
+        msg.readBy = [];
+      }
+      if (!msg.readBy.includes(userId)) {
+        msg.readBy.push(userId);
+      }
+      return msg;
+    });
+
+    // Save the updated chat
+    await this.chatModel.updateOne(
+      { chatId },
+      { $set: { messages: updatedMessages } }
+    );
+  }
+
+  async getUnreadCount(userId: string, userType: 'visitor' | 'vendor'): Promise<number> {
+    const field = userType === 'visitor' ? 'visitorId' : 'vendorId';
+    
+    const chats = await this.chatModel.find({
+      [field]: userId
+    });
+
+    let unreadCount = 0;
+    
+    for (const chat of chats) {
+      for (const message of chat.messages) {
+        // Count messages not sent by this user and not read by them
+        if (message.senderId !== userId && !message.readBy?.includes(userId)) {
+          unreadCount++;
+          console.log(`Unread message in chat ${chat.chatId}:`, {
+            messageId: message.id,
+            from: message.senderId,
+            readBy: message.readBy,
+            content: message.content.substring(0, 20)
+          });
+        }
+      }
+    }
+
+    console.log(`Total unread count for ${userType} ${userId}:`, unreadCount);
+    return unreadCount;
+  }
+
+  async getChatsWithUnreadCount(userId: string, userType: 'visitor' | 'vendor'): Promise<any[]> {
+    const field = userType === 'visitor' ? 'visitorId' : 'vendorId';
+    
+    const chats = await this.chatModel.find({
+      [field]: userId
+    }).sort({ updatedAt: -1 });
+
+    return chats.map(chat => {
+      const unreadCount = chat.messages.filter(
+        msg => msg.senderId !== userId && !msg.readBy?.includes(userId)
+      ).length;
+
+      return {
+        ...chat.toObject(),
+        unreadCount
+      };
+    });
+  }
 }
+
