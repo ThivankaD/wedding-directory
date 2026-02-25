@@ -130,13 +130,23 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ visitorId }) => {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-5 max-w-3xl">
-      <div className="mb-3">
-        <h2 className="text-xl font-bold text-gray-800 mb-2">Your Wedding Bookings</h2>
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 max-w-3xl">
+      <div className="mb-4">
+        <h2 className="text-2xl font-bold text-gray-900 mb-3">Booking Calendar</h2>
+        <div className="flex gap-4 text-sm">
+          <div className="flex items-center gap-2">
+            <span className="w-3 h-3 bg-green-500 rounded-full"></span>
+            <span className="text-gray-700">Completed</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-3 h-3 bg-yellow-500 rounded-full"></span>
+            <span className="text-gray-700">Pending</span>
+          </div>
+        </div>
       </div>
 
       {events.length === 0 ? (
-        <div className="text-center py-10 bg-gray-50 rounded-lg">
+        <div className="text-center py-10 bg-gray-50 rounded-lg border border-gray-200">
           <svg
             className="mx-auto h-10 w-10 text-gray-400"
             fill="none"
@@ -154,7 +164,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ visitorId }) => {
           <p className="mt-1 text-xs text-gray-500">Start planning your wedding by booking services.</p>
         </div>
       ) : (
-        <div className="calendar-container" style={{ height: '420px' }}>
+        <div className="calendar-container" style={{ height: '480px' }}>
           <Calendar
             localizer={localizer}
             events={events}
@@ -167,7 +177,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ visitorId }) => {
             onView={handleViewChange}
             date={currentDate}
             view={currentView}
-            views={['month', 'week', 'day']}
+            views={['month']}
             popup
             toolbar={true}
           />
