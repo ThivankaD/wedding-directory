@@ -5,7 +5,7 @@ import Header from "@/components/shared/Headers/Header";
 import Footer from "@/components/shared/Footer";
 import { useVendorAuth } from "@/contexts/VendorAuthContext";
 import { useQuery } from "@apollo/client";
-import { GET_VENDOR_BY_ID, GET_VENDOR_ANALYTICS, GET_VENDOR_PAYMENTS } from "@/graphql/queries";
+import { GET_VENDOR_BY_ID, GET_VENDOR_ANALYTICS, GET_VENDOR_PAYMENTS, GET_VENDOR_MESSAGES } from "@/graphql/queries";
 import LoaderJelly from "@/components/shared/Loaders/LoaderJelly";
 import { 
   FiTrendingUp, 
@@ -46,7 +46,16 @@ const VendorAnalytics: React.FC = () => {
     skip: !vendor?.id,
   });
 
-  if (vendorLoading || analyticsLoading || paymentsLoading) {
+  const {
+    data: chatsData,
+    loading: chatsLoading,
+    error: chatsError,
+  } = useQuery(GET_VENDOR_MESSAGES, {
+    variables: { vendorId: vendor?.id },
+    skip: !vendor?.id,
+  });
+
+  if (vendorLoading || analyticsLoading || paymentsLoading || chatsLoading) {
     return (
       <div className="min-h-screen bg-lightYellow">
         <Header />
@@ -58,13 +67,13 @@ const VendorAnalytics: React.FC = () => {
     );
   }
 
-  if (vendorError || analyticsError || paymentsError) {
+  if (vendorError || analyticsError || paymentsError || chatsError) {
     return (
       <div className="min-h-screen bg-lightYellow">
         <Header />
         <div className="container mx-auto px-4 py-8">
           <p className="text-red-600">
-            Error loading data: {vendorError?.message || analyticsError?.message || paymentsError?.message}
+            Error loading data: {vendorError?.message || analyticsError?.message || paymentsError?.message || chatsError?.message}
           </p>
         </div>
         <Footer />
@@ -121,10 +130,8 @@ const VendorAnalytics: React.FC = () => {
     return acc;
   }, {});
 
-  // Sample placeholder data for features not yet implemented
-  const placeholderData = {
-    totalInquiries: 56,
-  };
+  // Total inquiries = number of unique chats (conversations)
+  const totalInquiries = chatsData?.getVendorChats?.length ?? 0;
 
   return (
     <div className="min-h-screen bg-lightYellow">
@@ -157,9 +164,9 @@ const VendorAnalytics: React.FC = () => {
               <h3 className="text-lg font-semibold text-gray-700">Total Inquiries</h3>
               <FiMessageSquare className="text-3xl text-purple-500" />
             </div>
-            <p className="text-3xl font-bold text-text">{placeholderData.totalInquiries}</p>
+            <p className="text-3xl font-bold text-text">{totalInquiries}</p>
             <p className="text-sm text-gray-500 mt-2">
-              Coming soon - chat integration
+              Active chat conversation{totalInquiries !== 1 ? "s" : ""} with couples
             </p>
           </div>
 
