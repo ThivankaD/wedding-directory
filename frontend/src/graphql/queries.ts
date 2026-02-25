@@ -427,6 +427,12 @@ export const GET_VENDOR_CHAT = gql`
   }
 `;
 
+export const GET_UNREAD_MESSAGE_COUNT = gql`
+  query GetUnreadMessageCount($userId: String!, $userType: String!) {
+    getUnreadMessageCount(userId: $userId, userType: $userType)
+  }
+`;
+
 export const GET_CHAT_VISITOR_DETAILS = gql`
   query FindVisitorById($id: String!) {
     findVisitorById(id: $id) {

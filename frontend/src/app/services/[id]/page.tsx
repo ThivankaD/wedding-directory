@@ -13,7 +13,7 @@ import {
 } from "@/graphql/queries";
 import { useMutation, useQuery } from "@apollo/client";
 import SocialIcons from "@/components/vendor-dashboard/dahboard-services/socialIcons";
-import { FiEdit } from "react-icons/fi";
+import { FiEdit, FiMessageCircle } from "react-icons/fi";
 import Reviews from "@/components/vendor-dashboard/dahboard-services/reviews/Reviews";
 import { useVendorAuth } from "@/contexts/VendorAuthContext";
 import Link from "next/link";
@@ -30,6 +30,7 @@ import PortfolioImages from "@/components/vendor-dashboard/dahboard-services/Por
 import request from "@/utils/request";
 import PackageReservationModal from "@/components/shared/PackageReservationModal";
 import { ensureSessionId } from "@/utils/session";
+import ChatModal from "@/components/chat/ChatModal";
 
 // Add this constant at the top of the file with other imports
 const LKR_TO_USD_RATE = 0.0031; // 1 LKR = 0.0031 USD (you should use real-time rates)
@@ -97,6 +98,7 @@ const Service: React.FC = () => {
 
   const [selectedPackage, setSelectedPackage] = useState<Package | null>(null);
   const [clientIp, setClientIp] = useState<string | null>(null);
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   // Fetch client IP address on mount
   useEffect(() => {
@@ -344,6 +346,17 @@ const Service: React.FC = () => {
                     </div>
                   </div>
                   <div>{offering?.vendor.city}</div>
+                  
+                  {/* Chat Button - Only show for visitors (not vendors viewing their own) */}
+                  {!isVendorsOffering && visitor && (
+                    <button
+                      onClick={() => setIsChatOpen(true)}
+                      className="mt-4 bg-orange text-white px-6 py-2 rounded-lg hover:bg-orange/90 transition-colors flex items-center gap-2 w-fit"
+                    >
+                      <FiMessageCircle className="text-xl" />
+                      Chat with Vendor
+                    </button>
+                  )}
                 </div>
                 <SocialIcons offering={offering} />
               </div>
@@ -601,6 +614,20 @@ const Service: React.FC = () => {
             const advanceAmount = selectedPackage.pricing * 0.2;
             handlePayAdvance(advanceAmount, selectedPackage.id, date);
           }}
+          visitorId={visitor?.id}
+          offeringId={offering?.id}
+        />
+      )}
+
+      {/* Chat Modal */}
+      {visitor && offering && (
+        <ChatModal
+          isOpen={isChatOpen}
+          onClose={() => setIsChatOpen(false)}
+          visitorId={visitor.id}
+          offeringId={offering.id}
+          vendorName={offering.vendor?.busname || "Vendor"}
+          offeringName={offering.name || "Service"}
         />
       )}
     </div>

@@ -8,16 +8,18 @@ import { IoSend } from "react-icons/io5";
 
 interface MessageInputProps {
   chatId: string;
+  onMessageSent?: (messages: any[]) => void;
 }
 
-export default function MessageInput({ chatId }: MessageInputProps) {
+export default function MessageInput({ chatId, onMessageSent }: MessageInputProps) {
   const [message, setMessage] = useState("");
   const { vendor } = useVendorAuth();
 
   const [sendMessage] = useMutation(SEND_MESSAGE, {
-    onCompleted: () => {
-      // You might want to refetch the chat history after sending
-      // Similar to the visitor implementation
+    onCompleted: (data) => {
+      if (onMessageSent && data?.sendQuoteMessage?.messages) {
+        onMessageSent(data.sendQuoteMessage.messages);
+      }
     },
     onError: (error) => {
       console.error("Error sending message:", error);

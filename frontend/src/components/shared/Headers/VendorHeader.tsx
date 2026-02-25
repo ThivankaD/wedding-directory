@@ -5,11 +5,15 @@ import { IoIosNotificationsOutline } from "react-icons/io";
 import Image from "next/image";
 import { useVendorAuth } from "@/contexts/VendorAuthContext"; // Added vendor auth context
 import { BiMessageRounded } from "react-icons/bi";
+import { useChatSocket } from "@/hooks/useChatSocket";
 
 const VendorHeader = () => {
-  const { logout } = useVendorAuth(); // Added logout function from vendor auth context
+  const { logout, vendor } = useVendorAuth(); // Added logout function from vendor auth context
   const [showProfileMenu, setShowProfileMenu] = useState(false); // State for the profile dropdown
   const profileMenuRef = useRef<HTMLDivElement>(null);
+
+  // WebSocket hook for unread count
+  const { unreadCount } = useChatSocket(vendor?.id, 'vendor');
 
   // Handle dropdown toggle
   const handleProfileClick = () => {
@@ -68,8 +72,13 @@ const VendorHeader = () => {
           {/* Right section: Notifications and Profile dropdown */}
           <div className="flex items-center justify-end gap-8 flex-1">
             {/*Update the message icon section*/}
-            <Link href="/vendor-dashboard/chats">
+            <Link href="/vendor-dashboard/chats" className="relative">
               <BiMessageRounded className="w-[33px] h-[33px] cursor-pointer hover:text-gray-600" />
+              {unreadCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </span>
+              )}
             </Link>
             <IoIosNotificationsOutline className="w-[36px] h-[36px]" />
             {/* Profile dropdown */}

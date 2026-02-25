@@ -2,13 +2,15 @@
 
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
-import { useQuery } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
 import {
   GET_CHAT_VISITOR_DETAILS,
   GET_OFFERING_DETAILS,
 } from "@/graphql/queries";
+import { MARK_CHAT_AS_READ } from "@/graphql/mutations";
 import { FaUserCircle } from "react-icons/fa";
 import { FaInbox } from "react-icons/fa6";
+import { useVendorAuth } from "@/contexts/VendorAuthContext";
 
 interface Chat {
   chatId: string;
@@ -25,6 +27,9 @@ interface ChatListProps {
 }
 
 const ChatListItem = ({ chat }: { chat: Chat }) => {
+  const { vendor } = useVendorAuth();
+  const [markChatAsRead] = useMutation(MARK_CHAT_AS_READ);
+
   const { data: visitorData } = useQuery(GET_CHAT_VISITOR_DETAILS, {
     variables: { id: chat.visitorId },
   });
@@ -53,6 +58,13 @@ const ChatListItem = ({ chat }: { chat: Chat }) => {
     <Link
       href={`/vendor-dashboard/chats/${chat.chatId}`}
       className="flex items-center p-4 hover:bg-gray-50 transition-colors rounded-lg hover:shadow-md"
+      onClick={() => {
+        if (vendor?.id) {
+          markChatAsRead({
+            variables: { chatId: chat.chatId, userId: vendor.id, userType: 'vendor' }
+          }).catch(console.error);
+        }
+      }}
     >
       <div className="w-12 h-12 flex items-center justify-center bg-primary/10 rounded-full mr-4">
         <FaUserCircle className="text-2xl text-accent" size={45} />

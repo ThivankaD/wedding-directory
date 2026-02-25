@@ -16,6 +16,7 @@ export interface IChat {
     senderId: string;
     senderType: string;
     timestamp: Date;
+    readBy: string[]; // Array of user IDs who have read this message
   }>;
   createdAt: Date;
   updatedAt: Date;
@@ -31,6 +32,7 @@ export const ChatSchema = new Schema({
     content: String,
     senderId: String,
     senderType: String,
-    timestamp: { type: Date, default: Date.now }
+    timestamp: { type: Date, default: Date.now },
+    readBy: { type: [String], default: [] }
   }]
 }, { timestamps: true });
