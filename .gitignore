@@ -57,3 +57,12 @@ out/
 *.sh
 
 *.prod.yml
+
+# rebuild and push backend image
+docker build -t vanujak/wedding-backend:latest ./backend
+docker push vanujak/wedding-backend:latest
+
+# on VM
+docker compose -f docker-compose.prod.yml pull backend
+docker compose -f docker-compose.prod.yml up -d --force-recreate backend
+docker compose -f docker-compose.prod.yml logs -f backend
