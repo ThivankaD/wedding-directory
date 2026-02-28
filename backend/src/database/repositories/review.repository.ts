@@ -43,7 +43,7 @@ export const ReviewRepository = (
 
     async findReviewById(id: string): Promise<ReviewEntity> {
       return this.findOne({
-        relations: ['offering'],
+        relations: ['offering', 'visitor', 'mentionedOffering'],
         where: { id },
       });
     },
@@ -51,7 +51,20 @@ export const ReviewRepository = (
     async findReviewsByOffering(offeringId: string): Promise<ReviewEntity[]> {
       return await this.find({
         where: { offering: { id: offeringId } },
-        relations: ['visitor', 'offering'],
+        relations: ['visitor', 'offering', 'mentionedOffering', 'mentionedOffering.vendor'],
+      });
+    },
+
+    async findAllReviews(): Promise<ReviewEntity[]> {
+      return await this.find({
+        relations: [
+          'visitor',
+          'offering',
+          'offering.vendor',
+          'mentionedOffering',
+          'mentionedOffering.vendor',
+        ],
+        order: { createdAt: 'DESC' },
       });
     },
 

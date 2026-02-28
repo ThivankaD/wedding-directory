@@ -40,8 +40,21 @@ export class ReviewService {
     if (!visitor) {
       throw new Error('Visitor not found');
     }
+
+    let mentionedOffering: OfferingEntity | undefined;
+    if (createReviewInput.mentioned_offering_id) {
+      mentionedOffering = await this.offeringRepository.findOne({
+        where: { id: createReviewInput.mentioned_offering_id },
+      });
+    }
+
+    const { mentioned_offering_id, ...reviewPayload } = createReviewInput;
+
     return this.reviewRepository.createReview(
-      createReviewInput,
+      {
+        ...reviewPayload,
+        mentionedOffering,
+      },
       offering,
       visitor,
     );
@@ -57,5 +70,9 @@ export class ReviewService {
 
   async findReviewsByOffering(offeringId: string): Promise<ReviewEntity[]> {
     return this.reviewRepository.findReviewsByOffering(offeringId);
+  }
+
+  async findAllReviews(): Promise<ReviewEntity[]> {
+    return this.reviewRepository.findAllReviews();
   }
 }

@@ -5,6 +5,7 @@ import { useQuery } from "@apollo/client";
 import { FIND_REVIEW_BY_SERVICE } from "@/graphql/queries";
 import { Button } from "@/components/ui/button";
 import LoaderHelix from "@/components/shared/Loaders/LoaderHelix";
+import Link from "next/link";
 
 interface CommentsProps {
   serviceId: string;
@@ -14,7 +15,15 @@ interface Review {
   id: string;
   rating: number;
   comment: string;
+  image_urls?: string[];
   createdAt: string;
+  mentionedOffering?: {
+    id: string;
+    vendor?: {
+      busname?: string;
+    };
+    name?: string;
+  };
   visitor: {
     visitor_fname: string;
   };
@@ -61,7 +70,39 @@ const Comments: React.FC<CommentsProps> = ({ serviceId }) => {
             </div>
           </div>
           {/* Review comment */}
-          <div>{review.comment}</div>
+          <div className="whitespace-pre-wrap">{review.comment}</div>
+
+          {review.mentionedOffering?.id && (
+            <div className="mt-2 text-sm">
+              Mentioned:
+              <Link
+                href={`/services/${review.mentionedOffering.id}`}
+                className="ml-2 text-orange hover:underline font-semibold"
+              >
+                @{review.mentionedOffering.vendor?.busname || review.mentionedOffering.name || "Vendor"}
+              </Link>
+            </div>
+          )}
+
+          {review.image_urls && review.image_urls.length > 0 && (
+            <div className="mt-3 grid grid-cols-2 md:grid-cols-3 gap-2 max-w-2xl">
+              {review.image_urls.map((url, index) => (
+                <a
+                  key={`${review.id}-img-${index}`}
+                  href={url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="block"
+                >
+                  <img
+                    src={url}
+                    alt={`Review image ${index + 1}`}
+                    className="w-full h-28 object-cover rounded-md border border-gray-200"
+                  />
+                </a>
+              ))}
+            </div>
+          )}
         </div>
       ))}
 

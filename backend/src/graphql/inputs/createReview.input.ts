@@ -9,6 +9,12 @@ export class CreateReviewInput {
     @Field()
     rating: number;
 
+    @Field(() => [String], { nullable: true })
+    image_urls?: string[];
+
+    @Field({ nullable: true })
+    mentioned_offering_id?: string;
+
     @Field()
     offering_id: string;
     

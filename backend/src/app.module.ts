@@ -26,7 +26,10 @@ import { EmbeddingsModule } from "./modules/ai/embeddings.module";
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: [join(__dirname, "..", ".env")],
+    }),
 
     TypeOrmModule.forRoot({
       type: 'postgres',

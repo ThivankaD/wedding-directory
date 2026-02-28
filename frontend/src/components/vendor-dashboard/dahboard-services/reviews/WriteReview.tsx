@@ -6,15 +6,19 @@ import { useMutation } from '@apollo/client';
 import { CREATE_REVIEW } from '@/graphql/mutations';
 import { useAuth } from '@/contexts/VisitorAuthContext';
 import toast from 'react-hot-toast';
+import { uploadReviewImages } from '@/api/upload/review/reviewImages.upload';
 
 interface WriteReviewProps {
     serviceId: string;
+    vendorName?: string;
 }
 
-const WriteReview: React.FC<WriteReviewProps> = ({ serviceId }) => {
+const WriteReview: React.FC<WriteReviewProps> = ({ serviceId, vendorName }) => {
     const { visitor } = useAuth();
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState("");
+    const [images, setImages] = useState<File[]>([]);
+    const [mentionVendor, setMentionVendor] = useState(true);
     const [createReview, { loading }] = useMutation(CREATE_REVIEW);
     const [showForm, setShowForm] = useState(false);  // State to control the form visibility
 
@@ -40,12 +44,26 @@ const WriteReview: React.FC<WriteReviewProps> = ({ serviceId }) => {
             return;
         }
 
+        if (!comment.trim() && images.length === 0) {
+            toast("Please add a review comment or at least one image.");
+            return;
+        }
+
+        if (images.length > 5) {
+            toast.error("You can upload up to 5 images.");
+            return;
+        }
+
         try {
+            const uploadedImageUrls = await uploadReviewImages(images);
+
             const response = await createReview({
                 variables: {
                     input: {
                         rating,
                         comment,
+                        image_urls: uploadedImageUrls,
+                        mentioned_offering_id: mentionVendor ? serviceId : null,
                         offering_id: serviceId,
                         visitor_id: visitor?.id,
                     },
@@ -57,6 +75,8 @@ const WriteReview: React.FC<WriteReviewProps> = ({ serviceId }) => {
                 console.log("Review created successfully:", response.data);
                 setRating(0);
                 setComment("");
+                setImages([]);
+                setMentionVendor(true);
                 setShowForm(false);  // Hide the form after submission
                 toast.success("Review submitted successfully!");
             }
@@ -114,6 +134,40 @@ const WriteReview: React.FC<WriteReviewProps> = ({ serviceId }) => {
                             />
                         </div>
                     </div>
+
+                    <div className='mt-2'>
+                        <label className='flex items-center gap-2 cursor-pointer'>
+                            <input
+                                type="checkbox"
+                                checked={mentionVendor}
+                                onChange={(e) => setMentionVendor(e.target.checked)}
+                                disabled={loading}
+                            />
+                            <span>
+                                Mention vendor {vendorName ? `@${vendorName}` : ''}
+                            </span>
+                        </label>
+                    </div>
+
+                    <div className='mt-3'>
+                        <label className='block mb-1'>Add Photos (up to 5)</label>
+                        <input
+                            type="file"
+                            accept="image/*"
+                            multiple
+                            onChange={(e) => {
+                                const selectedFiles = Array.from(e.target.files || []);
+                                setImages(selectedFiles.slice(0, 5));
+                            }}
+                            disabled={loading}
+                        />
+                        {images.length > 0 && (
+                            <p className='text-sm text-gray-600 mt-1'>
+                                {images.length} image{images.length > 1 ? 's' : ''} selected
+                            </p>
+                        )}
+                    </div>
+
                     <Button
                         className='w-28 mx-2 font-bold hover:border-orange hover:text-orange hover:bg-orange/15'
                         variant="ornageOutline"

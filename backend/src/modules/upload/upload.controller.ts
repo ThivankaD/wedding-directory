@@ -181,5 +181,46 @@ export class UploadController {
     return { uploadedUrls };
   }
 
+  // Upload review images (no entity update here - URLs returned for GraphQL mutation payload)
+  @Post('review-images')
+  @UseInterceptors(FilesInterceptor('files', 5))
+  async uploadReviewImages(
+    @UploadedFiles() files: Array<Express.Multer.File>,
+  ) {
+    if (!files || files.length === 0) {
+      throw new BadRequestException('No review images provided.');
+    }
+
+    if (files.length > 5) {
+      throw new BadRequestException('You can upload a maximum of 5 review images.');
+    }
+
+    const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    const maxFileSize = 10 * 1024 * 1024; // 10MB per image
+    const uploadedUrls = [];
+
+    for (const file of files) {
+      if (!allowedMimeTypes.includes(file.mimetype)) {
+        throw new BadRequestException(`Invalid file type: ${file.originalname}`);
+      }
+
+      if (file.size > maxFileSize) {
+        throw new BadRequestException(`File too large: ${file.originalname}`);
+      }
+
+      const fileName = `${Date.now()}-${file.originalname}`;
+
+      try {
+        const fileUrl = await this.uploadService.uploadImage(fileName, file.buffer);
+        uploadedUrls.push(fileUrl);
+      } catch (error) {
+        console.error('Upload failed:', error);
+        throw new BadRequestException(`Error uploading file: ${file.originalname}`);
+      }
+    }
+
+    return { uploadedUrls };
+  }
+
 
 }
