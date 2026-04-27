@@ -150,7 +150,6 @@ const VendorAnalytics: React.FC = () => {
           <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-700">Total  Views</h3>
-              <FiEye className="text-3xl text-blue-500" />
             </div>
             <p className="text-3xl font-bold text-text">{analytics.totalUniqueViews}</p>
             <p className="text-sm text-gray-500 mt-2">
@@ -162,7 +161,6 @@ const VendorAnalytics: React.FC = () => {
           <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-700">Total Inquiries</h3>
-              <FiMessageSquare className="text-3xl text-purple-500" />
             </div>
             <p className="text-3xl font-bold text-text">{totalInquiries}</p>
             <p className="text-sm text-gray-500 mt-2">
@@ -174,7 +172,6 @@ const VendorAnalytics: React.FC = () => {
           <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-700">Total Bookings</h3>
-              <FiUsers className="text-3xl text-green-500" />
             </div>
             <p className="text-3xl font-bold text-text">{totalBookings}</p>
             <p className="text-sm text-gray-500 mt-2">
@@ -186,7 +183,6 @@ const VendorAnalytics: React.FC = () => {
           <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-700">Total Revenue</h3>
-              <FiDollarSign className="text-3xl text-orange" />
             </div>
             <p className="text-3xl font-bold text-text">LKR {totalRevenue.toLocaleString()}</p>
             <p className="text-sm text-gray-500 mt-2">
@@ -200,7 +196,6 @@ const VendorAnalytics: React.FC = () => {
           <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-700">Average Rating</h3>
-              <FiStar className="text-3xl text-yellow-500" />
             </div>
             <p className="text-3xl font-bold text-text">4.8/5.0</p>
             <p className="text-sm text-gray-600 mt-2">
@@ -212,7 +207,6 @@ const VendorAnalytics: React.FC = () => {
           <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-700">Total Packages</h3>
-              <FiTrendingUp className="text-3xl text-teal-500" />
             </div>
             <p className="text-3xl font-bold text-text">{analytics.packagesAnalytics.length}</p>
             <p className="text-sm text-gray-600 mt-2">
