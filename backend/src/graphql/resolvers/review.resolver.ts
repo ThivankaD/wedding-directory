@@ -27,4 +27,9 @@ export class ReviewResolver {
   ): Promise<ReviewEntity[]> {
     return this.reviewService.findReviewsByOffering(offeringId);
   }
+
+  @Query(() => [ReviewModel])
+  async findAllReviews(): Promise<ReviewEntity[]> {
+    return this.reviewService.findAllReviews();
+  }
 }

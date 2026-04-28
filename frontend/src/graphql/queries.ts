@@ -306,9 +306,46 @@ export const FIND_REVIEW_BY_SERVICE = gql`
       id
       comment
       rating
+      image_urls
       createdAt
       offering {
         id
+      }
+      mentionedOffering {
+        id
+        name
+        vendor {
+          busname
+        }
+      }
+      visitor {
+        visitor_fname
+      }
+    }
+  }
+`;
+
+export const FIND_ALL_REVIEWS = gql`
+  query FindAllReviews {
+    findAllReviews {
+      id
+      comment
+      rating
+      image_urls
+      createdAt
+      offering {
+        id
+        name
+        vendor {
+          busname
+        }
+      }
+      mentionedOffering {
+        id
+        name
+        vendor {
+          busname
+        }
       }
       visitor {
         visitor_fname

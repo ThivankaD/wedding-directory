@@ -15,4 +15,6 @@ export type ReviewRepositoryType = Repository<ReviewEntity> & {
   findReviewById(id: string): Promise<ReviewEntity | null>;
 
   findReviewsByOffering(id: string): Promise<ReviewEntity[]>;
+
+  findAllReviews(): Promise<ReviewEntity[]>;
 };

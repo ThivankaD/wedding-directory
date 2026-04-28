@@ -20,13 +20,20 @@ export class ReviewEntity {
   @Column({ type: 'integer' })
   rating: number;
 
+  @Column('text', { array: true, nullable: true })
+  image_urls?: string[];
+
   @ManyToOne(() => OfferingEntity, (offering) => offering.review, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'offering_id' })
   offering: OfferingEntity;
   
   @ManyToOne(() => VisitorEntity, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'visitor_id' })
-  visitor: VisitorEntity;  
+  visitor: VisitorEntity;
+
+  @ManyToOne(() => OfferingEntity, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'mentioned_offering_id' })
+  mentionedOffering?: OfferingEntity;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt: Date;

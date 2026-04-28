@@ -13,8 +13,14 @@ export class ReviewModel {
   @Field()
   rating: string;
 
+  @Field(() => [String], { nullable: true })
+  image_urls?: string[];
+
   @Field(() => OfferingModel)
   offering: OfferingModel;
+
+  @Field(() => OfferingModel, { nullable: true })
+  mentionedOffering?: OfferingModel;
   
   @Field(() => VisitorModel)
   visitor: VisitorModel;

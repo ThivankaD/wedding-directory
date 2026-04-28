@@ -90,6 +90,7 @@ const VisitorHeader = () => {
             
             <Link href="/visitor-dashboard">Dashboard</Link>
             <Link href="/vendor-search">Vendors</Link>
+            <Link href="/blog">Blog</Link>
             <Link href="/help">Help</Link>
             
             {/* Chat icon with unread badge */}

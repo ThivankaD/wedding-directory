@@ -9,6 +9,7 @@ import ReactMarkdown from "react-markdown";
 import Header from "@/components/shared/Headers/Header";
 import Footer from "@/components/shared/Footer";
 import { BlogPost } from "@/types/blogTypes";
+import { getBlogAssetUrl } from "@/api/blog/blog.api";
 
 export default function BlogPostPage() {
   const params = useParams();
@@ -91,9 +92,7 @@ export default function BlogPostPage() {
         );
         break;
       case "pinterest":
-        const imageUrl = post?.CoverImage?.url
-          ? `http://51.79.145.226:5000${post.CoverImage.url}`
-          : "";
+        const imageUrl = getBlogAssetUrl(post?.CoverImage?.url) || "";
         window.open(
           `https://pinterest.com/pin/create/button/?url=${encodeURIComponent(
             url
@@ -203,7 +202,7 @@ export default function BlogPostPage() {
   // Determine if we have a valid image URL
   const hasValidImage = post.CoverImage && post.CoverImage.url;
   const imageUrl = hasValidImage
-    ? `http://51.79.145.226:5000${post.CoverImage.url}`
+    ? getBlogAssetUrl(post.CoverImage.url)
     : null;
 
   // Calculate estimated reading time

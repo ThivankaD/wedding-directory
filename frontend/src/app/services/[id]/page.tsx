@@ -567,7 +567,7 @@ const Service: React.FC = () => {
 
               {!isVendorsOffering ? (
                 <div>
-                  <WriteReview serviceId={offering?.id} />
+                  <WriteReview serviceId={offering?.id} vendorName={offering?.vendor?.busname} />
                 </div>
               ) : null}
 

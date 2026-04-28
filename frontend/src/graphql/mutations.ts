@@ -313,8 +313,16 @@ export const CREATE_REVIEW = gql`
       id
       comment
       rating
+      image_urls
       offering {
         id
+      }
+      mentionedOffering {
+        id
+        name
+        vendor {
+          busname
+        }
       }
       visitor {
         id

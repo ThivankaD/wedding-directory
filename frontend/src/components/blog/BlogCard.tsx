@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { BlogCardProps } from "../../types/blogTypes";
+import { getBlogAssetUrl } from "../../api/blog/blog.api";
 
 const BlogCard: React.FC<BlogCardProps> = ({ post }) => {
   // Function to strip markdown for preview
@@ -23,9 +24,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ post }) => {
 
   const contentPreview = stripMarkdown(post.Content).substring(0, 120) + "...";
 
-  const imageUrl = post.CoverImage?.url
-    ? `http://51.79.145.226:5000${post.CoverImage.url}`
-    : "/images/placeholder-blog.jpg"; // Add a placeholder image
+  const imageUrl = getBlogAssetUrl(post.CoverImage?.url) || "/images/placeholder-blog.jpg";
 
   return (
     <div className="rounded-xl overflow-hidden shadow-lg bg-white hover:shadow-xl transition-all duration-300 h-full flex flex-col">
