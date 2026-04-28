@@ -42,6 +42,7 @@ export class AuthService {
         const payload= {
             email: visitor.email,
             sub: visitor.id,
+            role: 'visitor',
         }
         return {
             access_token: this.jwtService.sign(payload),
@@ -51,7 +52,8 @@ export class AuthService {
     loginVendor (vendor: VendorEntity): {access_token: string } {
         const payload = {
             email: vendor.email,
-            sub: vendor.id
+            sub: vendor.id,
+            role: 'vendor',
         }
         return {
             access_token: this.jwtService.sign(payload),

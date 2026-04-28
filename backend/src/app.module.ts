@@ -23,6 +23,7 @@ import { PaymentModule } from "./modules/payment/payment.module";
 import { ChatbotModule } from "./modules/ai/chatbot.module";
 import { VectorSearchModule } from "./modules/ai/vector-search.module";
 import { EmbeddingsModule } from "./modules/ai/embeddings.module";
+import { RecommendationModule } from "./modules/recommendation/recommendation.module";
 
 @Module({
   imports: [
@@ -63,7 +64,8 @@ import { EmbeddingsModule } from "./modules/ai/embeddings.module";
     PaymentModule,
     ChatbotModule,
     VectorSearchModule,
-    EmbeddingsModule
+    EmbeddingsModule,
+    RecommendationModule
   ],
 })
 export class AppModule { }
