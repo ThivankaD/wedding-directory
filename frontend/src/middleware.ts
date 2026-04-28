@@ -49,7 +49,7 @@ export async function middleware(request: NextRequest) {
   // Handle vendor user access
   if (vendorToken) {
     // If vendor tries to access visitor routes, redirect to vendor dashboard
-    if (visitorRoutes.includes(pathname)) {
+    if (visitorRoutes.some(route => pathname === route || pathname.startsWith(`${route}/`))) {
       return NextResponse.redirect(new URL('/vendor-dashboard', request.url));
     }
   }
@@ -71,7 +71,7 @@ export const config = {
   matcher: [
     '/vendor-dashboard/:path*',   // Apply middleware to all vendor routes
     '/visitor-profile',           // Apply middleware to visitor profile
-    '/visitor-dashboard',         // Apply middleware to visitor dashboard
+    '/visitor-dashboard/:path*',  // Apply middleware to visitor dashboard and nested pages
     '/about',                     // Public pages can still have middleware (for logging or tracking)
     '/contact',                   // Add other public routes here
     '/services/edit/:id*',        // Add this pattern
