@@ -16,5 +16,16 @@ export type ReviewRepositoryType = Repository<ReviewEntity> & {
 
   findReviewsByOffering(id: string): Promise<ReviewEntity[]>;
 
+  findReviewsByOfferingPaginated(
+    id: string,
+    page: number,
+    limit: number,
+  ): Promise<[ReviewEntity[], number]>;
+
+  getOfferingReviewStats(id: string): Promise<{
+    averageRating: number;
+    totalReviews: number;
+  }>;
+
   findAllReviews(): Promise<ReviewEntity[]>;
 };

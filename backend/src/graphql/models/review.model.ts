@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { OfferingModel } from './offering.model';
 import { VisitorModel } from './visitor.model';
 
@@ -10,8 +10,8 @@ export class ReviewModel {
   @Field({ nullable: true })
   comment?: string;
 
-  @Field()
-  rating: string;
+  @Field(() => Int)
+  rating: number;
 
   @Field(() => [String], { nullable: true })
   image_urls?: string[];
@@ -22,8 +22,8 @@ export class ReviewModel {
   @Field(() => OfferingModel, { nullable: true })
   mentionedOffering?: OfferingModel;
   
-  @Field(() => VisitorModel)
-  visitor: VisitorModel;
+  @Field(() => VisitorModel, { nullable: true })
+  visitor?: VisitorModel;
 
   @Field()
   createdAt: Date;

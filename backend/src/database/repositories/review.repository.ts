@@ -52,7 +52,39 @@ export const ReviewRepository = (
       return await this.find({
         where: { offering: { id: offeringId } },
         relations: ['visitor', 'offering', 'mentionedOffering', 'mentionedOffering.vendor'],
+        order: { createdAt: 'DESC' },
       });
+    },
+
+    async findReviewsByOfferingPaginated(
+      offeringId: string,
+      page: number,
+      limit: number,
+    ): Promise<[ReviewEntity[], number]> {
+      return this.findAndCount({
+        where: { offering: { id: offeringId } },
+        relations: ['visitor', 'offering', 'mentionedOffering', 'mentionedOffering.vendor'],
+        order: { createdAt: 'DESC' },
+        skip: (page - 1) * limit,
+        take: limit,
+      });
+    },
+
+    async getOfferingReviewStats(
+      offeringId: string,
+    ): Promise<{ averageRating: number; totalReviews: number }> {
+      const result = await this.createQueryBuilder('review')
+        .select('COUNT(review.id)', 'totalReviews')
+        .addSelect('COALESCE(AVG(review.rating), 0)', 'averageRating')
+        .where('review.offering_id = :offeringId', { offeringId })
+        .getRawOne();
+
+      const typedResult = result as { totalReviews?: string; averageRating?: string } | null;
+
+      return {
+        totalReviews: Number(typedResult?.totalReviews ?? 0),
+        averageRating: Number(typedResult?.averageRating ?? 0),
+      };
     },
 
     async findAllReviews(): Promise<ReviewEntity[]> {
