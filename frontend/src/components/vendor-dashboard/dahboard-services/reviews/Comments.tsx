@@ -1,14 +1,14 @@
 'use client';
 import { FaRegStar, FaStar } from "react-icons/fa";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useQuery } from "@apollo/client";
-import { FIND_REVIEW_BY_SERVICE } from "@/graphql/queries";
+import { FIND_REVIEW_PAGE_BY_SERVICE } from "@/graphql/queries";
 import { Button } from "@/components/ui/button";
 import LoaderHelix from "@/components/shared/Loaders/LoaderHelix";
 import Link from "next/link";
 
 interface CommentsProps {
-  serviceId: string;
+  serviceId?: string;
 }
 
 interface Review {
@@ -29,23 +29,42 @@ interface Review {
   };
 }
 
+const REVIEWS_PER_PAGE = 5;
+
 const Comments: React.FC<CommentsProps> = ({ serviceId }) => {
-  const { data: rdata, loading: reviewsLoading, error: reviewsError } = useQuery(FIND_REVIEW_BY_SERVICE, {
-    variables: { offering_id: serviceId },
+  const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    setPage(1);
+  }, [serviceId]);
+
+  const { data: rdata, loading: reviewsLoading, error: reviewsError } = useQuery(FIND_REVIEW_PAGE_BY_SERVICE, {
+    variables: { offering_id: serviceId, page, limit: REVIEWS_PER_PAGE },
     skip: !serviceId,
   });
 
-  const [showAll, setShowAll] = useState(false);
+  useEffect(() => {
+    const reviewPage = rdata?.findReviewsByOfferingPaginated;
+    const totalPages = reviewPage?.totalPages ?? 1;
+    if (page > totalPages) {
+      setPage(totalPages);
+    }
+  }, [page, rdata]);
 
   if (reviewsLoading) return <LoaderHelix />;
   if (reviewsError) return <div>Error fetching reviews: {reviewsError.message}</div>;
 
-  const reviewData = rdata?.findReviewsByOffering || [];
-  const displayedReviews = showAll ? reviewData : reviewData.slice(0, 3);
+  const reviewPage = rdata?.findReviewsByOfferingPaginated;
+  const reviewData = reviewPage?.reviews || [];
+  const totalReviews = reviewPage?.totalReviews ?? 0;
+  const totalPages = reviewPage?.totalPages ?? 1;
+  const currentPage = reviewPage?.currentPage ?? 1;
 
   return (
     <div className="font-body" role="list" aria-live="polite">
-      {displayedReviews.map((review: Review) => (
+      <p className="text-sm text-gray-600 mb-3">Newest reviews first</p>
+
+      {reviewData.map((review: Review) => (
         <div key={review.id} role="listitem" className="ml-2 mb-4">
           <hr className="border-t border-gray-300 my-4" />
           <div className="flex flex-row text-xl text-yellow-400 my-2 items-center">
@@ -106,13 +125,28 @@ const Comments: React.FC<CommentsProps> = ({ serviceId }) => {
         </div>
       ))}
 
-      {reviewData.length > 3 && (
-        <div className="mt-4">
+      {reviewData.length === 0 && (
+        <div className="text-gray-500 ml-2">No reviews yet for this service.</div>
+      )}
+
+      {totalReviews > REVIEWS_PER_PAGE && (
+        <div className="mt-6 flex items-center gap-3 ml-2">
           <Button
-            onClick={() => setShowAll((prev) => !prev)}
+            onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage <= 1}
             className='w-28 mx-2 font-bold hover:border-orange hover:text-orange hover:bg-orange/15'
             variant="ornageOutline">
-            {showAll ? "Show Less" : "Show More"}
+            Previous
+          </Button>
+          <span className="text-sm text-gray-600">
+            Page {currentPage} of {totalPages}
+          </span>
+          <Button
+            onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
+            disabled={currentPage >= totalPages}
+            className='w-28 mx-2 font-bold hover:border-orange hover:text-orange hover:bg-orange/15'
+            variant="ornageOutline">
+            Next
           </Button>
         </div>
       )}

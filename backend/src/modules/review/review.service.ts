@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { ReviewEntity } from '../../database/entities/review.entity';
 import { DataSource,Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -7,6 +7,15 @@ import { ReviewRepositoryType } from '../../database/types/reviewTypes';
 import { CreateReviewInput } from '../../graphql/inputs/createReview.input';
 import { OfferingEntity } from '../../database/entities/offering.entity';
 import { VisitorEntity } from '../../database/entities/visitor.entity';
+
+interface PaginatedReviewResult {
+  reviews: ReviewEntity[];
+  averageRating: number;
+  totalReviews: number;
+  currentPage: number;
+  pageSize: number;
+  totalPages: number;
+}
 
 
 @Injectable()
@@ -26,6 +35,10 @@ export class ReviewService {
   async createReview(
     createReviewInput: CreateReviewInput,
   ): Promise<ReviewEntity> {
+    if (!Number.isInteger(createReviewInput.rating) || createReviewInput.rating < 1 || createReviewInput.rating > 5) {
+      throw new BadRequestException('Rating must be an integer between 1 and 5');
+    }
+
     const offering = await this.offeringRepository.findOne({
       where: { id: createReviewInput.offering_id },
     });
@@ -35,10 +48,10 @@ export class ReviewService {
     });
 
     if (!offering) {
-      throw new Error('Offering not found');
+      throw new NotFoundException('Offering not found');
     }
     if (!visitor) {
-      throw new Error('Visitor not found');
+      throw new NotFoundException('Visitor not found');
     }
 
     let mentionedOffering: OfferingEntity | undefined;
@@ -70,6 +83,32 @@ export class ReviewService {
 
   async findReviewsByOffering(offeringId: string): Promise<ReviewEntity[]> {
     return this.reviewRepository.findReviewsByOffering(offeringId);
+  }
+
+  async findReviewsByOfferingPaginated(
+    offeringId: string,
+    page: number,
+    limit: number,
+  ): Promise<PaginatedReviewResult> {
+    const safePage = Math.max(1, page || 1);
+    const safeLimit = Math.min(50, Math.max(1, limit || 5));
+
+    const [reviews, totalReviews] = await this.reviewRepository.findReviewsByOfferingPaginated(
+      offeringId,
+      safePage,
+      safeLimit,
+    );
+
+    const { averageRating } = await this.reviewRepository.getOfferingReviewStats(offeringId);
+
+    return {
+      reviews,
+      averageRating: Number(averageRating.toFixed(1)),
+      totalReviews,
+      currentPage: safePage,
+      pageSize: safeLimit,
+      totalPages: Math.max(1, Math.ceil(totalReviews / safeLimit)),
+    };
   }
 
   async findAllReviews(): Promise<ReviewEntity[]> {

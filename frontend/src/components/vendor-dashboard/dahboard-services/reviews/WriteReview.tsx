@@ -4,12 +4,13 @@ import React, { useState } from 'react';
 import { FaStar } from 'react-icons/fa';
 import { useMutation } from '@apollo/client';
 import { CREATE_REVIEW } from '@/graphql/mutations';
+import { FIND_REVIEW_PAGE_BY_SERVICE } from '@/graphql/queries';
 import { useAuth } from '@/contexts/VisitorAuthContext';
 import toast from 'react-hot-toast';
 import { uploadReviewImages } from '@/api/upload/review/reviewImages.upload';
 
 interface WriteReviewProps {
-    serviceId: string;
+    serviceId?: string;
     vendorName?: string;
 }
 
@@ -19,7 +20,15 @@ const WriteReview: React.FC<WriteReviewProps> = ({ serviceId, vendorName }) => {
     const [comment, setComment] = useState("");
     const [images, setImages] = useState<File[]>([]);
     const [mentionVendor, setMentionVendor] = useState(true);
-    const [createReview, { loading }] = useMutation(CREATE_REVIEW);
+    const [createReview, { loading }] = useMutation(CREATE_REVIEW, {
+        refetchQueries: [
+            {
+                query: FIND_REVIEW_PAGE_BY_SERVICE,
+                variables: { offering_id: serviceId, page: 1, limit: 5 },
+            },
+        ],
+        awaitRefetchQueries: true,
+    });
     const [showForm, setShowForm] = useState(false);  // State to control the form visibility
 
     const handleRating = (rating: number) => {
@@ -39,6 +48,11 @@ const WriteReview: React.FC<WriteReviewProps> = ({ serviceId, vendorName }) => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!serviceId) {
+            toast.error("Service not found.");
+            return;
+        }
+
         if (rating === 0) {
             toast("Please select a rating before submitting!");
             return;

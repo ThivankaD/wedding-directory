@@ -325,6 +325,38 @@ export const FIND_REVIEW_BY_SERVICE = gql`
   }
 `;
 
+export const FIND_REVIEW_PAGE_BY_SERVICE = gql`
+  query FindReviewsByOfferingPaginated($offering_id: String!, $page: Int, $limit: Int) {
+    findReviewsByOfferingPaginated(offering_id: $offering_id, page: $page, limit: $limit) {
+      averageRating
+      totalReviews
+      currentPage
+      pageSize
+      totalPages
+      reviews {
+        id
+        comment
+        rating
+        image_urls
+        createdAt
+        offering {
+          id
+        }
+        mentionedOffering {
+          id
+          name
+          vendor {
+            busname
+          }
+        }
+        visitor {
+          visitor_fname
+        }
+      }
+    }
+  }
+`;
+
 export const FIND_ALL_REVIEWS = gql`
   query FindAllReviews {
     findAllReviews {
