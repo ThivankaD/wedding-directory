@@ -58,6 +58,7 @@ export class ReviewService {
     if (createReviewInput.mentioned_offering_id) {
       mentionedOffering = await this.offeringRepository.findOne({
         where: { id: createReviewInput.mentioned_offering_id },
+        relations: ['vendor'],
       });
     }
 

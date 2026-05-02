@@ -7,6 +7,7 @@ import { OfferingFilterInput } from '../inputs/offeringFilter.input';
 import { UpdateOfferingInput } from '../inputs/updateOffering.input';
 import { ReviewModel } from '../models/review.model';
 import { ReviewService } from '../../modules/review/review.service';
+import { VendorModel } from '../models/vendor.model';
 
 @Resolver(() => OfferingModel)
 export class OfferingResolver {
@@ -88,5 +89,14 @@ export class OfferingResolver {
   async reviews(@Parent() offering: OfferingModel) {
     const { id } = offering;
     return this.reviewService.findReviewsByOffering(id);
+  }
+
+  @ResolveField(() => VendorModel)
+  async vendor(@Parent() offering: OfferingModel) {
+    if (offering.vendor) {
+      return offering.vendor;
+    }
+    const fullOffering = await this.offeringService.findOfferingById(offering.id);
+    return fullOffering.vendor;
   }
 }
