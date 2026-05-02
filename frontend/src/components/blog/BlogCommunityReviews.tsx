@@ -9,6 +9,7 @@ import { useAuth } from "@/contexts/VisitorAuthContext";
 import { FIND_ALL_REVIEWS, FIND_SERVICES } from "@/graphql/queries";
 import { CREATE_REVIEW } from "@/graphql/mutations";
 import { uploadReviewImages } from "@/api/upload/review/reviewImages.upload";
+import Pagination from "./Pagination";
 
 interface OfferingOption {
   id: string;
@@ -64,6 +65,14 @@ const BlogCommunityReviews: React.FC = () => {
   const [showAddReviewForm, setShowAddReviewForm] = useState(false);
   const [filterVendorName, setFilterVendorName] = useState("");
   const [filterStars, setFilterStars] = useState<number | null>(null);
+  
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
+
+  // Reset to first page when filters change
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [filterStars, filterVendorName]);
 
   const openAddReviewForm = () => {
     setShowAddReviewForm(true);
@@ -100,6 +109,13 @@ const BlogCommunityReviews: React.FC = () => {
       return true;
     });
   }, [reviews, filterStars, filterVendorName]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredReviews.length / itemsPerPage));
+  
+  const currentReviews = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredReviews.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredReviews, currentPage]);
 
   const selectedOffering = offerings.find((o) => o.id === selectedOfferingId);
 
@@ -213,64 +229,77 @@ const BlogCommunityReviews: React.FC = () => {
           ) : filteredReviews.length === 0 ? (
             <div className="text-gray-500">No reviews match your filters.</div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-              {filteredReviews.map((review) => (
-                <div key={review.id} className="border border-gray-200 rounded-xl p-4 bg-white">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1 text-yellow-500">
-                      {Array.from({ length: 5 }, (_, index) => (
-                        index < review.rating ? <FaStar key={index} /> : <FaRegStar key={index} />
-                      ))}
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                {currentReviews.map((review) => (
+                  <div key={review.id} className="border border-gray-200 rounded-xl p-4 bg-white shadow-sm hover:shadow-md transition-shadow">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1 text-yellow-500">
+                        {Array.from({ length: 5 }, (_, index) => (
+                          index < review.rating ? <FaStar key={index} /> : <FaRegStar key={index} />
+                        ))}
+                      </div>
+                      <span className="text-xs text-gray-500">
+                        {new Date(review.createdAt).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </span>
                     </div>
-                    <span className="text-xs text-gray-500">
-                      {new Date(review.createdAt).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      })}
-                    </span>
+
+                    <p className="mt-2 text-sm text-gray-700">
+                      by <span className="font-semibold">{review.visitor?.visitor_fname || "User"}</span>
+                    </p>
+
+                    {review.offering?.id && (
+                      <p className="text-sm text-gray-600 mt-1">
+                        Reviewed service:{" "}
+                        <Link href={`/services/${review.offering.id}`} className="text-orange hover:underline">
+                          {review.offering.vendor?.busname || "Vendor"} - {review.offering.name || "Service"}
+                        </Link>
+                      </p>
+                    )}
+
+                    {review.comment && <p className="mt-3 text-gray-800 whitespace-pre-wrap">{review.comment}</p>}
+
+                    {review.mentionedOffering?.id && (
+                      <p className="mt-2 text-sm">
+                        Mentioned:{" "}
+                        <Link href={`/services/${review.mentionedOffering.id}`} className="text-orange hover:underline font-semibold">
+                          @{review.mentionedOffering.vendor?.busname || review.mentionedOffering.name || "Vendor"}
+                        </Link>
+                      </p>
+                    )}
+
+                    {review.image_urls && review.image_urls.length > 0 && (
+                      <div className="mt-3 grid grid-cols-2 gap-2">
+                        {review.image_urls.map((url, idx) => (
+                          <a key={`${review.id}-${idx}`} href={url} target="_blank" rel="noreferrer">
+                            <img
+                              src={url}
+                              alt={`Review ${idx + 1}`}
+                              className="w-full h-24 object-cover rounded-md border border-gray-200 hover:opacity-90 transition-opacity"
+                            />
+                          </a>
+                        ))}
+                      </div>
+                    )}
                   </div>
+                ))}
+              </div>
 
-                  <p className="mt-2 text-sm text-gray-700">
-                    by <span className="font-semibold">{review.visitor?.visitor_fname || "User"}</span>
-                  </p>
-
-                  {review.offering?.id && (
-                    <p className="text-sm text-gray-600 mt-1">
-                      Reviewed service:{" "}
-                      <Link href={`/services/${review.offering.id}`} className="text-orange hover:underline">
-                        {review.offering.vendor?.busname || "Vendor"} - {review.offering.name || "Service"}
-                      </Link>
-                    </p>
-                  )}
-
-                  {review.comment && <p className="mt-3 text-gray-800 whitespace-pre-wrap">{review.comment}</p>}
-
-                  {review.mentionedOffering?.id && (
-                    <p className="mt-2 text-sm">
-                      Mentioned:{" "}
-                      <Link href={`/services/${review.mentionedOffering.id}`} className="text-orange hover:underline font-semibold">
-                        @{review.mentionedOffering.vendor?.busname || review.mentionedOffering.name || "Vendor"}
-                      </Link>
-                    </p>
-                  )}
-
-                  {review.image_urls && review.image_urls.length > 0 && (
-                    <div className="mt-3 grid grid-cols-2 gap-2">
-                      {review.image_urls.map((url, idx) => (
-                        <a key={`${review.id}-${idx}`} href={url} target="_blank" rel="noreferrer">
-                          <img
-                            src={url}
-                            alt={`Review ${idx + 1}`}
-                            className="w-full h-24 object-cover rounded-md border border-gray-200"
-                          />
-                        </a>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
+              {totalPages > 1 && (
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={(page) => {
+                    setCurrentPage(page);
+                    document.getElementById("community-reviews")?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                />
+              )}
+            </>
           )}
         </div>
 
