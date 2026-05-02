@@ -62,6 +62,8 @@ const BlogCommunityReviews: React.FC = () => {
   const [images, setImages] = useState<File[]>([]);
   const [mentionVendor, setMentionVendor] = useState(true);
   const [showAddReviewForm, setShowAddReviewForm] = useState(false);
+  const [filterVendorName, setFilterVendorName] = useState("");
+  const [filterStars, setFilterStars] = useState<number | null>(null);
 
   const openAddReviewForm = () => {
     setShowAddReviewForm(true);
@@ -81,6 +83,23 @@ const BlogCommunityReviews: React.FC = () => {
     () => reviewsData?.findAllReviews || [],
     [reviewsData],
   );
+
+  const filteredReviews = useMemo(() => {
+    return reviews.filter(review => {
+      if (filterStars !== null && review.rating !== filterStars) {
+        return false;
+      }
+      
+      if (filterVendorName.trim() !== "") {
+        const vendorName = review.offering?.vendor?.busname || "";
+        if (!vendorName.toLowerCase().includes(filterVendorName.toLowerCase())) {
+          return false;
+        }
+      }
+      
+      return true;
+    });
+  }, [reviews, filterStars, filterVendorName]);
 
   const selectedOffering = offerings.find((o) => o.id === selectedOfferingId);
 
@@ -159,13 +178,43 @@ const BlogCommunityReviews: React.FC = () => {
         <div>
           <h3 className="text-2xl font-title font-semibold mb-4">All Reviews</h3>
 
+          <div className="mb-6 flex flex-col sm:flex-row gap-4 items-center bg-gray-50 p-4 rounded-lg border border-gray-200">
+            <div className="flex-1 w-full">
+              <label htmlFor="vendor-filter" className="block text-sm font-medium text-gray-700 mb-1">Filter by Vendor</label>
+              <input
+                id="vendor-filter"
+                type="text"
+                placeholder="Search vendor name..."
+                className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                value={filterVendorName}
+                onChange={(e) => setFilterVendorName(e.target.value)}
+              />
+            </div>
+            <div className="w-full sm:w-48">
+              <label htmlFor="star-filter" className="block text-sm font-medium text-gray-700 mb-1">Filter by Stars</label>
+              <select
+                id="star-filter"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                value={filterStars === null ? "" : filterStars.toString()}
+                onChange={(e) => setFilterStars(e.target.value === "" ? null : parseInt(e.target.value))}
+              >
+                <option value="">All Stars</option>
+                <option value="5">5 Stars</option>
+                <option value="4">4 Stars</option>
+                <option value="3">3 Stars</option>
+                <option value="2">2 Stars</option>
+                <option value="1">1 Star</option>
+              </select>
+            </div>
+          </div>
+
           {reviewsLoading ? (
             <div className="text-gray-500">Loading reviews...</div>
-          ) : reviews.length === 0 ? (
-            <div className="text-gray-500">No reviews yet. Be the first to add one.</div>
+          ) : filteredReviews.length === 0 ? (
+            <div className="text-gray-500">No reviews match your filters.</div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-              {reviews.map((review) => (
+              {filteredReviews.map((review) => (
                 <div key={review.id} className="border border-gray-200 rounded-xl p-4 bg-white">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1 text-yellow-500">
