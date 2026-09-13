@@ -119,6 +119,45 @@ const QuoteRequestWidget = ({ vendorId,offeringId }: QuoteRequestWidgetProps) =>
               Go to your Inbox
             </Link>
           </div>
+        ) : !visitor ? (
+          // 👇 GUEST / NOT LOGGED IN VIEW
+          <div className="text-center space-y-4 py-2">
+            <div className="w-12 h-12 mx-auto rounded-2xl bg-orange/10 flex items-center justify-center text-orange text-xl shadow-sm">
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+              </svg>
+            </div>
+            <div>
+              <h3 className="text-xl font-bold font-title text-gray-900">
+                Get Your Personalized Quote
+              </h3>
+              <p className="text-gray-500 font-body text-xs mt-1">
+                Vendors usually respond within 24 hours
+              </p>
+            </div>
+
+            <p className="text-gray-600 font-body text-sm leading-relaxed px-2">
+              Have questions about pricing, availability, or custom packages? Sign in to chat directly with this vendor.
+            </p>
+
+            <div className="pt-2 space-y-2.5">
+              <Link
+                href="/visitor-login"
+                className="w-full bg-orange text-white hover:bg-orange/90 py-3 px-4 rounded-xl font-semibold text-sm shadow-sm shadow-orange/20 transition-all flex items-center justify-center gap-2 active:scale-[0.99]"
+              >
+                <span>Log In to Request Quote</span>
+              </Link>
+              <p className="text-xs text-gray-500">
+                New couple?{" "}
+                <Link
+                  href="/visitor-signup"
+                  className="text-orange font-semibold hover:underline"
+                >
+                  Create an account
+                </Link>
+              </p>
+            </div>
+          </div>
         ) : (
           // 👇 VISITOR VIEW (original form)
           <>
