@@ -399,6 +399,7 @@ const Service: React.FC = () => {
             (offering?.video_showcase?.length || 0)
           }
           portfolioLink={`/services/${id}/gallery`}
+          isVendor={isVendorsOffering}
         />
 
         {/* Vendor Storefront View Mode Banner */}
