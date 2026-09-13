@@ -7,6 +7,7 @@ import { ReviewRepositoryType } from '../../database/types/reviewTypes';
 import { CreateReviewInput } from '../../graphql/inputs/createReview.input';
 import { OfferingEntity } from '../../database/entities/offering.entity';
 import { VisitorEntity } from '../../database/entities/visitor.entity';
+import { PaymentEntity } from '../../database/entities/payment.entity';
 
 interface PaginatedReviewResult {
   reviews: ReviewEntity[];
@@ -17,6 +18,12 @@ interface PaginatedReviewResult {
   totalPages: number;
 }
 
+export interface ReviewEligibilityResult {
+  canReview: boolean;
+  reason: string;
+  message: string;
+  bookingDate?: Date;
+}
 
 @Injectable()
 export class ReviewService {
@@ -28,8 +35,90 @@ export class ReviewService {
     private readonly offeringRepository: Repository<OfferingEntity>,
     @InjectRepository(VisitorEntity)
     private readonly visitorRepository: Repository<VisitorEntity>,
+    @InjectRepository(PaymentEntity)
+    private readonly paymentRepository: Repository<PaymentEntity>,
   ) {
     this.reviewRepository = ReviewRepository(this.dataSource);
+  }
+
+  async checkReviewEligibility(
+    offeringId: string,
+    visitorId?: string,
+  ): Promise<ReviewEligibilityResult> {
+    if (!visitorId) {
+      return {
+        canReview: false,
+        reason: 'NOT_LOGGED_IN',
+        message: 'Please log in as a couple to review this service.',
+      };
+    }
+
+    const existingReview = await this.reviewRepository.findOne({
+      where: {
+        offering: { id: offeringId },
+        visitor: { id: visitorId },
+      },
+    });
+
+    if (existingReview) {
+      return {
+        canReview: false,
+        reason: 'ALREADY_REVIEWED',
+        message: 'You have already reviewed this service. Thank you for your feedback!',
+      };
+    }
+
+    const completedPayments = await this.paymentRepository.find({
+      where: {
+        status: 'completed',
+        visitor: { id: visitorId },
+        package: {
+          offering: { id: offeringId },
+        },
+      },
+      relations: {
+        package: {
+          offering: true,
+        },
+      },
+    });
+
+    if (!completedPayments || completedPayments.length === 0) {
+      return {
+        canReview: false,
+        reason: 'NOT_BOOKED',
+        message: 'Only couples who have booked a package for this service can leave a review.',
+      };
+    }
+
+    const now = new Date();
+    const hasPassedBookingDate = completedPayments.some((payment) => {
+      if (payment.bookingDate) {
+        return new Date(payment.bookingDate) <= now;
+      }
+      return payment.createdAt ? new Date(payment.createdAt) <= now : true;
+    });
+
+    if (!hasPassedBookingDate) {
+      const upcomingBookings = completedPayments
+        .filter((p) => p.bookingDate)
+        .sort((a, b) => new Date(a.bookingDate).getTime() - new Date(b.bookingDate).getTime());
+
+      const nextBookingDate = upcomingBookings[0]?.bookingDate;
+
+      return {
+        canReview: false,
+        reason: 'EVENT_PENDING',
+        message: 'You can leave a review once your booked event date has passed.',
+        bookingDate: nextBookingDate,
+      };
+    }
+
+    return {
+      canReview: true,
+      reason: 'ELIGIBLE',
+      message: 'You are eligible to review this service.',
+    };
   }
 
   async createReview(
@@ -37,6 +126,10 @@ export class ReviewService {
   ): Promise<ReviewEntity> {
     if (!Number.isInteger(createReviewInput.rating) || createReviewInput.rating < 1 || createReviewInput.rating > 5) {
       throw new BadRequestException('Rating must be an integer between 1 and 5');
+    }
+
+    if (createReviewInput.image_urls && createReviewInput.image_urls.length > 3) {
+      throw new BadRequestException('You can upload a maximum of 3 review images');
     }
 
     const offering = await this.offeringRepository.findOne({
@@ -52,6 +145,50 @@ export class ReviewService {
     }
     if (!visitor) {
       throw new NotFoundException('Visitor not found');
+    }
+
+    // Check if visitor has already submitted a review for this offering
+    const existingReview = await this.reviewRepository.findOne({
+      where: {
+        offering: { id: offering.id },
+        visitor: { id: visitor.id },
+      },
+    });
+    if (existingReview) {
+      throw new BadRequestException('You have already submitted a review for this service');
+    }
+
+    // Check if visitor has completed payment for this offering
+    const completedPayments = await this.paymentRepository.find({
+      where: {
+        status: 'completed',
+        visitor: { id: visitor.id },
+        package: {
+          offering: { id: offering.id },
+        },
+      },
+      relations: {
+        package: {
+          offering: true,
+        },
+      },
+    });
+
+    if (!completedPayments || completedPayments.length === 0) {
+      throw new BadRequestException('You must have booked and purchased a package for this service to leave a review');
+    }
+
+    // Check if the booked event date has passed
+    const now = new Date();
+    const hasPassedBookingDate = completedPayments.some((payment) => {
+      if (payment.bookingDate) {
+        return new Date(payment.bookingDate) <= now;
+      }
+      return payment.createdAt ? new Date(payment.createdAt) <= now : true;
+    });
+
+    if (!hasPassedBookingDate) {
+      throw new BadRequestException('You can only leave a review after your booked event date has passed');
     }
 
     let mentionedOffering: OfferingEntity | undefined;

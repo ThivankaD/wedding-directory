@@ -11,6 +11,7 @@ interface PortfolioImagesProps {
   hasMoreMedia?: boolean | null;
   totalMediaCount?: number | null;
   portfolioLink?: string | null;
+  isVendor?: boolean;
 }
 
 const PortfolioImages: React.FC<PortfolioImagesProps> = ({
@@ -19,6 +20,7 @@ const PortfolioImages: React.FC<PortfolioImagesProps> = ({
   hasMoreMedia = false,
   totalMediaCount = 0,
   portfolioLink,
+  isVendor = false,
 }) => {
   // Filter out any empty/null showcase items
   const validShowcase = (photoShowcase || []).filter((img): img is string => Boolean(img));
@@ -58,8 +60,10 @@ const PortfolioImages: React.FC<PortfolioImagesProps> = ({
           priority
         />
 
-        {/* Banner Identification Badge */}
-        {activeImage === banner && (
+
+
+        {/* Banner Identification Badge - only visible to the vendor viewing their service */}
+        {isVendor && activeImage === banner && (
           <div className="absolute top-4 left-4 z-10 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-black/65 backdrop-blur-md text-white text-xs font-semibold shadow-md border border-white/15">
             <span className="w-2 h-2 rounded-full bg-orange" />
             <span>Banner Image</span>
@@ -130,7 +134,7 @@ const PortfolioImages: React.FC<PortfolioImagesProps> = ({
                   fill
                   className="object-cover"
                 />
-                {item.isBanner && (
+                {isVendor && item.isBanner && (
                   <span className="absolute bottom-1.5 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-md bg-black/75 backdrop-blur-sm text-white text-[9px] font-bold uppercase tracking-wider leading-none shadow-sm pointer-events-none whitespace-nowrap border border-white/20">
                     Banner
                   </span>

@@ -352,6 +352,7 @@ export const FIND_REVIEW_PAGE_BY_SERVICE = gql`
           }
         }
         visitor {
+          id
           visitor_fname
         }
       }
@@ -745,3 +746,15 @@ export const GET_PACKAGE_APPROVAL_REQUEST_STATUS = gql`
     }
   }
 `;
+
+export const CHECK_REVIEW_ELIGIBILITY = gql`
+  query CheckReviewEligibility($offering_id: String!, $visitor_id: String) {
+    checkReviewEligibility(offering_id: $offering_id, visitor_id: $visitor_id) {
+      canReview
+      reason
+      message
+      bookingDate
+    }
+  }
+`;
+

@@ -258,7 +258,7 @@ export class UploadController {
 
   // Upload review images (no entity update here - URLs returned for GraphQL mutation payload)
   @Post('review-images')
-  @UseInterceptors(FilesInterceptor('files', 5))
+  @UseInterceptors(FilesInterceptor('files', 3))
   async uploadReviewImages(
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
@@ -266,8 +266,8 @@ export class UploadController {
       throw new BadRequestException('No review images provided.');
     }
 
-    if (files.length > 5) {
-      throw new BadRequestException('You can upload a maximum of 5 review images.');
+    if (files.length > 3) {
+      throw new BadRequestException('You can upload a maximum of 3 review images.');
     }
 
     const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp'];
