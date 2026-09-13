@@ -149,6 +149,10 @@ const WriteReview: React.FC<WriteReviewProps> = ({ serviceId, vendorName }) => {
           })
         : null;
 
+    if (!visitor) {
+        return null;
+    }
+
     // Sentiment labels for star ratings
     const ratingLabels = ["", "Poor", "Fair", "Good", "Very Good", "Exceptional!"];
 
@@ -163,43 +167,26 @@ const WriteReview: React.FC<WriteReviewProps> = ({ serviceId, vendorName }) => {
                         </p>
                     </div>
 
-                    {visitor ? (
-                        eligibility?.reason === 'ALREADY_REVIEWED' ? (
-                            <span className='inline-flex items-center justify-center px-4 py-2 rounded-xl bg-emerald-50 text-emerald-700 text-xs font-semibold border border-emerald-200'>
-                                ✓ Already Reviewed
-                            </span>
-                        ) : (
-                            <Button
-                                onClick={handleWriteReviewClick}
-                                disabled={eligibility && !eligibility.canReview}
-                                className={`w-full md:w-44 font-semibold text-sm rounded-xl py-2.5 transition-all ${
-                                    eligibility && !eligibility.canReview
-                                        ? 'opacity-60 cursor-not-allowed bg-gray-100 text-gray-400 border border-gray-200'
-                                        : 'text-white bg-orange hover:bg-orange/90 shadow-sm shadow-orange/20 active:scale-[0.99]'
-                                }`}
-                            >
-                                {showForm ? "Close Form" : "Write a Review"}
-                            </Button>
-                        )
+                    {eligibility?.reason === 'ALREADY_REVIEWED' ? (
+                        <span className='inline-flex items-center justify-center px-4 py-2 rounded-xl bg-emerald-50 text-emerald-700 text-xs font-semibold border border-emerald-200'>
+                            ✓ Already Reviewed
+                        </span>
                     ) : (
                         <Button
                             onClick={handleWriteReviewClick}
-                            className='w-full md:w-44 font-semibold text-sm rounded-xl py-2.5 text-white bg-orange hover:bg-orange/90 shadow-sm shadow-orange/20'
+                            disabled={eligibility && !eligibility.canReview}
+                            className={`w-full md:w-44 font-semibold text-sm rounded-xl py-2.5 transition-all ${
+                                eligibility && !eligibility.canReview
+                                    ? 'opacity-60 cursor-not-allowed bg-gray-100 text-gray-400 border border-gray-200'
+                                    : 'text-white bg-orange hover:bg-orange/90 shadow-sm shadow-orange/20 active:scale-[0.99]'
+                            }`}
                         >
-                            Write a Review
+                            {showForm ? "Close Form" : "Write a Review"}
                         </Button>
                     )}
                 </div>
 
-                {/* Eligibility status notices */}
-                {!visitor && (
-                    <div className='rounded-xl bg-gray-50 border border-gray-200/80 p-3.5 text-xs text-gray-600 flex items-center gap-2'>
-                        <span className='text-base'>ℹ️</span>
-                        <span>Please log in as a couple to review this service. Only verified client bookings can submit reviews.</span>
-                    </div>
-                )}
-
-                {visitor && !eligibilityLoading && eligibility && (
+                {!eligibilityLoading && eligibility && (
                     <>
                         {eligibility.reason === 'ALREADY_REVIEWED' && (
                             <div className='rounded-xl bg-emerald-50 border border-emerald-200 p-3.5 text-xs text-emerald-800 flex items-center gap-2'>

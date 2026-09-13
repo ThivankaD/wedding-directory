@@ -446,7 +446,7 @@ const Service: React.FC = () => {
                     <h1 className="text-3xl font-title font-bold text-gray-900">
                       {offering?.name}
                     </h1>
-                    {!isVendorsOffering && (
+                    {!isVendorsOffering && visitor && (
                       <button
                         onClick={handleHeartClick}
                         className="p-2 rounded-xl hover:bg-gray-100 text-gray-400 hover:text-red-500 transition-colors"
@@ -804,7 +804,7 @@ const Service: React.FC = () => {
                 <Reviews serviceId={offering?.id} />
               </div>
 
-              {!isVendorsOffering ? (
+              {!isVendorsOffering && visitor ? (
                 <div className="mt-4">
                   <WriteReview serviceId={offering?.id} vendorName={offering?.vendor?.busname} />
                 </div>
