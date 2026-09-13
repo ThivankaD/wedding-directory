@@ -1,14 +1,22 @@
-import { Args, Int, Mutation, Resolver } from "@nestjs/graphql";
+import { Args, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { ReviewService } from "../../modules/review/review.service";
 import { ReviewModel } from "../models/review.model";
 import { ReviewEntity } from "../../database/entities/review.entity";
-import { Query } from "@nestjs/graphql";
 import { CreateReviewInput } from "../inputs/createReview.input";
 import { ReviewPageModel } from "../models/review-page.model";
+import { ReviewEligibilityModel } from "../models/review-eligibility.model";
 
 @Resolver()
 export class ReviewResolver {
   constructor(private readonly reviewService: ReviewService) {}
+
+  @Query(() => ReviewEligibilityModel)
+  async checkReviewEligibility(
+    @Args('offering_id') offeringId: string,
+    @Args('visitor_id', { nullable: true }) visitorId?: string,
+  ): Promise<ReviewEligibilityModel> {
+    return this.reviewService.checkReviewEligibility(offeringId, visitorId);
+  }
 
   @Mutation(() => ReviewModel)
   async createReview(

@@ -3,8 +3,8 @@ import request from "@/utils/request";
 export const uploadReviewImages = async (files: File[]): Promise<string[]> => {
   if (files.length === 0) return [];
 
-  if (files.length > 5) {
-    throw new Error("You can upload a maximum of 5 images.");
+  if (files.length > 3) {
+    throw new Error("You can upload a maximum of 3 images.");
   }
 
   const formData = new FormData();
