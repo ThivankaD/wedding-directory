@@ -149,32 +149,34 @@ const WriteReview: React.FC<WriteReviewProps> = ({ serviceId, vendorName }) => {
           })
         : null;
 
+    // Sentiment labels for star ratings
+    const ratingLabels = ["", "Poor", "Fair", "Good", "Very Good", "Exceptional!"];
+
     return (
         <div className='font-body mt-4'>
-            <div className='rounded-2xl border border-orange/20 bg-white p-4 md:p-5 shadow-sm space-y-4'>
+            <div className='rounded-2xl border border-gray-100 bg-white p-5 md:p-6 shadow-sm space-y-4'>
                 <div className='flex flex-col md:flex-row md:items-center md:justify-between gap-3'>
                     <div>
-                        <h3 className='text-xl font-title font-bold text-gray-900'>Share your experience</h3>
-                        <p className='text-sm text-gray-600'>
-                            Your review helps couples choose the right vendor service.
+                        <h3 className='text-lg font-title font-bold text-gray-900'>Share your experience</h3>
+                        <p className='text-xs text-gray-500 mt-0.5'>
+                            Your authentic feedback helps future couples choose the right wedding vendor.
                         </p>
                     </div>
 
                     {visitor ? (
                         eligibility?.reason === 'ALREADY_REVIEWED' ? (
-                            <span className='inline-flex items-center justify-center px-4 py-2 rounded-lg bg-green-50 text-green-700 text-sm font-semibold border border-green-200'>
+                            <span className='inline-flex items-center justify-center px-4 py-2 rounded-xl bg-emerald-50 text-emerald-700 text-xs font-semibold border border-emerald-200'>
                                 ✓ Already Reviewed
                             </span>
                         ) : (
                             <Button
                                 onClick={handleWriteReviewClick}
                                 disabled={eligibility && !eligibility.canReview}
-                                className={`w-full md:w-44 font-bold ${
+                                className={`w-full md:w-44 font-semibold text-sm rounded-xl py-2.5 transition-all ${
                                     eligibility && !eligibility.canReview
-                                        ? 'opacity-60 cursor-not-allowed bg-gray-100 text-gray-400 border-gray-200'
-                                        : 'hover:border-orange hover:text-orange hover:bg-orange/15'
+                                        ? 'opacity-60 cursor-not-allowed bg-gray-100 text-gray-400 border border-gray-200'
+                                        : 'text-white bg-orange hover:bg-orange/90 shadow-sm shadow-orange/20 active:scale-[0.99]'
                                 }`}
-                                variant="ornageOutline"
                             >
                                 {showForm ? "Close Form" : "Write a Review"}
                             </Button>
@@ -182,8 +184,7 @@ const WriteReview: React.FC<WriteReviewProps> = ({ serviceId, vendorName }) => {
                     ) : (
                         <Button
                             onClick={handleWriteReviewClick}
-                            className='w-full md:w-44 font-bold hover:border-orange hover:text-orange hover:bg-orange/15'
-                            variant="ornageOutline"
+                            className='w-full md:w-44 font-semibold text-sm rounded-xl py-2.5 text-white bg-orange hover:bg-orange/90 shadow-sm shadow-orange/20'
                         >
                             Write a Review
                         </Button>
@@ -192,34 +193,34 @@ const WriteReview: React.FC<WriteReviewProps> = ({ serviceId, vendorName }) => {
 
                 {/* Eligibility status notices */}
                 {!visitor && (
-                    <div className='rounded-xl bg-gray-50 border border-gray-200 p-3 text-sm text-gray-600 flex items-center gap-2'>
-                        <span>ℹ️</span>
-                        <span>Log in as a couple to review this service. Only verified bookings can be reviewed.</span>
+                    <div className='rounded-xl bg-gray-50 border border-gray-200/80 p-3.5 text-xs text-gray-600 flex items-center gap-2'>
+                        <span className='text-base'>ℹ️</span>
+                        <span>Please log in as a couple to review this service. Only verified client bookings can submit reviews.</span>
                     </div>
                 )}
 
                 {visitor && !eligibilityLoading && eligibility && (
                     <>
                         {eligibility.reason === 'ALREADY_REVIEWED' && (
-                            <div className='rounded-xl bg-emerald-50 border border-emerald-200 p-3 text-sm text-emerald-800 flex items-center gap-2'>
+                            <div className='rounded-xl bg-emerald-50 border border-emerald-200 p-3.5 text-xs text-emerald-800 flex items-center gap-2'>
                                 <span className='text-base'>✓</span>
-                                <span>You have already reviewed this service. Thank you for sharing your experience!</span>
+                                <span>You have already reviewed this service. Thank you for sharing your experience with the community!</span>
                             </div>
                         )}
 
                         {eligibility.reason === 'NOT_BOOKED' && (
-                            <div className='rounded-xl bg-amber-50 border border-amber-200 p-3 text-sm text-amber-800 flex items-center gap-2'>
+                            <div className='rounded-xl bg-amber-50 border border-amber-200 p-3.5 text-xs text-amber-800 flex items-center gap-2'>
                                 <span className='text-base'>🔒</span>
-                                <span>Only couples who have booked a package for this service can leave a review.</span>
+                                <span>Verified couples only: You must have a completed package booking for this service to leave a review.</span>
                             </div>
                         )}
 
                         {eligibility.reason === 'EVENT_PENDING' && (
-                            <div className='rounded-xl bg-blue-50 border border-blue-200 p-3 text-sm text-blue-800 flex items-center gap-2'>
+                            <div className='rounded-xl bg-blue-50 border border-blue-200 p-3.5 text-xs text-blue-800 flex items-center gap-2'>
                                 <span className='text-base'>📅</span>
                                 <span>
                                     {bookingDateFormatted
-                                        ? `You booked this service for ${bookingDateFormatted}. You can leave a review once your event date has passed.`
+                                        ? `You booked this service for ${bookingDateFormatted}. Your review option will unlock once your wedding date has passed.`
                                         : "You can leave a review once your booked event date has passed."}
                                 </span>
                             </div>
@@ -229,11 +230,11 @@ const WriteReview: React.FC<WriteReviewProps> = ({ serviceId, vendorName }) => {
 
                 {/* Form - only rendered when user is logged in, eligible, and has opened the form */}
                 {visitor && eligibility?.canReview && showForm && (
-                    <form onSubmit={handleSubmit} className='border-t border-gray-200 pt-5 space-y-5'>
+                    <form onSubmit={handleSubmit} className='border-t border-gray-100 pt-5 space-y-5'>
                         <div>
-                            <h4 className='text-lg font-semibold text-gray-900'>Rate this service</h4>
+                            <h4 className='text-sm font-semibold text-gray-900'>Rate your overall experience</h4>
                             <div className='mt-2 flex items-center gap-3'>
-                                <div className='flex items-center gap-1'>
+                                <div className='flex items-center gap-1.5'>
                                     {[1, 2, 3, 4, 5].map((star) => (
                                         <button
                                             key={star}
@@ -241,108 +242,117 @@ const WriteReview: React.FC<WriteReviewProps> = ({ serviceId, vendorName }) => {
                                             onMouseEnter={() => setHoverRating(star)}
                                             onMouseLeave={() => setHoverRating(0)}
                                             onClick={() => setRating(star)}
-                                            className='transition-transform hover:scale-110'
+                                            className='transition-transform hover:scale-125 focus:outline-none'
                                             aria-label={`${star} star`}
                                         >
                                             <FaStar
-                                                size={26}
-                                                color={star <= activeRating ? '#f59e0b' : '#d1d5db'}
+                                                size={28}
+                                                className={star <= activeRating ? 'text-amber-400' : 'text-gray-200'}
                                             />
                                         </button>
                                     ))}
                                 </div>
-                                <span className='text-sm font-medium text-gray-700'>
-                                    {rating > 0 ? `${rating} / 5` : 'Select a rating'}
+                                <span className='text-xs font-semibold text-gray-600 bg-gray-100 px-2.5 py-1 rounded-full'>
+                                    {activeRating > 0 ? ratingLabels[activeRating] : 'Select rating'}
                                 </span>
                             </div>
                         </div>
 
                         <div>
-                            <label htmlFor="review-comment" className='block text-sm font-semibold text-gray-800'>
-                                Your review
+                            <label htmlFor="review-comment" className='block text-xs font-semibold text-gray-700 uppercase tracking-wide'>
+                                Your Review
                             </label>
                             <textarea
-                                className='mt-2 w-full rounded-xl border border-gray-300 px-3 py-2 min-h-[130px] outline-none focus:ring-2 focus:ring-orange/30 focus:border-orange'
+                                className='mt-1.5 w-full rounded-xl border border-gray-200 p-3 text-sm text-gray-800 placeholder-gray-400 outline-none focus:ring-2 focus:ring-orange/20 focus:border-orange min-h-[120px] transition-all'
                                 id="review-comment"
                                 name="content"
-                                placeholder="What stood out? Communication, quality, value, or overall experience..."
-                                rows={5}
+                                placeholder="How was the communication, punctuality, and service quality on your wedding day?"
+                                rows={4}
                                 value={comment}
                                 onChange={(e) => setComment(e.target.value)}
                                 disabled={loading}
                             />
-                            <div className='mt-1 text-xs text-gray-500'>
+                            <div className='mt-1 text-right text-[11px] text-gray-400 font-mono'>
                                 {comment.trim().length} characters
                             </div>
                         </div>
 
                         <div>
-                            <label className='block text-sm font-semibold text-gray-800 mb-2'>
-                                Add photos (up to {MAX_REVIEW_IMAGES})
-                            </label>
-                            {images.length < MAX_REVIEW_IMAGES && (
-                                <label className='flex items-center gap-2 w-fit rounded-lg border border-dashed border-gray-400 px-3 py-2 cursor-pointer hover:border-orange hover:bg-orange/5 transition-colors'>
-                                    <FiImage size={16} />
-                                    <span className='text-sm'>Upload Images</span>
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        multiple
-                                        className='hidden'
-                                        onChange={handleFileChange}
-                                        disabled={loading}
-                                    />
+                            <div className='flex items-center justify-between mb-2'>
+                                <label className='block text-xs font-semibold text-gray-700 uppercase tracking-wide'>
+                                    Photos ({images.length}/{MAX_REVIEW_IMAGES})
                                 </label>
-                            )}
+                                <span className='text-[11px] text-gray-400'>Max 3 photos (JPEG, PNG, WEBP)</span>
+                            </div>
 
-                            {images.length > 0 && (
-                                <div className='mt-3 flex flex-wrap gap-2'>
-                                    {images.map((file, index) => (
+                            <div className='flex flex-wrap items-center gap-3'>
+                                {images.length < MAX_REVIEW_IMAGES && (
+                                    <label className='flex flex-col items-center justify-center w-20 h-20 rounded-xl border-2 border-dashed border-gray-300 hover:border-orange hover:bg-orange/5 cursor-pointer transition-all text-gray-400 hover:text-orange'>
+                                        <FiImage size={20} />
+                                        <span className='text-[10px] mt-1 font-medium'>Add Photo</span>
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            multiple
+                                            className='hidden'
+                                            onChange={handleFileChange}
+                                            disabled={loading}
+                                        />
+                                    </label>
+                                )}
+
+                                {images.map((file, index) => {
+                                    const previewUrl = URL.createObjectURL(file);
+                                    return (
                                         <div
                                             key={`${file.name}-${index}`}
-                                            className='flex items-center gap-2 rounded-full border border-gray-300 bg-gray-50 px-3 py-1 text-xs'
+                                            className='relative group w-20 h-20 rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-gray-50'
                                         >
-                                            <span className='max-w-[160px] truncate'>{file.name}</span>
+                                            <img
+                                                src={previewUrl}
+                                                alt={file.name}
+                                                className='w-full h-full object-cover'
+                                            />
                                             <button
                                                 type="button"
                                                 onClick={() => setImages((prev) => prev.filter((_, i) => i !== index))}
-                                                className='text-gray-500 hover:text-red-500'
+                                                className='absolute top-1 right-1 w-5 h-5 rounded-full bg-black/70 text-white flex items-center justify-center hover:bg-red-500 transition-colors'
                                                 aria-label={`Remove ${file.name}`}
                                             >
-                                                <FiX size={14} />
+                                                <FiX size={12} />
                                             </button>
                                         </div>
-                                    ))}
-                                </div>
-                            )}
+                                    );
+                                })}
+                            </div>
                         </div>
 
-                        <div>
-                            <label className='flex items-center gap-2 cursor-pointer w-fit'>
+                        <div className='pt-1'>
+                            <label className='inline-flex items-center gap-2 cursor-pointer text-xs text-gray-700 select-none'>
                                 <input
                                     type="checkbox"
                                     checked={mentionVendor}
                                     onChange={(e) => setMentionVendor(e.target.checked)}
                                     disabled={loading}
+                                    className='rounded text-orange focus:ring-orange/20 border-gray-300 w-4 h-4'
                                 />
-                                <span className='text-sm'>
-                                    Mention vendor {vendorName ? `@${vendorName}` : ''}
+                                <span>
+                                    Tag vendor in review {vendorName ? `(@${vendorName})` : ''}
                                 </span>
                             </label>
                         </div>
 
-                        <div className='flex flex-col sm:flex-row items-start sm:items-center gap-3'>
+                        <div className='flex items-center gap-3 pt-2'>
                             <Button
-                                className='w-32 font-bold hover:border-orange hover:text-orange hover:bg-orange/15'
-                                variant="ornageOutline"
+                                className='w-36 font-semibold text-sm rounded-xl py-2 text-white bg-orange hover:bg-orange/90 shadow-sm shadow-orange/20 active:scale-[0.99]'
                                 disabled={loading}
                             >
-                                {loading ? "Submitting..." : "Submit"}
+                                {loading ? "Submitting..." : "Submit Review"}
                             </Button>
                             <button
                                 type="button"
                                 onClick={() => setShowForm(false)}
-                                className='text-sm text-gray-600 hover:text-gray-900'
+                                className='text-xs font-semibold text-gray-500 hover:text-gray-800 px-3 py-2'
                                 disabled={loading}
                             >
                                 Cancel

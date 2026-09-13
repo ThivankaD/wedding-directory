@@ -61,79 +61,63 @@ const Reviews: React.FC<ReviewsProps> = ({ serviceId }) => {
         );
     };
 
+    if (totalReviews === 0) {
+        return (
+            <div className='font-body'>
+                <div className='rounded-2xl border border-dashed border-orange/30 bg-gradient-to-br from-white via-orange-50/20 to-orange-50/40 p-8 text-center shadow-sm'>
+                    <div className='mx-auto w-12 h-12 rounded-full bg-orange/15 text-orange flex items-center justify-center text-xl mb-3'>
+                        <FaStar />
+                    </div>
+                    <h3 className='text-lg font-title font-bold text-gray-900'>No reviews yet</h3>
+                    <p className='text-sm text-gray-600 max-w-md mx-auto mt-1'>
+                        Couples love hearing real stories! If you booked this service, your feedback helps other couples plan their special day.
+                    </p>
+                </div>
+            </div>
+        );
+    }
+
     return (
-        <div className='font-body mt-6'>
-            <div className='rounded-2xl border border-orange/15 bg-gradient-to-br from-white to-orange-50/40 p-5 md:p-6 shadow-sm'>
-                <div className='flex flex-col lg:flex-row gap-8'>
-                    <div className='lg:w-[280px]'>
-                        <div className='text-sm uppercase tracking-wide text-gray-500'>Overall rating</div>
-                        <div className='mt-2 flex items-end gap-2'>
-                            <span className='text-5xl font-title font-bold text-gray-900 leading-none'>{avgRating.toFixed(1)}</span>
-                            <span className='text-lg text-gray-500 pb-1'>/ 5</span>
+        <div className='font-body'>
+            <div className='rounded-2xl border border-gray-100 bg-white p-6 shadow-sm'>
+                <div className='grid grid-cols-1 md:grid-cols-12 gap-6 items-center'>
+                    {/* Left: Overall Rating */}
+                    <div className='md:col-span-5 flex flex-col items-center md:items-start text-center md:text-left border-b md:border-b-0 md:border-r border-gray-100 pb-5 md:pb-0 md:pr-6'>
+                        <span className='text-xs font-bold uppercase tracking-wider text-gray-400'>
+                            Overall Rating
+                        </span>
+                        <div className='mt-2 flex items-baseline gap-2'>
+                            <span className='text-5xl font-title font-extrabold text-gray-900 leading-none'>
+                                {avgRating.toFixed(1)}
+                            </span>
+                            <span className='text-lg text-gray-400 font-medium'>/ 5</span>
                         </div>
-                        <div className='flex flex-row text-3xl text-yellow-400 my-2 gap-1'>
+                        <div className='flex text-amber-400 text-xl my-2 gap-1'>
                             {renderStars(avgRating)}
                         </div>
-                        <div className='text-gray-700 font-medium'>
-                            {totalReviews} total {totalReviews === 1 ? 'review' : 'reviews'}
-                        </div>
-                    </div>
-
-                    <div className='flex-1'>
-                        <div className='text-sm uppercase tracking-wide text-gray-500 mb-3'>Recent rating mix</div>
-                        <div className='space-y-2'>
-                            {recentDistribution.map((item) => (
-                                <div key={item.star} className='flex items-center gap-3'>
-                                    <div className='w-8 text-sm font-semibold text-gray-700'>{item.star}★</div>
-                                    <div className='h-2.5 flex-1 rounded-full bg-gray-200 overflow-hidden'>
-                                        <div
-                                            className='h-full bg-orange rounded-full transition-all'
-                                            style={{ width: `${item.percentage}%` }}
-                                        />
-                                    </div>
-                                    <div className='w-8 text-right text-sm text-gray-600'>{item.count}</div>
-                                </div>
-                            ))}
-                        </div>
-                        <p className='mt-3 text-xs text-gray-500'>
-                            Distribution shown for the latest {latestReviews.length} loaded reviews.
+                        <p className='text-xs text-gray-500 font-medium'>
+                            Based on {totalReviews} verified {totalReviews === 1 ? 'review' : 'reviews'}
                         </p>
                     </div>
 
-                    <div className='lg:w-[360px]'>
-                        <div className='text-sm uppercase tracking-wide text-gray-500 mb-3'>Latest reviews</div>
-                        <div className='space-y-3 max-h-[280px] overflow-auto pr-1'>
-                            {latestReviews.length === 0 ? (
-                                <div className='rounded-xl border border-dashed border-gray-300 bg-white p-4 text-sm text-gray-500'>
-                                    No reviews yet. Be the first to share your experience.
+                    {/* Right: Rating Breakdown Bars */}
+                    <div className='md:col-span-7 space-y-2.5'>
+                        {recentDistribution.map((item) => (
+                            <div key={item.star} className='flex items-center gap-3 text-xs'>
+                                <span className='w-7 font-bold text-gray-700 text-right flex items-center justify-end gap-0.5'>
+                                    {item.star} <FaStar className='text-amber-400 text-[10px]' />
+                                </span>
+                                <div className='h-2 flex-1 rounded-full bg-gray-100 overflow-hidden'>
+                                    <div
+                                        className='h-full bg-gradient-to-r from-amber-400 to-orange rounded-full transition-all duration-300'
+                                        style={{ width: `${item.percentage}%` }}
+                                    />
                                 </div>
-                            ) : (
-                                latestReviews.slice(0, 3).map((review) => (
-                                    <div key={review.id} className='rounded-xl border border-gray-200 bg-white p-3'>
-                                        <div className='flex items-center justify-between'>
-                                            <div className='text-sm font-semibold text-gray-800'>
-                                                {review.visitor?.visitor_fname || 'Guest'}
-                                            </div>
-                                            <div className='text-xs text-gray-500'>
-                                                {review.createdAt
-                                                    ? new Date(review.createdAt).toLocaleDateString()
-                                                    : 'Recently'}
-                                            </div>
-                                        </div>
-                                        <div className='mt-1 flex text-yellow-400 gap-1'>
-                                            {Array.from({ length: 5 }, (_, index) => (
-                                                index < Math.round(review.rating)
-                                                    ? <FaStar key={`latest-filled-${review.id}-${index}`} size={13} />
-                                                    : <FaRegStar key={`latest-empty-${review.id}-${index}`} size={13} />
-                                            ))}
-                                        </div>
-                                        <p className='mt-2 text-sm text-gray-700 line-clamp-2'>
-                                            {review.comment?.trim() || 'Shared a rating without comment.'}
-                                        </p>
-                                    </div>
-                                ))
-                            )}
-                        </div>
+                                <span className='w-8 text-right font-medium text-gray-500'>
+                                    {item.count}
+                                </span>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>
