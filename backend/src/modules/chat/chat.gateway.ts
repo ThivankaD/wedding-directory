@@ -10,9 +10,53 @@ import {
 import { Server, Socket } from 'socket.io';
 import { ChatService } from './chat.service';
 
+const DEFAULT_ALLOWED_ORIGINS = [
+  'http://localhost:3000',
+  'http://localhost:3001',
+  'http://localhost:8081',
+  'http://localhost:19006',
+  'https://sayido.lk',
+  'https://sayido-eta.vercel.app',
+  'https://sayido.duckdns.org',
+  'https://sayido.easycase.site',
+  'https://wedding-directory-two.vercel.app',
+];
+
+const LOCALHOST_ORIGIN_REGEX = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i;
+const PRIVATE_LAN_ORIGIN_REGEX =
+  /^https?:\/\/(10\.\d+\.\d+\.\d+|192\.168\.\d+\.\d+|172\.(1[6-9]|2\d|3[0-1])\.\d+\.\d+)(:\d+)?$/i;
+
+const isOriginAllowed = (origin: string | undefined): boolean => {
+  if (!origin) return true; // Native mobile apps & server tools
+  const fromEnv = (process.env.CORS_ORIGIN || '')
+    .split(',')
+    .map((o) => o.trim())
+    .filter(Boolean);
+  const frontendEnv = process.env.FRONTEND_URL?.trim();
+  const allowed = new Set([
+    ...DEFAULT_ALLOWED_ORIGINS,
+    ...fromEnv,
+    ...(frontendEnv ? [frontendEnv] : []),
+  ]);
+
+  if (allowed.has(origin)) return true;
+  if (LOCALHOST_ORIGIN_REGEX.test(origin)) return true;
+  if (PRIVATE_LAN_ORIGIN_REGEX.test(origin)) return true;
+  if (origin.endsWith('.vercel.app')) return true;
+  if (origin.endsWith('.easycase.site')) return true;
+
+  return false;
+};
+
 @WebSocketGateway({
   cors: {
-    origin: ['http://localhost:3000', 'http://localhost:3001'],
+    origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+      if (isOriginAllowed(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error(`WebSocket CORS blocked for origin: ${origin}`), false);
+      }
+    },
     credentials: true,
   },
   namespace: '/chat',
