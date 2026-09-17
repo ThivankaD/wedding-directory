@@ -11,6 +11,7 @@ import {
   ApprovalRequestStatus,
   PackageApprovalRequestEntity,
 } from '../../database/entities/package-approval-request.entity';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class PaymentService {
@@ -29,6 +30,7 @@ export class PaymentService {
     private offeringRepository: Repository<OfferingEntity>,
     @InjectRepository(PackageApprovalRequestEntity)
     private approvalRequestRepository: Repository<PackageApprovalRequestEntity>,
+    private readonly mailService: MailService,
   ) {}
 
   async createPayment(
@@ -174,7 +176,7 @@ export class PaymentService {
       }
 
       if (payment) {
-        void this.sendPushNotificationForPurchase(payment.id);
+        void this.handlePurchaseNotifications(payment.id);
       }
     }
 
@@ -233,7 +235,7 @@ export class PaymentService {
       }
 
       if (payment) {
-        void this.sendPushNotificationForPurchase(payment.id);
+        void this.handlePurchaseNotifications(payment.id);
       }
     }
 
@@ -300,7 +302,7 @@ export class PaymentService {
         }
       }
 
-      void this.sendPushNotificationForPurchase(payment.id);
+      void this.handlePurchaseNotifications(payment.id);
     }
 
     return payment;
@@ -544,7 +546,7 @@ export class PaymentService {
     }
   }
 
-  private async sendPushNotificationForPurchase(paymentId: string): Promise<void> {
+  private async handlePurchaseNotifications(paymentId: string): Promise<void> {
     try {
       const payment = await this.paymentRepository.findOne({
         where: { id: paymentId },
@@ -559,57 +561,114 @@ export class PaymentService {
 
       if (!payment) return;
 
-      const pushToken = payment.vendor?.expoPushToken?.trim();
-      if (!pushToken) {
-        console.log(`[PushNotification] No expoPushToken found for vendor ${payment.vendor?.id}`);
-        return;
-      }
-
       const visitorName = [payment.visitor?.visitor_fname, payment.visitor?.partner_fname]
         .filter(Boolean)
         .join(' & ')
         .trim() || 'A couple';
 
-      const packageName = payment.package?.name || payment.package?.offering?.name || 'Wedding Package';
-      const formattedAmount = Number(payment.amount || 0).toLocaleString();
-      const bookingDateStr = payment.bookingDate
-        ? new Date(payment.bookingDate).toLocaleDateString('en-US', {
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric',
-          })
-        : null;
+      const vendorName =
+        payment.vendor?.busname ||
+        `${payment.vendor?.fname || ''} ${payment.vendor?.lname || ''}`.trim() ||
+        'Wedding Vendor';
+      const packageName =
+        payment.package?.name || payment.package?.offering?.name || 'Wedding Package';
+      const offeringName = payment.package?.offering?.name;
+      const amount = Number(payment.amount || 0);
+      const paymentReference = payment.paymentReference || payment.id;
 
-      const title = `🎉 New Booking: ${packageName}!`;
-      const body = bookingDateStr
-        ? `${visitorName} booked "${packageName}" ($${formattedAmount}) for ${bookingDateStr}.`
-        : `${visitorName} booked "${packageName}" ($${formattedAmount}).`;
+      // 1. Send push notification to vendor mobile app (if push token is present)
+      const pushToken = payment.vendor?.expoPushToken?.trim();
+      if (pushToken) {
+        const formattedAmount = amount.toLocaleString();
+        const bookingDateStr = payment.bookingDate
+          ? new Date(payment.bookingDate).toLocaleDateString('en-US', {
+              month: 'short',
+              day: 'numeric',
+              year: 'numeric',
+            })
+          : null;
 
-      await fetch('https://exp.host/--/api/v2/push/send', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Accept-encoding': 'gzip, deflate',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          to: pushToken,
-          sound: 'default',
-          title,
-          body,
-          data: {
-            type: 'package_purchase',
-            paymentId: payment.id,
-            packageName,
-            amount: payment.amount,
-            bookingDate: payment.bookingDate ? new Date(payment.bookingDate).toISOString() : null,
+        const title = `🎉 New Booking: ${packageName}!`;
+        const body = bookingDateStr
+          ? `${visitorName} booked "${packageName}" ($${formattedAmount}) for ${bookingDateStr}.`
+          : `${visitorName} booked "${packageName}" ($${formattedAmount}).`;
+
+        try {
+          await fetch('https://exp.host/--/api/v2/push/send', {
+            method: 'POST',
+            headers: {
+              Accept: 'application/json',
+              'Accept-encoding': 'gzip, deflate',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              to: pushToken,
+              sound: 'default',
+              channelId: 'default',
+              priority: 'high',
+              title,
+              body,
+              data: {
+                type: 'package_purchase',
+                paymentId: payment.id,
+                packageName,
+                amount: payment.amount,
+                bookingDate: payment.bookingDate ? new Date(payment.bookingDate).toISOString() : null,
+                visitorName,
+              },
+            }),
+          });
+          console.log(
+            `[PushNotification] Successfully sent purchase push notification for payment ${payment.id} to vendor ${payment.vendor?.id}`,
+          );
+        } catch (pushError) {
+          console.error('Failed to send vendor purchase push notification:', pushError);
+        }
+      } else {
+        console.log(`[PushNotification] No expoPushToken found for vendor ${payment.vendor?.id}`);
+      }
+
+      // 2. Send purchase confirmation email to user (visitor/couple)
+      if (payment.visitor?.email) {
+        try {
+          await this.mailService.sendPackagePurchaseUserEmail({
+            to: payment.visitor.email,
             visitorName,
-          },
-        }),
-      });
-      console.log(`[PushNotification] Successfully sent purchase push notification for payment ${payment.id} to vendor ${payment.vendor?.id}`);
+            packageName,
+            offeringName,
+            vendorName,
+            vendorEmail: payment.vendor?.email,
+            vendorPhone: payment.vendor?.phone,
+            amount,
+            bookingDate: payment.bookingDate ? new Date(payment.bookingDate) : undefined,
+            paymentReference,
+          });
+        } catch (emailError) {
+          console.error(`Failed to send package purchase email to user ${payment.visitor.email}:`, emailError);
+        }
+      }
+
+      // 3. Send package purchase notification email to vendor
+      if (payment.vendor?.email) {
+        try {
+          await this.mailService.sendPackagePurchaseVendorEmail({
+            to: payment.vendor.email,
+            vendorName,
+            visitorName,
+            visitorEmail: payment.visitor?.email || '',
+            visitorPhone: payment.visitor?.phone,
+            packageName,
+            offeringName,
+            amount,
+            bookingDate: payment.bookingDate ? new Date(payment.bookingDate) : undefined,
+            paymentReference,
+          });
+        } catch (emailError) {
+          console.error(`Failed to send package purchase email to vendor ${payment.vendor.email}:`, emailError);
+        }
+      }
     } catch (error) {
-      console.error('Failed to send vendor purchase push notification:', error);
+      console.error('Failed to handle purchase notifications:', error);
     }
   }
 }

@@ -323,14 +323,19 @@ export class AuthService {
       throw new BadRequestException('Google ID token is required.');
     }
 
-    const clientId = process.env.GOOGLE_CLIENT_ID;
-    const client = new OAuth2Client(clientId);
+    const webClientId = process.env.GOOGLE_CLIENT_ID;
+    const androidClientId = process.env.GOOGLE_ANDROID_CLIENT_ID;
+    const client = new OAuth2Client(webClientId);
 
     let payload: TokenPayload | undefined;
     try {
       const ticket = await client.verifyIdToken({
         idToken,
-        audience: clientId,
+        audience: [
+          webClientId,
+          androidClientId,
+          process.env.GOOGLE_IOS_CLIENT_ID,
+        ].filter(Boolean) as string[],
       });
       payload = ticket.getPayload();
     } catch {
@@ -360,6 +365,13 @@ export class AuthService {
           profile_pic_url: payload.picture,
         });
         isNewUser = true;
+
+        void this.mailService.sendVisitorSignupWelcomeEmail({
+          to: visitor.email,
+          visitorName:
+            `${visitor.visitor_fname || ''} ${visitor.visitor_lname || ''}`.trim() ||
+            'Valued Couple',
+        });
       }
       const { access_token } = this.loginVisitor(visitor);
       return {
@@ -386,6 +398,20 @@ export class AuthService {
           profile_pic_url: payload.picture,
         });
         isNewUser = true;
+
+        void this.mailService.sendVendorSignupWelcomeEmail({
+          to: vendor.email,
+          vendorName:
+            `${vendor.fname || ''} ${vendor.lname || ''}`.trim() || 'Wedding Vendor',
+          businessName: vendor.busname || 'My Business',
+        });
+
+        void this.mailService.sendAdminNewVendorAlertEmail({
+          vendorName:
+            `${vendor.fname || ''} ${vendor.lname || ''}`.trim() || 'Wedding Vendor',
+          businessName: vendor.busname || 'My Business',
+          vendorEmail: vendor.email,
+        });
       }
       const { access_token } = this.loginVendor(vendor);
       return {
@@ -582,6 +608,11 @@ export class AuthService {
       password: dto.password,
     });
 
+    void this.mailService.sendVisitorSignupWelcomeEmail({
+      to: visitor.email,
+      visitorName: 'Valued Couple',
+    });
+
     const { access_token } = this.loginVisitor(visitor);
 
     return {
@@ -634,6 +665,23 @@ export class AuthService {
       phone: dto.phone || '',
       city: dto.city || '',
       location: dto.location || '',
+    });
+
+    void this.mailService.sendVendorSignupWelcomeEmail({
+      to: vendor.email,
+      vendorName:
+        `${vendor.fname || ''} ${vendor.lname || ''}`.trim() || 'Wedding Vendor',
+      businessName: vendor.busname || 'My Business',
+    });
+
+    void this.mailService.sendAdminNewVendorAlertEmail({
+      vendorName:
+        `${vendor.fname || ''} ${vendor.lname || ''}`.trim() || 'Wedding Vendor',
+      businessName: vendor.busname || 'My Business',
+      vendorEmail: vendor.email,
+      phone: vendor.phone,
+      city: vendor.city,
+      location: vendor.location,
     });
 
     const { access_token } = this.loginVendor(vendor);

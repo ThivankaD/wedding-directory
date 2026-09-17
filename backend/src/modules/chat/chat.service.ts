@@ -31,7 +31,10 @@ export class ChatService {
         where: { id: chat.vendorId },
       });
       const pushToken = vendor?.expoPushToken?.trim();
-      if (!pushToken) return;
+      if (!pushToken) {
+        console.log(`[PushNotification] No expoPushToken found for vendor ${chat.vendorId}`);
+        return;
+      }
 
       const visitor = visitorId
         ? await this.visitorRepository.findOne({ where: { id: visitorId } })
@@ -41,7 +44,7 @@ export class ChatService {
         .join(' & ')
         .trim();
 
-      await fetch('https://exp.host/--/api/v2/push/send', {
+      const response = await fetch('https://exp.host/--/api/v2/push/send', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -51,6 +54,8 @@ export class ChatService {
         body: JSON.stringify({
           to: pushToken,
           sound: 'default',
+          channelId: 'default',
+          priority: 'high',
           title: visitorName ? `New message from ${visitorName}` : 'New message',
           body: messageContent.substring(0, 140),
           data: {
@@ -61,6 +66,12 @@ export class ChatService {
           },
         }),
       });
+
+      if (!response.ok) {
+        console.warn(`[PushNotification] Expo push returned status ${response.status} for vendor ${chat.vendorId}`);
+      } else {
+        console.log(`[PushNotification] Successfully sent chat push to vendor ${chat.vendorId}`);
+      }
     } catch (error) {
       console.error('Failed to send vendor push notification:', error);
     }

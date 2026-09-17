@@ -8,9 +8,7 @@ export default function GoogleAuthProviderWrapper({
 }: {
   children: React.ReactNode;
 }) {
-  const clientId =
-    process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ||
-    '1054418062583-nja3fs3u9q072hh7avht54habq534luu.apps.googleusercontent.com';
+  const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '';
 
   return (
     <GoogleOAuthProvider clientId={clientId}>

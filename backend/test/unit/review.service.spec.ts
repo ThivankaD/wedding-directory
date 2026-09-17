@@ -4,6 +4,7 @@ import { ReviewService } from 'src/modules/review/review.service';
 import { ReviewEntity } from 'src/database/entities/review.entity';
 import { OfferingEntity } from 'src/database/entities/offering.entity';
 import { VisitorEntity } from 'src/database/entities/visitor.entity';
+import { PaymentEntity } from 'src/database/entities/payment.entity';
 import { CreateReviewInput } from 'src/graphql/inputs/createReview.input';
 
 // Mock the ReviewRepository methods
@@ -12,6 +13,7 @@ const mockReviewRepository = {
   deleteReview: jest.fn(),
   findReviewById: jest.fn(),
   findReviewsByOffering: jest.fn(),
+  findOne: jest.fn(),
 };
 
 // Mock the OfferingRepository methods
@@ -22,6 +24,12 @@ const mockOfferingRepository = {
 // Mock the VisitorRepository methods
 const mockVisitorRepository = {
   findOne: jest.fn(),
+};
+
+// Mock the PaymentRepository methods
+const mockPaymentRepository = {
+  findOne: jest.fn(),
+  find: jest.fn(),
 };
 
 // Mock the DataSource
@@ -52,6 +60,10 @@ describe('ReviewService', () => {
         {
           provide: 'VisitorEntityRepository', // Provide the mock VisitorRepository
           useValue: mockVisitorRepository,
+        },
+        {
+          provide: 'PaymentEntityRepository', // Provide the mock PaymentRepository
+          useValue: mockPaymentRepository,
         },
       ],
     }).compile();
@@ -84,6 +96,14 @@ describe('ReviewService', () => {
 
       mockOfferingRepository.findOne.mockResolvedValue(offering);
       mockVisitorRepository.findOne.mockResolvedValue(visitor);
+      mockReviewRepository.findOne.mockResolvedValue(null);
+      mockPaymentRepository.find.mockResolvedValue([
+        {
+          id: 'payment-1',
+          status: 'completed',
+          bookingDate: new Date(Date.now() - 86400000),
+        },
+      ]);
       mockReviewRepository.createReview.mockResolvedValue(review);
 
       const result = await service.createReview(createReviewInput);
