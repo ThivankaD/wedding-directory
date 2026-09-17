@@ -13,6 +13,7 @@ const DEFAULT_ALLOWED_ORIGINS = [
   'https://sayido-eta.vercel.app',
   'https://sayido.duckdns.org',
   'https://sayido.easycase.site',
+  'https://api.sayido.easycase.site',
   'https://wedding-directory-two.vercel.app',
 ];
 
@@ -45,13 +46,15 @@ async function bootstrap() {
       if (
         allowedOrigins.includes(origin) ||
         LOCALHOST_ORIGIN_REGEX.test(origin) ||
-        PRIVATE_LAN_ORIGIN_REGEX.test(origin)
+        PRIVATE_LAN_ORIGIN_REGEX.test(origin) ||
+        origin.endsWith('.easycase.site') ||
+        origin.endsWith('.vercel.app')
       ) {
         callback(null, true);
         return;
       }
 
-      callback(new Error(`CORS blocked for origin: ${origin}`), false);
+      callback(null, false);
     },
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
