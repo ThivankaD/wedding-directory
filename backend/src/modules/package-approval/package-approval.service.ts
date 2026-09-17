@@ -91,6 +91,8 @@ export class PackageApprovalService {
         body: JSON.stringify({
           to: pushToken.trim(),
           sound: 'default',
+          channelId: 'default',
+          priority: 'high',
           title: `New Package Approval Request`,
           body: `${visitorName || 'A couple'} requested approval for "${packageName}" on ${formattedDate}. Tap to review.`,
           data: {
@@ -193,6 +195,24 @@ export class PackageApprovalService {
         saved.bookingDate,
         saved.id,
       );
+    }
+
+    if (vendor.email) {
+      void this.mailService.sendPackageApprovalRequestVendorEmail({
+        to: vendor.email,
+        vendorName:
+          vendor.busname ||
+          `${vendor.fname || ''} ${vendor.lname || ''}`.trim() ||
+          'Wedding Vendor',
+        visitorName,
+        visitorEmail: visitor.email,
+        visitorPhone: visitor.phone,
+        packageName: pkg.name,
+        offeringName: pkg.offering?.name,
+        bookingDate: saved.bookingDate,
+        userNote: saved.userNote,
+        requestId: saved.id,
+      });
     }
 
     return this.computeHelperFields(saved);

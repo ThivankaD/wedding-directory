@@ -9,6 +9,7 @@ import { PackageEntity } from '../../database/entities/package.entity';
 import { MyVendorsEntity } from '../../database/entities/myVendors.entity';
 import { OfferingEntity } from '../../database/entities/offering.entity';
 import { PackageApprovalRequestEntity } from '../../database/entities/package-approval-request.entity';
+import { MailModule } from '../mail/mail.module';
 
 @Module({
   imports: [
@@ -20,7 +21,8 @@ import { PackageApprovalRequestEntity } from '../../database/entities/package-ap
       MyVendorsEntity,
       OfferingEntity,
       PackageApprovalRequestEntity,
-    ])
+    ]),
+    MailModule,
   ],
   providers: [PaymentService, PaymentResolver],
   exports: [PaymentService],

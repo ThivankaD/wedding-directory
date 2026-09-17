@@ -4,20 +4,17 @@ import { OfferingService } from './offering.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { VendorEntity } from '../../database/entities/vendor.entity';
 import { OfferingEntity } from '../../database/entities/offering.entity';
-import { ReviewService } from '../review/review.service';
-import { VisitorEntity } from '../../database/entities/visitor.entity';
-import { ReviewEntity } from '../../database/entities/review.entity';
+import { ReviewModule } from '../review/review.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       OfferingEntity, 
       VendorEntity,
-      VisitorEntity,
-      ReviewEntity
-    ])
+    ]),
+    ReviewModule,
   ],
-  providers: [OfferingResolver, OfferingService, ReviewService],
+  providers: [OfferingResolver, OfferingService],
   exports: [OfferingService]
 })
-export class OfferingModule {}
+export class OfferingModule {}
