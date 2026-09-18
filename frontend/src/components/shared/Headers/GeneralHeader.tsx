@@ -13,8 +13,8 @@ const GeneralHeader = () => {
 
   return (
     <Fragment>
-      <header className="py-6 xl:py-6 text-black bg-white relative">
-        <div className="container mx-auto grid grid-cols-3 items-center">
+      <header className="py-4 xl:py-5 text-black bg-lightYellow border-b border-orange/15 relative">
+        <div className="container mx-auto grid grid-cols-3 items-center px-4 sm:px-6 lg:px-8">
           {/* Mobile Menu Button - Only visible on mobile */}
           <div className="xl:hidden flex justify-start items-center">
             <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>

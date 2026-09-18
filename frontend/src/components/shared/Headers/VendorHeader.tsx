@@ -1,7 +1,7 @@
 "use client";
 import React, { Fragment, useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import { BiMessageRounded } from "react-icons/bi";
 import { FiCalendar } from "react-icons/fi";
@@ -15,12 +15,46 @@ import { formatCoupleName } from "@/utils/formatCoupleName";
 
 const VendorHeader = () => {
   const router = useRouter();
+  const pathname = usePathname();
   const { logout, vendor } = useVendorAuth(); // Added logout function from vendor auth context
   const [showProfileMenu, setShowProfileMenu] = useState(false); // State for the profile dropdown
   const [showNotificationMenu, setShowNotificationMenu] = useState(false); // State for notifications dropdown
   const profileMenuRef = useRef<HTMLDivElement>(null);
   const notificationMenuRef = useRef<HTMLDivElement>(null);
   const previousCountRef = useRef<number | null>(null);
+
+  const navLinks = [
+    {
+      name: "Dashboard",
+      href: "/vendor-dashboard",
+      isActive: (path: string) => path === "/vendor-dashboard",
+    },
+    {
+      name: "Analytics",
+      href: "/vendor-dashboard/analytics",
+      isActive: (path: string) => path.startsWith("/vendor-dashboard/analytics"),
+    },
+    {
+      name: "Payments",
+      href: "/vendor-dashboard/payments",
+      isActive: (path: string) => path.startsWith("/vendor-dashboard/payments"),
+    },
+    {
+      name: "Vendors",
+      href: "/vendor-search",
+      isActive: (path: string) => path.startsWith("/vendor-search") || path.startsWith("/services"),
+    },
+    {
+      name: "Settings",
+      href: "/vendor-dashboard/settings",
+      isActive: (path: string) => path.startsWith("/vendor-dashboard/settings"),
+    },
+    {
+      name: "Help",
+      href: "/vendor-dashboard/help",
+      isActive: (path: string) => path === "/vendor-dashboard/help" || path === "/help",
+    },
+  ];
 
   const { data } = useQuery(GET_VENDOR_BY_ID, {
     variables: { id: vendor?.id },
@@ -131,35 +165,49 @@ const VendorHeader = () => {
 
   return (
     <Fragment>
-      <header className="py-6 xl:py-6 text-black bg-white">
-        <div className="container mx-auto flex justify-between items-center">
+      <header className="py-4 xl:py-5 text-black bg-lightYellow border-b border-orange/15">
+        <div className="container mx-auto flex justify-between items-center px-4 sm:px-6 lg:px-8">
           {/* Left section: Logo */}
           <div className="flex items-start justify-start flex-1">
-            <Link href="/">
-              <h1 className="text-2xl font-bold text-text font-title">
+            <Link href="/" className="group">
+              <h1 className="text-2xl font-bold text-gray-900 font-title group-hover:text-orange transition-colors">
                 Say I Do
               </h1>
-              <p className="text-sm font-title text-center">Vendors</p>
+              <p className="text-xs font-semibold uppercase tracking-wider text-orange -mt-0.5">Vendors</p>
             </Link>
           </div>
 
           {/* Center section: Navigation */}
-          <div className="flex-1 flex justify-center items-center gap-8 text-xl font-title text-text">
-            <Link href="/vendor-dashboard">Dashboard</Link>
-            <Link href="/vendor-dashboard/analytics">Analytics</Link>
-            <Link href="/vendor-dashboard/payments">Payments</Link>
-            <Link href="/vendor-search">Vendors</Link>
-            <Link href="/vendor-dashboard/settings">Settings</Link>
-            <Link href="/help">Help</Link>
-          </div>
+          <nav className="flex-1 hidden md:flex justify-center items-center gap-1 sm:gap-2 text-sm sm:text-base font-title">
+            {navLinks.map((link) => {
+              const active = link.isActive(pathname);
+              return (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  className={`px-3.5 py-1.5 rounded-xl transition-all ${
+                    active
+                      ? "bg-orange text-white shadow-xs font-semibold"
+                      : "text-gray-700 hover:text-orange hover:bg-orange/10 font-medium"
+                  }`}
+                >
+                  {link.name}
+                </Link>
+              );
+            })}
+          </nav>
 
           {/* Right section: Notifications and Profile dropdown */}
-          <div className="flex items-center justify-end gap-8 flex-1">
+          <div className="flex items-center justify-end gap-3 sm:gap-5 flex-1">
             {/* Update the message icon section */}
-            <Link href="/vendor-dashboard/chats" className="relative">
-              <BiMessageRounded className="w-[33px] h-[33px] cursor-pointer hover:text-gray-600" />
+            <Link
+              href="/vendor-dashboard/chats"
+              className="relative p-2 rounded-xl hover:bg-orange/10 transition-colors text-gray-700 hover:text-orange flex items-center justify-center"
+              title="Messages"
+            >
+              <BiMessageRounded className="w-[26px] h-[26px]" />
               {unreadCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center shadow-xs">
                   {unreadCount > 9 ? "9+" : unreadCount}
                 </span>
               )}
@@ -170,13 +218,13 @@ const VendorHeader = () => {
               <button
                 type="button"
                 onClick={() => setShowNotificationMenu((prev) => !prev)}
-                className="relative p-1 rounded-full hover:bg-gray-100 transition-colors flex items-center justify-center text-text"
+                className="relative p-2 rounded-xl hover:bg-orange/10 transition-colors flex items-center justify-center text-gray-700 hover:text-orange"
                 title={pendingCount > 0 ? `${pendingCount} new notification${pendingCount === 1 ? "" : "s"}` : "Notifications"}
                 aria-label="Notifications"
               >
-                <IoIosNotificationsOutline className="w-[36px] h-[36px] cursor-pointer hover:text-gray-600" />
+                <IoIosNotificationsOutline className="w-[28px] h-[28px]" />
                 {pendingCount > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-pulse shadow-sm">
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-pulse shadow-xs">
                     {pendingCount > 9 ? "9+" : pendingCount}
                   </span>
                 )}
