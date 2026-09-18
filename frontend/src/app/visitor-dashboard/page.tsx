@@ -118,7 +118,7 @@ const VisitorDashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-orange/[0.03] via-white to-orange/[0.03] flex flex-col">
+      <div className="min-h-screen bg-lightYellow flex flex-col">
         <Header />
         <div className="flex-grow flex items-center justify-center p-8">
           <LoaderHelix />
@@ -130,7 +130,7 @@ const VisitorDashboard = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-orange/[0.03] via-white to-orange/[0.03] flex flex-col">
+      <div className="min-h-screen bg-lightYellow flex flex-col">
         <Header />
         <div className="flex-grow flex items-center justify-center p-8">
           <div className="bg-white rounded-2xl p-8 border border-red-100 text-center max-w-md shadow-sm">
@@ -148,7 +148,7 @@ const VisitorDashboard = () => {
   const groomName = visitorData?.visitor_fname || "Groom";
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-orange/[0.03] via-white to-orange/[0.03] flex flex-col font-body">
+    <div className="min-h-screen bg-lightYellow flex flex-col font-body">
       <Header />
 
       <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8 max-w-7xl">

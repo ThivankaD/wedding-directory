@@ -309,7 +309,7 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ initialRole }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-orange/[0.03] via-white to-orange/[0.03] flex flex-col font-body">
+    <div className="min-h-screen bg-lightYellow flex flex-col font-body">
       <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8 max-w-6xl">
         {/* Top Header Banner matching Vendor Dashboard */}
         <div className="mb-8 pb-6 border-b border-orange/15">
