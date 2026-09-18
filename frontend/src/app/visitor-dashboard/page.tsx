@@ -174,7 +174,7 @@ const VisitorDashboardContent: React.FC = () => {
     <div className="min-h-screen bg-lightYellow flex flex-col font-body">
       <Header />
 
-      <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8 max-w-7xl">
+      <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
         {/* Top Header Banner matching Vendor Dashboard */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div>

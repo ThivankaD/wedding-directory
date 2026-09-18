@@ -50,77 +50,95 @@ const VendorSearch: React.FC = () => {
   }, []);
 
   return (
-    <div className="bg-lightYellow font-title">
+    <div className="bg-lightYellow font-title min-h-screen flex flex-col justify-between">
       <Header />
-      <div className="container mx-auto px-4 md:px-8 py-8">
-        <h2 className="text-3xl text-center font-bold">
-          Find the perfect crew for your wedding
-        </h2>
-        <h2 className="mx-4 md:mx-20 text-xl text-center mb-2">
-          Filter by Category and Location
-        </h2>
-      </div>
-
-      <FilterSearchBar
-        handleSearch={handleSearch}
-        onCityChange={handleCityChange}
-        onCategoryChange={handleCategoryChange}
-      />
-      <hr className=" h-px my-4 bg-black border-[1.5px] container" />
-
-      <div className="flex flex-row container mx-auto px-4">
-        {/* Main Content */}
-        <div className="relative w-full m-3 md:w-3/4 h-full md:h-auto rounded-2xl overflow-hidden">
-          {/* Sorting Options */}
-          {/* <div className="flex flex-row space-x-4">
-            <Button className="bg-white text-black hover:bg-gray-300">Distance</Button>
-            <Button className="bg-white text-black hover:bg-gray-300">Price</Button>
-            <Button className="bg-white text-black hover:bg-gray-300">Ratings</Button>
-            <Button className="bg-white text-black hover:bg-gray-300">Featured</Button>
-          </div> */}
-
-          {/* Data Loading/Error/Result State */}
-          {loading ? (
-            <LoaderJelly />
-          ) : error ? (
-            <div className="my-4 text-2xl">Oops! We went to a trouble. Please try again after few minutes. :(</div>
-          ) : data?.findOfferings?.filter((offering: Offering) => offering.visible)?.length > 0 ? (
-            <div>
-              <div className="my-4 text-2xl">
-                Found {data.findOfferings.filter((offering: Offering) => offering.visible).length} vendors
-              </div>
-              <div className="grid xl:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-6 overflow-x-auto">
-                {data.findOfferings
-                  .filter((offering: Offering) => offering.visible)
-                  .map((offering: Offering) => (
-                    <OfferingCard
-                      key={offering.id}
-                      name={offering.name}
-                      vendor={offering.vendor?.busname || "N/A"}
-                      city={offering.vendor?.city || "N/A"}
-                      banner={offering.banner || "/images/offeringPlaceholder.webp"}
-                      rating={offering.reviews.length > 0 
-                        ? (offering.reviews.reduce((acc, review) => acc + Number(review.rating), 0) / offering.reviews.length)
-                        : 0
-                      }
-                      buttonText="View Details"
-                      link={`/services/${offering.id}`}
-                    />
-                  ))}
-              </div>
-            </div>
-          ) : (
-            <div className="my-4 text-xl">No vendors found</div>
-          )}
+      <main className="flex-1">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-5 pb-2 text-center w-full">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+            Find the perfect crew for your wedding
+          </h1>
+          <p className="text-xs sm:text-sm text-gray-500 mt-1 font-body">
+            Filter by Category and Location
+          </p>
         </div>
 
-        {/* Sidebar */}
-        <div className="relative hidden xl:block w-full m-3 md:w-1/4 h-full md:h-auto rounded-2xl bg-white overflow-hidden">
-          <p className="text-center my-6 font-bold mx-2">Vendors you might like based on your favorites</p>
-          <p className="text-center">Nothing to show yet!</p>
+        <FilterSearchBar
+          handleSearch={handleSearch}
+          onCityChange={handleCityChange}
+          onCategoryChange={handleCategoryChange}
+        />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          <div className="border-b border-orange/15 my-4" />
         </div>
-      </div>
-      <Chatbot/>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10 w-full">
+          {/* Main Content - Full Width Catalog */}
+          <div className="w-full">
+            {/* Data Loading/Error/Result State */}
+            {loading ? (
+              <div className="py-16 flex flex-col items-center justify-center">
+                <LoaderJelly />
+                <p className="text-xs font-semibold text-gray-500 font-body mt-3">
+                  Finding wedding vendors...
+                </p>
+              </div>
+            ) : error ? (
+              <div className="bg-white rounded-3xl border-2 border-rose-200 p-8 text-center my-6 max-w-md mx-auto">
+                <p className="text-rose-600 font-medium text-sm font-body">
+                  Oops! We encountered an issue loading vendors. Please try again in a moment.
+                </p>
+              </div>
+            ) : data?.findOfferings?.filter((offering: Offering) => offering.visible)?.length > 0 ? (
+              <div>
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <h2 className="font-title font-bold text-xl sm:text-2xl text-gray-900">
+                      Available Vendors
+                    </h2>
+                    <span className="px-3 py-0.5 text-xs font-bold rounded-full bg-orange/10 text-orange border border-orange/20 font-body">
+                      {data.findOfferings.filter((offering: Offering) => offering.visible).length} found
+                    </span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {data.findOfferings
+                    .filter((offering: Offering) => offering.visible)
+                    .map((offering: Offering) => (
+                      <OfferingCard
+                        key={offering.id}
+                        name={offering.name}
+                        vendor={offering.vendor?.busname || "N/A"}
+                        city={offering.vendor?.city || "N/A"}
+                        banner={offering.banner || "/images/offeringPlaceholder.webp"}
+                        rating={
+                          offering.reviews.length > 0
+                            ? offering.reviews.reduce((acc, review) => acc + Number(review.rating), 0) /
+                              offering.reviews.length
+                            : 0
+                        }
+                        buttonText="View Details"
+                        link={`/services/${offering.id}`}
+                      />
+                    ))}
+                </div>
+              </div>
+            ) : (
+              <div className="bg-white rounded-3xl border-2 border-orange/20 p-12 text-center my-8 shadow-xs max-w-md mx-auto">
+                <h3 className="font-title font-bold text-lg text-gray-900 mb-1">
+                  No vendors found
+                </h3>
+                <p className="text-xs sm:text-sm text-gray-500 font-body">
+                  Try adjusting your city or category filter to discover more wedding services.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      </main>
+
+      <Chatbot />
       <Footer />
     </div>
   );

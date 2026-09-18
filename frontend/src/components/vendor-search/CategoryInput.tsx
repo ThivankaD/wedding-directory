@@ -18,7 +18,7 @@ const CategoryInput: React.FC<CategoryProps> = ({ onCategoryChange }) => {
       <SelectTrigger
         id="bcategory"
         variant="borderless"
-        className="h-10 w-full bg-white/50 px-3 py-2 text-left font-title text-[16px] text-black focus:outline-none rounded-lg backdrop-blur-sm hover:bg-white/30 transition duration-150"
+        className="h-7 w-full bg-transparent px-2 py-0 text-left font-body text-xs sm:text-sm font-medium text-gray-800 focus:outline-none rounded-none shadow-none hover:bg-transparent border-none"
       >
         <SelectValue placeholder="Select Service" />
       </SelectTrigger>

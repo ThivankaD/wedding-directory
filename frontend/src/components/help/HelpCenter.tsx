@@ -549,10 +549,10 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ initialRole }) => {
                   <div className="overflow-hidden">
                     <p className="text-xs text-gray-400 font-medium">Email Support</p>
                     <a
-                      href="mailto:help@sayido.lk"
+                      href="mailto:sayidolk@gmail.com"
                       className="font-semibold text-gray-900 hover:text-orange transition-colors truncate block"
                     >
-                      help@sayido.lk
+                      sayidolk@gmail.com
                     </a>
                   </div>
                 </div>

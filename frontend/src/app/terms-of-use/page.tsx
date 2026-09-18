@@ -63,7 +63,7 @@ Attempting to disrupt or compromise the security of the Services.</p>
 <p className='mt-6'>If you believe that any content on the Services infringes your copyright, please provide a written DMCA notice to our Copyright Agent at, 
 </p>
 <p className='font-bold mt-3'>Email Us</p>
-<p>help@sayido.lk</p>
+<p>sayidolk@gmail.com</p>
 <div className='mt-4'>
     <p>Your notice must include:</p>
 
@@ -99,7 +99,7 @@ A statement that the information in the notice is accurate and that you are auth
 <h1 className='mt-6 font-bold font-title text-lg'>16. Contact Us</h1>
 <p className='mt-6'>If you have any questions or concerns about these Terms, please contact us at </p>
 <p className='font-bold mt-3'>Email Us</p>
-<p>help@sayido.lk</p>
+<p>sayidolk@gmail.com</p>
 
 <h1 className='mt-6 font-bold font-title text-lg'>17. Additional Terms for Vendors</h1>
 <p className='mt-6 pb-8'>If you are a vendor, additional terms and conditions may apply to your use of the Services, including payment terms, refund policies, and any vendor-specific rules of conduct.

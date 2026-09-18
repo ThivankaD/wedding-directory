@@ -166,7 +166,7 @@ const VendorHeader = () => {
   return (
     <Fragment>
       <header className="py-4 xl:py-5 text-black bg-lightYellow border-b border-orange/15">
-        <div className="container mx-auto flex justify-between items-center px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto flex justify-between items-center px-4 sm:px-6 lg:px-8 w-full">
           {/* Left section: Logo - click disabled for logged-in vendor */}
           <div className="flex items-start justify-start flex-1 select-none cursor-default">
             <div>

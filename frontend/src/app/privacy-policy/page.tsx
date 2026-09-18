@@ -75,7 +75,7 @@ const PrivacyPolicy = () => {
 
 <p className='mt-6'>If you have any questions or concerns about this privacy policy or our data practices, please contact us at:</p>
 <ul className="list-disc pl-5 space-y-1">
-<li>Email: help@sayido.lk
+<li>Email: sayidolk@gmail.com
 </li><li>Phone: +94 47 786 4913
 </li><li>Address: Hapugala,Galle, Sri Lanka</li>
 </ul>
