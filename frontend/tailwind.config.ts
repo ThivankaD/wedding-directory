@@ -30,7 +30,8 @@ const config = {
         text: "#132043",
         brown: "#271300",
         orange: "#FC7B54",
-        lightYellow: "#FFF8F3",
+        lightYellow: "#FFEFEB",
+        lightOrange: "#FFEFEB",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",

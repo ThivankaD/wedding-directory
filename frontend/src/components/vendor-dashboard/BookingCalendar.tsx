@@ -1,11 +1,9 @@
 "use client";
 
 import React, { useState } from 'react';
-import { useQuery, useMutation } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { GET_VENDOR_PAYMENTS } from '@/graphql/queries';
-import { CANCEL_PAYMENT } from '@/graphql/mutations';
 import { useVendorAuth } from '@/contexts/VendorAuthContext';
-import toast from 'react-hot-toast';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import { formatCoupleName } from '@/utils/formatCoupleName';
 
@@ -38,29 +36,21 @@ const BookingCalendar: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
-  const { data, loading, error, refetch } = useQuery(GET_VENDOR_PAYMENTS, {
+  const { data, loading, error } = useQuery(GET_VENDOR_PAYMENTS, {
     variables: { vendorId: vendor?.id },
     skip: !vendor?.id,
   });
 
-  const [cancelPayment, { loading: cancelLoading }] = useMutation(CANCEL_PAYMENT, {
-    onCompleted: () => {
-      toast.success('Booking cancelled successfully');
-      refetch(); // Refresh the payments data
-    },
-    onError: (error) => {
-      toast.error(error.message || 'Failed to cancel booking');
-    }
-  });
-
   const payments: Payment[] = data?.vendorPayments || [];
 
-  // Filter payments with booking dates
-  const bookingsWithDates = payments.filter(p => p.bookingDate);
+  // Filter ONLY completed payments with booking dates (exclude failed/cancelled attempts)
+  const bookingsWithDates = payments.filter(
+    (p) => p.bookingDate && p.status === "completed"
+  );
 
   // Get bookings for selected date
   const getBookingsForDate = (date: Date) => {
-    return bookingsWithDates.filter(p => {
+    return bookingsWithDates.filter((p) => {
       const bookingDate = new Date(p.bookingDate!);
       return bookingDate.toDateString() === date.toDateString();
     });
@@ -68,22 +58,16 @@ const BookingCalendar: React.FC = () => {
 
   // Check if a date has bookings
   const hasBooking = (date: Date) => {
-    return bookingsWithDates.some(p => {
+    return bookingsWithDates.some((p) => {
       const bookingDate = new Date(p.bookingDate!);
       return bookingDate.toDateString() === date.toDateString();
     });
   };
 
-  // Get booking status for a date (completed, pending, or both)
+  // Get booking status for a date (only completed bookings are tracked)
   const getDateStatus = (date: Date) => {
     const dateBookings = getBookingsForDate(date);
-    const hasCompleted = dateBookings.some(b => b.status === 'completed');
-    const hasPending = dateBookings.some(b => b.status === 'pending');
-    
-    if (hasCompleted && hasPending) return 'mixed';
-    if (hasCompleted) return 'completed';
-    if (hasPending) return 'pending';
-    return null;
+    return dateBookings.length > 0 ? "completed" : null;
   };
 
   // Generate calendar days
@@ -126,17 +110,6 @@ const BookingCalendar: React.FC = () => {
     setSelectedDate(date);
   };
 
-  const handleCancelBooking = async (paymentId: string) => {
-    if (window.confirm('Are you sure you want to cancel this booking?')) {
-      await cancelPayment({
-        variables: {
-          paymentId,
-          cancelledBy: 'vendor'
-        }
-      });
-    }
-  };
-
   const selectedDateBookings = selectedDate ? getBookingsForDate(selectedDate) : [];
 
   if (loading) {
@@ -174,11 +147,7 @@ const BookingCalendar: React.FC = () => {
         <div className="flex items-center gap-2">
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-medium">
             <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-            Completed
-          </span>
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50 text-amber-700 border border-amber-200 text-xs font-medium">
-            <span className="w-2 h-2 rounded-full bg-amber-500"></span>
-            Pending
+            Confirmed Bookings
           </span>
         </div>
       </div>
@@ -294,28 +263,9 @@ const BookingCalendar: React.FC = () => {
                         <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-orange/10 text-orange font-semibold text-xs">
                           LKR {booking.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                         </span>
-                        <span
-                          className={`px-2 py-0.5 rounded-md text-[11px] font-medium capitalize ${
-                            booking.status === 'completed'
-                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                              : 'bg-amber-50 text-amber-700 border border-amber-200'
-                          }`}
-                        >
-                          {booking.status}
-                        </span>
                       </div>
                     </div>
                   </div>
-
-                  {booking.status === 'pending' && (
-                    <button
-                      onClick={() => handleCancelBooking(booking.id)}
-                      disabled={cancelLoading}
-                      className="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded-lg text-xs font-medium transition-colors disabled:opacity-50"
-                    >
-                      {cancelLoading ? 'Cancelling...' : 'Cancel'}
-                    </button>
-                  )}
                 </div>
               </div>
             ))}
@@ -328,18 +278,13 @@ const BookingCalendar: React.FC = () => {
         <h4 className="font-title text-xs font-bold uppercase tracking-wider text-gray-500 mb-3">
           Booking Overview
         </h4>
-        <div className="grid grid-cols-2 gap-3">
-          <div className="bg-emerald-50/70 border border-emerald-100 rounded-xl p-3.5">
-            <div className="text-2xl font-bold text-emerald-800 font-title leading-none mb-1">
-              {payments.filter((p) => p.status === 'completed').length}
-            </div>
-            <div className="text-xs font-medium text-emerald-700">Completed Bookings</div>
+        <div className="bg-emerald-50/70 border border-emerald-100 rounded-xl p-3.5 flex items-center justify-between">
+          <div>
+            <div className="text-xs font-medium text-emerald-700">Confirmed Bookings</div>
+            <p className="text-[11px] text-gray-400 mt-0.5">Active reservations on your calendar</p>
           </div>
-          <div className="bg-amber-50/70 border border-amber-100 rounded-xl p-3.5">
-            <div className="text-2xl font-bold text-amber-800 font-title leading-none mb-1">
-              {payments.filter((p) => p.status === 'pending').length}
-            </div>
-            <div className="text-xs font-medium text-amber-700">Pending Bookings</div>
+          <div className="text-2xl font-bold text-emerald-800 font-title leading-none">
+            {bookingsWithDates.length}
           </div>
         </div>
       </div>
@@ -364,15 +309,11 @@ const BookingCalendar: React.FC = () => {
                     {booking.package.name} • {new Date(booking.bookingDate!).toLocaleDateString(undefined, { dateStyle: 'medium' })}
                   </div>
                 </div>
-                <span
-                  className={`px-2 py-0.5 rounded text-[11px] font-medium capitalize flex-shrink-0 ${
-                    booking.status === 'completed'
-                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                      : 'bg-amber-50 text-amber-700 border border-amber-200'
-                  }`}
-                >
-                  {booking.status}
-                </span>
+                <div className="text-right flex-shrink-0">
+                  <span className="font-semibold text-orange text-xs">
+                    LKR {booking.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                  </span>
+                </div>
               </div>
             ))}
           </div>

@@ -250,12 +250,18 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ initialRole }) => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [expandedFaqId, setExpandedFaqId] = useState<string | null>(null);
 
-  // Sync if role query param changes
+  // Sync if role query param or auth state changes
   useEffect(() => {
-    if (roleParam === "vendor" || roleParam === "visitor") {
+    if (initialRole) {
+      setActiveRole(initialRole);
+    } else if (vendor) {
+      setActiveRole("vendor");
+    } else if (visitor) {
+      setActiveRole("visitor");
+    } else if (roleParam === "vendor" || roleParam === "visitor") {
       setActiveRole(roleParam);
     }
-  }, [roleParam]);
+  }, [vendor, visitor, initialRole, roleParam]);
 
   // Categories config for Vendor
   const vendorCategories = [
@@ -298,14 +304,6 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ initialRole }) => {
     });
   }, [currentFaqList, selectedCategory, searchQuery]);
 
-  // Handle role toggle
-  const handleRoleChange = (role: "vendor" | "visitor") => {
-    setActiveRole(role);
-    setSelectedCategory("all");
-    setSearchQuery("");
-    setExpandedFaqId(null);
-  };
-
   const toggleFaq = (id: string) => {
     setExpandedFaqId((prev) => (prev === id ? null : id));
   };
@@ -314,54 +312,26 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ initialRole }) => {
     <div className="min-h-screen bg-lightYellow flex flex-col font-body">
       <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8 max-w-6xl">
         {/* Top Header Banner matching Vendor Dashboard */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8 pb-6 border-b border-gray-200/60">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-orange/10 text-orange">
-                <FiHelpCircle size={14} />
-                {activeRole === "vendor" ? "Vendor Support Center" : "Couple Support Center"}
-              </span>
-              <span className="text-xs text-gray-400 font-medium">Say I Do Help Desk</span>
-            </div>
-            <h1 className="font-title text-3xl sm:text-4xl font-bold text-gray-900">
-              {activeRole === "vendor" ? "Vendor Help & Support" : "Couple Help & Support"}
-            </h1>
-            <p className="text-gray-500 font-body text-sm sm:text-base mt-1 max-w-2xl">
-              {activeRole === "vendor"
-                ? "Everything you need to know about managing your storefront, services, booking calendar, payments, and client communications."
-                : "Find answers and guidance for finding the best vendors, planning your wedding budget, managing your guest list, and booking securely."}
-            </p>
+        <div className="mb-8 pb-6 border-b border-orange/15">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-orange/10 text-orange border border-orange/20">
+              <FiHelpCircle size={14} />
+              {activeRole === "vendor" ? "Vendor Support Center" : "Couple Support Center"}
+            </span>
+            <span className="text-xs text-gray-400 font-medium">Say I Do Help Desk</span>
           </div>
-
-          {/* Role Switcher Pill */}
-          <div className="flex items-center gap-1.5 bg-white p-1.5 rounded-2xl shadow-sm border border-gray-100 self-start md:self-auto">
-            <button
-              onClick={() => handleRoleChange("vendor")}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-                activeRole === "vendor"
-                  ? "bg-orange text-white shadow-sm"
-                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-              }`}
-            >
-              <FiBriefcase size={14} />
-              <span>For Vendors</span>
-            </button>
-            <button
-              onClick={() => handleRoleChange("visitor")}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-                activeRole === "visitor"
-                  ? "bg-orange text-white shadow-sm"
-                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-              }`}
-            >
-              <FiHeart size={14} />
-              <span>For Couples</span>
-            </button>
-          </div>
+          <h1 className="font-title text-3xl sm:text-4xl font-bold text-gray-900">
+            {activeRole === "vendor" ? "Vendor Help & Support" : "Couple Help & Support"}
+          </h1>
+          <p className="text-gray-500 font-body text-sm sm:text-base mt-1 max-w-2xl">
+            {activeRole === "vendor"
+              ? "Everything you need to know about managing your storefront, services, booking calendar, payments, and client communications."
+              : "Find answers and guidance for finding the best vendors, planning your wedding budget, managing your guest list, and booking securely."}
+          </p>
         </div>
 
         {/* Search Bar Card */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 mb-8">
+        <div className="bg-white rounded-2xl shadow-sm border border-orange/20 p-6 sm:p-8 mb-8">
           <div className="max-w-2xl mx-auto text-center">
             <h2 className="font-title text-2xl font-bold text-gray-900 mb-2">
               How can we help you today?
@@ -397,9 +367,9 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ initialRole }) => {
           </div>
         </div>
 
-        {/* Category Tabs */}
+        {/* Category Tabs - Wrapped to eliminate horizontal scrolling */}
         <div className="mb-8">
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
             {currentCategories.map((cat) => {
               const Icon = cat.icon;
               const isActive = selectedCategory === cat.id;
@@ -412,19 +382,19 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ initialRole }) => {
                 <button
                   key={cat.id}
                   onClick={() => setSelectedCategory(cat.id)}
-                  className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all border ${
+                  className={`inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all border ${
                     isActive
-                      ? "bg-orange text-white border-orange shadow-sm"
-                      : "bg-white text-gray-600 border-gray-100 hover:bg-gray-50 hover:text-gray-900"
+                      ? "bg-orange text-white border-orange shadow-sm ring-2 ring-orange/20"
+                      : "bg-white text-gray-700 border-orange/20 hover:border-orange hover:bg-orange/5 hover:text-orange shadow-xs"
                   }`}
                 >
-                  <Icon size={14} />
+                  <Icon size={14} className={isActive ? "text-white" : "text-orange"} />
                   <span>{cat.label}</span>
                   <span
-                    className={`text-[10px] px-1.5 py-0.5 rounded-full ${
+                    className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
                       isActive
-                        ? "bg-white/20 text-white"
-                        : "bg-gray-100 text-gray-500"
+                        ? "bg-white/25 text-white"
+                        : "bg-orange/10 text-orange"
                     }`}
                   >
                     {count}
@@ -460,24 +430,40 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ initialRole }) => {
             </div>
 
             {filteredFaqs.length > 0 ? (
-              <div className="space-y-3">
+              <div className="space-y-3.5">
                 {filteredFaqs.map((faq) => {
                   const isExpanded = expandedFaqId === faq.id;
                   return (
                     <div
                       key={faq.id}
-                      className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-200 hover:border-gray-200"
+                      className={`bg-white rounded-2xl transition-all duration-200 overflow-hidden ${
+                        isExpanded
+                          ? "border-2 border-orange shadow-md"
+                          : "border border-orange/20 hover:border-orange/60 shadow-xs hover:shadow-sm"
+                      }`}
                     >
                       <button
                         onClick={() => toggleFaq(faq.id)}
-                        className="w-full text-left p-5 sm:p-6 flex items-start justify-between gap-4 transition-colors"
+                        className="w-full text-left p-5 sm:p-6 flex items-start justify-between gap-4 transition-colors group cursor-pointer"
                       >
-                        <div className="flex items-start gap-3">
-                          <div className="mt-0.5 w-6 h-6 rounded-lg bg-orange/10 text-orange flex items-center justify-center flex-shrink-0">
-                            <FiHelpCircle size={14} />
+                        <div className="flex items-start gap-3.5">
+                          <div
+                            className={`mt-0.5 w-7 h-7 rounded-xl flex items-center justify-center flex-shrink-0 border transition-colors ${
+                              isExpanded
+                                ? "bg-orange border-orange text-white"
+                                : "bg-orange/10 border-orange/20 text-orange group-hover:bg-orange group-hover:text-white"
+                            }`}
+                          >
+                            <FiHelpCircle size={15} />
                           </div>
                           <div>
-                            <span className="font-title text-base sm:text-lg font-bold text-gray-900 block group-hover:text-orange">
+                            <span
+                              className={`font-title text-base sm:text-lg font-bold block transition-colors ${
+                                isExpanded
+                                  ? "text-orange"
+                                  : "text-gray-900 group-hover:text-orange"
+                              }`}
+                            >
                               {faq.question}
                             </span>
                             <div className="flex items-center gap-2 mt-1">
@@ -488,22 +474,24 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ initialRole }) => {
                           </div>
                         </div>
                         <div
-                          className={`p-1.5 rounded-full bg-gray-50 text-gray-400 transition-transform duration-200 flex-shrink-0 ${
-                            isExpanded ? "rotate-180 text-orange bg-orange/10" : ""
+                          className={`p-2 rounded-xl border transition-all duration-200 flex-shrink-0 ${
+                            isExpanded
+                              ? "rotate-180 border-orange bg-orange text-white"
+                              : "border-gray-200 bg-gray-50 text-gray-400 group-hover:border-orange/40 group-hover:text-orange"
                           }`}
                         >
-                          <FiChevronDown size={18} />
+                          <FiChevronDown size={16} />
                         </div>
                       </button>
 
                       {isExpanded && (
-                        <div className="px-5 sm:px-6 pb-6 pt-1 text-gray-600 text-sm sm:text-base leading-relaxed border-t border-gray-50 bg-gray-50/30">
-                          <p className="mt-2">{faq.answer}</p>
-                          <div className="flex flex-wrap gap-1.5 mt-4 pt-3 border-t border-gray-100">
+                        <div className="px-5 sm:px-6 pb-6 pt-3 text-gray-700 text-sm sm:text-base leading-relaxed border-t border-orange/15 bg-orange/[0.02]">
+                          <p className="mt-1">{faq.answer}</p>
+                          <div className="flex flex-wrap gap-1.5 mt-4 pt-3 border-t border-orange/10">
                             {faq.tags.map((tag) => (
                               <span
                                 key={tag}
-                                className="text-[11px] px-2 py-0.5 rounded-md bg-white border border-gray-100 text-gray-500"
+                                className="text-[11px] px-2.5 py-0.5 rounded-lg bg-white border border-orange/20 text-orange font-medium shadow-2xs"
                               >
                                 #{tag}
                               </span>
@@ -516,8 +504,8 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ initialRole }) => {
                 })}
               </div>
             ) : (
-              <div className="bg-white rounded-2xl p-12 text-center border border-gray-100 shadow-sm">
-                <div className="w-14 h-14 rounded-2xl bg-orange/10 text-orange flex items-center justify-center mx-auto mb-4">
+              <div className="bg-white rounded-2xl p-12 text-center border border-orange/20 shadow-sm">
+                <div className="w-14 h-14 rounded-2xl bg-orange/10 border border-orange/20 text-orange flex items-center justify-center mx-auto mb-4">
                   <FiSearch size={26} />
                 </div>
                 <h3 className="font-title text-lg font-bold text-gray-900 mb-1">
@@ -542,7 +530,7 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ initialRole }) => {
           {/* Quick Support & Dashboard Links (Right Column) */}
           <div className="lg:col-span-4 flex flex-col gap-6">
             {/* Direct Support Card */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <div className="bg-white rounded-2xl shadow-sm border border-orange/20 p-6">
               <div className="flex items-center gap-2 text-orange mb-3">
                 <FiMail size={20} />
                 <h3 className="font-title text-lg font-bold text-gray-900">
@@ -609,7 +597,7 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ initialRole }) => {
             </div>
 
             {/* Quick Navigation Shortcuts based on role */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <div className="bg-white rounded-2xl shadow-sm border border-orange/20 p-6">
               <h3 className="font-title text-base font-bold text-gray-900 mb-3">
                 {activeRole === "vendor"
                   ? "Vendor Quick Tools"
