@@ -159,19 +159,57 @@ export class ChecklistService {
     
   }
 
-  async handleWeddingDateChange(visitorId: string, newWeddingDate: Date): Promise<void> {
+  async handleWeddingDateChange(
+    visitorId: string,
+    newWeddingDate: Date,
+    oldWeddingDate?: Date | null
+  ): Promise<void> {
     // Check if tasks already exist for this visitor
     const existingTasks = await this.checklistRepository.find({
       where: { visitor: { id: visitorId } },
     });
-    
+
     if (existingTasks.length > 0) {
-      // Delete existing tasks and recreate them
-      await this.checklistRepository.delete({ visitor: { id: visitorId } });
+      // If there was an old wedding date, shift the due dates by the date difference!
+      if (oldWeddingDate) {
+        const deltaMs =
+          new Date(newWeddingDate).getTime() - new Date(oldWeddingDate).getTime();
+        for (const task of existingTasks) {
+          if (task.due_date) {
+            task.due_date = new Date(new Date(task.due_date).getTime() + deltaMs);
+            await this.checklistRepository.save(task);
+          }
+        }
+      }
+      // Preserve existing custom tasks, notes, and completions!
+      return;
     }
-    
-    // Generate new tasks based on the new wedding date
+
+    // Only generate new tasks if the visitor had no existing tasks
     await this.generateDefaultTasks(visitorId, newWeddingDate);
   }
 
+  async clearAllByVisitor(visitorId: string): Promise<boolean> {
+    await this.checklistRepository.delete({ visitor: { id: visitorId } });
+    return true;
+  }
+
+  async resetToDefault(visitorId: string): Promise<boolean> {
+    const visitor = await this.visitorRepository.findOne({ where: { id: visitorId } });
+    if (!visitor) {
+      throw new NotFoundException(`Visitor with ID ${visitorId} not found`);
+    }
+
+    // Delete existing tasks
+    await this.checklistRepository.delete({ visitor: { id: visitorId } });
+
+    // Use visitor's wedding date or default to 1 year from now
+    const weddingDate = visitor.weddingDate
+      ? new Date(visitor.weddingDate)
+      : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000);
+
+    await this.generateDefaultTasks(visitorId, weddingDate);
+    return true;
+  }
 }
+

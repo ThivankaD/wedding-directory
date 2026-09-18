@@ -27,4 +27,14 @@ export class ChecklistResolver {
   async deleteChecklist(@Args('id') id: string) {
     return this.checklistService.delete(id);
   }
+
+  @Mutation(() => Boolean)
+  async clearAllChecklists(@Args('visitorId') visitorId: string): Promise<boolean> {
+    return this.checklistService.clearAllByVisitor(visitorId);
+  }
+
+  @Mutation(() => Boolean)
+  async resetDefaultChecklist(@Args('visitorId') visitorId: string): Promise<boolean> {
+    return this.checklistService.resetToDefault(visitorId);
+  }
 }
