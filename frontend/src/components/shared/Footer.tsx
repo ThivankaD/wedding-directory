@@ -1,128 +1,161 @@
 import React from "react";
-import { Button } from "../ui/button";
+import Link from "next/link";
 import { FaFacebook, FaPinterest } from "react-icons/fa";
 import { AiFillInstagram } from "react-icons/ai";
 import { FaXTwitter } from "react-icons/fa6";
-import Link from "next/link";
+import { FiArrowRight, FiHeart } from "react-icons/fi";
 
-const Footer = () => {
+const Footer: React.FC = () => {
+  const currentYear = new Date().getFullYear();
+
   return (
-    <footer className="bg-white py-6">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-          {/* Brand Description */}
-          <div className="hidden md:block">
-            <h3 className="text-lg md:text-xl font-bold font-title mb-2">Say I Do</h3>
-            <p className="text-xs md:text-sm font-body">
-              Say I Do is your one-stop destination for all wedding planning
-              needs. From finding the perfect venue to hiring the best vendors,
-              we make sure your big day is as magical and stress-free as
-              possible. Explore our handpicked marketplace, manage your budget,
-              and check off your wedding to-do list with ease. Start planning
-              the wedding of your dreams today.
-            </p>
-          </div>
-          {/* Navigation Links */}
-          <div className="grid grid-cols-2 gap-4 md:gap-8">
-            <div>
-              <h4 className="text-md md:text-lg font-semibold font-title mb-2">
-                Navigate
-              </h4>
-              <ul className="text-xs md:text-sm font-body space-y-1">
-                <li>
-                  <Link href="/" className="hover:text-orange">
-                    Home
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="hover:text-orange">
-                    Marketplace
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="hover:text-orange">
-                    Checklist
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="hover:text-orange">
-                    Budget
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-md md:text-lg font-semibold font-title mb-2">About</h4>
-              <ul className="text-xs md:text-sm font-body space-y-1">
-                <li>
-                  <Link href="/about" className="hover:text-orange">
-                    About Us
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/contact" className="hover:text-orange">
-                    Contact
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    // href="/privacy-policy"
-                    href="#"
-                    target="_blank"
-                    className="hover:text-orange"
-                  >
-                    Privacy Policy
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    // href="/terms-of-use"
-                    href="#"
-                    target="_blank"
-                    className="hover:text-orange"
-                  >
-                    Terms and Conditions
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          </div>
-          {/* Call to Action */}
-          <div>
-            <h4 className="text-md md:text-lg font-semibold font-title mb-2">
-              Are you a wedding service provider?
-            </h4>
-            <p className="text-xs md:text-sm font-body mb-4">
-              Work with us to find more couples and help them make their big
-              day unforgettable!
-            </p>
-            {/* Redirect to visitor signup */}
-            <Link href="https://tally.so/r/nGBVMp" target="_blank">
-              <Button className="font-body font-bold w-full md:w-auto sm:w-fit" variant="signup"
-              >
-                Register Now
-              </Button>
+    <footer className="w-full border-t border-orange/15 bg-transparent font-body mt-auto">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10 mb-10">
+          {/* Brand & Brief Tagline */}
+          <div className="lg:col-span-4">
+            <Link href="/" className="inline-block mb-3">
+              <span className="font-title text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
+                Say I Do
+              </span>
             </Link>
+            <p className="text-gray-600 text-sm leading-relaxed max-w-sm mb-4">
+              Sri Lanka&apos;s premier wedding directory and planning companion, connecting couples with verified vendors to craft unforgettable celebrations.
+            </p>
+            <div className="inline-flex items-center gap-1.5 text-xs text-gray-500 font-medium bg-orange/10 border border-orange/20 px-3 py-1 rounded-full text-orange">
+              <FiHeart size={12} />
+              <span>Made with love for weddings</span>
+            </div>
+          </div>
+
+          {/* Explore / Navigation */}
+          <div className="lg:col-span-2">
+            <h4 className="font-title text-base font-bold text-gray-900 mb-3 tracking-wide">
+              Explore
+            </h4>
+            <ul className="space-y-2 text-sm text-gray-600">
+              <li>
+                <Link href="/" className="hover:text-orange transition-colors">
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link href="/vendor-search" className="hover:text-orange transition-colors">
+                  Find Vendors
+                </Link>
+              </li>
+              <li>
+                <Link href="/visitor-dashboard" className="hover:text-orange transition-colors">
+                  Planning Tools
+                </Link>
+              </li>
+              <li>
+                <Link href="/blog" className="hover:text-orange transition-colors">
+                  Wedding Blog
+                </Link>
+              </li>
+              <li>
+                <Link href="/help" className="hover:text-orange transition-colors">
+                  Help & FAQ
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Company & Support */}
+          <div className="lg:col-span-2">
+            <h4 className="font-title text-base font-bold text-gray-900 mb-3 tracking-wide">
+              Company
+            </h4>
+            <ul className="space-y-2 text-sm text-gray-600">
+              <li>
+                <Link href="/about" className="hover:text-orange transition-colors">
+                  About Us
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="hover:text-orange transition-colors">
+                  Contact
+                </Link>
+              </li>
+              <li>
+                <Link href="/privacy-policy" className="hover:text-orange transition-colors">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/terms-of-use" className="hover:text-orange transition-colors">
+                  Terms of Use
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Vendor Partnership Card */}
+          <div className="lg:col-span-4">
+            <div className="bg-white/80 backdrop-blur-xs rounded-2xl border border-orange/20 p-5 sm:p-6 shadow-2xs">
+              <span className="text-[11px] font-semibold text-orange uppercase tracking-wider block mb-1">
+                For Service Providers
+              </span>
+              <h4 className="font-title text-base sm:text-lg font-bold text-gray-900 mb-1.5">
+                Grow your wedding business
+              </h4>
+              <p className="text-xs text-gray-600 leading-relaxed mb-4">
+                Showcase your packages, receive verified couple inquiries, and manage bookings effortlessly.
+              </p>
+              <Link
+                href="/vendor-signup"
+                className="inline-flex items-center gap-2 bg-orange hover:bg-orange/90 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition-all shadow-sm"
+              >
+                <span>Join as a Vendor</span>
+                <FiArrowRight size={13} />
+              </Link>
+            </div>
           </div>
         </div>
-        <hr className="border-t border-black pt-4" />
-        <div className="flex flex-col md:flex-row justify-between items-center my-4 space-y-4 md:space-y-0">
-          <p className="font-body text-xs md:text-sm text-center md:text-left">
-            &copy; 2025 All Rights Reserved by The Team Say I Do
+
+        {/* Bottom Bar: Copyright & Socials */}
+        <div className="border-t border-orange/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-gray-500 text-center sm:text-left">
+            &copy; {currentYear} Say I Do. All rights reserved.
           </p>
-          {/* Social Media Icons */}
-          <div className="flex space-x-4">
-            <a href="#" className="text-black hover:text-orange">
-              <FaFacebook size={20} />
+
+          <div className="flex items-center gap-2.5">
+            <a
+              href="https://facebook.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-8 h-8 rounded-full bg-white border border-orange/20 text-gray-600 hover:text-white hover:bg-orange hover:border-orange flex items-center justify-center transition-all shadow-2xs"
+              aria-label="Facebook"
+            >
+              <FaFacebook size={14} />
             </a>
-            <a href="#" className="text-black hover:text-orange">
-              <FaXTwitter size={20} />
+            <a
+              href="https://twitter.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-8 h-8 rounded-full bg-white border border-orange/20 text-gray-600 hover:text-white hover:bg-orange hover:border-orange flex items-center justify-center transition-all shadow-2xs"
+              aria-label="Twitter / X"
+            >
+              <FaXTwitter size={13} />
             </a>
-            <a href="#" className="text-black hover:text-orange">
-              <AiFillInstagram size={20} />
+            <a
+              href="https://instagram.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-8 h-8 rounded-full bg-white border border-orange/20 text-gray-600 hover:text-white hover:bg-orange hover:border-orange flex items-center justify-center transition-all shadow-2xs"
+              aria-label="Instagram"
+            >
+              <AiFillInstagram size={15} />
             </a>
-            <a href="#" className="text-black hover:text-orange">
-              <FaPinterest size={20} />
+            <a
+              href="https://pinterest.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-8 h-8 rounded-full bg-white border border-orange/20 text-gray-600 hover:text-white hover:bg-orange hover:border-orange flex items-center justify-center transition-all shadow-2xs"
+              aria-label="Pinterest"
+            >
+              <FaPinterest size={14} />
             </a>
           </div>
         </div>

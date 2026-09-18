@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 const HelpPage: React.FC = () => {
   return (
-    <div className="bg-lightYellow min-h-screen flex flex-col font-body">
+    <div className="bg-gradient-to-b from-orange/[0.03] via-white to-orange/[0.03] min-h-screen flex flex-col font-body">
       <Header />
       <Suspense
         fallback={
