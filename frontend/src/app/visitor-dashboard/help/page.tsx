@@ -6,12 +6,12 @@ import LoaderJelly from "@/components/shared/Loaders/LoaderJelly";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Help & Support | Say I Do",
+  title: "Couple Help & Support | Say I Do",
   description:
-    "Get instant answers and support for vendors and couples planning their perfect wedding on Say I Do.",
+    "Get wedding planning help, answers, and support for your big day on Say I Do.",
 };
 
-const HelpPage: React.FC = () => {
+const VisitorDashboardHelpPage: React.FC = () => {
   return (
     <div className="bg-lightYellow min-h-screen flex flex-col font-body">
       <Header />
@@ -21,17 +21,17 @@ const HelpPage: React.FC = () => {
             <div className="flex flex-col items-center gap-3">
               <LoaderJelly />
               <p className="text-xs font-medium text-gray-500">
-                Loading Help Center...
+                Loading Couple Help Center...
               </p>
             </div>
           </div>
         }
       >
-        <HelpCenter />
+        <HelpCenter initialRole="visitor" />
       </Suspense>
       <Footer />
     </div>
   );
 };
 
-export default HelpPage;
+export default VisitorDashboardHelpPage;
