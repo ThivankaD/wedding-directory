@@ -39,7 +39,7 @@ const VendorDashBoardSettings = () => {
     <div className="flex flex-col min-h-screen">
       <Header />
       <div className="bg-lightYellow flex-grow">
-        <div className="container mx-auto px-4 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
           <div className="mb-6">
             <h1 className="font-title text-3xl font-bold text-gray-900">Settings</h1>
             <p className="text-gray-500 font-body text-sm mt-1">
