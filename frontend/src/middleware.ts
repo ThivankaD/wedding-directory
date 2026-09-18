@@ -7,6 +7,22 @@ function getCookie(name: string, request: NextRequest) {
   return cookie ? cookie.value : null;
 }
 
+// Helper function to check if a JWT token is expired in Edge runtime
+function isTokenExpired(token: string | null): boolean {
+  if (!token) return true;
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) return true;
+    const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
+    if (payload.exp && typeof payload.exp === 'number') {
+      return payload.exp * 1000 <= Date.now();
+    }
+    return false;
+  } catch {
+    return true;
+  }
+}
+
 // Route definitions
 const publicRoutes = ['/about', '/contact'];
 const visitorRoutes = ['/visitor-profile', '/visitor-dashboard'];
@@ -22,58 +38,75 @@ export async function middleware(request: NextRequest) {
   }
 
   // Get auth tokens
-  const vendorToken = getCookie('access_tokenVendor', request);
-  const visitorToken = getCookie('access_token', request);
+  const rawVendorToken = getCookie('access_tokenVendor', request);
+  const rawVisitorToken = getCookie('access_token', request);
+
+  const vendorTokenExpired = rawVendorToken ? isTokenExpired(rawVendorToken) : false;
+  const visitorTokenExpired = rawVisitorToken ? isTokenExpired(rawVisitorToken) : false;
+
+  const vendorToken = vendorTokenExpired ? null : rawVendorToken;
+  const visitorToken = visitorTokenExpired ? null : rawVisitorToken;
 
   const isVendorRoute = vendorRoutes.some(route => pathname === route || pathname.startsWith(`${route}/`));
   const isVisitorRoute = visitorRoutes.some(route => pathname === route || pathname.startsWith(`${route}/`));
 
+  // Helper to attach cookie cleanup to responses
+  const cleanResponse = <T extends NextResponse>(res: T): T => {
+    if (vendorTokenExpired && rawVendorToken) {
+      res.cookies.delete('access_tokenVendor');
+    }
+    if (visitorTokenExpired && rawVisitorToken) {
+      res.cookies.delete('access_token');
+    }
+    return res;
+  };
+
   // 1. Handle vendor routes (/vendor-dashboard, /services/edit, etc.)
   if (isVendorRoute) {
     if (vendorToken) {
-      const response = NextResponse.next();
+      const response = cleanResponse(NextResponse.next());
       // Clean up lingering visitor token to avoid auth conflict
-      if (visitorToken) {
+      if (rawVisitorToken) {
         response.cookies.delete('access_token');
       }
       return response;
     }
 
-    // If not authenticated as vendor, but has visitor token, redirect to visitor dashboard
+    // If not authenticated as vendor, but has valid visitor token, redirect to visitor dashboard
     if (visitorToken) {
-      return NextResponse.redirect(new URL('/visitor-dashboard', request.url));
+      return cleanResponse(NextResponse.redirect(new URL('/visitor-dashboard', request.url)));
     }
 
     // Not authenticated at all, redirect to vendor login
-    return NextResponse.redirect(new URL('/login', request.url));
+    return cleanResponse(NextResponse.redirect(new URL('/login', request.url)));
   }
 
   // 2. Handle visitor routes (/visitor-dashboard, /visitor-profile, etc.)
   if (isVisitorRoute) {
     if (visitorToken) {
-      const response = NextResponse.next();
+      const response = cleanResponse(NextResponse.next());
       // Clean up lingering vendor token to avoid auth conflict
-      if (vendorToken) {
+      if (rawVendorToken) {
         response.cookies.delete('access_tokenVendor');
       }
       return response;
     }
 
-    // If not authenticated as visitor, but has vendor token, redirect to vendor dashboard
+    // If not authenticated as visitor, but has valid vendor token, redirect to vendor dashboard
     if (vendorToken) {
-      return NextResponse.redirect(new URL('/vendor-dashboard', request.url));
+      return cleanResponse(NextResponse.redirect(new URL('/vendor-dashboard', request.url)));
     }
 
     // Not authenticated at all, redirect to visitor login
-    return NextResponse.redirect(new URL('/visitor-login', request.url));
+    return cleanResponse(NextResponse.redirect(new URL('/visitor-login', request.url)));
   }
 
   // Fallback for any other protected routes matched by config
   if (!vendorToken && !visitorToken) {
-    return NextResponse.redirect(new URL('/visitor-login', request.url));
+    return cleanResponse(NextResponse.redirect(new URL('/visitor-login', request.url)));
   }
 
-  return NextResponse.next();
+  return cleanResponse(NextResponse.next());
 }
 
 // Configure the matcher for middleware to apply to relevant routes
