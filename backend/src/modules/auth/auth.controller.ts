@@ -47,6 +47,12 @@ const buildCookieOptions = (): CookieOptions => {
   return cookieOptions;
 };
 
+const clearCookieOptions = (): CookieOptions => {
+  const options = buildCookieOptions();
+  delete options.maxAge;
+  return options;
+};
+
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -61,6 +67,7 @@ export class AuthController {
 
     const { access_token } = this.authService.loginVisitor(visitor);
     res.cookie('access_token', access_token, buildCookieOptions());
+    res.clearCookie('access_tokenVendor', clearCookieOptions());
 
     res.status(HttpStatus.OK).json({
       message: 'Login successful',
@@ -80,6 +87,7 @@ export class AuthController {
 
     const { access_token } = this.authService.loginVendor(vendor);
     res.cookie('access_tokenVendor', access_token, buildCookieOptions());
+    res.clearCookie('access_token', clearCookieOptions());
 
     res.status(HttpStatus.OK).json({
       message: 'Login successful',
@@ -119,9 +127,12 @@ export class AuthController {
   ) {
     const result = await this.authService.googleAuth(body.idToken, body.role);
 
-    const cookieName =
-      result.role === 'vendor' ? 'access_tokenVendor' : 'access_token';
+    const isVendor = result.role === 'vendor';
+    const cookieName = isVendor ? 'access_tokenVendor' : 'access_token';
+    const oppositeCookieName = isVendor ? 'access_token' : 'access_tokenVendor';
+
     res.cookie(cookieName, result.access_token, buildCookieOptions());
+    res.clearCookie(oppositeCookieName, clearCookieOptions());
 
     return {
       message: result.isNewUser
@@ -152,6 +163,7 @@ export class AuthController {
   ) {
     const result = await this.authService.completeVisitorSignup(body);
     res.cookie('access_token', result.access_token, buildCookieOptions());
+    res.clearCookie('access_tokenVendor', clearCookieOptions());
     return result;
   }
 
@@ -162,6 +174,14 @@ export class AuthController {
   ) {
     const result = await this.authService.completeVendorSignup(body);
     res.cookie('access_tokenVendor', result.access_token, buildCookieOptions());
+    res.clearCookie('access_token', clearCookieOptions());
     return result;
+  }
+
+  @Post('logout')
+  logout(@Res({ passthrough: true }) res: Response) {
+    res.clearCookie('access_token', clearCookieOptions());
+    res.clearCookie('access_tokenVendor', clearCookieOptions());
+    return { message: 'Logged out successfully' };
   }
 }
