@@ -8,13 +8,13 @@ import {
 import categories from "../../utils/category.json";
 import { CategoryProps } from "@/types/signupInput";
 
-const CategoryInput: React.FC<CategoryProps> = ({ onCategoryChange }) => {
-  const handleCategorySelect = (value: string) => {
-    onCategoryChange(value);
+const CategoryInput: React.FC<CategoryProps> = ({ onCategoryChange, value }) => {
+  const handleCategorySelect = (selected: string) => {
+    onCategoryChange(selected === "ALL" ? "" : selected);
   };
 
   return (
-    <Select onValueChange={handleCategorySelect}>
+    <Select value={value || undefined} onValueChange={handleCategorySelect}>
       <SelectTrigger
         id="bcategory"
         variant="borderless"
@@ -22,12 +22,18 @@ const CategoryInput: React.FC<CategoryProps> = ({ onCategoryChange }) => {
       >
         <SelectValue placeholder="Select Service" />
       </SelectTrigger>
-      <SelectContent className="w-full bg-white/30 backdrop-blur-sm rounded-lg shadow-lg max-h-60 overflow-y-auto z-10">
+      <SelectContent className="w-full bg-white rounded-xl shadow-xl border border-orange/15 max-h-60 overflow-y-auto z-50">
+        <SelectItem
+          value="ALL"
+          className="p-2 text-gray-500 italic font-body hover:bg-orange/10 hover:text-orange rounded-lg cursor-pointer transition duration-150 ease-in-out"
+        >
+          All Services
+        </SelectItem>
         {categories.map((category, index) => (
           <SelectItem
             key={index}
             value={category}
-            className="p-2 text-gray-800 font-body hover:bg-gray-300/40 rounded-lg cursor-pointer transition duration-150 ease-in-out"
+            className="p-2 text-gray-800 font-body hover:bg-orange/10 hover:text-orange rounded-lg cursor-pointer transition duration-150 ease-in-out"
           >
             {category}
           </SelectItem>

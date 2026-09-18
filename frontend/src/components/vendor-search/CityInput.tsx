@@ -16,14 +16,18 @@ import {
 import cities from "../../utils/city.json";
 import { Button } from "../ui/button";
 import { CityProps } from "@/types/signupInput";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
 
-const CityInput: React.FC<CityProps> = ({ onCityChange }) => {
-  const [selectedCity, setSelectedCity] = useState<string | null>(null);
+const CityInput: React.FC<CityProps> = ({ onCityChange, value }) => {
+  const [selectedCity, setSelectedCity] = useState<string | null>(value || null);
+
+  useEffect(() => {
+    setSelectedCity(value || null);
+  }, [value]);
 
   const handleCitySelect = (city: string) => {
-    setSelectedCity(city);
+    setSelectedCity(city ? city : null);
     onCityChange(city);
   };
 
@@ -60,6 +64,13 @@ const CityInput: React.FC<CityProps> = ({ onCityChange }) => {
           <DropdownMenuLabel className="font-body px-4 py-2 text-gray-500">
             Find Your City
           </DropdownMenuLabel>
+          <DropdownMenuItem
+            onClick={() => handleCitySelect("")}
+            className="px-4 py-2 text-gray-500 italic hover:bg-orange/10 hover:text-orange rounded-lg cursor-pointer transition duration-150"
+          >
+            All Cities
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
           <DropdownMenuGroup>
             {provinces.map((province, provinceIndex) => (
               <DropdownMenuSub key={provinceIndex}>

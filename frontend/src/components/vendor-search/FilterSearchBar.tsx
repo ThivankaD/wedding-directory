@@ -1,31 +1,39 @@
-"use-client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { IoIosSearch } from "react-icons/io";
 import CategoryInput from "./CategoryInput";
 import CityInput from "./CityInput";
-import { Button } from "../ui/button";
 import { FilterSearchBarProps } from "@/types/offeringTypes";
 
 const FilterSearchBar: React.FC<FilterSearchBarProps> = ({
   onCategoryChange,
   onCityChange,
   handleSearch,
+  selectedCategory,
+  selectedCity,
 }) => {
-  const [category, setCategory] = useState<string | null>(null);
-  const [city, setCity] = useState<string | null>(null);
+  const [category, setCategory] = useState<string>(selectedCategory || "");
+  const [city, setCity] = useState<string>(selectedCity || "");
 
-  const handleCategoryChange = (selectedCategory: string) => {
-    setCategory(selectedCategory);
-    onCategoryChange(selectedCategory);
+  useEffect(() => {
+    setCategory(selectedCategory || "");
+  }, [selectedCategory]);
+
+  useEffect(() => {
+    setCity(selectedCity || "");
+  }, [selectedCity]);
+
+  const handleCategoryChange = (newCategory: string) => {
+    setCategory(newCategory);
+    onCategoryChange(newCategory);
   };
 
-  const handleCityChange = (selectedCity: string) => {
-    setCity(selectedCity);
-    onCityChange(selectedCity);
+  const handleCityChange = (newCity: string) => {
+    setCity(newCity);
+    onCityChange(newCity);
   };
 
   const onSearch = () => {
-    handleSearch(city || "", category || "");
+    handleSearch(city, category);
   };
 
   return (
@@ -36,7 +44,10 @@ const FilterSearchBar: React.FC<FilterSearchBarProps> = ({
           <span className="text-[10px] font-bold uppercase tracking-wider text-orange/80 px-2 leading-none">
             Category
           </span>
-          <CategoryInput onCategoryChange={handleCategoryChange} />
+          <CategoryInput
+            value={category}
+            onCategoryChange={handleCategoryChange}
+          />
         </div>
 
         {/* Divider */}
@@ -47,7 +58,11 @@ const FilterSearchBar: React.FC<FilterSearchBarProps> = ({
           <span className="text-[10px] font-bold uppercase tracking-wider text-orange/80 px-2 leading-none">
             Location
           </span>
-          <CityInput placeholder="City" onCityChange={handleCityChange} />
+          <CityInput
+            placeholder="City"
+            value={city}
+            onCityChange={handleCityChange}
+          />
         </div>
 
         {/* Search Button */}
