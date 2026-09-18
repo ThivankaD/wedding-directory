@@ -17,7 +17,7 @@ const BudgetItemPopup: React.FC<BudgetItemPopupProps> = ({
                                                          }) => {
   const initialFormState = {
     itemName: '',
-    category: '',
+    category: budgetCategories[0] || 'Venues',
     estimatedCost: '',
     amountPaid: '',
     specialNotes: '',
@@ -55,7 +55,7 @@ const BudgetItemPopup: React.FC<BudgetItemPopupProps> = ({
 
     const input = {
       itemName: formData.itemName,
-      category: formData.category,
+      category: formData.category?.trim() || budgetCategories[0] || 'Venues',
       estimatedCost: estimatedCost,
       amountPaid: amountPaid || 0,
       specialNotes: formData.specialNotes,
@@ -74,22 +74,22 @@ const BudgetItemPopup: React.FC<BudgetItemPopupProps> = ({
       <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
 
       <div className="fixed inset-0 flex items-center justify-center p-4">
-        <Dialog.Panel className="mx-auto max-w-md rounded-2xl bg-white p-6 w-full">
-          <div className="flex items-center justify-between mb-6">
-            <Dialog.Title className="text-2xl font-bold font-body">
-              Add new Budget Item
+        <Dialog.Panel className="mx-auto max-w-md rounded-3xl bg-white border-2 border-orange/20 shadow-2xl p-6 sm:p-7 w-full animate-in fade-in zoom-in-95 duration-200">
+          <div className="flex items-center justify-between mb-6 pb-4 border-b border-orange/15">
+            <Dialog.Title className="text-xl sm:text-2xl font-bold font-title text-gray-900">
+              Add New Budget Item
             </Dialog.Title>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600"
+              className="w-8 h-8 rounded-full bg-gray-100 hover:bg-orange/10 hover:text-orange flex items-center justify-center text-gray-500 transition-colors"
             >
-              <X size={24} />
+              <X size={18} />
             </button>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block mb-2 font-body">Item Name</label>
+              <label className="block mb-1.5 text-xs font-bold text-gray-700 font-body uppercase tracking-wider">Item Name</label>
               <Input
                 value={formData.itemName}
                 onChange={(e) =>
@@ -98,22 +98,23 @@ const BudgetItemPopup: React.FC<BudgetItemPopupProps> = ({
                     itemName: e.target.value,
                   }))
                 }
-                placeholder="Enter item name"
+                placeholder="e.g. Wedding Reception Hall"
+                className="w-full h-11 border-2 border-orange/20 focus:border-orange rounded-xl bg-orange/[0.02]"
                 required
               />
             </div>
 
             <div>
-              <label className="block mb-2 font-body">Budget Category</label>
+              <label className="block mb-1.5 text-xs font-bold text-gray-700 font-body uppercase tracking-wider">Budget Category</label>
               <select
-                value={formData.category}
+                value={formData.category || budgetCategories[0] || 'Venues'}
                 onChange={(e) =>
                   setFormData((prev) => ({
                     ...prev,
                     category: e.target.value,
                   }))
                 }
-                className="  w-full rounded-md border border-input font-body bg-background px-3 h-10"
+                className="w-full rounded-xl border-2 border-orange/20 focus:border-orange font-body bg-white px-3 h-11 text-sm focus:outline-none"
                 required
               >
                 {budgetCategories.map((category) => (
@@ -124,9 +125,9 @@ const BudgetItemPopup: React.FC<BudgetItemPopupProps> = ({
               </select>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block mb-2 font-body">Estimate/Cost</label>
+                <label className="block mb-1.5 text-xs font-bold text-gray-700 font-body uppercase tracking-wider">Estimated Cost</label>
                 <Input
                   type="number"
                   step="0.01"
@@ -137,13 +138,14 @@ const BudgetItemPopup: React.FC<BudgetItemPopupProps> = ({
                       estimatedCost: e.target.value,
                     }))
                   }
-                  placeholder="Enter estimated cost"
+                  placeholder="0.00"
+                  className="w-full h-11 border-2 border-orange/20 focus:border-orange rounded-xl bg-orange/[0.02]"
                   required
                 />
               </div>
 
               <div>
-                <label className="block mb-2 font-body">Amount paid</label>
+                <label className="block mb-1.5 text-xs font-bold text-gray-700 font-body uppercase tracking-wider">Amount Paid</label>
                 <Input
                   type="number"
                   step="0.01"
@@ -154,14 +156,15 @@ const BudgetItemPopup: React.FC<BudgetItemPopupProps> = ({
                       amountPaid: e.target.value,
                     }))
                   }
-                  placeholder="Enter amount paid"
+                  placeholder="0.00"
+                  className="w-full h-11 border-2 border-orange/20 focus:border-orange rounded-xl bg-orange/[0.02]"
                   required
                 />
               </div>
             </div>
 
             <div>
-              <label className="block mb-2 font-body">Add Notes</label>
+              <label className="block mb-1.5 text-xs font-bold text-gray-700 font-body uppercase tracking-wider">Notes (Optional)</label>
               <textarea
                 value={formData.specialNotes}
                 onChange={(e) =>
@@ -170,18 +173,18 @@ const BudgetItemPopup: React.FC<BudgetItemPopupProps> = ({
                     specialNotes: e.target.value,
                   }))
                 }
-                placeholder="Add related notes about your payments, advanced, due dates, options etc."
-                className="w-full p-2 border rounded-lg h-24 resize-none"
+                placeholder="Add notes about deposits, due dates, package choices..."
+                className="w-full p-3 border-2 border-orange/20 focus:border-orange rounded-xl h-20 resize-none text-sm bg-orange/[0.02] focus:outline-none"
               />
             </div>
 
-            <Button
+            <button
               type="submit"
-              className="w-full bg-[#FF7262] hover:bg-[#ff8576] text-white py-6 font-body"
+              className="w-full h-12 bg-orange hover:bg-orange/90 text-white font-semibold rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer mt-2"
               disabled={loading}
             >
-              {loading ? "Adding..." : "Add Expense"}
-            </Button>
+              {loading ? "Adding..." : "Add Expense Item"}
+            </button>
           </form>
         </Dialog.Panel>
       </div>
