@@ -9,6 +9,14 @@ import { toast } from 'react-hot-toast';
 import PaymentItem from './PaymentItem';
 
 import { BudgetItemsPanelProps, BudgetItemData, UpdateBudgetItemInput, PaymentData } from '@/types/budgeterTypes';
+import budgetCategories from '@/utils/budgetCategories';
+
+const getValidCategory = (cat?: string | null) => {
+  if (!cat || cat.trim() === '' || cat.toLowerCase() === 'uncategorized') {
+    return budgetCategories[0] || 'Venues';
+  }
+  return cat;
+};
 
 const BudgetItemsPanel: React.FC<BudgetItemsPanelProps> = ({ 
   budgetToolId,
@@ -90,7 +98,8 @@ const BudgetItemsPanel: React.FC<BudgetItemsPanelProps> = ({
   
   // Update paidInFullItems calculation to include external payments
   const paidInFullItems = budgetItems.filter((item) => {
-    const categoryPaidAmount = categoryPayments[item.category] || 0;
+    const itemCat = getValidCategory(item.category);
+    const categoryPaidAmount = categoryPayments[itemCat] || 0;
     const totalPaidAmount = item.amountPaid + categoryPaidAmount;
     return totalPaidAmount >= item.estimatedCost;
   }).length;
@@ -100,9 +109,9 @@ const BudgetItemsPanel: React.FC<BudgetItemsPanelProps> = ({
   );
 
   const renderBudgetItems = () => {
-    // Group items by category
+    // Group items by category (normalizing user added items without category into their valid category)
     const groupedItems = filteredItems.reduce((acc: { [key: string]: BudgetItemData[] }, item) => {
-      const category = item.category || 'Uncategorized';
+      const category = getValidCategory(item.category);
       if (!acc[category]) {
         acc[category] = [];
       }
@@ -113,7 +122,7 @@ const BudgetItemsPanel: React.FC<BudgetItemsPanelProps> = ({
     // Group payments by category
     const groupedPayments = payments.reduce((acc: { [key: string]: PaymentData[] }, payment) => {
       if (payment.package?.offering?.category) {
-        const category = payment.package.offering.category;
+        const category = getValidCategory(payment.package.offering.category);
         if (!acc[category]) {
           acc[category] = [];
         }
@@ -132,27 +141,30 @@ const BudgetItemsPanel: React.FC<BudgetItemsPanelProps> = ({
     return Array.from(allCategories).map((category) => (
       <div key={category} className="mb-6">
         {/* Category Header */}
-        <div className="bg-gray-50 px-6 py-3 rounded-t-lg border-b font-semibold text-gray-700">
-          {category}
+        <div className="bg-orange/[0.06] px-5 py-3 rounded-2xl border-2 border-orange/15 font-title font-bold text-gray-900 flex items-center justify-between text-base sm:text-lg">
+          <span>{category}</span>
         </div>
 
         {/* Category Items */}
-        <div className="space-y-2 mt-2">
+        <div className="space-y-3 mt-3">
           {/* Render Budget Items */}
-          {groupedItems[category]?.map((item) => (
-            <BudgetItem
-              key={`item-${item.id}`}
-              itemId={item.id}
-              itemName={item.itemName}
-              estimatedCost={item.estimatedCost}
-              paidAmount={item.amountPaid}
-              category={item.category}
-              specialNotes={item.specialNotes}
-              onSave={(data) => handleUpdateBudgetItem(item.id, data)}
-              onDelete={() => handleDeleteBudgetItem(item.id)}
-              externalPayments={categoryPayments[item.category] || 0}
-            />
-          ))}
+          {groupedItems[category]?.map((item) => {
+            const itemCat = getValidCategory(item.category);
+            return (
+              <BudgetItem
+                key={`item-${item.id}`}
+                itemId={item.id}
+                itemName={item.itemName}
+                estimatedCost={item.estimatedCost}
+                paidAmount={item.amountPaid}
+                category={itemCat}
+                specialNotes={item.specialNotes}
+                onSave={(data) => handleUpdateBudgetItem(item.id, data)}
+                onDelete={() => handleDeleteBudgetItem(item.id)}
+                externalPayments={categoryPayments[itemCat] || 0}
+              />
+            );
+          })}
 
           {/* Render Related Payments */}
           {groupedPayments[category]?.map((payment) => (
@@ -167,25 +179,28 @@ const BudgetItemsPanel: React.FC<BudgetItemsPanelProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-lg border p-6 space-y-6">
+    <div className="bg-white rounded-3xl border-2 border-orange/20 shadow-sm p-6 sm:p-8 space-y-6">
       {/* Header Section */}
-      <div className="flex items-center justify-between border-b-slate-300">
-        <h2 className="text-2xl font-semibold font-body">Budget List</h2>
-        <div className="flex items-center gap-8">
-          <div className="flex items-center gap-2">
-            <span className="text-gray-600 font-body">Total Budget Items:</span>
-            <span className="font-semibold">{totalItems}</span>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-orange/15">
+        <div>
+          <h2 className="font-title text-2xl sm:text-3xl font-bold text-gray-900">Budget Items</h2>
+          <p className="text-xs sm:text-sm text-gray-500 font-body">Track, manage, and record expenses for all wedding categories.</p>
+        </div>
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-2 bg-orange/[0.05] border border-orange/15 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold text-gray-700">
+            <span>Total Items:</span>
+            <strong className="text-orange font-bold">{totalItems}</strong>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-gray-600 font-body">Items Paid Full:</span>
-            <span className="font-semibold">{paidInFullItems}</span>
+          <div className="flex items-center gap-2 bg-orange/[0.05] border border-orange/15 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold text-gray-700">
+            <span>Paid in Full:</span>
+            <strong className="text-orange font-bold">{paidInFullItems}</strong>
           </div>
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="bg-[#FF7262] text-white px-6 py-2 rounded-full flex items-center gap-2 font-body hover:bg-[#ff8576] transition-colors"
+            className="bg-orange hover:bg-orange/90 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 font-semibold text-sm shadow-xs hover:shadow-md transition-all cursor-pointer"
           >
-            <Plus size={20} />
-            Add Budget Item
+            <Plus size={18} />
+            <span>Add Item</span>
           </button>
         </div>
       </div>
@@ -198,15 +213,15 @@ const BudgetItemsPanel: React.FC<BudgetItemsPanelProps> = ({
       />
 
       {/* Search Bar */}
-      <div className="relative">
+      <div className="relative max-w-sm">
         <input
           type="text"
-          placeholder="Search Budget Items"
-          className="w-[300px] pl-10 pr-4 py-2 border rounded-lg"
+          placeholder="Search budget items..."
+          className="w-full pl-10 pr-4 py-2.5 text-sm bg-orange/[0.02] border-2 border-orange/20 focus:border-orange rounded-xl focus:outline-none focus:ring-1 focus:ring-orange text-gray-800 placeholder-gray-400 transition-all"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <Search className="absolute left-3 top-2.5 text-gray-400" size={20} />
+        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
       </div>
 
       {/* Budget Items grouped by category */}

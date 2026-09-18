@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { CREATE_BUDGET_TOOL } from '@/graphql/mutations';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import Breadcrumbs from '@/components/Breadcrumbs';
 import toast from 'react-hot-toast';
 import Image from 'next/image';
-
+import { FiPieChart, FiArrowRight, FiCheckCircle } from 'react-icons/fi';
 import { CreateBudgetToolProps } from '@/types/budgeterTypes';
 
 const CreateBudgetTool: React.FC<CreateBudgetToolProps> = ({ visitorId }) => {
@@ -43,58 +43,102 @@ const CreateBudgetTool: React.FC<CreateBudgetToolProps> = ({ visitorId }) => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8 bg-white">
-      <div className="text-sm text-gray-500 mb-4">
-        Dashboard/Budgeter
+    <div className="w-full bg-white rounded-3xl border-2 border-orange/20 shadow-sm p-6 sm:p-10 relative overflow-hidden">
+      {/* Subtle background glow */}
+      <div className="absolute -top-24 -right-24 w-96 h-96 bg-orange/5 rounded-full blur-3xl pointer-events-none" />
+
+      {/* Breadcrumbs */}
+      <div className="mb-6 relative z-10">
+        <Breadcrumbs
+          items={[
+            { label: "Dashboard", href: "/visitor-dashboard" },
+            { label: "Budgeter" },
+          ]}
+        />
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-8">
-        <div className="flex-1 min-w-[300px]">
-          <h1 className="text-4xl font-bold mb-4">
+      <div className="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12 relative z-10">
+        {/* Left Form Section */}
+        <div className="flex-1 w-full max-w-xl">
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-bold bg-orange/10 text-orange mb-3">
+            <FiPieChart size={14} />
+            <span>Wedding Budget Planner</span>
+          </div>
+
+          <h1 className="font-title text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight mb-3">
             Get started with adding your budget
           </h1>
 
-          <p className="text-gray-700 mb-8">
-            Plan your wedding expenses effectively and stay within budget.
+          <p className="font-body text-gray-600 text-sm sm:text-base mb-6 leading-relaxed">
+            Plan your wedding expenses effectively, monitor vendor costs, and stay comfortably within budget for your dream celebration.
           </p>
 
-          <div className="space-y-6 max-w-md">
+          <form onSubmit={handleSubmit} className="space-y-4 max-w-md">
             <div>
-              <h2 className="text-xl font-semibold mb-4">Your Budget</h2>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="flex gap-2">
+              <label className="block text-sm font-bold text-gray-800 mb-2 font-body">
+                Your Target Budget
+              </label>
+              <div className="flex items-center gap-2">
+                <div className="relative flex-1">
                   <Input
                     type="number"
-                    placeholder="Enter your budget"
+                    placeholder="e.g. 1500000"
                     value={totalBudget}
                     onChange={(e) => setTotalBudget(e.target.value)}
-                    className="flex-1"
+                    className="w-full h-12 text-base font-semibold bg-orange/[0.02] border-2 border-orange/20 focus:border-orange rounded-xl focus:ring-2 focus:ring-orange/20 text-gray-900 placeholder-gray-400 transition-all"
+                    required
                   />
-                  <div className="flex items-center px-4 bg-gray-100 rounded-md">
-                    LKR
-                  </div>
                 </div>
-
-                <Button
-                  type="submit"
-                  className="w-full bg-orange hover:bg-coral-600 text-white py-6"
-                  disabled={loading || !totalBudget}
-                >
-                  {loading ? 'Creating...' : 'Manage my budget'}
-                </Button>
-              </form>
+                <div className="flex items-center justify-center px-4 h-12 bg-orange/10 border-2 border-orange/20 rounded-xl text-orange font-bold text-sm tracking-wider shrink-0">
+                  LKR
+                </div>
+              </div>
             </div>
+
+            <button
+              type="submit"
+              disabled={loading || !totalBudget}
+              className="w-full h-12 bg-orange hover:bg-orange/90 text-white font-semibold text-base rounded-xl shadow-xs hover:shadow-md transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer mt-3"
+            >
+              {loading ? (
+                <>
+                  <div className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                  <span>Setting up budget...</span>
+                </>
+              ) : (
+                <>
+                  <span>Manage My Budget</span>
+                  <FiArrowRight size={16} />
+                </>
+              )}
+            </button>
+          </form>
+
+          {/* Quick value props */}
+          <div className="flex flex-wrap items-center gap-4 mt-8 pt-6 border-t border-orange/15 text-xs text-gray-600 font-medium">
+            <span className="flex items-center gap-1.5">
+              <FiCheckCircle className="text-orange" size={14} />
+              Category expense breakdowns
+            </span>
+            <span className="flex items-center gap-1.5">
+              <FiCheckCircle className="text-orange" size={14} />
+              Real-time payment tracking
+            </span>
           </div>
         </div>
 
-        <div className="flex-1">
-          <Image
-            src="/images/budgeter.png"
-            alt="Budget Management Illustration"
-            width={500}
-            height={400}
-            className="w-full h-auto"
-          />
+        {/* Right Illustration Section */}
+        <div className="flex-1 w-full max-w-md flex justify-center items-center">
+          <div className="w-full p-6 sm:p-8 bg-orange/[0.03] rounded-3xl border-2 border-orange/15 shadow-2xs">
+            <Image
+              src="/images/budgeter.png"
+              alt="Budget Management Illustration"
+              width={500}
+              height={400}
+              className="w-full h-auto object-contain drop-shadow-sm"
+              priority
+            />
+          </div>
         </div>
       </div>
     </div>

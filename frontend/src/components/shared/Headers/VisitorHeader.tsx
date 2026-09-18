@@ -182,13 +182,11 @@ const VisitorHeader = () => {
     <Fragment>
       <header className="py-4 xl:py-5 text-black bg-lightYellow border-b border-orange/15">
         <div className="container mx-auto flex justify-between items-center px-4 sm:px-6 lg:px-8">
-          {/* Logo */}
-          <div className="flex items-center">
-            <Link href="/" className="group">
-              <h1 className="text-2xl font-bold text-gray-900 font-title group-hover:text-orange transition-colors">
-                Say I Do
-              </h1>
-            </Link>
+          {/* Logo - click disabled for logged-in visitor */}
+          <div className="flex items-center select-none cursor-default">
+            <h1 className="text-2xl font-bold text-gray-900 font-title">
+              Say I Do
+            </h1>
           </div>
 
           {/* Search bar */}

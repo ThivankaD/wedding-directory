@@ -1,126 +1,267 @@
 'use client';
 
-import Breadcrumbs from '@/components/Breadcrumbs';
 import React, { useState } from 'react';
+import Link from 'next/link';
+import Breadcrumbs from '@/components/Breadcrumbs';
 import { useQuery } from '@apollo/client';
 import { FIND_ALL_MY_VENDORS } from '@/graphql/queries';
 import { useAuth } from '@/contexts/VisitorAuthContext';
-import CategoryDropdown from '@/components/visitor-dashboard/my-vendors/CategoryDropdown';
+import { CategoryCard, CategoryModal } from '@/components/visitor-dashboard/my-vendors/CategoryDropdown';
 import categories from '@/utils/category.json';
+import { FiSearch, FiBookmark, FiLayers } from 'react-icons/fi';
 
 const MyVendors = () => {
   const { visitor } = useAuth();
-  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [filterMode, setFilterMode] = useState<'all' | 'saved'>('all');
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const { data, loading, error } = useQuery(
-    FIND_ALL_MY_VENDORS,
-    {
-      variables: {
-        visitorId: visitor?.id,
-      },
-      skip: !visitor,
-    }
-  );
+  const { data, loading } = useQuery(FIND_ALL_MY_VENDORS, {
+    variables: {
+      visitorId: visitor?.id,
+    },
+    skip: !visitor,
+  });
 
   // Get all vendors
   const allVendors = data?.findAllMyVendors || [];
 
-  console.log({
-    visitorId: visitor?.id,
-    expandedCategories: Array.from(expandedCategories),
-    data,
-    error
+  // Count of categories that have at least 1 saved vendor
+  const categoriesWithVendorsCount = categories.filter((category) =>
+    allVendors.some(
+      (vendor: { offering: { category: string } }) => vendor.offering?.category === category
+    )
+  ).length;
+
+  // Filter categories based on saved status and search query
+  const filteredCategories = categories.filter((category) => {
+    // Filter mode
+    if (filterMode === 'saved') {
+      const hasOfferings = allVendors.some(
+        (vendor: { offering: { category: string } }) => vendor.offering?.category === category
+      );
+      if (!hasOfferings) return false;
+    }
+
+    // Search query
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase().trim();
+      const categoryMatches = category.toLowerCase().includes(query);
+      const vendorMatches = allVendors.some(
+        (vendor: {
+          offering: {
+            category: string;
+            name?: string;
+            vendor?: { busname?: string; city?: string };
+          };
+        }) =>
+          vendor.offering?.category === category &&
+          (vendor.offering?.name?.toLowerCase().includes(query) ||
+            vendor.offering?.vendor?.busname?.toLowerCase().includes(query) ||
+            vendor.offering?.vendor?.city?.toLowerCase().includes(query))
+      );
+      return categoryMatches || vendorMatches;
+    }
+
+    return true;
   });
 
-  const [showAdded, setShowAdded] = useState(false);
-
-  const handleCategoryClick = (category: string) => {
-    setExpandedCategories(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(category)) {
-        newSet.delete(category);
-      } else {
-        newSet.add(category);
-      }
-      return newSet;
-    });
-  };
-
-  // Filter categories that have vendors if showAdded is true
-  const filteredCategories = showAdded
-    ? categories.filter((category) => 
-        allVendors.some(
-          (vendor: { offering: { category: string; }; }) => vendor.offering.category === category
-        )
-      )
-    : categories;
-
   return (
-    <div className="py-4 px-2 md:py-6 md:px-4">
-      {/* Hide breadcrumbs on mobile */}
-      <div className="hidden md:block shadow-md bg-white p-4 rounded-lg mb-4 md:mb-6">
-        <Breadcrumbs
-          items={[
-            { label: "Dashboard", href: "/visitor-dashboard" },
-            { label: "Checklist", href: "/visitor-dashboard/my-vendors" },
-          ]}
-        />
-        <div>
-          <h1 className="text-4xl md:text-3xl font-bold text-black font-title my-3">
-            My Vendors
-          </h1>
-          <p className="font-body text-xl text-black">Easily organize all your vendors in one place</p>
+    <div className="w-full space-y-6">
+      {/* Hero Header Card */}
+      <div className="bg-white rounded-2xl border border-orange/15 shadow-sm p-6 sm:p-8 relative overflow-hidden">
+        {/* Subtle accent glow */}
+        <div className="absolute top-0 right-0 w-80 h-80 bg-orange/5 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="relative z-10">
+          {/* Breadcrumbs */}
+          <div className="mb-4">
+            <Breadcrumbs
+              items={[
+                { label: "Dashboard", href: "/visitor-dashboard" },
+                { label: "My Vendors" },
+              ]}
+            />
+          </div>
+
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div>
+              <div className="flex items-center gap-2.5 mb-2">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-orange/10 text-orange">
+                  <FiBookmark size={13} />
+                  Shortlisted & Booked
+                </span>
+                <span className="text-xs font-medium text-gray-500">
+                  {categories.length} Categories Total
+                </span>
+              </div>
+              <h1 className="font-title text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight">
+                My Vendors
+              </h1>
+              <p className="font-body text-sm sm:text-base text-gray-600 mt-1.5 max-w-2xl">
+                Easily organize, track, and manage all your shortlisted and booked wedding vendors in one place.
+              </p>
+
+              {/* Metric badges */}
+              <div className="flex flex-wrap items-center gap-3 mt-4">
+                <div className="flex items-center gap-2 bg-orange/[0.06] border border-orange/15 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold text-gray-800">
+                  <span className="w-2 h-2 rounded-full bg-orange" />
+                  <span>
+                    <strong className="text-orange font-bold">{allVendors.length}</strong> Saved Vendors
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 bg-orange/[0.06] border border-orange/15 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold text-gray-800">
+                  <FiLayers className="text-orange" size={14} />
+                  <span>
+                    <strong className="text-orange font-bold">{categoriesWithVendorsCount}</strong> Categories with Vendors
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Action Button */}
+            <div className="shrink-0 flex items-center gap-3">
+              <Link
+                href="/vendor-search"
+                className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-orange hover:bg-orange/90 text-white font-semibold text-sm shadow-xs transition-all w-full sm:w-auto"
+              >
+                <FiSearch size={16} />
+                <span>Explore Vendors</span>
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="mt-6 md:mt-12">
-        <div className="flex flex-col items-center mb-4 md:mb-6 bg-white p-3 md:p-4 rounded-lg shadow-lg">
-          <div className="flex flex-col md:flex-row justify-between items-center w-full gap-3 md:gap-0">
-            <h1 className="text-2xl md:text-3xl font-bold font-title">
-              Vendors List
-            </h1>
-            <label className="flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                checked={showAdded}
-                onChange={() => setShowAdded(!showAdded)}
-                className="hidden"
-              />
-              <span
-                className={`relative inline-block w-12 h-6 transition duration-200 ease-linear rounded-full ${
-                  showAdded ? "bg-slate-600" : "bg-orange"
+      {/* Main Vendors by Category Card */}
+      <div className="bg-white rounded-2xl border border-orange/15 shadow-sm p-5 sm:p-7">
+        {/* Filter & Search Toolbar */}
+        <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 pb-6 border-b border-orange/10">
+          <div>
+            <h2 className="font-title text-xl sm:text-2xl font-bold text-gray-900">
+              Vendors by Category
+            </h2>
+            <p className="text-xs sm:text-sm text-gray-500 font-body">
+              Click any category box below to open your shortlisted vendors or explore options.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2.5">
+            {/* Filter Pills */}
+            <div className="inline-flex items-center bg-orange/[0.06] p-1 rounded-xl border border-orange/15 text-xs font-semibold">
+              <button
+                type="button"
+                onClick={() => setFilterMode("all")}
+                className={`px-3.5 py-1.5 rounded-lg transition-all cursor-pointer ${
+                  filterMode === "all"
+                    ? "bg-orange text-white shadow-2xs"
+                    : "text-gray-700 hover:text-orange"
                 }`}
               >
-                <span
-                  className={`absolute left-0 inline-block w-6 h-6 transform transition duration-100 ease-linear bg-white rounded-full ${
-                    showAdded
-                      ? "translate-x-full bg-slate-600"
-                      : "translate-x-0 bg-orange"
-                  }`}
-                />
-              </span>
-              <span className="ml-3 text-sm font-body font-medium text-gray-900">
-                {showAdded ? "Show All" : "Show Added"}
-              </span>
-            </label>
-          </div>
-
-          {/* Category Dropdowns */}
-          <div className="w-full mt-6">
-            {filteredCategories.map((category) => (
-              <CategoryDropdown
-                key={category}
-                category={category}
-                isExpanded={expandedCategories.has(category)}
-                onToggle={handleCategoryClick}
-                loading={loading}
-                vendors={allVendors}
-              />
-            ))}
+                All ({categories.length})
+              </button>
+              <button
+                type="button"
+                onClick={() => setFilterMode("saved")}
+                className={`px-3.5 py-1.5 rounded-lg transition-all cursor-pointer ${
+                  filterMode === "saved"
+                    ? "bg-orange text-white shadow-2xs"
+                    : "text-gray-700 hover:text-orange"
+                }`}
+              >
+                Saved Only ({categoriesWithVendorsCount})
+              </button>
+            </div>
           </div>
         </div>
+
+        {/* Search Bar */}
+        <div className="pt-4 pb-6">
+          <div className="relative max-w-md">
+            <FiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search category, vendor name, or city..."
+              className="w-full pl-10 pr-4 py-2.5 text-sm bg-orange/[0.02] border border-orange/20 rounded-xl focus:outline-none focus:border-orange focus:ring-1 focus:ring-orange transition-all text-gray-800 placeholder-gray-400"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-gray-400 hover:text-orange cursor-pointer"
+              >
+                Clear
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Category Boxes Grid */}
+        <div className="w-full">
+          {filteredCategories.length === 0 ? (
+            <div className="text-center py-12 px-4 rounded-2xl border border-dashed border-orange/25 bg-orange/[0.015]">
+              <div className="w-12 h-12 rounded-full bg-orange/10 text-orange flex items-center justify-center mx-auto mb-3">
+                <FiSearch size={20} />
+              </div>
+              <h3 className="font-title text-base sm:text-lg font-bold text-gray-800">
+                No matching categories found
+              </h3>
+              <p className="text-xs sm:text-sm text-gray-500 mt-1 max-w-sm mx-auto">
+                {searchQuery
+                  ? `No categories match "${searchQuery}". Try a different search term or clear the filter.`
+                  : "You haven't saved any vendors in any category yet."}
+              </p>
+              <div className="mt-4 flex items-center justify-center gap-2">
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery("")}
+                    className="px-4 py-2 rounded-xl text-xs font-semibold text-gray-700 bg-white border border-gray-200 hover:border-orange/30 hover:text-orange transition-all cursor-pointer"
+                  >
+                    Clear Search
+                  </button>
+                )}
+                {filterMode === "saved" && (
+                  <button
+                    type="button"
+                    onClick={() => setFilterMode("all")}
+                    className="px-4 py-2 rounded-xl text-xs font-semibold text-white bg-orange hover:bg-orange/90 transition-all shadow-xs cursor-pointer"
+                  >
+                    Show All Categories
+                  </button>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
+              {filteredCategories.map((category) => {
+                const count = allVendors.filter(
+                  (v: { offering: { category: string } }) => v.offering?.category === category
+                ).length;
+                return (
+                  <CategoryCard
+                    key={category}
+                    category={category}
+                    vendorCount={count}
+                    onClick={() => setSelectedCategory(category)}
+                  />
+                );
+              })}
+            </div>
+          )}
+        </div>
       </div>
+
+      {/* Pop Window / Modal for selected category */}
+      <CategoryModal
+        isOpen={!!selectedCategory}
+        onClose={() => setSelectedCategory(null)}
+        category={selectedCategory}
+        vendors={allVendors}
+        loading={loading}
+      />
     </div>
   );
 };
