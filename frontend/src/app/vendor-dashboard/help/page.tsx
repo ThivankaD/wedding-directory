@@ -1,5 +1,5 @@
 import React, { Suspense } from "react";
-import Header from "@/components/shared/Headers/Header";
+import VendorHeader from "@/components/shared/Headers/VendorHeader";
 import Footer from "@/components/shared/Footer";
 import HelpCenter from "@/components/help/HelpCenter";
 import LoaderJelly from "@/components/shared/Loaders/LoaderJelly";
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 const VendorDashboardHelpPage: React.FC = () => {
   return (
     <div className="bg-lightYellow min-h-screen flex flex-col font-body">
-      <Header />
+      <VendorHeader />
       <Suspense
         fallback={
           <div className="flex-grow flex items-center justify-center p-12">

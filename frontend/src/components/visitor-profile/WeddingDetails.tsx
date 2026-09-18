@@ -1,50 +1,71 @@
 "use client";
-import React, { Fragment, useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { useMutation, useQuery } from "@apollo/client";
 import { GET_VISITOR_BY_ID } from "@/graphql/queries";
 import { WeddingDetailsData } from "@/types/visitorProfileTypes";
 import { useAuth } from "@/contexts/VisitorAuthContext";
 import { UPDATE_VISITOR, SET_WEDDING_DATE } from "@/graphql/mutations";
 import toast from "react-hot-toast";
+import { FiCalendar, FiHeart, FiMapPin, FiUser } from "react-icons/fi";
 
 const WeddingDetails: React.FC = () => {
   const { visitor } = useAuth();
 
-  const { data, loading, error } = useQuery(GET_VISITOR_BY_ID, {
+  const { data, loading, error, refetch } = useQuery(GET_VISITOR_BY_ID, {
     variables: { id: visitor?.id },
     skip: !visitor?.id,
   });
 
-    const [setWeddingDate] = useMutation(SET_WEDDING_DATE, {
-      onCompleted: () => {
-        toast.success("Wedding date updated and checklist generated!");
-      },
-      onError: (error) => {
-        console.error("Error setting wedding date:", error);
-        toast.error("Failed to update wedding date");
-      },
-    });
+  const [setWeddingDate] = useMutation(SET_WEDDING_DATE, {
+    onCompleted: () => {
+      toast.success("Wedding date updated and checklist generated!");
+    },
+    onError: (error) => {
+      console.error("Error setting wedding date:", error);
+      toast.error("Failed to update wedding date");
+    },
+  });
 
   const visitorData = data?.findVisitorById;
 
   const [weddingDetails, setWeddingDetails] = useState<WeddingDetailsData>({
-    firstName: visitorData?.visitor_fname || "Your first name",
-    lastName: visitorData?.visitor_lname || "Your last name",
-    partnerFirstName: visitorData?.partner_fname || "Partners first name",
-    partnerLastName: visitorData?.partner_lname || "Partners last name",
-    engagementDate: visitorData?.engaged_date || "Your engagement date",
-    weddingDate: visitorData?.wed_date || "Your wedding date",
-    weddingVenue: visitorData?.wed_venue || "Your wedding venue",
+    firstName: "",
+    lastName: "",
+    partnerFirstName: "",
+    partnerLastName: "",
+    engagementDate: "",
+    weddingDate: "",
+    weddingVenue: "",
   });
 
-  const [updateVisitor] = useMutation(UPDATE_VISITOR, {
+  useEffect(() => {
+    if (visitorData) {
+      setWeddingDetails({
+        firstName: visitorData.visitor_fname || "",
+        lastName: visitorData.visitor_lname || "",
+        partnerFirstName: visitorData.partner_fname || "",
+        partnerLastName: visitorData.partner_lname || "",
+        engagementDate: visitorData.engaged_date
+          ? visitorData.engaged_date.split("T")[0]
+          : "",
+        weddingDate: visitorData.wed_date
+          ? visitorData.wed_date.split("T")[0]
+          : "",
+        weddingVenue: visitorData.wed_venue || "",
+      });
+    }
+  }, [visitorData]);
+
+  const [updateVisitor, { loading: isUpdating }] = useMutation(UPDATE_VISITOR, {
     onCompleted: () => {
-      console.log("Visitor updated successfully!");
+      toast.success("Wedding details saved successfully!");
+      refetch();
     },
     onError: (error) => {
       console.error("Error updating visitor:", error);
+      toast.error("Error updating wedding details");
     },
   });
 
@@ -69,95 +90,148 @@ const WeddingDetails: React.FC = () => {
           partner_lname: weddingDetails.partnerLastName,
           engaged_date: weddingDetails.engagementDate,
           wed_date: weddingDetails.weddingDate,
-          wed_venue: weddingDetails.weddingVenue
-        }
+          wed_venue: weddingDetails.weddingVenue,
+        },
       },
     });
 
     if (
       weddingDetails.weddingDate &&
-      weddingDetails.weddingDate !== "Your wedding date"
+      weddingDetails.weddingDate !== visitorData?.wed_date
     ) {
-      await setWeddingDate({
-        variables: {
-          visitorId: visitor?.id,
-          weddingDate: new Date(weddingDetails.weddingDate).toISOString(),
-        },
-      });
+      try {
+        await setWeddingDate({
+          variables: {
+            visitorId: visitor?.id,
+            weddingDate: new Date(weddingDetails.weddingDate).toISOString(),
+          },
+        });
+      } catch (err) {
+        console.error("Error updating wedding date milestone:", err);
+      }
     }
-
-    toast.success("Wedding details saved successfully!");
-
-
   };
 
-  if (loading) return <p className="text-center p-4">Loading...</p>;
-  if (error) return <p className="text-center p-4 text-red-500">Error loading visitor details: {error.message}</p>;
+  if (loading) {
+    return (
+      <div className="bg-white rounded-2xl shadow-sm border border-orange/20 p-8 flex items-center justify-center min-h-[300px]">
+        <div className="flex items-center gap-3 text-gray-500 font-body">
+          <div className="w-5 h-5 border-2 border-orange border-t-transparent rounded-full animate-spin"></div>
+          <span>Loading wedding details...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-white rounded-2xl shadow-sm border border-rose-200 p-8 text-center">
+        <p className="text-rose-600 font-semibold font-body text-sm mb-1">
+          Error loading profile details
+        </p>
+        <p className="text-gray-400 text-xs font-body">{error.message}</p>
+      </div>
+    );
+  }
 
   return (
-    <Fragment>
-      <div className="bg-white rounded-2xl p-4 sm:p-8 shadow-lg max-w-4xl mx-auto">
-        <h2 className="font-title text-2xl sm:text-[30px] text-text">Wedding Details</h2>
-        <div className="w-full h-px my-4 bg-gray-300"></div>
+    <div className="bg-white rounded-2xl shadow-sm border border-orange/20 p-6 sm:p-8">
+      {/* Card Header matching Vendor Settings */}
+      <div className="pb-6 mb-6 border-b border-orange/15">
+        <h2 className="font-title text-2xl font-bold text-gray-900">
+          Wedding Details
+        </h2>
+        <p className="text-gray-500 font-body text-sm mt-1">
+          Update your couple information, ceremony dates, and venue location.
+        </p>
+      </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Grid container with responsive columns */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-8">
-            {/* Your Details Section */}
-            <div className="space-y-4">
-              <div>
-                <label className="font-body text-sm sm:text-base text-gray-700 mb-1 block">
-                  First Name
-                </label>
-                <Input
-                  name="firstName"
-                  value={weddingDetails.firstName}
-                  onChange={handleInputChange}
-                  className="font-body rounded-lg border-gray-400 focus:border-gray-600 focus:ring-gray-600"
-                />
-              </div>
-              <div>
-                <label className="font-body text-sm sm:text-base text-gray-700 mb-1 block">
-                  Last Name
-                </label>
-                <Input
-                  name="lastName"
-                  value={weddingDetails.lastName}
-                  onChange={handleInputChange}
-                  className="font-body rounded-lg border-gray-400 focus:border-gray-600 focus:ring-gray-600"
-                />
-              </div>
-            </div>
-
-            {/* Partner's Details Section */}
-            <div className="space-y-4">
-              <div>
-                <label className="font-body text-sm sm:text-base text-gray-700 mb-1 block">
-                  Partner&apos;s First Name
-                </label>
-                <Input
-                  name="partnerFirstName"
-                  value={weddingDetails.partnerFirstName}
-                  onChange={handleInputChange}
-                  className="font-body rounded-lg border-gray-400 focus:border-gray-600 focus:ring-gray-600"
-                />
-              </div>
-              <div>
-                <label className="font-body text-sm sm:text-base text-gray-700 mb-1 block">
-                  Partner&apos;s Last Name
-                </label>
-                <Input
-                  name="partnerLastName"
-                  value={weddingDetails.partnerLastName}
-                  onChange={handleInputChange}
-                  className="font-body rounded-lg border-gray-400 focus:border-gray-600 focus:ring-gray-600"
-                />
-              </div>
-            </div>
-
-            {/* Date Section */}
+      <form onSubmit={handleSubmit} className="space-y-6 font-body">
+        {/* Section: Your Details */}
+        <div>
+          <div className="flex items-center gap-2 mb-3">
+            <FiUser className="text-orange" size={16} />
+            <h3 className="font-title font-bold text-base text-gray-900">
+              Your Information
+            </h3>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             <div>
-              <label className="font-body text-sm sm:text-base text-gray-700 mb-1 block">
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                First Name <span className="text-orange">*</span>
+              </label>
+              <Input
+                name="firstName"
+                value={weddingDetails.firstName}
+                onChange={handleInputChange}
+                placeholder="e.g. Vanuja"
+                required
+                className="h-11 rounded-xl border-orange/25 focus:border-orange focus:ring-2 focus:ring-orange/20 text-sm font-body bg-white"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                Last Name <span className="text-orange">*</span>
+              </label>
+              <Input
+                name="lastName"
+                value={weddingDetails.lastName}
+                onChange={handleInputChange}
+                placeholder="e.g. Karunaratne"
+                required
+                className="h-11 rounded-xl border-orange/25 focus:border-orange focus:ring-2 focus:ring-orange/20 text-sm font-body bg-white"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Section: Partner Details */}
+        <div className="pt-4 border-t border-orange/10">
+          <div className="flex items-center gap-2 mb-3">
+            <FiHeart className="text-orange" size={16} />
+            <h3 className="font-title font-bold text-base text-gray-900">
+              Partner&apos;s Information
+            </h3>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                Partner&apos;s First Name
+              </label>
+              <Input
+                name="partnerFirstName"
+                value={weddingDetails.partnerFirstName}
+                onChange={handleInputChange}
+                placeholder="e.g. Hansika"
+                className="h-11 rounded-xl border-orange/25 focus:border-orange focus:ring-2 focus:ring-orange/20 text-sm font-body bg-white"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                Partner&apos;s Last Name
+              </label>
+              <Input
+                name="partnerLastName"
+                value={weddingDetails.partnerLastName}
+                onChange={handleInputChange}
+                placeholder="e.g. Perera"
+                className="h-11 rounded-xl border-orange/25 focus:border-orange focus:ring-2 focus:ring-orange/20 text-sm font-body bg-white"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Section: Dates & Venue */}
+        <div className="pt-4 border-t border-orange/10">
+          <div className="flex items-center gap-2 mb-3">
+            <FiCalendar className="text-orange" size={16} />
+            <h3 className="font-title font-bold text-base text-gray-900">
+              Ceremony & Schedule
+            </h3>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
                 Engagement Date
               </label>
               <Input
@@ -165,11 +239,11 @@ const WeddingDetails: React.FC = () => {
                 name="engagementDate"
                 value={weddingDetails.engagementDate}
                 onChange={handleInputChange}
-                className="font-body rounded-lg border-gray-400 focus:border-gray-600 focus:ring-gray-600"
+                className="h-11 rounded-xl border-orange/25 focus:border-orange focus:ring-2 focus:ring-orange/20 text-sm font-body bg-white"
               />
             </div>
             <div>
-              <label className="font-body text-sm sm:text-base text-gray-700 mb-1 block">
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
                 Wedding Date
               </label>
               <Input
@@ -177,37 +251,38 @@ const WeddingDetails: React.FC = () => {
                 name="weddingDate"
                 value={weddingDetails.weddingDate}
                 onChange={handleInputChange}
-                className="font-body rounded-lg border-gray-400 focus:border-gray-600 focus:ring-gray-600"
+                className="h-11 rounded-xl border-orange/25 focus:border-orange focus:ring-2 focus:ring-orange/20 text-sm font-body bg-white"
               />
             </div>
           </div>
 
-          {/* Venue Section - Full Width */}
           <div>
-            <label className="font-body text-sm sm:text-base text-gray-700 mb-1 block">
-              Wedding Venue
+            <label className="block text-sm font-medium text-gray-700 mb-1.5 flex items-center gap-1.5">
+              <FiMapPin className="text-orange" size={14} />
+              <span>Wedding Venue</span>
             </label>
             <Input
               name="weddingVenue"
               value={weddingDetails.weddingVenue}
               onChange={handleInputChange}
-              className="font-body rounded-lg border-gray-400 focus:border-gray-600 focus:ring-gray-600"
+              placeholder="e.g. Cinnamon Grand Colombo, Lotus Ballroom"
+              className="h-11 rounded-xl border-orange/25 focus:border-orange focus:ring-2 focus:ring-orange/20 text-sm font-body bg-white"
             />
           </div>
+        </div>
 
-          {/* Save Button Container */}
-          <div className="flex justify-center mt-8">
-            <Button
-              variant="signup"
-              className="w-full sm:w-auto px-8 py-2.5 bg-orange hover:bg-primary text-white font-medium rounded-xl transition-colors duration-300 shadow-md hover:shadow-lg"
-              type="submit"
-            >
-              Save Wedding Details
-            </Button>
-          </div>
-        </form>
-      </div>
-    </Fragment>
+        {/* Submit Button */}
+        <div className="pt-4 border-t border-orange/10 flex justify-end">
+          <button
+            type="submit"
+            disabled={isUpdating}
+            className="px-6 py-2.5 bg-orange hover:bg-orange/90 text-white font-semibold rounded-xl transition-all shadow-xs text-sm disabled:opacity-50 inline-flex items-center gap-2"
+          >
+            {isUpdating ? "Saving..." : "Save Wedding Details"}
+          </button>
+        </div>
+      </form>
+    </div>
   );
 };
 

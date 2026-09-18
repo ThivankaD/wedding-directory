@@ -12,6 +12,8 @@ export interface FilterSearchBarProps {
     handleSearch: (city: string, category: string) => void;
     onCityChange: (city: string) => void;
     onCategoryChange: (category: string) => void;
+    selectedCity?: string;
+    selectedCategory?: string;
 }
 
 export type SocialTypes = {
@@ -31,6 +33,9 @@ export interface Offering {
     name: string;
     category: string;
     visible: boolean;
+    description?: string;
+    bus_phone?: string;
+    bus_email?: string;
     banner: string | null;
     reviews: Review[];
     vendor: {

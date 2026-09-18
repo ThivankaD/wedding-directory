@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { CgMore } from "react-icons/cg";
+import { FiArrowRight } from "react-icons/fi";
 
 interface ActionButtonProps {
   href: string;
@@ -11,12 +11,10 @@ const ActionButton: React.FC<ActionButtonProps> = ({ href, label }) => {
   return (
     <Link
       href={href}
-      className="inline-flex items-center justify-center px-4 py-2 rounded-md bg-orange-50 border border-orange-200 text-orange-600 hover:bg-orange-100 hover:border-orange-300 transition-all duration-200 font-medium text-sm shadow-sm"
+      className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-orange/[0.07] hover:bg-orange text-orange hover:text-white border border-orange/20 hover:border-orange font-semibold text-xs sm:text-sm transition-all duration-200 shadow-xs group font-body"
     >
       <span>{label}</span>
-      <span className="ml-1.5 transform transition-transform group-hover:translate-x-1">
-        <CgMore />
-      </span>
+      <FiArrowRight className="text-xs sm:text-sm transition-transform duration-200 group-hover:translate-x-1" />
     </Link>
   );
 };

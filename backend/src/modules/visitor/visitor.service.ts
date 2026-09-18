@@ -94,21 +94,23 @@ export class VisitorService {
 
 
   async setWeddingDate(visitorId: string, weddingDate: Date): Promise<VisitorEntity> {
-  const visitor = await this.visitorRepository.findOne({
-    where: { id: visitorId },
-  });
-  
-  if (!visitor) {
-    throw new NotFoundException(`Visitor with ID ${visitorId} not found`);
+    const visitor = await this.visitorRepository.findOne({
+      where: { id: visitorId },
+    });
+    
+    if (!visitor) {
+      throw new NotFoundException(`Visitor with ID ${visitorId} not found`);
+    }
+    
+    const oldWeddingDate = visitor.weddingDate;
+
+    // Update wedding date
+    visitor.weddingDate = weddingDate;
+    await this.visitorRepository.save(visitor);
+    
+    // Shift due dates or generate initial checklist tasks
+    await this.ChecklistService.handleWeddingDateChange(visitorId, weddingDate, oldWeddingDate);
+    
+    return visitor;
   }
-  
-  // Update wedding date
-  visitor.weddingDate = weddingDate;
-  await this.visitorRepository.save(visitor);
-  
-  // Generate or update checklist tasks
-  await this.ChecklistService.handleWeddingDateChange(visitorId, weddingDate);
-  
-  return visitor;
-}
 }

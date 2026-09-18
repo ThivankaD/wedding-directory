@@ -1,22 +1,16 @@
-import React, { Fragment } from "react";
+import React from "react";
 import Header from "@/components/shared/Headers/Header";
+import Footer from "@/components/shared/Footer";
 
 const ChatLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <Fragment>
-      {/* Container for the header */}
-      <div className="container mx-auto px-4">
-        <Header />
-      </div>
-
-      {/* Main content with background color */}
-      <div className="bg-lightYellow min-h-screen">
-        <div className="max-w-6xl mx-auto px-4">
-          {/* Content injected dynamically */}
-          {children}
-        </div>
-      </div>
-    </Fragment>
+    <div className="bg-lightYellow min-h-screen flex flex-col justify-between">
+      <Header />
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex-1">
+        {children}
+      </main>
+      <Footer />
+    </div>
   );
 };
 

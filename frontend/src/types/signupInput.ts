@@ -1,11 +1,13 @@
 export interface CategoryProps {
     onCategoryChange: (category: string) => void;
+    value?: string;
 }
 
 export interface CityProps {
     onCityChange: (category: string) => void;
     placeholder: string;
     className?: string;
+    value?: string;
 }
 
 export interface LocationProps {

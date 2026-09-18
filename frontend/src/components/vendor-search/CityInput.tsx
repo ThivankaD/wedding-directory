@@ -16,14 +16,18 @@ import {
 import cities from "../../utils/city.json";
 import { Button } from "../ui/button";
 import { CityProps } from "@/types/signupInput";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
 
-const CityInput: React.FC<CityProps> = ({ onCityChange }) => {
-  const [selectedCity, setSelectedCity] = useState<string | null>(null);
+const CityInput: React.FC<CityProps> = ({ onCityChange, value }) => {
+  const [selectedCity, setSelectedCity] = useState<string | null>(value || null);
+
+  useEffect(() => {
+    setSelectedCity(value || null);
+  }, [value]);
 
   const handleCitySelect = (city: string) => {
-    setSelectedCity(city);
+    setSelectedCity(city ? city : null);
     onCityChange(city);
   };
 
@@ -46,20 +50,27 @@ const CityInput: React.FC<CityProps> = ({ onCityChange }) => {
   };
 
   return (
-    <div className="rounded-lg bg-white/20 font-body backdrop-blur-sm transition duration-150">
+    <div className="w-full font-body">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button className="flex justify-between items-center w-full text-left px-3 py-2 text-black bg-white/30 rounded-lg hover:bg-white/40 transition duration-150 font-light font-title h-10">
-            <span className="font-title font-normal text-[16px]">
+          <Button className="flex justify-between items-center w-full text-left px-2 py-0 text-gray-800 bg-transparent hover:bg-transparent transition duration-150 font-medium text-xs sm:text-sm h-7 shadow-none border-none">
+            <span className="font-body font-medium truncate">
               {selectedCity || "Select City"}
             </span>
-            <ChevronDown className="ml-2 h-4 w-4 text-gray-500" />
+            <ChevronDown className="ml-1 h-3.5 w-3.5 text-gray-400 shrink-0" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-56 bg-white/80 backdrop-blur-sm rounded-lg shadow-lg max-h-60 overflow-y-auto font-body z-10">
+        <DropdownMenuContent className="w-56 bg-white/95 backdrop-blur-sm rounded-xl shadow-lg max-h-60 overflow-y-auto font-body z-10 border border-orange/15">
           <DropdownMenuLabel className="font-body px-4 py-2 text-gray-500">
             Find Your City
           </DropdownMenuLabel>
+          <DropdownMenuItem
+            onClick={() => handleCitySelect("")}
+            className="px-4 py-2 text-gray-500 italic hover:bg-orange/10 hover:text-orange rounded-lg cursor-pointer transition duration-150"
+          >
+            All Cities
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
           <DropdownMenuGroup>
             {provinces.map((province, provinceIndex) => (
               <DropdownMenuSub key={provinceIndex}>

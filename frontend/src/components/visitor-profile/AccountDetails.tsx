@@ -1,18 +1,19 @@
 "use client";
-import React, { Fragment, useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/VisitorAuthContext";
 import { useMutation, useQuery } from "@apollo/client";
 import { GET_VISITOR_BY_ID } from "@/graphql/queries";
 import { UPDATE_VISITOR } from "@/graphql/mutations";
 import { AccountDetailsData } from "@/types/visitorProfileTypes";
-import { toast } from 'react-hot-toast';
+import { toast } from "react-hot-toast";
+import { FiEye, FiEyeOff, FiLock, FiMail } from "react-icons/fi";
 
 const AccountDetails: React.FC = () => {
   const { visitor } = useAuth();
 
-  const { data, loading, error } = useQuery(GET_VISITOR_BY_ID, {
+  const { data, loading, error, refetch } = useQuery(GET_VISITOR_BY_ID, {
     variables: { id: visitor?.id },
     skip: !visitor?.id,
   });
@@ -20,19 +21,36 @@ const AccountDetails: React.FC = () => {
   const visitorData = data?.findVisitorById;
 
   const [accountDetails, setAccountDetails] = useState<AccountDetailsData>({
-    email: visitorData?.email,
+    email: "",
     password: "",
-    retypePassword: ""
+    retypePassword: "",
   });
 
-  const [updateVisitor] = useMutation(UPDATE_VISITOR, {
+  const [showPassword, setShowPassword] = useState(false);
+  const [showRetypePassword, setShowRetypePassword] = useState(false);
+
+  useEffect(() => {
+    if (visitorData?.email) {
+      setAccountDetails((prev) => ({
+        ...prev,
+        email: visitorData.email,
+      }));
+    }
+  }, [visitorData]);
+
+  const [updateVisitor, { loading: isUpdating }] = useMutation(UPDATE_VISITOR, {
     onCompleted: () => {
-      console.log("Visitor updated successfully!");
-      toast.success('Account details updated successfully!', {style: {background: '#333',color: '#fff',},});
+      toast.success("Account details updated successfully!");
+      setAccountDetails((prev) => ({
+        ...prev,
+        password: "",
+        retypePassword: "",
+      }));
+      refetch();
     },
     onError: (error) => {
-      console.error("Error updating visitor:", error);
-      toast.error('Account details update failed!', {style: {background: '#333',color: '#fff',},});
+      console.error("Error updating visitor account:", error);
+      toast.error(error.message || "Account details update failed!");
     },
   });
 
@@ -47,83 +65,171 @@ const AccountDetails: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (accountDetails.password !== accountDetails.retypePassword) {
-      alert("Passwords do not match.");
-      return;
+    if (accountDetails.password || accountDetails.retypePassword) {
+      if (accountDetails.password !== accountDetails.retypePassword) {
+        toast.error("Passwords do not match.");
+        return;
+      }
+
+      if (accountDetails.password.length < 6) {
+        toast.error("Password must be at least 6 characters long.");
+        return;
+      }
+    }
+
+    const input: { email: string; password?: string } = {
+      email: accountDetails.email,
+    };
+
+    if (accountDetails.password) {
+      input.password = accountDetails.password;
     }
 
     updateVisitor({
       variables: {
         id: visitor?.id,
-        input: {
-          email: accountDetails.email,
-          password: accountDetails.password
-        }
+        input,
       },
     });
   };
 
-  if (loading) return <p className="text-center p-4">Loading...</p>;
-  if (error) return <p className="text-center p-4 text-red-500">Error loading visitor details: {error.message}</p>;
+  if (loading) {
+    return (
+      <div className="bg-white rounded-2xl shadow-sm border border-orange/20 p-8 flex items-center justify-center min-h-[300px]">
+        <div className="flex items-center gap-3 text-gray-500 font-body">
+          <div className="w-5 h-5 border-2 border-orange border-t-transparent rounded-full animate-spin"></div>
+          <span>Loading account details...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-white rounded-2xl shadow-sm border border-rose-200 p-8 text-center">
+        <p className="text-rose-600 font-semibold font-body text-sm mb-1">
+          Error loading account details
+        </p>
+        <p className="text-gray-400 text-xs font-body">{error.message}</p>
+      </div>
+    );
+  }
 
   return (
-    <Fragment>
-      <div className="bg-white rounded-2xl p-4 md:p-6 lg:p-8 shadow-lg w-full max-w-4xl mx-auto">
-        <div className="flex flex-col space-y-2">
-          <h2 className="font-title text-2xl md:text-[30px]">Account Details</h2>
-          <hr className="w-[210px] h-px bg-gray-500 border-0 dark:bg-gray-700" />
-        </div>
+    <div className="bg-white rounded-2xl shadow-sm border border-orange/20 p-6 sm:p-8">
+      {/* Card Header matching Vendor Settings */}
+      <div className="pb-6 mb-6 border-b border-orange/15">
+        <h2 className="font-title text-2xl font-bold text-gray-900">
+          Account Security
+        </h2>
+        <p className="text-gray-500 font-body text-sm mt-1">
+          Manage your login email and security credentials.
+        </p>
+      </div>
 
-        <form onSubmit={handleSubmit} className="mt-6 space-y-6">
-          <div className="space-y-2">
-            <label className="font-body text-sm md:text-base block">Email Address</label>
+      <form onSubmit={handleSubmit} className="space-y-6 font-body">
+        {/* Email Address Section */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            Email Address
+          </label>
+          <div className="relative max-w-lg">
             <Input
               type="email"
               name="email"
               value={accountDetails.email}
               onChange={handleInputChange}
-              className="font-body rounded-md w-full"
               required
+              className="h-11 rounded-xl border-orange/25 focus:border-orange focus:ring-2 focus:ring-orange/20 text-sm font-body bg-white pl-10"
             />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
-            <div className="space-y-2">
-              <label className="font-body text-sm md:text-base block">Password</label>
-              <Input
-                type="password"
-                name="password"
-                value={accountDetails.password}
-                onChange={handleInputChange}
-                className="font-body rounded-md w-full"
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="font-body text-sm md:text-base block">Retype Password</label>
-              <Input
-                type="password"
-                name="retypePassword"
-                value={accountDetails.retypePassword}
-                onChange={handleInputChange}
-                className="font-body rounded-md w-full"
-                required
-              />
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+              <FiMail size={16} />
             </div>
           </div>
+          <p className="text-xs text-gray-400 mt-1.5 font-body">
+            Used for signing in, notifications, and booking confirmation updates.
+          </p>
+        </div>
 
-          <div className="text-center p-4  mt-8">
-            <Button
-              variant="signup"
-              className="w-full md:max-w-md mx-auto p-2.5"
-              type="submit"
-            >
-              Save Account Details
-            </Button>
+        {/* Change Password Section */}
+        <div className="pt-4 border-t border-orange/10">
+          <div className="flex items-center gap-2 mb-1">
+            <FiLock className="text-orange" size={16} />
+            <h3 className="font-title font-bold text-base text-gray-900">
+              Change Password
+            </h3>
           </div>
-        </form>
-      </div>
-    </Fragment>
+          <p className="text-xs text-gray-500 mb-4 font-body">
+            Leave blank if you do not wish to change your password.
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                New Password
+              </label>
+              <div className="relative">
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  value={accountDetails.password}
+                  onChange={handleInputChange}
+                  placeholder="Min. 6 characters"
+                  className="h-11 rounded-xl border-orange/25 focus:border-orange focus:ring-2 focus:ring-orange/20 text-sm font-body bg-white pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+                  title={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <FiEyeOff size={16} /> : <FiEye size={16} />}
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                Confirm New Password
+              </label>
+              <div className="relative">
+                <Input
+                  type={showRetypePassword ? "text" : "password"}
+                  name="retypePassword"
+                  value={accountDetails.retypePassword}
+                  onChange={handleInputChange}
+                  placeholder="Re-enter new password"
+                  className="h-11 rounded-xl border-orange/25 focus:border-orange focus:ring-2 focus:ring-orange/20 text-sm font-body bg-white pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowRetypePassword(!showRetypePassword)}
+                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+                  title={showRetypePassword ? "Hide password" : "Show password"}
+                >
+                  {showRetypePassword ? (
+                    <FiEyeOff size={16} />
+                  ) : (
+                    <FiEye size={16} />
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Submit Button */}
+        <div className="pt-4 border-t border-orange/10 flex justify-end">
+          <button
+            type="submit"
+            disabled={isUpdating}
+            className="px-6 py-2.5 bg-orange hover:bg-orange/90 text-white font-semibold rounded-xl transition-all shadow-xs text-sm disabled:opacity-50 inline-flex items-center gap-2"
+          >
+            {isUpdating ? "Saving..." : "Save Account Details"}
+          </button>
+        </div>
+      </form>
+    </div>
   );
 };
 
