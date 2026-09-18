@@ -74,9 +74,13 @@ const PaymentsHistoryPage = () => {
     }
   };
 
-  const handlePrint = () => {
+  const handlePrint = (paymentReference?: string | null) => {
     if (typeof window !== 'undefined') {
-      window.print();
+      if (paymentReference) {
+        window.open(`/success?order_id=${encodeURIComponent(paymentReference)}&print=true`, '_blank');
+      } else {
+        window.print();
+      }
     }
   };
 
@@ -281,10 +285,10 @@ const PaymentsHistoryPage = () => {
             {/* Modal Actions */}
             <div className="p-4 bg-gray-50 border-t border-gray-100 flex gap-2">
               <button
-                onClick={handlePrint}
+                onClick={() => handlePrint(selectedReceipt.paymentReference)}
                 className="flex-1 inline-flex items-center justify-center gap-1.5 border border-gray-300 bg-white text-gray-700 py-2 px-3 rounded-lg text-xs font-medium hover:bg-gray-100 transition"
               >
-                <Printer size={14} /> Print
+                <Printer size={14} /> Print Receipt
               </button>
 
               {selectedReceipt.paymentReference && (

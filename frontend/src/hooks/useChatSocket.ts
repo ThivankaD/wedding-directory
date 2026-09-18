@@ -1,7 +1,26 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { io, Socket } from 'socket.io-client';
 
-const SOCKET_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:4000';
+const getSocketUrl = (): string => {
+  if (process.env.NEXT_PUBLIC_BACKEND_URL) {
+    return process.env.NEXT_PUBLIC_BACKEND_URL.replace(/\/+$/, '');
+  }
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL.replace(/\/+$/, '');
+  }
+  const gql = process.env.NEXT_PUBLIC_GRAPHQL_URL;
+  if (gql) {
+    try {
+      const url = new URL(gql);
+      return `${url.protocol}//${url.host}`;
+    } catch {
+      return gql.replace(/\/graphql\/?$/, '').replace(/\/+$/, '');
+    }
+  }
+  return 'http://localhost:4000';
+};
+
+const SOCKET_URL = getSocketUrl();
 
 // Global singleton socket per userId so all components share the same connection
 const globalSockets: Map<string, Socket> = new Map();
@@ -25,7 +44,7 @@ export const useChatSocket = (userId: string | undefined, userType: 'visitor' | 
     let socket = globalSockets.get(userId);
 
     if (!socket || !socket.connected) {
-      console.log('useChatSocket: Creating new socket for', { userId, userType });
+      console.log('useChatSocket: Connecting to', `${SOCKET_URL}/chat`, 'for', { userId, userType });
 
       if (socket) {
         socket.disconnect();
@@ -47,6 +66,10 @@ export const useChatSocket = (userId: string | undefined, userType: 'visitor' | 
           }
           setConnected(true);
         });
+      });
+
+      socket.on('connect_error', (err: any) => {
+        console.error('Socket connect_error for user:', userId, err?.message || err);
       });
 
       socket.on('disconnect', () => {

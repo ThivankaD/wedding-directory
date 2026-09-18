@@ -590,8 +590,8 @@ export class PaymentService {
 
         const title = `🎉 New Booking: ${packageName}!`;
         const body = bookingDateStr
-          ? `${visitorName} booked "${packageName}" ($${formattedAmount}) for ${bookingDateStr}.`
-          : `${visitorName} booked "${packageName}" ($${formattedAmount}).`;
+          ? `${visitorName} booked "${packageName}" (LKR ${formattedAmount}) for ${bookingDateStr}.`
+          : `${visitorName} booked "${packageName}" (LKR ${formattedAmount}).`;
 
         try {
           await fetch('https://exp.host/--/api/v2/push/send', {
