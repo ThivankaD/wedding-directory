@@ -61,7 +61,6 @@ interface Payment {
 const PaymentsPage = () => {
   const { vendor } = useVendorAuth();
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"all" | "completed" | "pending" | "failed">("all");
   const [selectedPayment, setSelectedPayment] = useState<Payment | null>(null);
   const [showExportMenu, setShowExportMenu] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
@@ -78,52 +77,42 @@ const PaymentsPage = () => {
   });
   const vendorInfo = vendorData?.findVendorById;
 
-  const payments: Payment[] = data?.vendorPayments || [];
+  // Filter ONLY completed payments (exclude failed and pending attempts)
+  const payments: Payment[] = useMemo(() => {
+    return (data?.vendorPayments || []).filter(
+      (p: Payment) => p.status === "completed"
+    );
+  }, [data]);
 
   // Summary Metrics calculations
-  const { totalRevenue, pendingRevenue, completedCount, pendingCount, failedCount, avgAdvance } =
+  const { totalRevenue, completedCount, scheduledCount, avgAdvance } =
     useMemo(() => {
       let total = 0;
-      let pending = 0;
-      let completed = 0;
-      let pendingC = 0;
-      let failed = 0;
+      let scheduled = 0;
 
       payments.forEach((p) => {
         const amt = Number(p.amount) || 0;
-        if (p.status === "completed") {
-          total += amt;
-          completed++;
-        } else if (p.status === "pending") {
-          pending += amt;
-          pendingC++;
-        } else if (p.status === "failed") {
-          failed++;
-        }
+        total += amt;
+        if (p.bookingDate) scheduled++;
       });
 
-      const avg = completed > 0 ? total / completed : 0;
+      const count = payments.length;
+      const avg = count > 0 ? total / count : 0;
 
       return {
         totalRevenue: total,
-        pendingRevenue: pending,
-        completedCount: completed,
-        pendingCount: pendingC,
-        failedCount: failed,
+        completedCount: count,
+        scheduledCount: scheduled,
         avgAdvance: avg,
       };
     }, [payments]);
 
-  // Filtered Payments
+  // Filtered Payments (search only)
   const filteredPayments = useMemo(() => {
+    if (!searchTerm.trim()) return payments;
+
+    const term = searchTerm.toLowerCase();
     return payments.filter((payment) => {
-      const matchesStatus = statusFilter === "all" || payment.status === statusFilter;
-
-      if (!matchesStatus) return false;
-
-      if (!searchTerm.trim()) return true;
-
-      const term = searchTerm.toLowerCase();
       const customerName = formatCoupleName(payment.visitor, "").toLowerCase();
       const email = (payment.visitor?.email || "").toLowerCase();
       const phone = (payment.visitor?.phone || "").toLowerCase();
@@ -140,7 +129,7 @@ const PaymentsPage = () => {
         orderRef.includes(term)
       );
     });
-  }, [payments, statusFilter, searchTerm]);
+  }, [payments, searchTerm]);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -194,9 +183,9 @@ const PaymentsPage = () => {
     setShowExportMenu(false);
 
     try {
-      const filterLabel = filteredOnly
-        ? `Filtered (${statusFilter.toUpperCase()}${searchTerm ? ` • "${searchTerm}"` : ""})`
-        : "All Records";
+      const filterLabel = filteredOnly && searchTerm
+        ? `Filtered (Search: "${searchTerm}")`
+        : "Confirmed Payments";
 
       if (format === "pdf") {
         exportPaymentPDF(listToExport, vendorInfo, {
@@ -427,39 +416,39 @@ const PaymentsPage = () => {
             </div>
           </div>
 
-          {/* Card 2: Pending Revenue */}
+          {/* Card 2: Confirmed Bookings */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex items-center justify-between">
             <div>
               <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">
-                Pending Advance
+                Confirmed Bookings
               </p>
               <h3 className="font-title text-2xl font-bold text-gray-900">
-                {formatLKR(pendingRevenue)}
+                {completedCount}
               </h3>
-              <p className="text-xs font-medium text-amber-600 mt-1 flex items-center gap-1">
-                <FiClock size={12} /> {pendingCount} awaiting confirmation
+              <p className="text-xs font-medium text-emerald-600 mt-1 flex items-center gap-1">
+                <FiCheckCircle size={12} /> Verified client reservations
               </p>
             </div>
-            <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center flex-shrink-0">
-              <FiClock size={22} />
+            <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
+              <FiCheckCircle size={22} />
             </div>
           </div>
 
-          {/* Card 3: Total Transactions */}
+          {/* Card 3: Scheduled Dates */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex items-center justify-between">
             <div>
               <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">
-                Total Bookings
+                Scheduled Dates
               </p>
               <h3 className="font-title text-2xl font-bold text-gray-900">
-                {payments.length}
+                {scheduledCount}
               </h3>
               <p className="text-xs text-gray-400 mt-1">
-                {failedCount > 0 ? `${failedCount} failed/canceled` : "Across all packages"}
+                Locked on your calendar
               </p>
             </div>
             <div className="w-12 h-12 rounded-2xl bg-orange/10 text-orange flex items-center justify-center flex-shrink-0">
-              <FiCreditCard size={22} />
+              <FiCalendar size={22} />
             </div>
           </div>
 
@@ -472,7 +461,7 @@ const PaymentsPage = () => {
               <h3 className="font-title text-2xl font-bold text-gray-900">
                 {formatLKR(avgAdvance)}
               </h3>
-              <p className="text-xs text-gray-400 mt-1">Per successful booking</p>
+              <p className="text-xs text-gray-400 mt-1">Per confirmed booking</p>
             </div>
             <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
               <FiTrendingUp size={22} />
@@ -482,48 +471,11 @@ const PaymentsPage = () => {
 
         {/* Filters & Search Toolbar */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          {/* Status Pills */}
-          <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-1 md:pb-0">
-            <button
-              onClick={() => setStatusFilter("all")}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
-                statusFilter === "all"
-                  ? "bg-orange text-white shadow-xs"
-                  : "bg-gray-50 text-gray-600 hover:bg-gray-100"
-              }`}
-            >
-              All ({payments.length})
-            </button>
-            <button
-              onClick={() => setStatusFilter("completed")}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
-                statusFilter === "completed"
-                  ? "bg-emerald-600 text-white shadow-xs"
-                  : "bg-gray-50 text-gray-600 hover:bg-gray-100"
-              }`}
-            >
-              Completed ({completedCount})
-            </button>
-            <button
-              onClick={() => setStatusFilter("pending")}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
-                statusFilter === "pending"
-                  ? "bg-amber-600 text-white shadow-xs"
-                  : "bg-gray-50 text-gray-600 hover:bg-gray-100"
-              }`}
-            >
-              Pending ({pendingCount})
-            </button>
-            <button
-              onClick={() => setStatusFilter("failed")}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
-                statusFilter === "failed"
-                  ? "bg-rose-600 text-white shadow-xs"
-                  : "bg-gray-50 text-gray-600 hover:bg-gray-100"
-              }`}
-            >
-              Failed ({failedCount})
-            </button>
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold">
+              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+              Confirmed Payments ({filteredPayments.length})
+            </span>
           </div>
 
           {/* Search Box */}
@@ -733,26 +685,23 @@ const PaymentsPage = () => {
               <FiCreditCard size={32} />
             </div>
             <h3 className="font-title text-xl font-bold text-gray-900 mb-2">
-              {searchTerm || statusFilter !== "all"
+              {searchTerm
                 ? "No Matching Payments Found"
-                : "No Payment Records Yet"}
+                : "No Confirmed Payments Yet"}
             </h3>
             <p className="text-gray-500 font-body text-sm leading-relaxed mb-6">
-              {searchTerm || statusFilter !== "all"
-                ? "Try clearing your search query or switching your status filter to view all payment records."
-                : "When couples book your wedding services and complete their 20% advance payment through PayHere, all transaction details and earnings will be listed here."}
+              {searchTerm
+                ? "Try clearing your search query to view all confirmed payment records."
+                : "When couples book your wedding services and complete their 20% advance payment through PayHere, all confirmed transaction details and earnings will be listed here."}
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-              {searchTerm || statusFilter !== "all" ? (
+              {searchTerm ? (
                 <button
-                  onClick={() => {
-                    setSearchTerm("");
-                    setStatusFilter("all");
-                  }}
+                  onClick={() => setSearchTerm("")}
                   className="w-full sm:w-auto px-5 py-2.5 bg-orange text-white rounded-xl font-medium text-sm hover:bg-orange/90 transition-colors shadow-sm"
                 >
-                  Clear Filters
+                  Clear Search
                 </button>
               ) : (
                 <>

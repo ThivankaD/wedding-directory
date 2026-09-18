@@ -12,7 +12,6 @@ import {
   FiMapPin,
   FiMessageSquare,
   FiShoppingBag,
-  FiCheckCircle,
   FiAlertCircle,
   FiX,
 } from "react-icons/fi";
@@ -68,8 +67,10 @@ const VisitorBookingCalendar: React.FC<VisitorBookingCalendarProps> = ({
 
   const bookings: Booking[] = data?.getVisitorBookings || [];
 
-  // Filter bookings with valid dates
-  const bookingsWithDates = bookings.filter((b) => Boolean(b.date));
+  // Filter ONLY confirmed bookings with valid dates (exclude failed, cancelled, or pending attempts)
+  const bookingsWithDates = bookings.filter(
+    (b) => Boolean(b.date) && b.status?.toLowerCase() === "confirmed"
+  );
 
   // Get bookings for a specific date
   const getBookingsForDate = (date: Date) => {
@@ -79,22 +80,10 @@ const VisitorBookingCalendar: React.FC<VisitorBookingCalendarProps> = ({
     });
   };
 
-  // Get status for a date
+  // Get status for a date (only confirmed bookings are tracked on the calendar)
   const getDateStatus = (date: Date) => {
     const dateBookings = getBookingsForDate(date);
-    if (dateBookings.length === 0) return null;
-
-    const hasConfirmed = dateBookings.some(
-      (b) => b.status?.toLowerCase() === "confirmed"
-    );
-    const hasPending = dateBookings.some(
-      (b) => b.status?.toLowerCase() === "pending"
-    );
-
-    if (hasConfirmed && hasPending) return "mixed";
-    if (hasConfirmed) return "confirmed";
-    if (hasPending) return "pending";
-    return "other";
+    return dateBookings.length > 0 ? "confirmed" : null;
   };
 
   // Month navigation
@@ -183,7 +172,7 @@ const VisitorBookingCalendar: React.FC<VisitorBookingCalendarProps> = ({
             Wedding Booking Calendar
           </h2>
           <p className="text-gray-400 text-xs mt-0.5">
-            Track confirmed vendor bookings, appointments, and pending dates
+            Track confirmed vendor bookings and your wedding event schedule
           </p>
         </div>
 
@@ -191,11 +180,7 @@ const VisitorBookingCalendar: React.FC<VisitorBookingCalendarProps> = ({
         <div className="flex items-center gap-2">
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-medium">
             <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-            Confirmed
-          </span>
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50 text-amber-700 border border-amber-200 text-xs font-medium">
-            <span className="w-2 h-2 rounded-full bg-amber-500"></span>
-            Pending
+            Confirmed Bookings
           </span>
         </div>
       </div>
@@ -280,27 +265,13 @@ const VisitorBookingCalendar: React.FC<VisitorBookingCalendarProps> = ({
                 )}
               </div>
 
-              {/* Status Indicator Dots */}
+              {/* Status Indicator Dot */}
               {status && (
                 <div className="flex items-center gap-1 mt-auto">
-                  {status === "confirmed" && (
-                    <span
-                      className="w-2 h-2 rounded-full bg-emerald-500"
-                      title="Confirmed Booking"
-                    />
-                  )}
-                  {status === "pending" && (
-                    <span
-                      className="w-2 h-2 rounded-full bg-amber-500"
-                      title="Pending Booking"
-                    />
-                  )}
-                  {status === "mixed" && (
-                    <>
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                      <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                    </>
-                  )}
+                  <span
+                    className="w-2 h-2 rounded-full bg-emerald-500"
+                    title="Confirmed Booking"
+                  />
                 </div>
               )}
             </button>
@@ -329,39 +300,23 @@ const VisitorBookingCalendar: React.FC<VisitorBookingCalendarProps> = ({
 
           {selectedDateBookings.length > 0 ? (
             <div className="space-y-3">
-              {selectedDateBookings.map((b) => {
-                const isConfirmed = b.status?.toLowerCase() === "confirmed";
-                return (
-                  <div
-                    key={b.id}
-                    className="bg-white rounded-xl p-4 border border-gray-200/80 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3"
-                  >
-                    <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <span
-                          className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full ${
-                            isConfirmed
-                              ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                              : "bg-amber-50 text-amber-700 border border-amber-200"
-                          }`}
-                        >
-                          {isConfirmed ? (
-                            <FiCheckCircle size={10} />
-                          ) : (
-                            <FiAlertCircle size={10} />
-                          )}
-                          {b.status}
+              {selectedDateBookings.map((b) => (
+                <div
+                  key={b.id}
+                  className="bg-white rounded-xl p-4 border border-gray-200/80 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                >
+                  <div>
+                    {b.packageName && (
+                      <div className="mb-1.5">
+                        <span className="inline-block bg-orange/10 text-orange text-xs font-semibold px-2.5 py-0.5 rounded-md">
+                          {b.packageName}
                         </span>
-                        {b.packageName && (
-                          <span className="text-xs text-gray-400 font-medium">
-                            {b.packageName}
-                          </span>
-                        )}
                       </div>
+                    )}
 
-                      <h5 className="font-title font-bold text-gray-900 text-base">
-                        {b.title || b.offeringName || "Wedding Service"}
-                      </h5>
+                    <h5 className="font-title font-bold text-gray-900 text-base">
+                      {b.title || b.offeringName || "Wedding Service"}
+                    </h5>
 
                       <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500 mt-1">
                         {b.serviceProvider?.name && (
@@ -406,8 +361,7 @@ const VisitorBookingCalendar: React.FC<VisitorBookingCalendarProps> = ({
                       </Link>
                     </div>
                   </div>
-                );
-              })}
+                ))}
             </div>
           ) : (
             <div className="bg-white rounded-xl p-6 text-center border border-gray-100">
@@ -431,7 +385,7 @@ const VisitorBookingCalendar: React.FC<VisitorBookingCalendarProps> = ({
           <span>
             {bookingsWithDates.length === 0
               ? "No scheduled bookings yet."
-              : `${bookingsWithDates.length} booking${
+              : `${bookingsWithDates.length} confirmed booking${
                   bookingsWithDates.length === 1 ? "" : "s"
                 } recorded on your wedding schedule.`}
           </span>
