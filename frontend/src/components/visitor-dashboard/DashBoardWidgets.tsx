@@ -47,11 +47,8 @@ const DashboardWidgets: React.FC<DashboardWidgetsProps> = ({
   visitorId,
 }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mb-8">
-      <VendorWidget
-         vendors={myVendors} visitorId={visitorId} />
-        
-        
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <VendorWidget vendors={myVendors} visitorId={visitorId} />
 
       <GuestListWidget
         attendingGuests={attendingGuests}

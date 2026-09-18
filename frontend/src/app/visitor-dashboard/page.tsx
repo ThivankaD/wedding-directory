@@ -21,7 +21,6 @@ import {
   GET_VISITOR_CHECKLISTS,
 } from "@/graphql/queries";
 import { FiSearch, FiCalendar, FiGrid } from "react-icons/fi";
-import { IoMdCheckmarkCircleOutline } from "react-icons/io";
 
 interface Guest {
   id: string;
@@ -179,16 +178,11 @@ const VisitorDashboardContent: React.FC = () => {
         {/* Top Header Banner matching Vendor Dashboard */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-semibold bg-orange/10 text-orange border border-orange/20">
-                Wedding Planning Portal
-              </span>
-            </div>
             <h1 className="font-title text-3xl font-bold text-gray-900">
               Wedding Dashboard
             </h1>
             <p className="text-gray-500 font-body text-sm mt-1">
-              Welcome back, {brideName} & {groomName}! Track your vendor bookings, wedding countdown, and planning milestones.
+              Welcome back, {brideName} & {groomName}!
             </p>
           </div>
 
@@ -199,13 +193,6 @@ const VisitorDashboardContent: React.FC = () => {
             >
               <FiSearch size={15} />
               <span>Explore Vendors</span>
-            </Link>
-            <Link
-              href={visitor?.id ? `/visitor-dashboard/checklist/${visitor.id}` : "/sign-up"}
-              className="inline-flex items-center justify-center gap-2 bg-white hover:bg-orange/5 text-gray-700 hover:text-orange font-semibold px-4 py-2.5 rounded-xl border border-orange/20 transition-all shadow-2xs text-xs"
-            >
-              <IoMdCheckmarkCircleOutline size={15} className="text-orange" />
-              <span>Checklist</span>
             </Link>
           </div>
         </div>

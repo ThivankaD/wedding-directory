@@ -173,6 +173,18 @@ export const DELETE_CHECKLIST = gql`
   }
 `;
 
+export const CLEAR_ALL_CHECKLISTS = gql`
+  mutation ClearAllChecklists($visitorId: String!) {
+    clearAllChecklists(visitorId: $visitorId)
+  }
+`;
+
+export const RESET_DEFAULT_CHECKLIST = gql`
+  mutation ResetDefaultChecklist($visitorId: String!) {
+    resetDefaultChecklist(visitorId: $visitorId)
+  }
+`;
+
 export const UPDATE_BUDGET_ITEM = gql`
   mutation UpdateBudgetItem(
     $id: String!

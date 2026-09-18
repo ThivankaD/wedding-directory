@@ -22,9 +22,9 @@ export default function ChatHeader({ visitor, offeringId }: ChatHeaderProps) {
   const coupleName = formatCoupleName(visitor, "Wedding Couple");
 
   return (
-    <div className="bg-white border-b border-gray-100 px-4 sm:px-6 py-3.5 flex items-center justify-between gap-3 flex-shrink-0">
+    <div className="bg-white border-b-2 border-orange/10 px-4 sm:px-6 py-4 flex items-center justify-between gap-3 flex-shrink-0">
       <div className="flex items-center gap-3 min-w-0">
-        <div className="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center bg-orange/10 text-orange font-bold text-sm sm:text-base rounded-full flex-shrink-0 shadow-xs">
+        <div className="w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center bg-orange/10 text-orange font-bold text-base sm:text-lg rounded-2xl flex-shrink-0 border border-orange/20 shadow-xs">
           {coupleName[0]?.toUpperCase() || "C"}
         </div>
         <div className="min-w-0">
@@ -33,12 +33,12 @@ export default function ChatHeader({ visitor, offeringId }: ChatHeaderProps) {
               {coupleName}
             </h2>
             {offering && (
-              <span className="hidden sm:inline-block px-2.5 py-0.5 text-xs bg-orange/10 text-orange font-semibold rounded-full truncate max-w-[200px]">
+              <span className="hidden sm:inline-block px-3 py-0.5 text-xs bg-orange/10 text-orange font-semibold rounded-full border border-orange/20 truncate max-w-[220px]">
                 {offering.name}
               </span>
             )}
           </div>
-          <p className="text-xs text-gray-500 truncate mt-0.5">
+          <p className="text-xs text-gray-500 truncate mt-0.5 font-body">
             {visitor.email}
             {visitor.phone ? ` • ${visitor.phone}` : ""}
             {offering && ` • ${offering.category}`}
@@ -47,7 +47,7 @@ export default function ChatHeader({ visitor, offeringId }: ChatHeaderProps) {
       </div>
 
       {offering && (
-        <span className="sm:hidden px-2.5 py-0.5 text-[11px] bg-orange/10 text-orange font-semibold rounded-full flex-shrink-0">
+        <span className="sm:hidden px-3 py-1 text-xs bg-orange/10 text-orange font-semibold rounded-full border border-orange/20 flex-shrink-0">
           {offering.name}
         </span>
       )}

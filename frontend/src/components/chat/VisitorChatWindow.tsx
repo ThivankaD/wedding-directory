@@ -130,14 +130,17 @@ const VisitorChatWindow = ({ chatId }: VisitorChatWindowProps) => {
     );
   }
 
-  const vendorDisplayName = vendor?.busname || `${vendor?.fname || ""} ${vendor?.lname || ""}`.trim() || "Wedding Vendor";
+  const vendorDisplayName =
+    vendor?.busname ||
+    `${vendor?.fname || ""} ${vendor?.lname || ""}`.trim() ||
+    "Wedding Vendor";
 
   return (
-    <div className="flex flex-col h-[calc(100vh-220px)] min-h-[500px]">
+    <div className="flex flex-col h-[calc(100vh-210px)] min-h-[520px]">
       {/* Top Chat Header */}
-      <div className="bg-white border-b border-gray-100 px-4 sm:px-6 py-3.5 flex items-center justify-between gap-3 flex-shrink-0">
-        <div className="flex items-center gap-3 min-w-0">
-          <div className="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center bg-orange/10 text-orange font-bold text-sm sm:text-base rounded-full flex-shrink-0 shadow-xs">
+      <div className="bg-white border-b-2 border-orange/10 px-4 sm:px-6 py-4 flex items-center justify-between gap-4 flex-shrink-0">
+        <div className="flex items-center gap-3.5 min-w-0">
+          <div className="w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center bg-orange/10 text-orange font-bold text-base sm:text-lg rounded-2xl flex-shrink-0 border border-orange/20 shadow-xs">
             {vendorDisplayName[0]?.toUpperCase() || <FaStore />}
           </div>
           <div className="min-w-0">
@@ -148,23 +151,28 @@ const VisitorChatWindow = ({ chatId }: VisitorChatWindowProps) => {
               {offering && (
                 <Link
                   href={`/services/${offering.id}`}
-                  className="hidden sm:inline-block px-2.5 py-0.5 text-xs bg-orange/10 text-orange hover:bg-orange hover:text-white transition-colors font-semibold rounded-full truncate max-w-[200px]"
+                  className="hidden sm:inline-flex items-center gap-1 px-3 py-0.5 text-xs bg-orange/10 text-orange hover:bg-orange hover:text-white transition-colors font-semibold rounded-full border border-orange/20 truncate max-w-[220px]"
                 >
-                  {offering.name} &rarr;
+                  <span>{offering.name}</span>
+                  <span>&rarr;</span>
                 </Link>
               )}
             </div>
-            <p className="text-xs text-gray-500 truncate mt-0.5">
-              {vendor?.city ? `${vendor.city} • ` : ""}
-              {offering?.category || "Wedding Service"}
-            </p>
+            <div className="flex items-center gap-2 text-xs text-gray-500 font-body truncate mt-0.5">
+              <span>{vendor?.city ? `${vendor.city} • ` : ""}{offering?.category || "Wedding Service"}</span>
+              <span className="inline-block w-1 h-1 rounded-full bg-gray-300" />
+              <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                Live Chat
+              </span>
+            </div>
           </div>
         </div>
 
         {offering && (
           <Link
             href={`/services/${offering.id}`}
-            className="sm:hidden px-2.5 py-0.5 text-[11px] bg-orange/10 text-orange font-semibold rounded-full flex-shrink-0"
+            className="sm:hidden px-3 py-1 text-xs bg-orange/10 text-orange font-semibold rounded-full border border-orange/20 flex-shrink-0"
           >
             {offering.name}
           </Link>
@@ -172,12 +180,19 @@ const VisitorChatWindow = ({ chatId }: VisitorChatWindowProps) => {
       </div>
 
       {/* Messages List Area */}
-      <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-3.5 bg-gray-50/40">
+      <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 bg-gradient-to-b from-[#FFFDFD] to-[#FFF7F4]">
         {messages.length === 0 ? (
           <div className="flex-1 h-full flex items-center justify-center p-8 text-center text-gray-400">
-            <div>
-              <p className="font-title font-medium text-gray-600 text-sm mb-1">Start of Conversation</p>
-              <p className="text-xs text-gray-400">Send a message to discuss your wedding plans with this vendor.</p>
+            <div className="max-w-xs p-6 bg-white rounded-3xl border-2 border-orange/15 shadow-xs">
+              <div className="w-12 h-12 rounded-2xl bg-orange/10 text-orange flex items-center justify-center mx-auto mb-3 text-xl">
+                <FaStore />
+              </div>
+              <p className="font-title font-semibold text-gray-800 text-sm mb-1">
+                Start of Conversation
+              </p>
+              <p className="text-xs text-gray-500 font-body">
+                Send a message to discuss dates, packages, and special requirements with {vendorDisplayName}.
+              </p>
             </div>
           </div>
         ) : (
@@ -189,15 +204,15 @@ const VisitorChatWindow = ({ chatId }: VisitorChatWindowProps) => {
             if (isSystemOrPayment) {
               return (
                 <div key={index} className="flex justify-center my-3">
-                  <div className="bg-amber-50/90 border border-amber-200/80 rounded-2xl p-3.5 max-w-[90%] sm:max-w-[75%] text-xs sm:text-sm text-amber-900 shadow-xs">
-                    <div className="font-semibold flex items-center gap-1.5 mb-1 text-orange">
-                      <span>📦</span>
-                      <span>Booking Payment Notification</span>
+                  <div className="bg-[#FFF8F3] border-2 border-orange/25 rounded-2xl p-4 max-w-[92%] sm:max-w-[75%] text-xs sm:text-sm text-gray-800 shadow-xs">
+                    <div className="font-semibold flex items-center gap-2 mb-1.5 text-orange">
+                      <span className="text-base">📦</span>
+                      <span className="font-title">Booking Payment Notification</span>
                     </div>
-                    <p className="leading-relaxed font-body whitespace-pre-line text-gray-800">
+                    <p className="leading-relaxed font-body whitespace-pre-line text-gray-700">
                       {msg.content.replace(/^📦\s*/, "")}
                     </p>
-                    <div className="text-[10px] text-amber-700/80 mt-1.5 text-right font-body">
+                    <div className="text-[10px] text-gray-400 mt-2 text-right font-body">
                       {formatDistanceToNow(new Date(msg.timestamp), {
                         addSuffix: true,
                       })}
@@ -216,13 +231,13 @@ const VisitorChatWindow = ({ chatId }: VisitorChatWindowProps) => {
               >
                 {/* Small Avatar badge */}
                 <div
-                  className={`w-7 h-7 rounded-full flex items-center justify-center font-bold text-[11px] flex-shrink-0 mb-0.5 shadow-xs ${
+                  className={`w-7 h-7 rounded-xl flex items-center justify-center font-bold text-[11px] flex-shrink-0 mb-0.5 shadow-xs border ${
                     isVisitor
-                      ? "bg-orange text-white"
-                      : "bg-gray-200 text-gray-700"
+                      ? "bg-orange text-white border-orange"
+                      : "bg-white text-orange border-orange/20"
                   }`}
                 >
-                  {isVisitor ? "C" : "V"}
+                  {isVisitor ? "You" : (vendorDisplayName[0]?.toUpperCase() || "V")}
                 </div>
 
                 {/* Message Bubble */}
@@ -232,15 +247,15 @@ const VisitorChatWindow = ({ chatId }: VisitorChatWindowProps) => {
                   }`}
                 >
                   <div
-                    className={`px-4 py-2.5 rounded-2xl shadow-xs text-sm font-body ${
+                    className={`px-4 py-3 rounded-2xl shadow-xs text-sm font-body ${
                       isVisitor
                         ? "bg-orange text-white rounded-br-xs"
-                        : "bg-white text-gray-800 rounded-bl-xs border border-gray-100"
+                        : "bg-white text-gray-800 rounded-bl-xs border-2 border-orange/10"
                     }`}
                   >
                     <p className="leading-relaxed whitespace-pre-wrap break-words">{msg.content}</p>
                     <span
-                      className={`text-[10px] mt-1 block ${
+                      className={`text-[10px] mt-1.5 block ${
                         isVisitor ? "text-white/80 text-right" : "text-gray-400 text-left"
                       }`}
                     >
@@ -258,9 +273,9 @@ const VisitorChatWindow = ({ chatId }: VisitorChatWindowProps) => {
       </div>
 
       {/* Message Input Bar */}
-      <div className="border-t border-gray-100 bg-white p-3 sm:p-4 flex-shrink-0">
+      <div className="border-t-2 border-orange/10 bg-white p-3.5 sm:p-4 flex-shrink-0">
         <form onSubmit={handleSendMessage} className="w-full">
-          <div className="flex items-center gap-2 bg-gray-50/80 rounded-2xl px-4 py-2 border border-gray-200 focus-within:border-orange focus-within:ring-2 focus-within:ring-orange/20 focus-within:bg-white transition-all">
+          <div className="flex items-center gap-2 bg-lightYellow/40 rounded-2xl px-4 py-2 border-2 border-orange/20 focus-within:border-orange focus-within:ring-2 focus-within:ring-orange/20 focus-within:bg-white transition-all">
             <input
               type="text"
               value={message}
@@ -271,10 +286,10 @@ const VisitorChatWindow = ({ chatId }: VisitorChatWindowProps) => {
             <button
               type="submit"
               disabled={!message.trim()}
-              className="p-2 rounded-xl bg-orange text-white disabled:opacity-40 disabled:cursor-not-allowed hover:bg-orange/90 transition-colors shadow-sm"
+              className="p-2.5 rounded-xl bg-orange text-white disabled:opacity-40 disabled:cursor-not-allowed hover:bg-orange/90 active:scale-95 transition-all shadow-sm flex-shrink-0"
               title="Send message"
             >
-              <IoSend className="text-base" />
+              <IoSend className="text-sm" />
             </button>
           </div>
         </form>
