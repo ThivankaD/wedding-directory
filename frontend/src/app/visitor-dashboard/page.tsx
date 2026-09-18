@@ -1,15 +1,15 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Header from "@/components/shared/Headers/Header";
 import Footer from "@/components/shared/Footer";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from "@apollo/client";
 import { useAuth } from "@/contexts/VisitorAuthContext";
 import VisitorCoupleBanner from "@/components/visitor-dashboard/VisitorCoupleBanner";
 import VisitorBookingCalendar from "@/components/visitor-dashboard/VisitorBookingCalendar";
 import DashboardWidgets from "@/components/visitor-dashboard/DashBoardWidgets";
-import WeddingPlanningGuide from "@/components/visitor-dashboard/WeddingPlanningGuide";
 import BottomNavigationBar from "@/components/visitor-dashboard/BottomNavigationBar";
 import LoaderHelix from "@/components/shared/Loaders/LoaderHelix";
 import { StaticImageData } from "next/image";
@@ -20,7 +20,7 @@ import {
   GET_BUDGET_TOOL,
   GET_VISITOR_CHECKLISTS,
 } from "@/graphql/queries";
-import { FiSearch } from "react-icons/fi";
+import { FiSearch, FiCalendar, FiGrid } from "react-icons/fi";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
 
 interface Guest {
@@ -36,7 +36,31 @@ interface Checklist {
   completed: boolean;
 }
 
-const VisitorDashboard = () => {
+const VisitorDashboardContent: React.FC = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get("tab");
+  const [dashboardTab, setDashboardTab] = useState<"overview" | "calendar">(
+    tabParam === "calendar" ? "calendar" : "overview"
+  );
+
+  useEffect(() => {
+    if (tabParam === "calendar") {
+      setDashboardTab("calendar");
+    } else {
+      setDashboardTab("overview");
+    }
+  }, [tabParam]);
+
+  const handleTabChange = (tab: "overview" | "calendar") => {
+    setDashboardTab(tab);
+    if (tab === "calendar") {
+      router.push("/visitor-dashboard?tab=calendar", { scroll: false });
+    } else {
+      router.push("/visitor-dashboard", { scroll: false });
+    }
+  };
+
   const { visitor } = useAuth();
   const [profilePic, setProfilePic] = useState<string | StaticImageData>(
     "/images/visitorProfilePic.webp"
@@ -203,57 +227,91 @@ const VisitorDashboard = () => {
             />
           </div>
 
-          {/* Right Column (8 cols): Visitor Booking Calendar (Vendor Template) */}
-          <div className="lg:col-span-8 flex flex-col gap-4">
-            {visitor?.id ? (
-              <VisitorBookingCalendar visitorId={visitor.id} />
-            ) : (
-              <div className="bg-white rounded-2xl border border-orange/20 p-8 text-center text-gray-500 text-sm">
-                Log in to view your wedding calendar.
+          {/* Right Column (8 cols): Planning Overview or Booking Calendar */}
+          <div className="lg:col-span-8 flex flex-col">
+            {/* Tab Switcher matching Vendor Dashboard */}
+            <div className="flex items-center gap-3 mb-6">
+              <button
+                type="button"
+                onClick={() => handleTabChange("overview")}
+                className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
+                  dashboardTab === "overview"
+                    ? "bg-orange text-white shadow-xs"
+                    : "bg-white text-gray-700 hover:text-orange hover:bg-orange/5 border border-gray-200"
+                }`}
+              >
+                <FiGrid size={16} />
+                <span>Planning Overview</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleTabChange("calendar")}
+                className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
+                  dashboardTab === "calendar"
+                    ? "bg-orange text-white shadow-xs"
+                    : "bg-white text-gray-700 hover:text-orange hover:bg-orange/5 border border-gray-200"
+                }`}
+              >
+                <FiCalendar size={16} />
+                <span>Booking Calendar</span>
+              </button>
+            </div>
+
+            {/* Tab 1: Planning Overview */}
+            {dashboardTab === "overview" && (
+              <div>
+                <DashboardWidgets
+                  myVendors={myVendors}
+                  attendingGuests={attendingGuests}
+                  declinedGuests={declinedGuests}
+                  invitedGuests={invitedGuests}
+                  notInvitedGuests={notInvitedGuests}
+                  totalGuests={guestList.length}
+                  budgetTotal={budgetTotal}
+                  budgetSpent={budgetSpent}
+                  budgetPercentage={budgetPercentage}
+                  completedTasks={completedTasks}
+                  totalTasks={totalTasks}
+                  checklistProgress={checklistProgress}
+                  visitorId={visitor?.id}
+                />
+              </div>
+            )}
+
+            {/* Tab 2: Booking Calendar */}
+            {dashboardTab === "calendar" && (
+              <div>
+                {visitor?.id ? (
+                  <VisitorBookingCalendar visitorId={visitor.id} />
+                ) : (
+                  <div className="bg-white rounded-2xl border border-orange/20 p-8 text-center text-gray-500 text-sm">
+                    Log in to view your wedding calendar.
+                  </div>
+                )}
               </div>
             )}
           </div>
-        </div>
-
-        {/* Planning Overview Widgets Grid */}
-        <div className="mb-10">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2.5">
-              <h2 className="font-title text-xl sm:text-2xl font-bold text-gray-900">
-                Planning Overview
-              </h2>
-              <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-orange/10 text-orange">
-                4 Active Tools
-              </span>
-            </div>
-          </div>
-
-          <DashboardWidgets
-            myVendors={myVendors}
-            attendingGuests={attendingGuests}
-            declinedGuests={declinedGuests}
-            invitedGuests={invitedGuests}
-            notInvitedGuests={notInvitedGuests}
-            totalGuests={guestList.length}
-            budgetTotal={budgetTotal}
-            budgetSpent={budgetSpent}
-            budgetPercentage={budgetPercentage}
-            completedTasks={completedTasks}
-            totalTasks={totalTasks}
-            checklistProgress={checklistProgress}
-            visitorId={visitor?.id}
-          />
-        </div>
-
-        {/* Wedding Planning Guide Banner */}
-        <div className="mb-8">
-          <WeddingPlanningGuide />
         </div>
       </main>
 
       <BottomNavigationBar />
       <Footer />
     </div>
+  );
+};
+
+const VisitorDashboard: React.FC = () => {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-lightYellow flex flex-col items-center justify-center p-8">
+          <LoaderHelix />
+        </div>
+      }
+    >
+      <VisitorDashboardContent />
+    </Suspense>
   );
 };
 

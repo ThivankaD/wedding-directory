@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import ProfilePicture from "./ProfilePicture";
 import { StaticImageData } from "next/image";
 import {
@@ -47,6 +47,8 @@ const VisitorCoupleBanner: React.FC<VisitorCoupleBannerProps> = ({
   attendingGuests,
 }) => {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get("tab");
 
   // Calculate days left
   const weddingDate = visitorData?.wed_date;
@@ -79,8 +81,17 @@ const VisitorCoupleBanner: React.FC<VisitorCoupleBannerProps> = ({
       href: "/visitor-dashboard",
       icon: FiHome,
       title: "Dashboard",
-      subtitle: "Overview & Calendar",
+      subtitle: "Planning Overview",
       badge: null,
+      isActive: pathname === "/visitor-dashboard" && tabParam !== "calendar",
+    },
+    {
+      href: "/visitor-dashboard?tab=calendar",
+      icon: FiCalendar,
+      title: "Wedding Calendar",
+      subtitle: "Appointments & Schedule",
+      badge: null,
+      isActive: pathname === "/visitor-dashboard" && tabParam === "calendar",
     },
     {
       href: `/visitor-dashboard/checklist/${visitorId || ""}`,
@@ -88,6 +99,7 @@ const VisitorCoupleBanner: React.FC<VisitorCoupleBannerProps> = ({
       title: "Checklist",
       subtitle: "Milestones & tasks",
       badge: totalTasks > 0 ? `${completedTasks}/${totalTasks}` : null,
+      isActive: pathname.startsWith("/visitor-dashboard/checklist"),
     },
     {
       href: `/visitor-dashboard/budgeter/${visitorId || ""}`,
@@ -95,6 +107,7 @@ const VisitorCoupleBanner: React.FC<VisitorCoupleBannerProps> = ({
       title: "Budgeter",
       subtitle: "Track allocations",
       badge: budgetPercentage > 0 ? `${budgetPercentage}%` : null,
+      isActive: pathname.startsWith("/visitor-dashboard/budgeter"),
     },
     {
       href: "/guest-list",
@@ -102,6 +115,7 @@ const VisitorCoupleBanner: React.FC<VisitorCoupleBannerProps> = ({
       title: "Guest List",
       subtitle: "Manage RSVPs",
       badge: attendingGuests > 0 ? `${attendingGuests} RSVP` : null,
+      isActive: pathname.startsWith("/guest-list"),
     },
     {
       href: `/visitor-dashboard/my-vendors/${visitorId || ""}`,
@@ -109,6 +123,7 @@ const VisitorCoupleBanner: React.FC<VisitorCoupleBannerProps> = ({
       title: "My Vendors",
       subtitle: "Saved & hired vendors",
       badge: myVendorsCount > 0 ? `${myVendorsCount}` : null,
+      isActive: pathname.startsWith("/visitor-dashboard/my-vendors"),
     },
     {
       href: `/visitor-dashboard/chats/${visitorId || ""}`,
@@ -116,6 +131,7 @@ const VisitorCoupleBanner: React.FC<VisitorCoupleBannerProps> = ({
       title: "Chats",
       subtitle: "Vendor conversations",
       badge: null,
+      isActive: pathname.startsWith("/visitor-dashboard/chats"),
     },
     {
       href: "/visitor-dashboard/recommendations",
@@ -123,6 +139,7 @@ const VisitorCoupleBanner: React.FC<VisitorCoupleBannerProps> = ({
       title: "Smart Picks",
       subtitle: "Curated for you",
       badge: "AI",
+      isActive: pathname.startsWith("/visitor-dashboard/recommendations"),
     },
     {
       href: "/visitor-dashboard/payments-history",
@@ -130,6 +147,7 @@ const VisitorCoupleBanner: React.FC<VisitorCoupleBannerProps> = ({
       title: "Payments History",
       subtitle: "Deposits & receipts",
       badge: null,
+      isActive: pathname.startsWith("/visitor-dashboard/payments-history"),
     },
   ];
 
@@ -178,14 +196,14 @@ const VisitorCoupleBanner: React.FC<VisitorCoupleBannerProps> = ({
             Planning Portal Navigation
           </h3>
           <span className="text-[10px] text-orange font-semibold bg-orange/10 px-2 py-0.5 rounded-md">
-            8 Tools
+            9 Tools
           </span>
         </div>
 
         <div className="flex flex-col gap-1.5">
           {navigationItems.map((item) => {
             const Icon = item.icon;
-            const isActive = pathname === item.href;
+            const isActive = item.isActive;
 
             return (
               <Link
