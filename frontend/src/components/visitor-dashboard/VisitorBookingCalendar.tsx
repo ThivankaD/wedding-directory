@@ -1,0 +1,451 @@
+"use client";
+
+import React, { useState } from "react";
+import { useQuery } from "@apollo/client";
+import { GET_VISITOR_BOOKINGS } from "@/graphql/queries";
+import Link from "next/link";
+import {
+  FiChevronLeft,
+  FiChevronRight,
+  FiCalendar,
+  FiClock,
+  FiMapPin,
+  FiMessageSquare,
+  FiShoppingBag,
+  FiCheckCircle,
+  FiAlertCircle,
+  FiX,
+} from "react-icons/fi";
+
+interface Booking {
+  id: string;
+  title: string;
+  date: string;
+  time?: string;
+  status: "Confirmed" | "Pending" | "Cancelled" | string;
+  location?: string;
+  serviceProvider?: {
+    id: string;
+    name: string;
+    email?: string;
+    phone?: string;
+  };
+  packageName?: string;
+  offeringName?: string;
+  amount?: number;
+  createdAt?: string;
+}
+
+interface VisitorBookingCalendarProps {
+  visitorId: string;
+}
+
+const monthNames = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
+const VisitorBookingCalendar: React.FC<VisitorBookingCalendarProps> = ({
+  visitorId,
+}) => {
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+
+  const { data, loading, error, refetch } = useQuery(GET_VISITOR_BOOKINGS, {
+    variables: { visitorId },
+    skip: !visitorId,
+  });
+
+  const bookings: Booking[] = data?.getVisitorBookings || [];
+
+  // Filter bookings with valid dates
+  const bookingsWithDates = bookings.filter((b) => Boolean(b.date));
+
+  // Get bookings for a specific date
+  const getBookingsForDate = (date: Date) => {
+    return bookingsWithDates.filter((b) => {
+      const bookingDate = new Date(b.date);
+      return bookingDate.toDateString() === date.toDateString();
+    });
+  };
+
+  // Get status for a date
+  const getDateStatus = (date: Date) => {
+    const dateBookings = getBookingsForDate(date);
+    if (dateBookings.length === 0) return null;
+
+    const hasConfirmed = dateBookings.some(
+      (b) => b.status?.toLowerCase() === "confirmed"
+    );
+    const hasPending = dateBookings.some(
+      (b) => b.status?.toLowerCase() === "pending"
+    );
+
+    if (hasConfirmed && hasPending) return "mixed";
+    if (hasConfirmed) return "confirmed";
+    if (hasPending) return "pending";
+    return "other";
+  };
+
+  // Month navigation
+  const goToPreviousMonth = () => {
+    setCurrentMonth(
+      new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1)
+    );
+  };
+
+  const goToNextMonth = () => {
+    setCurrentMonth(
+      new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1)
+    );
+  };
+
+  // Generate calendar days
+  const getDaysInMonth = (date: Date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    const startingDayOfWeek = firstDay.getDay();
+
+    const days: (Date | null)[] = [];
+
+    // Add empty cells for offset
+    for (let i = 0; i < startingDayOfWeek; i++) {
+      days.push(null);
+    }
+
+    // Add days of the month
+    for (let day = 1; day <= daysInMonth; day++) {
+      days.push(new Date(year, month, day));
+    }
+
+    return days;
+  };
+
+  const calendarDays = getDaysInMonth(currentMonth);
+  const selectedDateBookings = selectedDate
+    ? getBookingsForDate(selectedDate)
+    : [];
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  if (loading) {
+    return (
+      <div className="bg-white rounded-2xl shadow-sm border border-orange/20 p-8 flex items-center justify-center min-h-[400px]">
+        <div className="flex flex-col items-center gap-3 text-gray-500 text-sm">
+          <div className="w-8 h-8 border-3 border-orange border-t-transparent rounded-full animate-spin"></div>
+          <span className="font-medium text-xs">Loading booking calendar...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-white rounded-2xl shadow-sm border border-red-200 p-8 text-center text-red-500 text-sm">
+        <FiAlertCircle size={24} className="mx-auto mb-2 text-red-400" />
+        <p className="font-semibold">Unable to load booking calendar</p>
+        <button
+          onClick={() => refetch()}
+          className="mt-3 text-xs bg-orange text-white px-3.5 py-1.5 rounded-xl font-semibold hover:bg-orange/90 transition-all shadow-xs"
+        >
+          Try Again
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white rounded-2xl shadow-sm border border-orange/20 p-6 sm:p-7 flex flex-col h-full">
+      {/* Top Header & Legend matching vendor calendar */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6 pb-4 border-b border-gray-100">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="w-2 h-2 rounded-full bg-orange animate-pulse"></span>
+            <span className="text-[11px] font-semibold text-orange uppercase tracking-wider">
+              Appointments & Event Schedule
+            </span>
+          </div>
+          <h2 className="font-title text-xl sm:text-2xl font-bold text-gray-900">
+            Wedding Booking Calendar
+          </h2>
+          <p className="text-gray-400 text-xs mt-0.5">
+            Track confirmed vendor bookings, appointments, and pending dates
+          </p>
+        </div>
+
+        {/* Status Legend */}
+        <div className="flex items-center gap-2">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-medium">
+            <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+            Confirmed
+          </span>
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50 text-amber-700 border border-amber-200 text-xs font-medium">
+            <span className="w-2 h-2 rounded-full bg-amber-500"></span>
+            Pending
+          </span>
+        </div>
+      </div>
+
+      {/* Month Navigation */}
+      <div className="flex justify-between items-center mb-4">
+        <button
+          onClick={goToPreviousMonth}
+          className="inline-flex items-center gap-1 px-3 py-1.5 bg-gray-50 hover:bg-orange/10 hover:text-orange border border-gray-200 hover:border-orange/30 rounded-xl text-xs font-semibold text-gray-700 transition-colors"
+          title="Previous Month"
+        >
+          <FiChevronLeft size={16} />
+          <span>Prev</span>
+        </button>
+        <h3 className="text-base sm:text-lg font-title font-bold text-gray-900">
+          {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
+        </h3>
+        <button
+          onClick={goToNextMonth}
+          className="inline-flex items-center gap-1 px-3 py-1.5 bg-gray-50 hover:bg-orange/10 hover:text-orange border border-gray-200 hover:border-orange/30 rounded-xl text-xs font-semibold text-gray-700 transition-colors"
+          title="Next Month"
+        >
+          <span>Next</span>
+          <FiChevronRight size={16} />
+        </button>
+      </div>
+
+      {/* Calendar Grid */}
+      <div className="grid grid-cols-7 gap-1.5 mb-6">
+        {/* Day Header Row */}
+        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+          <div
+            key={day}
+            className="text-center font-semibold text-gray-400 py-1.5 text-xs uppercase tracking-wider"
+          >
+            {day}
+          </div>
+        ))}
+
+        {/* Day Cells */}
+        {calendarDays.map((day, idx) => {
+          if (!day) {
+            return <div key={`empty-${idx}`} className="h-14 sm:h-16" />;
+          }
+
+          const isToday = day.getTime() === today.getTime();
+          const isSelected =
+            selectedDate && day.toDateString() === selectedDate.toDateString();
+          const status = getDateStatus(day);
+          const dayBookings = getBookingsForDate(day);
+
+          return (
+            <button
+              key={day.toISOString()}
+              onClick={() => setSelectedDate(isSelected ? null : day)}
+              className={`h-14 sm:h-16 p-1.5 rounded-xl border text-left flex flex-col justify-between transition-all duration-150 relative ${
+                isSelected
+                  ? "border-2 border-orange bg-orange/5 shadow-xs"
+                  : isToday
+                  ? "border-orange/40 bg-orange/[0.02]"
+                  : status
+                  ? "border-gray-200 hover:border-orange/40 bg-white hover:bg-gray-50/80"
+                  : "border-gray-100 hover:border-gray-200 bg-white hover:bg-gray-50/50"
+              }`}
+            >
+              <div className="flex justify-between items-center w-full">
+                <span
+                  className={`text-xs font-semibold rounded-md w-5 h-5 flex items-center justify-center ${
+                    isToday
+                      ? "bg-orange text-white"
+                      : isSelected
+                      ? "text-orange font-bold"
+                      : "text-gray-700"
+                  }`}
+                >
+                  {day.getDate()}
+                </span>
+                {status && (
+                  <span className="text-[10px] font-bold text-gray-500">
+                    {dayBookings.length}
+                  </span>
+                )}
+              </div>
+
+              {/* Status Indicator Dots */}
+              {status && (
+                <div className="flex items-center gap-1 mt-auto">
+                  {status === "confirmed" && (
+                    <span
+                      className="w-2 h-2 rounded-full bg-emerald-500"
+                      title="Confirmed Booking"
+                    />
+                  )}
+                  {status === "pending" && (
+                    <span
+                      className="w-2 h-2 rounded-full bg-amber-500"
+                      title="Pending Booking"
+                    />
+                  )}
+                  {status === "mixed" && (
+                    <>
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                    </>
+                  )}
+                </div>
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Selected Date Details Panel */}
+      {selectedDate && (
+        <div className="mt-2 pt-5 border-t border-gray-100 bg-gray-50/70 -mx-6 -mb-6 p-6 rounded-b-2xl">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <FiCalendar className="text-orange" size={16} />
+              <h4 className="font-title font-bold text-gray-900 text-sm sm:text-base">
+                Bookings for {monthNames[selectedDate.getMonth()]}{" "}
+                {selectedDate.getDate()}, {selectedDate.getFullYear()}
+              </h4>
+            </div>
+            <button
+              onClick={() => setSelectedDate(null)}
+              className="text-gray-400 hover:text-gray-600 p-1"
+            >
+              <FiX size={16} />
+            </button>
+          </div>
+
+          {selectedDateBookings.length > 0 ? (
+            <div className="space-y-3">
+              {selectedDateBookings.map((b) => {
+                const isConfirmed = b.status?.toLowerCase() === "confirmed";
+                return (
+                  <div
+                    key={b.id}
+                    className="bg-white rounded-xl p-4 border border-gray-200/80 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                  >
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span
+                          className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full ${
+                            isConfirmed
+                              ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                              : "bg-amber-50 text-amber-700 border border-amber-200"
+                          }`}
+                        >
+                          {isConfirmed ? (
+                            <FiCheckCircle size={10} />
+                          ) : (
+                            <FiAlertCircle size={10} />
+                          )}
+                          {b.status}
+                        </span>
+                        {b.packageName && (
+                          <span className="text-xs text-gray-400 font-medium">
+                            {b.packageName}
+                          </span>
+                        )}
+                      </div>
+
+                      <h5 className="font-title font-bold text-gray-900 text-base">
+                        {b.title || b.offeringName || "Wedding Service"}
+                      </h5>
+
+                      <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500 mt-1">
+                        {b.serviceProvider?.name && (
+                          <span className="flex items-center gap-1">
+                            <FiShoppingBag size={12} className="text-orange" />
+                            {b.serviceProvider.name}
+                          </span>
+                        )}
+                        {b.time && (
+                          <span className="flex items-center gap-1">
+                            <FiClock size={12} className="text-orange" />
+                            {b.time}
+                          </span>
+                        )}
+                        {b.location && (
+                          <span className="flex items-center gap-1">
+                            <FiMapPin size={12} className="text-orange" />
+                            {b.location}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 self-start sm:self-center pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-100 w-full sm:w-auto justify-between sm:justify-end">
+                      {typeof b.amount === "number" && (
+                        <div className="text-right">
+                          <p className="text-[10px] text-gray-400 font-medium uppercase">
+                            Total Price
+                          </p>
+                          <p className="font-title font-bold text-gray-900 text-sm">
+                            LKR {b.amount.toLocaleString()}
+                          </p>
+                        </div>
+                      )}
+
+                      <Link
+                        href={`/visitor-dashboard/chats/${visitorId}`}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-orange/10 hover:bg-orange text-orange hover:text-white font-semibold text-xs transition-all"
+                      >
+                        <FiMessageSquare size={13} />
+                        <span>Chat</span>
+                      </Link>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="bg-white rounded-xl p-6 text-center border border-gray-100">
+              <p className="text-gray-500 text-xs mb-3">
+                No vendor appointments or bookings scheduled on this date.
+              </p>
+              <Link
+                href="/vendor-search"
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-orange hover:underline"
+              >
+                <span>Browse vendors available on this date &rarr;</span>
+              </Link>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Summary Footer when no date selected */}
+      {!selectedDate && (
+        <div className="mt-auto pt-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 gap-2">
+          <span>
+            {bookingsWithDates.length === 0
+              ? "No scheduled bookings yet."
+              : `${bookingsWithDates.length} booking${
+                  bookingsWithDates.length === 1 ? "" : "s"
+                } recorded on your wedding schedule.`}
+          </span>
+          <Link
+            href="/vendor-search"
+            className="text-orange font-semibold hover:underline inline-flex items-center gap-1"
+          >
+            <span>Book more wedding vendors</span>
+            <span>&rarr;</span>
+          </Link>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default VisitorBookingCalendar;
