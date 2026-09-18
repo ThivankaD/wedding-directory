@@ -152,7 +152,7 @@ const VisitorCoupleBanner: React.FC<VisitorCoupleBannerProps> = ({
   ];
 
   return (
-    <div className="w-full bg-white rounded-2xl shadow-sm border border-orange/20 p-6 sm:p-7 flex flex-col items-center text-center">
+    <div className="w-full h-full bg-white rounded-2xl shadow-sm border border-orange/20 p-6 sm:p-7 flex flex-col items-center text-center">
       {/* Couple Photo Upload Card */}
       <div className="w-full flex justify-center mb-5">
         <ProfilePicture profilePic={profilePic} setProfilePic={setProfilePic} />

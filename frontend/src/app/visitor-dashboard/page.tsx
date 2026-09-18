@@ -20,7 +20,7 @@ import {
   GET_BUDGET_TOOL,
   GET_VISITOR_CHECKLISTS,
 } from "@/graphql/queries";
-import { FiSearch, FiCalendar, FiGrid } from "react-icons/fi";
+import { FiSearch, FiCalendar } from "react-icons/fi";
 
 interface Guest {
   id: string;
@@ -198,9 +198,9 @@ const VisitorDashboardContent: React.FC = () => {
         </div>
 
         {/* Asymmetric Profile Hub + Booking Calendar Layout (4 cols + 8 cols) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 mb-10 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 mb-10 items-stretch">
           {/* Left Column (4 cols): Couple Profile & Integrated Planning Hub */}
-          <div className="lg:col-span-4">
+          <div className="lg:col-span-4 flex flex-col">
             <VisitorCoupleBanner
               visitorData={visitorData}
               visitorId={visitor?.id}
@@ -215,39 +215,10 @@ const VisitorDashboardContent: React.FC = () => {
           </div>
 
           {/* Right Column (8 cols): Planning Overview or Booking Calendar */}
-          <div className="lg:col-span-8 flex flex-col">
-            {/* Tab Switcher matching Vendor Dashboard */}
-            <div className="flex items-center gap-3 mb-6">
-              <button
-                type="button"
-                onClick={() => handleTabChange("overview")}
-                className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
-                  dashboardTab === "overview"
-                    ? "bg-orange text-white shadow-xs"
-                    : "bg-white text-gray-700 hover:text-orange hover:bg-orange/5 border border-gray-200"
-                }`}
-              >
-                <FiGrid size={16} />
-                <span>Planning Overview</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleTabChange("calendar")}
-                className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
-                  dashboardTab === "calendar"
-                    ? "bg-orange text-white shadow-xs"
-                    : "bg-white text-gray-700 hover:text-orange hover:bg-orange/5 border border-gray-200"
-                }`}
-              >
-                <FiCalendar size={16} />
-                <span>Booking Calendar</span>
-              </button>
-            </div>
-
+          <div className="lg:col-span-8 flex flex-col h-full">
             {/* Tab 1: Planning Overview */}
             {dashboardTab === "overview" && (
-              <div>
+              <div className="h-full flex flex-col flex-1">
                 <DashboardWidgets
                   myVendors={myVendors}
                   attendingGuests={attendingGuests}
@@ -268,7 +239,19 @@ const VisitorDashboardContent: React.FC = () => {
 
             {/* Tab 2: Booking Calendar */}
             {dashboardTab === "calendar" && (
-              <div>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between bg-white rounded-2xl border border-orange/20 px-5 py-3 shadow-xs">
+                  <div className="flex items-center gap-2 text-sm font-bold text-gray-900 font-title">
+                    <FiCalendar className="text-orange" size={18} />
+                    <span>Booking Calendar</span>
+                  </div>
+                  <Link
+                    href="/visitor-dashboard"
+                    className="text-xs font-semibold text-orange hover:underline font-body"
+                  >
+                    ← Back to Overview
+                  </Link>
+                </div>
                 {visitor?.id ? (
                   <VisitorBookingCalendar visitorId={visitor.id} />
                 ) : (

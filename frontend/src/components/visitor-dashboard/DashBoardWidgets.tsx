@@ -3,6 +3,8 @@ import VendorWidget from "./widgets/VendorWidget";
 import GuestListWidget from "./widgets/GuestListWidget";
 import BudgetWidget from "./widgets/BudgetWidget";
 import ChecklistWidget from "./widgets/ChecklistWidget";
+import CalendarWidget from "./widgets/CalendarWidget";
+import ChatWidget from "./widgets/ChatWidget";
 
 export interface Vendor {
   id: string;
@@ -47,7 +49,7 @@ const DashboardWidgets: React.FC<DashboardWidgetsProps> = ({
   visitorId,
 }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:grid-rows-3 h-full flex-1">
       <VendorWidget vendors={myVendors} visitorId={visitorId} />
 
       <GuestListWidget
@@ -71,6 +73,10 @@ const DashboardWidgets: React.FC<DashboardWidgetsProps> = ({
         checklistProgress={checklistProgress}
         visitorId={visitorId}
       />
+
+      <CalendarWidget visitorId={visitorId} />
+
+      <ChatWidget visitorId={visitorId} />
     </div>
   );
 };
