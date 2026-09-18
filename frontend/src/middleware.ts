@@ -16,53 +16,63 @@ const vendorRoutes = ['/vendor-dashboard', '/services/edit'];
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // Allow access to public routes
+  if (publicRoutes.some(route => pathname === route || pathname.startsWith(`${route}/`))) {
+    return NextResponse.next();
+  }
+
   // Get auth tokens
   const vendorToken = getCookie('access_tokenVendor', request);
   const visitorToken = getCookie('access_token', request);
 
-  // Check if it's a service edit route
-  const serviceEditMatch = pathname.match(/^\/services\/edit\/([^/]+)$/);
-  
-  if (serviceEditMatch) {
-    // For service edit routes, require vendor authentication
-    if (!vendorToken) {
-      return NextResponse.redirect(new URL('/login', request.url));
+  const isVendorRoute = vendorRoutes.some(route => pathname === route || pathname.startsWith(`${route}/`));
+  const isVisitorRoute = visitorRoutes.some(route => pathname === route || pathname.startsWith(`${route}/`));
+
+  // 1. Handle vendor routes (/vendor-dashboard, /services/edit, etc.)
+  if (isVendorRoute) {
+    if (vendorToken) {
+      const response = NextResponse.next();
+      // Clean up lingering visitor token to avoid auth conflict
+      if (visitorToken) {
+        response.cookies.delete('access_token');
+      }
+      return response;
     }
-    
-    // The actual authorization check for the specific vendor
-    // will need to be done in the page component since middleware
-    // can't access the full application state
-    return NextResponse.next();
+
+    // If not authenticated as vendor, but has visitor token, redirect to visitor dashboard
+    if (visitorToken) {
+      return NextResponse.redirect(new URL('/visitor-dashboard', request.url));
+    }
+
+    // Not authenticated at all, redirect to vendor login
+    return NextResponse.redirect(new URL('/login', request.url));
   }
 
-  // Handle unauthenticated users
-  if (!vendorToken && !visitorToken) {
-    // Allow access to public routes
-    if (publicRoutes.includes(pathname)) {
-      return NextResponse.next();
+  // 2. Handle visitor routes (/visitor-dashboard, /visitor-profile, etc.)
+  if (isVisitorRoute) {
+    if (visitorToken) {
+      const response = NextResponse.next();
+      // Clean up lingering vendor token to avoid auth conflict
+      if (vendorToken) {
+        response.cookies.delete('access_tokenVendor');
+      }
+      return response;
     }
 
-    // If the user is not authenticated and tries to access protected routes, redirect to login
+    // If not authenticated as visitor, but has vendor token, redirect to vendor dashboard
+    if (vendorToken) {
+      return NextResponse.redirect(new URL('/vendor-dashboard', request.url));
+    }
+
+    // Not authenticated at all, redirect to visitor login
     return NextResponse.redirect(new URL('/visitor-login', request.url));
   }
 
-  // Handle vendor user access
-  if (vendorToken) {
-    // If vendor tries to access visitor routes, redirect to vendor dashboard
-    if (visitorRoutes.some(route => pathname === route || pathname.startsWith(`${route}/`))) {
-      return NextResponse.redirect(new URL('/vendor-dashboard', request.url));
-    }
+  // Fallback for any other protected routes matched by config
+  if (!vendorToken && !visitorToken) {
+    return NextResponse.redirect(new URL('/visitor-login', request.url));
   }
 
-  // Handle visitor user access
-  if (visitorToken) {
-    // If visitor tries to access vendor routes, redirect to visitor dashboard
-    if (vendorRoutes.some(route => pathname.startsWith(route))) {
-      return NextResponse.redirect(new URL('/visitor-dashboard', request.url));
-    }
-  }
-
-  // If all conditions are satisfied, continue
   return NextResponse.next();
 }
 

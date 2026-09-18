@@ -11,6 +11,8 @@ import {
 import { useRouter } from "next/navigation";
 import { jwtDecode } from "jwt-decode"; // Correct import for jwtDecode
 
+import { deleteCookie } from "@/utils/cookieUtils";
+
 interface Visitor {
   id: string;
   email: string;
@@ -41,6 +43,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   // Function to login by decoding JWT and extracting visitor details
   const login = (token: string) => {
+    // Clear any vendor token to avoid conflicting auth state
+    deleteCookie("access_tokenVendor");
+
     const decoded = jwtDecode<{ sub: string; email: string }>(token); // Expecting sub (visitor id) and email
 
     // Set access token in first-party cookie so Next.js middleware and browser can read it
@@ -59,9 +64,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     // Clear visitor and accessToken state
     setVisitor(null);
     setAccessToken(null);
-    // Delete the access_token cookie
-    document.cookie = "access_token=; Max-Age=0; path=/;";
-    // Redirect to sign-in page
+    // Delete the access_token cookie thoroughly across domain levels
+    deleteCookie("access_token");
+    // Redirect to home page
     router.push("/");
   };
 
