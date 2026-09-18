@@ -1,12 +1,25 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
 import { FaFacebook, FaPinterest } from "react-icons/fa";
 import { AiFillInstagram } from "react-icons/ai";
 import { FaXTwitter } from "react-icons/fa6";
 import { FiArrowRight, FiHeart } from "react-icons/fi";
+import { useAuth as useVisitorAuth } from "@/contexts/VisitorAuthContext";
+import { useVendorAuth } from "@/contexts/VendorAuthContext";
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
+  const { visitor } = useVisitorAuth();
+  const { vendor } = useVendorAuth();
+  const isLoggedIn = !!visitor || !!vendor;
+
+  const homeHref = visitor
+    ? "/visitor-dashboard"
+    : vendor
+    ? "/vendor-dashboard"
+    : "/";
 
   return (
     <footer className="w-full border-t border-orange/15 bg-transparent font-body mt-auto">
@@ -14,11 +27,19 @@ const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10 mb-10">
           {/* Brand & Brief Tagline */}
           <div className="lg:col-span-4">
-            <Link href="/" className="inline-block mb-3">
-              <span className="font-title text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
-                Say I Do
-              </span>
-            </Link>
+            {isLoggedIn ? (
+              <div className="inline-block mb-3 select-none cursor-default">
+                <span className="font-title text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
+                  Say I Do
+                </span>
+              </div>
+            ) : (
+              <Link href="/" className="inline-block mb-3">
+                <span className="font-title text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
+                  Say I Do
+                </span>
+              </Link>
+            )}
             <p className="text-gray-600 text-sm leading-relaxed max-w-sm mb-4">
               Sri Lanka&apos;s premier wedding directory and planning companion, connecting couples with verified vendors to craft unforgettable celebrations.
             </p>
@@ -35,7 +56,7 @@ const Footer: React.FC = () => {
             </h4>
             <ul className="space-y-2 text-sm text-gray-600">
               <li>
-                <Link href="/" className="hover:text-orange transition-colors">
+                <Link href={homeHref} className="hover:text-orange transition-colors">
                   Home
                 </Link>
               </li>
