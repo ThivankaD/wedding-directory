@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { Fragment, useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import { BiMessageRounded } from "react-icons/bi";
 import { FiCalendar } from "react-icons/fi";
@@ -15,6 +15,7 @@ import toast from "react-hot-toast";
 
 const VisitorHeader = () => {
   const router = useRouter();
+  const pathname = usePathname();
   const { visitor, logout } = useAuth();
   const [profilePic, setProfilePic] = useState<string>("/images/visitorPlaceholder.png"); // Default placeholder
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -22,6 +23,30 @@ const VisitorHeader = () => {
   const profileMenuRef = useRef<HTMLDivElement>(null);
   const notificationMenuRef = useRef<HTMLDivElement>(null);
   const previousApprovedCountRef = useRef<number | null>(null);
+
+  const navLinks = [
+    {
+      name: "Dashboard",
+      href: "/visitor-dashboard",
+      isActive: (path: string) =>
+        path.startsWith("/visitor-dashboard") && !path.startsWith("/visitor-dashboard/help"),
+    },
+    {
+      name: "Vendors",
+      href: "/vendor-search",
+      isActive: (path: string) => path.startsWith("/vendor-search") || path.startsWith("/services"),
+    },
+    {
+      name: "Blog",
+      href: "/blog",
+      isActive: (path: string) => path.startsWith("/blog"),
+    },
+    {
+      name: "Help",
+      href: "/visitor-dashboard/help",
+      isActive: (path: string) => path === "/visitor-dashboard/help" || path === "/help",
+    },
+  ];
 
   // WebSocket hook for unread count
   const { unreadCount } = useChatSocket(visitor?.id, "visitor");
@@ -155,19 +180,19 @@ const VisitorHeader = () => {
 
   return (
     <Fragment>
-      <header className="py-6 xl:py-6 text-black bg-white">
-        <div className="container mx-auto flex justify-between items-center">
+      <header className="py-4 xl:py-5 text-black bg-lightYellow border-b border-orange/15">
+        <div className="container mx-auto flex justify-between items-center px-4 sm:px-6 lg:px-8">
           {/* Logo */}
           <div className="flex items-center">
-            <Link href="/">
-              <h1 className="text-2xl font-bold text-text font-title">
+            <Link href="/" className="group">
+              <h1 className="text-2xl font-bold text-gray-900 font-title group-hover:text-orange transition-colors">
                 Say I Do
               </h1>
             </Link>
           </div>
 
           {/* Search bar */}
-          <div className="flex flex-1 justify-center">
+          <div className="hidden lg:flex flex-1 justify-center px-6">
             <SearchBar
               showIcon={false}
               placehHolderText="search venues, caterers, etc."
@@ -175,17 +200,35 @@ const VisitorHeader = () => {
           </div>
 
           {/* Dashboard, Notifications, and Profile dropdown */}
-          <div className="flex items-center justify-end gap-8 text-xl font-title text-text">
-            <Link href="/visitor-dashboard">Dashboard</Link>
-            <Link href="/vendor-search">Vendors</Link>
-            <Link href="/blog">Blog</Link>
-            <Link href="/help">Help</Link>
+          <div className="flex items-center justify-end gap-3 sm:gap-5 text-sm sm:text-base font-title text-text">
+            <nav className="flex items-center gap-1 sm:gap-2">
+              {navLinks.map((link) => {
+                const active = link.isActive(pathname);
+                return (
+                  <Link
+                    key={link.name}
+                    href={link.href}
+                    className={`px-3.5 py-1.5 rounded-xl transition-all ${
+                      active
+                        ? "bg-orange text-white shadow-xs font-semibold"
+                        : "text-gray-700 hover:text-orange hover:bg-orange/10 font-medium"
+                    }`}
+                  >
+                    {link.name}
+                  </Link>
+                );
+              })}
+            </nav>
 
             {/* Chat icon with unread badge */}
-            <Link href={`/visitor-dashboard/chats/${visitor?.id}`} className="relative">
-              <BiMessageRounded className="w-[33px] h-[33px] cursor-pointer hover:text-gray-600" />
+            <Link
+              href={`/visitor-dashboard/chats/${visitor?.id}`}
+              className="relative p-2 rounded-xl hover:bg-orange/10 transition-colors text-gray-700 hover:text-orange flex items-center justify-center"
+              title="Messages"
+            >
+              <BiMessageRounded className="w-[26px] h-[26px]" />
               {unreadCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center shadow-xs">
                   {unreadCount > 9 ? "9+" : unreadCount}
                 </span>
               )}
@@ -196,7 +239,7 @@ const VisitorHeader = () => {
               <button
                 type="button"
                 onClick={() => setShowNotificationMenu((prev) => !prev)}
-                className="relative p-1 rounded-full hover:bg-gray-100 transition-colors flex items-center justify-center text-text"
+                className="relative p-2 rounded-xl hover:bg-orange/10 transition-colors flex items-center justify-center text-gray-700 hover:text-orange"
                 title={
                   notificationCount > 0
                     ? `${notificationCount} notification${notificationCount === 1 ? "" : "s"}`
@@ -204,9 +247,9 @@ const VisitorHeader = () => {
                 }
                 aria-label="Notifications"
               >
-                <IoIosNotificationsOutline className="w-[36px] h-[36px] cursor-pointer hover:text-gray-600" />
+                <IoIosNotificationsOutline className="w-[28px] h-[28px]" />
                 {notificationCount > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-pulse shadow-sm">
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-pulse shadow-xs">
                     {notificationCount > 9 ? "9+" : notificationCount}
                   </span>
                 )}

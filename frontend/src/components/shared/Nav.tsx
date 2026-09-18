@@ -36,20 +36,23 @@ const Nav = () => {
   const pathname = usePathname();
 
   return (
-    <nav className=" flex gap-6 font-title   text-xl">
+    <nav className="flex items-center gap-1 sm:gap-2 font-title text-sm sm:text-base">
       {Links.map((link, index) => {
-        const isActive = pathname === link.path;
+        const isActive =
+          link.path === "/"
+            ? pathname === "/"
+            : pathname.startsWith(link.path);
         return (
           <Link
             href={link.path}
             key={index}
             className={`
-              capitalize 
-              text-black 
-              hover:text-orange  
-              transition-all 
-              ${isActive ? "font-bold text-black" : ""}
-              ${isActive && "hover:text-orange hover:font-bold"} 
+              capitalize px-3.5 py-1.5 rounded-xl transition-all
+              ${
+                isActive
+                  ? "bg-orange text-white shadow-xs font-semibold"
+                  : "text-gray-700 hover:text-orange hover:bg-orange/10 font-medium"
+              }
             `}
           >
             {link.name}
