@@ -310,20 +310,13 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ initialRole }) => {
 
   return (
     <div className="min-h-screen bg-lightYellow flex flex-col font-body">
-      <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8 max-w-6xl">
-        {/* Top Header Banner matching Vendor Dashboard */}
-        <div className="mb-8 pb-6 border-b border-orange/15">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-orange/10 text-orange border border-orange/20">
-              <FiHelpCircle size={14} />
-              {activeRole === "vendor" ? "Vendor Support Center" : "Couple Support Center"}
-            </span>
-            <span className="text-xs text-gray-400 font-medium">Say I Do Help Desk</span>
-          </div>
-          <h1 className="font-title text-3xl sm:text-4xl font-bold text-gray-900">
+      <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 w-full">
+        {/* Minimized Header Banner */}
+        <div className="mb-6 pb-4 border-b border-orange/15">
+          <h1 className="font-title text-2xl sm:text-3xl font-bold text-gray-900">
             {activeRole === "vendor" ? "Vendor Help & Support" : "Couple Help & Support"}
           </h1>
-          <p className="text-gray-500 font-body text-sm sm:text-base mt-1 max-w-2xl">
+          <p className="text-gray-500 font-body text-xs sm:text-sm mt-1 max-w-2xl">
             {activeRole === "vendor"
               ? "Everything you need to know about managing your storefront, services, booking calendar, payments, and client communications."
               : "Find answers and guidance for finding the best vendors, planning your wedding budget, managing your guest list, and booking securely."}
@@ -331,12 +324,12 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ initialRole }) => {
         </div>
 
         {/* Search Bar Card */}
-        <div className="bg-white rounded-2xl shadow-sm border border-orange/20 p-6 sm:p-8 mb-8">
+        <div className="bg-white rounded-2xl shadow-sm border border-orange/20 p-5 sm:p-6 mb-6">
           <div className="max-w-2xl mx-auto text-center">
-            <h2 className="font-title text-2xl font-bold text-gray-900 mb-2">
+            <h2 className="font-title text-xl sm:text-2xl font-bold text-gray-900 mb-1.5">
               How can we help you today?
             </h2>
-            <p className="text-gray-500 text-sm mb-6">
+            <p className="text-gray-500 text-xs sm:text-sm mb-5">
               Search by question, keyword, or topic to find quick answers.
             </p>
 
@@ -353,7 +346,7 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ initialRole }) => {
                     ? "Search packages, calendar, advance payments, payouts, chat..."
                     : "Search finding vendors, budgeter, deposits, checklist, RSVPs..."
                 }
-                className="w-full pl-11 pr-10 py-3.5 bg-gray-50/80 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange/20 focus:border-orange transition-all"
+                className="w-full pl-11 pr-10 py-3 bg-gray-50/80 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange/20 focus:border-orange transition-all"
               />
               {searchQuery && (
                 <button

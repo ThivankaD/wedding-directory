@@ -44,10 +44,9 @@ const VisitorProfile = () => {
     <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex-grow bg-lightYellow">
-        {/* Main content wrapper with proper spacing */}
-        <div className="container mx-auto px-4 py-6 sm:py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
           {/* Wedding Couple Card Section */}
-          <div className="mb-6 sm:mb-8">
+          <div className="mb-8">
             <WeddingCoupleCard
               profilePic={profilePic}
               setProfilePic={setProfilePic}
@@ -57,15 +56,28 @@ const VisitorProfile = () => {
             />
           </div>
 
-          {/* Profile Content Section */}
-          <div className="flex flex-col gap-8 md:flex-row md:space-x-8 space-y-6 md:space-y-0">
+          {/* Page Header matching Vendor Settings */}
+          <div className="mb-6">
+            <h1 className="font-title text-3xl font-bold text-gray-900">
+              Profile Settings
+            </h1>
+            <p className="text-gray-500 font-body text-sm mt-1">
+              Manage your wedding details, partner information, and account security.
+            </p>
+          </div>
+
+          {/* Settings Grid */}
+          <div className="flex flex-col lg:flex-row gap-8 items-start">
             {/* Sidebar */}
-            <aside className="w-full md:w-1/4 flex-shrink-0 ">
-              <ProfileMenu setActiveSection={setActiveSection} />
+            <aside className="w-full lg:w-72 flex-shrink-0">
+              <ProfileMenu
+                setActiveSection={setActiveSection}
+                activeSection={activeSection}
+              />
             </aside>
 
             {/* Main Content Area */}
-            <div className="w-full md:w-3/4 pb-8 md:pb-0">
+            <div className="w-full flex-grow max-w-4xl">
               {renderSection()}
             </div>
           </div>
