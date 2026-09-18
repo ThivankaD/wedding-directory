@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import { BiMessageRounded } from "react-icons/bi";
-import { FiCalendar } from "react-icons/fi";
+import { FiCalendar, FiSettings, FiLogOut } from "react-icons/fi";
 import Image from "next/image";
 import { useVendorAuth } from "@/contexts/VendorAuthContext"; // Added vendor auth context
 import { useChatSocket } from "@/hooks/useChatSocket";
@@ -295,27 +295,64 @@ const VendorHeader = () => {
 
             {/* Profile dropdown */}
             <div className="relative" ref={profileMenuRef}>
-              <Image
-                src={profilePic}
-                alt="vendor-profile-image"
-                className="rounded-full cursor-pointer object-cover w-[50px] h-[50px]"
-                width={50}
-                height={50}
+              <button
+                type="button"
                 onClick={handleProfileClick}
-              />
+                className="relative block rounded-full focus:outline-none focus:ring-2 focus:ring-orange/40 transition-all cursor-pointer"
+                aria-label="Vendor profile menu"
+              >
+                <Image
+                  src={profilePic}
+                  alt="vendor-profile-image"
+                  className={`w-[46px] h-[46px] sm:w-[50px] sm:h-[50px] rounded-full object-cover transition-all border-2 ${
+                    showProfileMenu
+                      ? "border-orange ring-2 ring-orange/30 shadow-sm"
+                      : "border-orange/25 hover:border-orange shadow-xs"
+                  }`}
+                  width={50}
+                  height={50}
+                />
+              </button>
+
               {showProfileMenu && (
-                <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg py-2 z-50">
-                  <Link href="/vendor-dashboard/settings">
-                    <p className="px-4 py-2 hover:bg-gray-100 cursor-pointer font-title text-lg">
-                      Settings
+                <div className="absolute right-0 mt-3 w-56 bg-white rounded-2xl shadow-xl border border-orange/20 py-1.5 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                  {/* Vendor info header */}
+                  <div className="px-4 py-2.5 border-b border-orange/15">
+                    <p className="font-title text-sm font-bold text-gray-900 truncate">
+                      {data?.findVendorById?.busname ||
+                        `${data?.findVendorById?.fname || ""} ${data?.findVendorById?.lname || ""}`.trim() ||
+                        "Vendor Partner"}
                     </p>
-                  </Link>
-                  <p
-                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer font-title text-lg"
-                    onClick={handleLogout}
-                  >
-                    Logout
-                  </p>
+                  </div>
+
+                  {/* Menu items */}
+                  <div className="p-1.5 space-y-1">
+                    <Link
+                      href="/vendor-dashboard/settings"
+                      onClick={() => setShowProfileMenu(false)}
+                      className="flex items-center gap-3 px-3 py-2 rounded-xl text-gray-700 hover:text-orange hover:bg-orange/5 transition-all group"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-orange/10 border border-orange/20 text-orange flex items-center justify-center transition-colors group-hover:bg-orange group-hover:text-white flex-shrink-0">
+                        <FiSettings size={15} />
+                      </div>
+                      <span className="font-title text-sm font-semibold text-gray-900 group-hover:text-orange transition-colors">
+                        Settings
+                      </span>
+                    </Link>
+
+                    <button
+                      type="button"
+                      onClick={handleLogout}
+                      className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-gray-700 hover:text-red-600 hover:bg-red-50/80 transition-all group text-left cursor-pointer"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-red-50 border border-red-200/60 text-red-500 flex items-center justify-center transition-colors group-hover:bg-red-500 group-hover:text-white group-hover:border-red-500 flex-shrink-0">
+                        <FiLogOut size={15} />
+                      </div>
+                      <span className="font-title text-sm font-semibold text-gray-900 group-hover:text-red-600 transition-colors">
+                        Logout
+                      </span>
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
