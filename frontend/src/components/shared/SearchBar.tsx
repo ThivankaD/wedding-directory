@@ -12,9 +12,11 @@ const SearchBar: React.FC<SearchBarProps> = ({
   showIcon = true,
   placehHolderText = "Search venues, photographers, Colombo...",
   className = "",
+  size = "default",
 }) => {
   const router = useRouter();
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const isLarge = size === "large";
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredCategories, setFilteredCategories] = useState<string[]>([]);
@@ -131,7 +133,10 @@ const SearchBar: React.FC<SearchBarProps> = ({
     isOpen && (filteredCategories.length > 0 || filteredCities.length > 0);
 
   return (
-    <div ref={wrapperRef} className={`relative w-full max-w-md ${className}`}>
+    <div
+      ref={wrapperRef}
+      className={`relative w-full max-w-md ${className}`}
+    >
       <form onSubmit={handleSubmit} className="relative flex items-center w-full">
         <input
           type="text"
@@ -146,14 +151,20 @@ const SearchBar: React.FC<SearchBarProps> = ({
               setIsOpen(true);
             }
           }}
-          className={`w-full py-2 text-xs sm:text-sm rounded-full border border-orange/25 dark:border-zinc-700 bg-white/95 dark:bg-darkElevated focus:bg-white dark:focus:bg-darkElevated text-gray-800 dark:text-zinc-100 placeholder-gray-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-orange/20 focus:border-orange transition-all shadow-xs font-body ${
-            showIcon ? "pl-9" : "pl-4"
-          } ${searchTerm ? "pr-16" : "pr-9"}`}
+          className={`w-full rounded-full border border-orange/30 dark:border-zinc-700 bg-white dark:bg-darkElevated focus:bg-white dark:focus:bg-darkElevated text-gray-800 dark:text-zinc-100 placeholder-gray-400 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-orange/25 focus:border-orange transition-all font-body ${
+            isLarge
+              ? "h-14 sm:h-16 text-sm sm:text-base shadow-lg pl-12 sm:pl-14 pr-20 sm:pr-24"
+              : `py-2 text-xs sm:text-sm shadow-xs ${showIcon ? "pl-9" : "pl-4"} ${searchTerm ? "pr-16" : "pr-9"}`
+          }`}
         />
 
         {showIcon && (
-          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400 dark:text-zinc-500">
-            <MdSearch className="w-5 h-5" />
+          <div
+            className={`absolute top-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none text-gray-400 dark:text-zinc-400 ${
+              isLarge ? "left-4 sm:left-5" : "left-3"
+            }`}
+          >
+            <MdSearch className={isLarge ? "w-6 h-6 text-gray-400 dark:text-zinc-400" : "w-5 h-5"} />
           </div>
         )}
 
@@ -162,20 +173,26 @@ const SearchBar: React.FC<SearchBarProps> = ({
           <button
             type="button"
             onClick={handleClear}
-            className="absolute inset-y-0 right-9 flex items-center pr-1 text-gray-400 dark:text-zinc-400 hover:text-gray-600 dark:hover:text-zinc-200 transition-colors"
+            className={`absolute top-1/2 -translate-y-1/2 flex items-center justify-center text-gray-400 dark:text-zinc-400 hover:text-gray-600 dark:hover:text-zinc-200 transition-colors ${
+              isLarge ? "right-[52px] sm:right-[60px] p-1 rounded-full" : "right-9 pr-1"
+            }`}
             title="Clear search"
           >
-            <MdClose className="w-4 h-4" />
+            <MdClose className={isLarge ? "w-5 h-5" : "w-4 h-4"} />
           </button>
         )}
 
         {/* Action Button */}
         <button
           type="submit"
-          className="absolute inset-y-0 right-1.5 my-auto w-7 h-7 rounded-full bg-orange hover:bg-orange/90 text-white flex items-center justify-center transition-transform active:scale-95 shadow-xs"
+          className={`absolute top-1/2 -translate-y-1/2 rounded-full bg-orange hover:bg-orange/90 text-white flex items-center justify-center transition-all active:scale-95 shadow-sm cursor-pointer ${
+            isLarge
+              ? "right-2 w-10 h-10 sm:w-12 sm:h-12"
+              : "right-1.5 w-7 h-7"
+          }`}
           title="Search"
         >
-          <MdSearch className="w-4 h-4" />
+          <MdSearch className={isLarge ? "w-5 h-5 sm:w-6 sm:h-6" : "w-4 h-4"} />
         </button>
       </form>
 

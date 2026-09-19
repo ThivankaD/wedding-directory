@@ -26,8 +26,8 @@ const Hero = () => {
           Search, add to the checklist, and plan your wedding!
         </p>
 
-        <div className="mt-5 sm:mt-7 w-full max-w-md">
-          <SearchBar />
+        <div className="mt-5 sm:mt-7 w-full max-w-md px-2">
+          <SearchBar size="large" />
         </div>
       </div>
     </div>

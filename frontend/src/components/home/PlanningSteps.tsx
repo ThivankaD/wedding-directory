@@ -1,67 +1,66 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from "../ui/button";
 
 const cards = [
   {
     id: 1,
-    tagLine: "sample tag line",
     title: "Your Vendors",
     description:
-      "We'll help you find the perfect vendors for your wedding, tailored to your specific needs!",
-    buttonText: "Get Started",
+      "Find verified wedding vendors tailored to your style, date, and budget across Sri Lanka.",
+    buttonText: "Explore Vendors",
+    href: "/vendor-search",
     image: "/images/venue.webp",
   },
   {
     id: 2,
-    tagLine: "sample tag line",
     title: "Your Budget",
     description:
-      "Set up your budget and manage your finances with our easy-to-use budgeting tool!",
-    buttonText: "Get Started",
+      "Set your spending limits, track expenses, and manage milestone payments effortlessly.",
+    buttonText: "Set Up Budget",
+    href: "/visitor-signup",
     image: "/images/cakes.webp",
   },
   {
     id: 3,
-    tagLine: "sample tag line",
     title: "Your Checklist",
     description:
-      "We'll walk you through every part of planning, so you can plan your big day in no time!",
-    buttonText: "Get Started",
+      "Stay ahead with our step-by-step wedding countdown and task management tools.",
+    buttonText: "Start Checklist",
+    href: "/visitor-signup",
     image: "/images/florists.webp",
   },
 ];
 
 const PlanningSteps = () => {
   return (
-    <section className="flex justify-center py-12 sm:py-16 bg-white dark:bg-darkSurface border-y border-orange/10 dark:border-zinc-800 transition-colors duration-200">
+    <section className="flex justify-center py-10 sm:py-14 bg-lightYellow dark:bg-darkSurface dark:bg-none border-y border-orange/15 dark:border-zinc-800 transition-colors duration-200">
       <div className="container mx-auto px-4 max-w-6xl flex flex-col items-center">
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-title text-gray-900 dark:text-zinc-100 mb-8 sm:mb-12 text-center tracking-tight">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-title text-gray-900 dark:text-zinc-100 mb-8 sm:mb-10 text-center tracking-tight">
           Wedding planning has never been easier
         </h2>
 
-        <div className="flex flex-col lg:flex-row lg:items-stretch gap-6 lg:gap-8 w-full">
+        <div className="flex flex-col lg:flex-row lg:items-stretch gap-6 sm:gap-8 w-full">
           {/* Responsive image container */}
-          <div className="hidden lg:block lg:w-5/12">
-            <div className="relative h-full min-h-[380px] rounded-2xl overflow-hidden border border-orange/15 dark:border-zinc-800 shadow-sm">
+          <div className="hidden lg:block lg:w-5/12 xl:w-[360px] shrink-0">
+            <div className="relative h-full min-h-[340px] rounded-2xl overflow-hidden border border-orange/15 dark:border-zinc-800 shadow-sm">
               <Image
                 src="/images/bridaldressing.webp"
                 alt="Wedding Planning"
-                className="object-cover w-full h-full"
+                className="object-cover"
                 fill
               />
             </div>
           </div>
 
           {/* Responsive cards container */}
-          <div className="w-full lg:w-7/12 flex flex-col space-y-4 sm:space-y-5">
+          <div className="w-full lg:flex-1 flex flex-col gap-4">
             {cards.map((card) => (
               <div
                 key={card.id}
-                className="flex flex-col sm:flex-row items-center sm:items-start gap-4 p-5 sm:p-6 bg-white dark:bg-darkElevated border border-orange/15 dark:border-zinc-700/80 rounded-2xl shadow-2xs hover:shadow-sm transition-all"
+                className="flex flex-row items-center gap-4 sm:gap-5 p-4 sm:p-5 bg-white dark:bg-darkElevated border border-orange/15 dark:border-zinc-700/80 rounded-2xl shadow-2xs hover:shadow-xs transition-all"
               >
-                <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden shrink-0 border border-orange/10 dark:border-zinc-700">
+                <div className="relative w-18 h-18 sm:w-20 sm:h-20 rounded-xl overflow-hidden shrink-0 border border-orange/10 dark:border-zinc-700">
                   <Image
                     src={card.image}
                     alt={card.title}
@@ -69,17 +68,17 @@ const PlanningSteps = () => {
                     fill
                   />
                 </div>
-                <div className="flex flex-col text-center sm:text-left flex-1 min-w-0">
+                <div className="flex flex-col text-left flex-1 min-w-0">
                   <h3 className="text-lg sm:text-xl font-bold font-title text-gray-900 dark:text-zinc-100">
                     {card.title}
                   </h3>
-                  <p className="text-xs sm:text-sm font-body text-gray-600 dark:text-zinc-400 mt-1.5 leading-relaxed">
+                  <p className="text-xs sm:text-sm font-body text-gray-600 dark:text-zinc-400 mt-1 leading-relaxed">
                     {card.description}
                   </p>
-                  <div className="mt-3 flex justify-center sm:justify-start">
+                  <div className="mt-2.5 flex justify-start">
                     <Link
-                      href="/visitor-signup"
-                      className="px-4 py-1.5 rounded-xl border border-orange text-orange hover:bg-orange hover:text-white font-title text-sm font-semibold transition-colors"
+                      href={card.href}
+                      className="px-3.5 py-1.5 rounded-xl border border-orange text-orange hover:bg-orange hover:text-white font-title text-xs sm:text-sm font-semibold transition-colors"
                     >
                       {card.buttonText}
                     </Link>
@@ -90,20 +89,28 @@ const PlanningSteps = () => {
           </div>
         </div>
 
-        {/* Signup section */}
-        <div className="mt-12 sm:mt-16 text-center">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-title text-gray-900 dark:text-zinc-100 mb-4 tracking-tight">
-            Join with Say I Do
-          </h2>
-          <p className="text-sm sm:text-base text-gray-600 dark:text-zinc-400 font-body max-w-md mx-auto mb-6">
-            Create your free couple account to explore vendors, manage budgets, and build your custom wedding checklist.
+        {/* Couples CTA Section */}
+        <div className="mt-10 sm:mt-12 text-center max-w-xl mx-auto">
+          <h3 className="text-2xl sm:text-3xl font-bold font-title text-gray-900 dark:text-zinc-100 mb-2 tracking-tight">
+            Ready to plan your dream wedding?
+          </h3>
+          <p className="text-sm sm:text-base text-gray-600 dark:text-zinc-400 font-body mb-5 leading-relaxed">
+            Create your free couple account to unlock our budgeter, checklists, and connect with top-rated wedding vendors.
           </p>
-          <Link
-            href="/visitor-signup"
-            className="inline-flex items-center justify-center px-6 py-3 rounded-xl font-title text-base sm:text-lg font-semibold text-white bg-orange hover:bg-orange/90 active:scale-[0.98] transition-all shadow-xs"
-          >
-            Sign up with us for free
-          </Link>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <Link
+              href="/visitor-signup"
+              className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 rounded-xl font-title text-base font-semibold text-white bg-orange hover:bg-orange/90 active:scale-[0.98] transition-all shadow-xs"
+            >
+              Sign up as a couple
+            </Link>
+            <Link
+              href="/vendor-search"
+              className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 rounded-xl font-title text-base font-semibold text-gray-800 dark:text-zinc-200 border border-gray-300 dark:border-zinc-700 bg-white dark:bg-darkElevated hover:border-orange dark:hover:border-orange hover:text-orange dark:hover:text-orange transition-all shadow-2xs"
+            >
+              Browse Directory
+            </Link>
+          </div>
         </div>
       </div>
     </section>
