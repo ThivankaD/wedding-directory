@@ -37,7 +37,13 @@ export const isDashboardRoute = (pathname: string | null): boolean => {
     pathname.startsWith("/login") ||
     pathname.startsWith("/sign-up") ||
     pathname.startsWith("/forgot-password") ||
-    pathname.startsWith("/blog")
+    pathname.startsWith("/blog") ||
+    pathname.startsWith("/about") ||
+    pathname.startsWith("/contact") ||
+    pathname.startsWith("/help") ||
+    pathname.startsWith("/privacy-policy") ||
+    pathname.startsWith("/terms-of-use") ||
+    pathname.startsWith("/profile")
   );
 };
 
