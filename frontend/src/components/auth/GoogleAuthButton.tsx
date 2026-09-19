@@ -7,6 +7,7 @@ import { toast } from 'react-hot-toast';
 import { googleAuthApi } from '@/api/auth/google.auth.api';
 import { useAuth as useVisitorAuth } from '@/contexts/VisitorAuthContext';
 import { useVendorAuth } from '@/contexts/VendorAuthContext';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface GoogleAuthButtonProps {
   role?: 'visitor' | 'vendor';
@@ -22,6 +23,7 @@ export default function GoogleAuthButton({
   const router = useRouter();
   const visitorAuth = useVisitorAuth();
   const vendorAuth = useVendorAuth();
+  const { isDark } = useTheme();
   const [loading, setLoading] = useState(false);
 
   const handleSuccess = async (credentialResponse: CredentialResponse) => {
@@ -86,7 +88,7 @@ export default function GoogleAuthButton({
           onSuccess={handleSuccess}
           onError={handleError}
           text={text}
-          theme="outline"
+          theme={isDark ? "filled_black" : "outline"}
           size="large"
           shape="rectangular"
           width="100%"

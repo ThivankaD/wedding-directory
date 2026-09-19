@@ -11,14 +11,15 @@ import Footer from "@/components/shared/Footer";
 
 export default function Page() {
   return (
-    <div>
+    <div className="min-h-screen bg-lightYellow dark:bg-darkBg text-gray-900 dark:text-zinc-100 transition-colors duration-200 flex flex-col justify-between">
       <Header />
-      <Hero />
-      <MasonaryGrid />
-      <PlanningSteps />
-      <Subscribe />
-      <Testimonials />
-
+      <main className="flex-1">
+        <Hero />
+        <MasonaryGrid />
+        <PlanningSteps />
+        <Subscribe />
+        <Testimonials />
+      </main>
       <Footer />
     </div>
   );

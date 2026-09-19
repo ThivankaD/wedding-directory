@@ -2,9 +2,7 @@
 
 import React, { useState, useEffect, useRef, Suspense } from 'react';
 import Header from '@/components/shared/Headers/Header';
-import Image from 'next/image';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import Footer from '@/components/shared/Footer';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'react-hot-toast';
@@ -179,10 +177,10 @@ const ForgotPasswordForm = () => {
   const loginRoute = role === 'vendor' ? '/login' : '/visitor-login';
 
   return (
-    <div className="bg-white w-full max-w-[460px] rounded-md p-6 sm:p-8 font-body shadow-lg relative transition-all">
+    <div className="relative z-10 w-full max-w-[460px] bg-white dark:bg-darkSurface border border-orange/25 dark:border-zinc-700/80 rounded-3xl shadow-xl dark:shadow-[0_8px_30px_rgb(0,0,0,0.5)] p-6 sm:p-8 font-body transition-colors">
       {/* Loader Overlay */}
       {isLoading && (
-        <div className="absolute inset-0 bg-white bg-opacity-90 flex items-center justify-center z-30 rounded-md">
+        <div className="absolute inset-0 bg-white/90 dark:bg-darkSurface/90 backdrop-blur-xs flex items-center justify-center z-30 rounded-3xl">
           <LoaderJelly />
         </div>
       )}
@@ -190,25 +188,25 @@ const ForgotPasswordForm = () => {
       {/* STEP 1: REQUEST OTP */}
       {step === 1 && (
         <>
-          <h1 className="text-3xl sm:text-4xl font-bold text-center font-title text-gray-900">
+          <h1 className="text-3xl sm:text-4xl font-bold text-center font-title text-gray-900 dark:text-zinc-100">
             Forgot Password
           </h1>
-          <p className="text-sm text-gray-500 text-center mt-2">
+          <p className="text-sm text-gray-600 dark:text-zinc-400 text-center mt-2">
             Select your account type and enter your email address to receive a 6-digit OTP code.
           </p>
 
           {/* Account Type Selector Tabs */}
-          <div className="flex border border-gray-300 rounded-md overflow-hidden mt-6">
+          <div className="flex border border-gray-200 dark:border-zinc-700 rounded-xl overflow-hidden mt-6 p-1 bg-gray-50 dark:bg-darkElevated">
             <button
               type="button"
               onClick={() => {
                 setRole('visitor');
                 setError(null);
               }}
-              className={`flex-1 py-2.5 text-xs sm:text-sm font-semibold text-center transition-colors ${
+              className={`flex-1 py-2 text-xs sm:text-sm font-semibold text-center rounded-lg transition-all ${
                 role === 'visitor'
-                  ? 'bg-orange text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  ? 'bg-orange text-white shadow-xs'
+                  : 'text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-200'
               }`}
             >
               Couple / Visitor
@@ -219,10 +217,10 @@ const ForgotPasswordForm = () => {
                 setRole('vendor');
                 setError(null);
               }}
-              className={`flex-1 py-2.5 text-xs sm:text-sm font-semibold text-center transition-colors ${
+              className={`flex-1 py-2 text-xs sm:text-sm font-semibold text-center rounded-lg transition-all ${
                 role === 'vendor'
-                  ? 'bg-orange text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  ? 'bg-orange text-white shadow-xs'
+                  : 'text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-200'
               }`}
             >
               Wedding Vendor
@@ -230,12 +228,18 @@ const ForgotPasswordForm = () => {
           </div>
 
           <form onSubmit={handleRequestOtp} className="mt-6">
-            <div className="border-black border-solid border-2 border-opacity-70 rounded-md flex flex-row space-y-1.5">
-              <Input
-                className="h-12 pl-6 pb-3 text-base"
+            <div>
+              <label
+                htmlFor="email"
+                className="block text-xs font-semibold text-gray-700 dark:text-zinc-300 mb-1.5"
+              >
+                Registered Email Address
+              </label>
+              <input
+                className="w-full h-12 px-4 rounded-xl text-base bg-white dark:bg-darkElevated border-2 border-gray-200 dark:border-zinc-700/80 text-gray-900 dark:text-zinc-100 placeholder:text-gray-400 dark:placeholder:text-zinc-500 outline-none focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 focus:border-orange dark:focus:border-orange transition-colors"
                 type="email"
                 id="email"
-                placeholder="Enter your registered email"
+                placeholder="name@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -243,22 +247,23 @@ const ForgotPasswordForm = () => {
             </div>
 
             {error && (
-              <p className="text-red-500 text-sm text-center mt-2.5">{error}</p>
+              <p className="text-red-500 text-sm text-center mt-3">{error}</p>
             )}
 
             <div className="mt-6 flex flex-col w-full">
-              <Button
+              <button
                 type="submit"
-                className="rounded-none text-white font-bold hover:bg-orange bg-orange text-base sm:text-lg h-12"
+                disabled={isLoading}
+                className="w-full h-12 rounded-xl text-white font-title text-base sm:text-lg font-bold bg-orange hover:bg-orange/90 active:scale-[0.99] shadow-md hover:shadow-orange/20 transition-all cursor-pointer flex items-center justify-center disabled:opacity-50"
               >
                 Send Verification Code
-              </Button>
+              </button>
             </div>
 
             <div className="text-center mt-4">
               <Link
                 href={loginRoute}
-                className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-orange hover:underline transition-colors"
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-600 dark:text-zinc-400 hover:text-orange dark:hover:text-orange hover:underline transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" />
                 Back to Log In
@@ -271,16 +276,16 @@ const ForgotPasswordForm = () => {
       {/* STEP 2: VERIFY OTP */}
       {step === 2 && (
         <>
-          <div className="w-12 h-12 bg-orange/10 text-orange rounded-full flex items-center justify-center mx-auto mb-3">
+          <div className="w-12 h-12 bg-orange/10 dark:bg-orange/20 text-orange rounded-full flex items-center justify-center mx-auto mb-3">
             <Mail className="w-6 h-6 text-orange" />
           </div>
 
-          <h1 className="text-3xl font-bold text-center font-title text-gray-900">
+          <h1 className="text-3xl font-bold text-center font-title text-gray-900 dark:text-zinc-100">
             Verify Code
           </h1>
-          <p className="text-sm text-gray-600 text-center mt-2">
+          <p className="text-sm text-gray-600 dark:text-zinc-400 text-center mt-2">
             We sent a 6-digit OTP code to <br />
-            <span className="font-semibold text-gray-800">{email}</span>
+            <span className="font-semibold text-gray-900 dark:text-zinc-200">{email}</span>
           </p>
 
           <form onSubmit={handleVerifyOtp} className="mt-6">
@@ -292,17 +297,17 @@ const ForgotPasswordForm = () => {
             />
 
             {error && (
-              <p className="text-red-500 text-sm text-center mt-2.5">{error}</p>
+              <p className="text-red-500 text-sm text-center mt-3">{error}</p>
             )}
 
             <div className="mt-6 flex flex-col w-full">
-              <Button
+              <button
                 type="submit"
                 disabled={isLoading}
-                className="rounded-none text-white font-bold hover:bg-orange bg-orange text-base sm:text-lg h-12"
+                className="w-full h-12 rounded-xl text-white font-title text-base sm:text-lg font-bold bg-orange hover:bg-orange/90 active:scale-[0.99] shadow-md hover:shadow-orange/20 transition-all cursor-pointer flex items-center justify-center disabled:opacity-50"
               >
                 Verify Code
-              </Button>
+              </button>
             </div>
 
             <div className="flex items-center justify-between text-xs sm:text-sm mt-5">
@@ -313,14 +318,14 @@ const ForgotPasswordForm = () => {
                   setOtp('');
                   setError(null);
                 }}
-                className="inline-flex items-center gap-1 text-gray-500 hover:text-gray-800 underline"
+                className="inline-flex items-center gap-1 text-gray-500 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100 underline transition-colors"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 Change email
               </button>
 
               {resendTimer > 0 ? (
-                <span className="text-gray-400">
+                <span className="text-gray-400 dark:text-zinc-500">
                   Resend in {resendTimer}s
                 </span>
               ) : (
@@ -341,69 +346,88 @@ const ForgotPasswordForm = () => {
       {/* STEP 3: RESET PASSWORD */}
       {step === 3 && (
         <>
-          <div className="w-12 h-12 bg-orange/10 text-orange rounded-full flex items-center justify-center mx-auto mb-3">
+          <div className="w-12 h-12 bg-orange/10 dark:bg-orange/20 text-orange rounded-full flex items-center justify-center mx-auto mb-3">
             <KeyRound className="w-6 h-6 text-orange" />
           </div>
 
-          <h1 className="text-3xl font-bold text-center font-title text-gray-900">
+          <h1 className="text-3xl font-bold text-center font-title text-gray-900 dark:text-zinc-100">
             New Password
           </h1>
-          <p className="text-sm text-gray-500 text-center mt-2">
+          <p className="text-sm text-gray-600 dark:text-zinc-400 text-center mt-2">
             Create a strong new password for your account.
           </p>
 
           <form onSubmit={handleResetPassword} className="mt-6">
             <div className="space-y-4">
-              <div className="border-black border-solid border-2 border-opacity-70 rounded-md flex items-center relative">
-                <Input
-                  className="h-12 pl-6 pr-12 pb-3 text-base border-none"
-                  type={showPassword ? 'text' : 'password'}
-                  id="newPassword"
-                  placeholder="New Password (min 6 chars)"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 text-gray-500 hover:text-gray-700"
+              <div>
+                <label
+                  htmlFor="newPassword"
+                  className="block text-xs font-semibold text-gray-700 dark:text-zinc-300 mb-1.5"
                 >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
+                  New Password
+                </label>
+                <div className="relative w-full">
+                  <input
+                    className="w-full h-12 pl-4 pr-12 rounded-xl text-base bg-white dark:bg-darkElevated border-2 border-gray-200 dark:border-zinc-700/80 text-gray-900 dark:text-zinc-100 placeholder:text-gray-400 dark:placeholder:text-zinc-500 outline-none focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 focus:border-orange dark:focus:border-orange transition-colors"
+                    type={showPassword ? 'text' : 'password'}
+                    id="newPassword"
+                    placeholder="At least 6 characters"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 dark:hover:text-zinc-200 transition-colors p-1"
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
               </div>
 
-              <div className="border-black border-solid border-2 border-opacity-70 rounded-md flex items-center relative">
-                <Input
-                  className="h-12 pl-6 pr-12 pb-3 text-base border-none"
-                  type={showConfirmPassword ? 'text' : 'password'}
-                  id="confirmPassword"
-                  placeholder="Confirm New Password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-4 text-gray-500 hover:text-gray-700"
+              <div>
+                <label
+                  htmlFor="confirmPassword"
+                  className="block text-xs font-semibold text-gray-700 dark:text-zinc-300 mb-1.5"
                 >
-                  {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
+                  Confirm New Password
+                </label>
+                <div className="relative w-full">
+                  <input
+                    className="w-full h-12 pl-4 pr-12 rounded-xl text-base bg-white dark:bg-darkElevated border-2 border-gray-200 dark:border-zinc-700/80 text-gray-900 dark:text-zinc-100 placeholder:text-gray-400 dark:placeholder:text-zinc-500 outline-none focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 focus:border-orange dark:focus:border-orange transition-colors"
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    id="confirmPassword"
+                    placeholder="Re-enter your new password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 dark:hover:text-zinc-200 transition-colors p-1"
+                    aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
               </div>
             </div>
 
             {error && (
-              <p className="text-red-500 text-sm text-center mt-2.5">{error}</p>
+              <p className="text-red-500 text-sm text-center mt-3">{error}</p>
             )}
 
             <div className="mt-6 flex flex-col w-full">
-              <Button
+              <button
                 type="submit"
-                className="rounded-none text-white font-bold hover:bg-orange bg-orange text-base sm:text-lg h-12"
+                disabled={isLoading}
+                className="w-full h-12 rounded-xl text-white font-title text-base sm:text-lg font-bold bg-orange hover:bg-orange/90 active:scale-[0.99] shadow-md hover:shadow-orange/20 transition-all cursor-pointer flex items-center justify-center disabled:opacity-50"
               >
                 Reset Password
-              </Button>
+              </button>
             </div>
           </form>
         </>
@@ -412,24 +436,25 @@ const ForgotPasswordForm = () => {
       {/* STEP 4: SUCCESS STATE */}
       {step === 4 && (
         <div className="text-center py-4">
-          <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
-            <CheckCircle2 className="w-10 h-10" />
+          <div className="w-16 h-16 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-4 border border-emerald-200 dark:border-emerald-800">
+            <CheckCircle2 className="w-9 h-9" />
           </div>
 
-          <h1 className="text-3xl font-bold font-title text-gray-900">
+          <h1 className="text-3xl font-bold font-title text-gray-900 dark:text-zinc-100">
             Password Reset!
           </h1>
-          <p className="text-sm text-gray-600 mt-2">
+          <p className="text-sm text-gray-600 dark:text-zinc-400 mt-2">
             Your password has been successfully updated. You can now log in with your new credentials.
           </p>
 
           <div className="mt-8">
-            <Button
+            <button
+              type="button"
               onClick={() => router.push(loginRoute)}
-              className="w-full rounded-none text-white font-bold hover:bg-orange bg-orange text-base sm:text-lg h-12"
+              className="w-full h-12 rounded-xl text-white font-title text-base sm:text-lg font-bold bg-orange hover:bg-orange/90 active:scale-[0.99] shadow-md hover:shadow-orange/20 transition-all cursor-pointer flex items-center justify-center"
             >
               Go to {role === 'vendor' ? 'Vendor' : 'User'} Log In
-            </Button>
+            </button>
           </div>
         </div>
       )}
@@ -439,36 +464,30 @@ const ForgotPasswordForm = () => {
 
 const ForgotPasswordPage = () => {
   return (
-    <div className="relative w-full min-h-screen overflow-hidden">
+    <div className="min-h-screen bg-lightYellow dark:bg-darkBg text-gray-900 dark:text-zinc-100 flex flex-col justify-between transition-colors duration-200">
       {/* Header */}
-      <div className="relative z-10">
-        <Header />
-      </div>
+      <Header />
 
-      {/* Hero Background */}
-      <div className="absolute inset-0">
-        <Image
-          src="/images/hero.webp"
-          alt="Password Reset Background"
-          className="object-cover"
-          fill
-          priority
-        />
-        <div className="absolute inset-0 bg-black opacity-50"></div>
-      </div>
+      {/* Main Content with theme orange background styling */}
+      <main className="flex-1 flex justify-center items-center px-4 py-12 relative overflow-hidden bg-gradient-to-b from-orange/10 via-lightYellow to-orange/5 dark:from-[#1F1715] dark:via-darkBg dark:to-[#161211]">
+        {/* Ambient Brand Glows */}
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[550px] h-[350px] bg-orange/15 dark:bg-orange/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-10 right-10 w-[300px] h-[250px] bg-orange/10 dark:bg-orange/5 rounded-full blur-3xl pointer-events-none" />
 
-      {/* Card Form with Suspense boundary for useSearchParams */}
-      <div className="relative z-20 flex min-h-[calc(100vh-92px)] justify-center items-center px-4 py-10">
+        {/* Card Form with Suspense boundary for useSearchParams */}
         <Suspense
           fallback={
-            <div className="bg-white w-full max-w-[460px] rounded-md p-8 shadow-lg flex items-center justify-center min-h-[300px]">
+            <div className="relative z-10 w-full max-w-[460px] bg-white dark:bg-darkSurface border border-orange/25 dark:border-zinc-700/80 rounded-3xl p-8 shadow-xl flex items-center justify-center min-h-[300px]">
               <LoaderJelly />
             </div>
           }
         >
           <ForgotPasswordForm />
         </Suspense>
-      </div>
+      </main>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };

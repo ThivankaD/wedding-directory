@@ -92,10 +92,10 @@ export const OtpInput: React.FC<OtpInputProps> = ({
           onChange={(e) => handleChange(e, index)}
           onKeyDown={(e) => handleKeyDown(e, index)}
           disabled={disabled}
-          className={`w-11 h-13 sm:w-12 sm:h-14 text-center text-2xl font-bold font-mono rounded-lg border-2 transition-all outline-none ${
+          className={`w-11 h-13 sm:w-12 sm:h-14 text-center text-2xl font-bold font-mono rounded-xl border-2 transition-colors outline-none focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 ${
             digits[index]
-              ? 'border-orange bg-orange/5 text-gray-900 shadow-sm'
-              : 'border-black/70 bg-white text-gray-800 focus:border-orange focus:ring-2 focus:ring-orange/20'
+              ? 'border-orange bg-orange/5 dark:bg-orange/15 text-gray-900 dark:text-zinc-100 shadow-sm'
+              : 'border-gray-300 dark:border-zinc-700 bg-white dark:bg-darkElevated text-gray-800 dark:text-zinc-100 focus:border-orange dark:focus:border-orange'
           } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
         />
       ))}

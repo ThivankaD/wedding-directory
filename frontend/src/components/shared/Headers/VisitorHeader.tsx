@@ -202,18 +202,18 @@ const VisitorHeader = () => {
           </div>
 
           {/* Dashboard, Notifications, and Profile dropdown */}
-          <div className="flex items-center justify-end gap-3 sm:gap-4 text-sm sm:text-base font-title text-text dark:text-zinc-200">
-            <nav className="flex items-center gap-1 sm:gap-2">
+          <div className="flex items-center justify-end gap-3 sm:gap-4 font-title text-text dark:text-zinc-200">
+            <nav className="flex items-center gap-1.5 sm:gap-2.5">
               {navLinks.map((link) => {
                 const active = link.isActive(pathname);
                 return (
                   <Link
                     key={link.name}
                     href={link.href}
-                    className={`px-3.5 py-1.5 rounded-xl transition-all ${
+                    className={`px-4 py-2 rounded-xl text-base sm:text-[17px] tracking-wide transition-all ${
                       active
-                        ? "bg-orange text-white shadow-xs font-semibold"
-                        : "text-gray-700 dark:text-zinc-300 hover:text-orange hover:bg-orange/10 dark:hover:bg-zinc-800 font-medium"
+                        ? "bg-orange text-white shadow-xs font-bold"
+                        : "text-gray-700 dark:text-zinc-300 hover:text-orange hover:bg-orange/10 dark:hover:bg-zinc-800 font-semibold"
                     }`}
                   >
                     {link.name}

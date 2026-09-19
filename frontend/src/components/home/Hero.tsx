@@ -13,21 +13,21 @@ const Hero = () => {
         alt="hero image"
       />
 
-      {/* Dark overlay */}
-      <div className="absolute inset-0 bg-black opacity-40"></div>
+      {/* Enhanced dark gradient overlay for optimal text readability */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/45 to-black/70"></div>
 
       {/* Text and Search Bar */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center p-4 md:p-0">
-        <h1 className="text-xl sm:text-3xl md:text-5xl font-bold font-title leading-tight">
+      <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center p-4">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-[42px] font-bold font-title leading-tight tracking-tight max-w-3xl">
           Plan your wedding hassle-free with us!
         </h1>
 
-        <p className="mt-2 sm:mt-4 text-base sm:text-lg md:text-xl font-body leading-snug">
+        <p className="mt-2 sm:mt-3 text-sm sm:text-base md:text-lg text-zinc-100/90 font-body max-w-xl">
           Search, add to the checklist, and plan your wedding!
         </p>
 
-        <div className="mt-6 sm:mt-8 w-full max-w-md">
-          <SearchBar />
+        <div className="mt-5 sm:mt-7 w-full max-w-md px-2">
+          <SearchBar size="large" />
         </div>
       </div>
     </div>

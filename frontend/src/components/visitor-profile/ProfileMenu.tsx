@@ -65,11 +65,11 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
                 }`}
               />
               <div className="flex flex-col">
-                <span className="text-sm font-medium leading-snug">
+                <span className="text-base font-semibold leading-snug">
                   {item.label}
                 </span>
                 <span
-                  className={`text-[11px] ${
+                  className={`text-xs ${
                     isActive ? "text-white/80" : "text-gray-400 dark:text-zinc-500"
                   }`}
                 >
