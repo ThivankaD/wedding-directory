@@ -90,7 +90,7 @@ const VisitorLogin: React.FC<VisitorLoginProps> = ({ isVisible, onClose }) => {
         
         if (token) {
           login(token);
-          router.push('/visitor-dashboard');
+          window.location.href = '/visitor-dashboard';
         } else {
           throw new Error('No token received');
         }

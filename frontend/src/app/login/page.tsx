@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "@/components/shared/Headers/Header";
 import Footer from "@/components/shared/Footer";
 import Link from "next/link";
@@ -16,8 +16,15 @@ const VendorLoginPage = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const { login } = useVendorAuth();
+  const { login, vendor } = useVendorAuth();
   const router = useRouter();
+
+  // If already authenticated as vendor, redirect directly to vendor dashboard
+  useEffect(() => {
+    if (vendor) {
+      window.location.replace('/vendor-dashboard');
+    }
+  }, [vendor]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,21 +43,23 @@ const VendorLoginPage = () => {
 
         if (token) {
           login(token);
-          toast.success('Login successful!', {
+          toast.success('Login successful! Redirecting...', {
             style: { background: '#333', color: '#fff' },
           });
-          router.push('/vendor-dashboard');
+          window.location.href = '/vendor-dashboard';
         } else {
           setError('No token received. Please try again.');
           toast.error('No token received. Please try again.', {
             style: { background: '#333', color: '#fff' },
           });
+          setIsLoading(false);
         }
       } else {
         setError('Login failed. Please try again.');
         toast.error('Login failed. Please try again.', {
           style: { background: '#333', color: '#fff' },
         });
+        setIsLoading(false);
       }
     } catch (err) {
       console.error('Login failed:', err);
@@ -58,10 +67,24 @@ const VendorLoginPage = () => {
       toast.error('Invalid credentials. Please try again.', {
         style: { background: '#333', color: '#fff' },
       });
-    } finally {
       setIsLoading(false);
     }
   };
+
+  if (vendor) {
+    return (
+      <div className="min-h-screen bg-lightYellow dark:bg-darkBg text-gray-900 dark:text-zinc-100 flex flex-col justify-between transition-colors duration-200">
+        <Header />
+        <main className="flex-1 flex flex-col justify-center items-center gap-3">
+          <LoaderJelly />
+          <p className="text-sm text-gray-600 dark:text-zinc-400 font-body font-medium">
+            Redirecting to your dashboard...
+          </p>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-lightYellow dark:bg-darkBg text-gray-900 dark:text-zinc-100 flex flex-col justify-between transition-colors duration-200">

@@ -8,14 +8,20 @@ function getCookie(name: string, request: NextRequest) {
 }
 
 // Helper function to check if a JWT token is expired in Edge runtime
-function isTokenExpired(token: string | null): boolean {
-  if (!token) return true;
+function isTokenExpired(rawToken: string | null): boolean {
+  if (!rawToken) return true;
   try {
+    const token = rawToken.replace(/^["']|["']$/g, '').trim();
     const parts = token.split('.');
     if (parts.length !== 3) return true;
-    const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
+    let base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    while (base64.length % 4 !== 0) {
+      base64 += '=';
+    }
+    const payload = JSON.parse(atob(base64));
     if (payload.exp && typeof payload.exp === 'number') {
-      return payload.exp * 1000 <= Date.now();
+      // Allow 30 seconds clock skew tolerance
+      return payload.exp * 1000 <= Date.now() - 30000;
     }
     return false;
   } catch {
@@ -27,6 +33,8 @@ function isTokenExpired(token: string | null): boolean {
 const publicRoutes = ['/about', '/contact'];
 const visitorRoutes = ['/visitor-profile', '/visitor-dashboard'];
 const vendorRoutes = ['/vendor-dashboard', '/services/edit'];
+const visitorAuthRoutes = ['/visitor-login', '/visitor-signup'];
+const vendorAuthRoutes = ['/login', '/sign-up'];
 
 // Middleware to handle role-based authentication redirection
 export async function middleware(request: NextRequest) {
@@ -49,6 +57,8 @@ export async function middleware(request: NextRequest) {
 
   const isVendorRoute = vendorRoutes.some(route => pathname === route || pathname.startsWith(`${route}/`));
   const isVisitorRoute = visitorRoutes.some(route => pathname === route || pathname.startsWith(`${route}/`));
+  const isVisitorAuth = visitorAuthRoutes.some(route => pathname === route);
+  const isVendorAuth = vendorAuthRoutes.some(route => pathname === route);
 
   // Helper to attach cookie cleanup to responses
   const cleanResponse = <T extends NextResponse>(res: T): T => {
@@ -60,6 +70,21 @@ export async function middleware(request: NextRequest) {
     }
     return res;
   };
+
+  // If already authenticated and visiting auth pages, forward directly to respective dashboard
+  if (isVisitorAuth) {
+    if (visitorToken) {
+      return cleanResponse(NextResponse.redirect(new URL('/visitor-dashboard', request.url)));
+    }
+    return NextResponse.next();
+  }
+
+  if (isVendorAuth) {
+    if (vendorToken) {
+      return cleanResponse(NextResponse.redirect(new URL('/vendor-dashboard', request.url)));
+    }
+    return NextResponse.next();
+  }
 
   // 1. Handle vendor routes (/vendor-dashboard, /services/edit, etc.)
   if (isVendorRoute) {
@@ -115,6 +140,10 @@ export const config = {
     '/vendor-dashboard/:path*',   // Apply middleware to all vendor routes
     '/visitor-profile',           // Apply middleware to visitor profile
     '/visitor-dashboard/:path*',  // Apply middleware to visitor dashboard and nested pages
+    '/visitor-login',             // Redirect if already authenticated
+    '/visitor-signup',            // Redirect if already authenticated
+    '/login',                     // Redirect if already authenticated
+    '/sign-up',                   // Redirect if already authenticated
     '/about',                     // Public pages can still have middleware (for logging or tracking)
     '/contact',                   // Add other public routes here
     '/services/edit/:id*',        // Add this pattern
