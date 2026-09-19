@@ -374,7 +374,7 @@ const Service: React.FC = () => {
   return (
     <div className="bg-lightYellow dark:bg-darkBg font-body min-h-screen">
       <Header />
-      <div className="container mx-auto justify-center py-2">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 w-full">
         <div className="mb-4 pt-2">
           <Link
             href={isVendorsOffering ? "/vendor-dashboard" : "/"}
@@ -433,8 +433,8 @@ const Service: React.FC = () => {
           </div>
         )}
 
-        <div className="flex flex-row gap-x-5 mt-4">
-          <div className="w-3/4">
+        <div className="flex flex-col lg:flex-row gap-6 mt-6 w-full">
+          <div className="w-full lg:w-2/3 xl:w-3/4 min-w-0">
             {/* General Section */}
             <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 p-6 mb-4">
               <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
@@ -822,7 +822,7 @@ const Service: React.FC = () => {
             </div>
           </div>
 
-          <div className="w-1/4 sticky top-20">
+          <div className="w-full lg:w-1/3 xl:w-1/4 lg:sticky lg:top-24 h-fit">
             <QuoteRequestWidget
               vendorId={offering?.vendor?.id}
               offeringId={

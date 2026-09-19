@@ -77,7 +77,7 @@ export const OtpInput: React.FC<OtpInputProps> = ({
   };
 
   return (
-    <div className="flex items-center justify-center gap-2 sm:gap-3 my-2" onPaste={handlePaste}>
+    <div className="flex items-center justify-center gap-1.5 sm:gap-2.5 my-2 w-full" onPaste={handlePaste}>
       {Array.from({ length }).map((_, index) => (
         <input
           key={index}
@@ -92,7 +92,7 @@ export const OtpInput: React.FC<OtpInputProps> = ({
           onChange={(e) => handleChange(e, index)}
           onKeyDown={(e) => handleKeyDown(e, index)}
           disabled={disabled}
-          className={`w-11 h-13 sm:w-12 sm:h-14 text-center text-2xl font-bold font-mono rounded-xl border-2 transition-colors outline-none focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 ${
+          className={`w-9 h-12 sm:w-11 sm:h-14 text-center text-xl sm:text-2xl font-bold font-mono rounded-xl border-2 transition-colors outline-none focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 ${
             digits[index]
               ? 'border-orange bg-orange/5 dark:bg-orange/15 text-gray-900 dark:text-zinc-100 shadow-sm'
               : 'border-gray-300 dark:border-zinc-700 bg-white dark:bg-darkElevated text-gray-800 dark:text-zinc-100 focus:border-orange dark:focus:border-orange'

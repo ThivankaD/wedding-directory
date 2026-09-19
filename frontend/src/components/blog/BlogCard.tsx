@@ -27,8 +27,8 @@ const BlogCard: React.FC<BlogCardProps> = ({ post }) => {
   const imageUrl = getBlogAssetUrl(post.CoverImage?.url) || "/images/placeholder-blog.jpg";
 
   return (
-    <div className="rounded-xl overflow-hidden shadow-lg bg-white hover:shadow-xl transition-all duration-300 h-full flex flex-col">
-      <div className="relative h-52 w-full overflow-hidden group">
+    <div className="rounded-2xl overflow-hidden shadow-sm hover:shadow-md bg-white dark:bg-darkSurface border border-gray-100 dark:border-zinc-800 transition-all duration-300 h-full flex flex-col">
+      <div className="relative h-48 sm:h-52 w-full overflow-hidden group">
         {post.CoverImage && (
           <Image
             src={imageUrl}
@@ -39,15 +39,13 @@ const BlogCard: React.FC<BlogCardProps> = ({ post }) => {
           />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-60"></div>
-
-        
       </div>
 
-      <div className="p-6 flex-grow flex flex-col">
+      <div className="p-5 sm:p-6 flex-grow flex flex-col">
         <div className="flex-grow">
-          <p className="text-sm text-gray-500 mb-2 font-light flex items-center">
+          <p className="text-xs sm:text-sm text-gray-500 dark:text-zinc-400 mb-2 font-light flex items-center">
             <svg
-              className="w-4 h-4 mr-1"
+              className="w-4 h-4 mr-1 text-orange"
               fill="currentColor"
               viewBox="0 0 20 20"
             >
@@ -64,22 +62,22 @@ const BlogCard: React.FC<BlogCardProps> = ({ post }) => {
             })}
           </p>
 
-          <h2 className="text-xl font-semibold mb-3 font-title text-gray-800 line-clamp-2">
+          <h2 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 font-title text-gray-900 dark:text-zinc-100 line-clamp-2">
             {post.Title}
           </h2>
 
-          <p className="text-gray-600 mb-5 font-light line-clamp-3">
+          <p className="text-gray-600 dark:text-zinc-300 mb-4 sm:mb-5 font-body text-xs sm:text-sm leading-relaxed line-clamp-3">
             {contentPreview}
           </p>
         </div>
 
-        <div className="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
-          <span className="text-gray-600 text-sm font-medium">
+        <div className="mt-auto pt-4 border-t border-gray-100 dark:border-zinc-800 flex items-center justify-between">
+          <span className="text-gray-600 dark:text-zinc-400 text-xs sm:text-sm font-medium">
             By {post.Author}
           </span>
           <Link
             href={`/blog/${post.Slug}`}
-            className="text-orange hover:text-orange-700 transition-colors font-medium flex items-center group"
+            className="text-orange hover:text-orange/80 transition-colors font-semibold text-xs sm:text-sm flex items-center group"
           >
             Read More
             <svg

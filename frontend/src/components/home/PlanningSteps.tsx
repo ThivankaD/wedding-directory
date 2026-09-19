@@ -35,7 +35,7 @@ const cards = [
 const PlanningSteps = () => {
   return (
     <section className="flex justify-center py-10 sm:py-14 bg-lightYellow dark:bg-darkSurface dark:bg-none border-y border-orange/15 dark:border-zinc-800 transition-colors duration-200">
-      <div className="container mx-auto px-4 max-w-6xl flex flex-col items-center">
+      <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center">
         <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-title text-gray-900 dark:text-zinc-100 mb-8 sm:mb-10 text-center tracking-tight">
           Wedding planning has never been easier
         </h2>
@@ -58,9 +58,9 @@ const PlanningSteps = () => {
             {cards.map((card) => (
               <div
                 key={card.id}
-                className="flex flex-row items-center gap-4 sm:gap-5 p-4 sm:p-5 bg-white dark:bg-darkElevated border border-orange/15 dark:border-zinc-700/80 rounded-2xl shadow-2xs hover:shadow-xs transition-all"
+                className="flex flex-row items-center gap-3.5 sm:gap-5 p-3.5 sm:p-5 bg-white dark:bg-darkElevated border border-orange/15 dark:border-zinc-700/80 rounded-2xl shadow-2xs hover:shadow-xs transition-all"
               >
-                <div className="relative w-18 h-18 sm:w-20 sm:h-20 rounded-xl overflow-hidden shrink-0 border border-orange/10 dark:border-zinc-700">
+                <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden shrink-0 border border-orange/10 dark:border-zinc-700">
                   <Image
                     src={card.image}
                     alt={card.title}
