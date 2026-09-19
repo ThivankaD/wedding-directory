@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { FIND_SERVICE_BY_ID } from "@/graphql/queries";
 import { useQuery } from "@apollo/client";
 import Header from "@/components/shared/Headers/Header";
+import Footer from "@/components/shared/Footer";
 import Link from "next/link";
 import LoaderQuantum from "@/components/shared/Loaders/LoaderQuantum";
 import { FaArrowLeft } from "react-icons/fa";
@@ -177,6 +178,8 @@ const PortfolioPage: React.FC = () => {
           </Link>
         </div>
       </div>
+
+      <Footer />
 
       {/* Lightbox/Modal */}
       {selectedMedia && (

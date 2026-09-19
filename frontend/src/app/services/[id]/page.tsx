@@ -1,6 +1,7 @@
 "use client";
 
 import Header from "@/components/shared/Headers/Header";
+import Footer from "@/components/shared/Footer";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { CiHeart } from "react-icons/ci";
@@ -372,9 +373,9 @@ const Service: React.FC = () => {
   };
 
   return (
-    <div className="bg-lightYellow dark:bg-darkBg font-body min-h-screen">
+    <div className="bg-lightYellow dark:bg-darkBg font-body min-h-screen flex flex-col justify-between transition-colors duration-200">
       <Header />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 w-full">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 w-full flex-grow">
         <div className="mb-4 pt-2">
           <Link
             href={isVendorsOffering ? "/vendor-dashboard" : "/"}
@@ -832,6 +833,8 @@ const Service: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <Footer />
 
       {selectedPackage && (
         <PackageReservationModal
