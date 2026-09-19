@@ -158,7 +158,7 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({ serviceId }) =>
 
   if (vendorLoading || isFetchingCoordinates) {
     return (
-      <div className="h-[400px] flex items-center justify-center bg-gray-50 rounded-2xl border border-gray-100">
+      <div className="h-[400px] flex items-center justify-center bg-gray-50 dark:bg-darkElevated rounded-2xl border border-gray-100 dark:border-zinc-800">
         <LoaderHelix />
       </div>
     );
@@ -166,7 +166,7 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({ serviceId }) =>
 
   if (vendorError) {
     return (
-      <div className="p-4 bg-red-50 text-red-600 rounded-xl text-sm">
+      <div className="p-4 bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 rounded-xl text-sm border border-red-200 dark:border-red-900/60">
         Failed to load vendor location.
       </div>
     );
@@ -180,7 +180,7 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({ serviceId }) =>
   return (
     <div className="flex flex-col gap-3">
       {/* Map display */}
-      <div className="w-full h-[400px] rounded-2xl overflow-hidden border border-gray-200 shadow-sm relative">
+      <div className="w-full h-[400px] rounded-2xl overflow-hidden border border-gray-200 dark:border-zinc-800 shadow-sm relative">
         <LeafletMap
           lat={coordinates.lat}
           lng={coordinates.lng}
@@ -190,16 +190,16 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({ serviceId }) =>
       </div>
 
       {/* Address details bar & Directions button */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 bg-white rounded-xl border border-gray-200 text-sm">
-        <div className="flex items-center gap-2.5 text-gray-700">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 bg-white dark:bg-darkSurface rounded-xl border border-gray-200 dark:border-zinc-800 text-sm">
+        <div className="flex items-center gap-2.5 text-gray-700 dark:text-zinc-300">
           <div className="w-8 h-8 rounded-lg bg-orange/10 flex items-center justify-center text-orange flex-shrink-0">
             <FiMapPin className="w-4 h-4" />
           </div>
           <div>
-            <p className="font-semibold text-gray-900 leading-tight">
+            <p className="font-semibold text-gray-900 dark:text-zinc-100 leading-tight">
               {businessName ? `${businessName} Location` : "Service Location"}
             </p>
-            <p className="text-xs text-gray-500 mt-0.5">
+            <p className="text-xs text-gray-500 dark:text-zinc-400 mt-0.5">
               {vendorLocation || "Location available on contact"}
             </p>
           </div>
@@ -209,7 +209,7 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({ serviceId }) =>
           href={googleMapsUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold bg-gray-900 hover:bg-black text-white transition-all shadow-sm active:scale-95"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold bg-gray-900 dark:bg-darkElevated hover:bg-black dark:hover:bg-zinc-700 text-white transition-all shadow-sm active:scale-95 border border-transparent dark:border-zinc-700"
         >
           <span>Open in Google Maps</span>
           <FiExternalLink className="w-3.5 h-3.5" />

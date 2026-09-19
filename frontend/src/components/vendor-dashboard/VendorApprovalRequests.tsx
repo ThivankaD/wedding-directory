@@ -128,8 +128,8 @@ const VendorApprovalRequests: React.FC = () => {
 
   if (loading && !data) {
     return (
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 flex items-center justify-center min-h-[360px]">
-        <div className="flex flex-col items-center gap-2 text-gray-500 text-sm">
+      <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 p-8 flex items-center justify-center min-h-[360px]">
+        <div className="flex flex-col items-center gap-2 text-gray-500 dark:text-zinc-400 text-sm">
           <div className="w-6 h-6 border-2 border-orange border-t-transparent rounded-full animate-spin"></div>
           <span>Loading approval requests...</span>
         </div>
@@ -139,40 +139,40 @@ const VendorApprovalRequests: React.FC = () => {
 
   if (error) {
     return (
-      <div className="bg-white rounded-2xl shadow-sm border border-red-100 p-8 text-center text-red-500 text-sm">
+      <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-red-100 dark:border-red-900/30 p-8 text-center text-red-500 text-sm">
         Error loading approval requests: {error.message}
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-7 flex flex-col h-full">
+    <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 p-6 sm:p-7 flex flex-col h-full">
       {/* Header & Filter Switcher */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6 pb-4 border-b border-gray-100">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6 pb-4 border-b border-gray-100 dark:border-zinc-800">
         <div>
           <div className="flex items-center gap-2">
-            <h2 className="font-title text-xl sm:text-2xl font-bold text-gray-900">
+            <h2 className="font-title text-xl sm:text-2xl font-bold text-gray-900 dark:text-zinc-100">
               Approval Requests
             </h2>
             {pendingCount > 0 && (
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 animate-pulse">
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 animate-pulse">
                 {pendingCount} new
               </span>
             )}
           </div>
-          <p className="text-gray-400 text-xs mt-0.5">
+          <p className="text-gray-400 dark:text-zinc-500 text-xs mt-0.5">
             Review couples requesting prior approval for your wedding packages
           </p>
         </div>
 
         {/* Filter Pills */}
-        <div className="flex items-center gap-1.5 bg-gray-50 p-1 rounded-xl border border-gray-200/80">
+        <div className="flex items-center gap-1.5 bg-gray-50 dark:bg-darkElevated p-1 rounded-xl border border-gray-200/80 dark:border-zinc-700">
           <button
             onClick={() => setFilter("all")}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
               filter === "all"
-                ? "bg-white text-gray-900 shadow-sm"
-                : "text-gray-500 hover:text-gray-700"
+                ? "bg-white dark:bg-darkSurface text-gray-900 dark:text-zinc-100 shadow-sm"
+                : "text-gray-500 dark:text-zinc-400 hover:text-gray-700 dark:hover:text-zinc-200"
             }`}
           >
             All ({requests.length})
@@ -181,8 +181,8 @@ const VendorApprovalRequests: React.FC = () => {
             onClick={() => setFilter("pending")}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
               filter === "pending"
-                ? "bg-white text-gray-900 shadow-sm"
-                : "text-gray-500 hover:text-gray-700"
+                ? "bg-white dark:bg-darkSurface text-gray-900 dark:text-zinc-100 shadow-sm"
+                : "text-gray-500 dark:text-zinc-400 hover:text-gray-700 dark:hover:text-zinc-200"
             }`}
           >
             Pending ({pendingCount})
@@ -191,8 +191,8 @@ const VendorApprovalRequests: React.FC = () => {
             onClick={() => setFilter("approved")}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
               filter === "approved"
-                ? "bg-white text-gray-900 shadow-sm"
-                : "text-gray-500 hover:text-gray-700"
+                ? "bg-white dark:bg-darkSurface text-gray-900 dark:text-zinc-100 shadow-sm"
+                : "text-gray-500 dark:text-zinc-400 hover:text-gray-700 dark:hover:text-zinc-200"
             }`}
           >
             Approved ({approvedCount})
@@ -203,11 +203,11 @@ const VendorApprovalRequests: React.FC = () => {
       {/* Requests List */}
       {filteredRequests.length === 0 ? (
         <div className="py-12 flex flex-col items-center justify-center text-center">
-          <div className="w-12 h-12 rounded-2xl bg-gray-100 flex items-center justify-center text-gray-400 mb-3">
+          <div className="w-12 h-12 rounded-2xl bg-gray-100 dark:bg-darkElevated flex items-center justify-center text-gray-400 dark:text-zinc-500 mb-3">
             <ShieldCheck className="w-6 h-6" />
           </div>
-          <p className="text-sm font-semibold text-gray-700">No approval requests found</p>
-          <p className="text-xs text-gray-400 max-w-xs mt-1">
+          <p className="text-sm font-semibold text-gray-700 dark:text-zinc-300">No approval requests found</p>
+          <p className="text-xs text-gray-400 dark:text-zinc-500 max-w-xs mt-1">
             When couples select packages that require your prior approval, their date requests will appear here.
           </p>
         </div>
@@ -220,7 +220,7 @@ const VendorApprovalRequests: React.FC = () => {
             return (
               <div
                 key={req.id}
-                className="border border-gray-200/80 rounded-2xl p-5 hover:border-orange/30 transition-all bg-white shadow-sm"
+                className="border border-gray-200/80 dark:border-zinc-800 rounded-2xl p-5 hover:border-orange/30 transition-all bg-white dark:bg-darkSurface shadow-sm"
               >
                 <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                   {/* Left Column: Requester & Details */}
@@ -230,10 +230,10 @@ const VendorApprovalRequests: React.FC = () => {
                         {visitorName.charAt(0)}
                       </div>
                       <div>
-                        <h4 className="font-bold text-gray-900 text-sm">
+                        <h4 className="font-bold text-gray-900 dark:text-zinc-100 text-sm">
                           {visitorName}
                         </h4>
-                        <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500 mt-0.5">
+                        <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500 dark:text-zinc-400 mt-0.5">
                           {req.visitor?.email && (
                             <span className="flex items-center gap-1">
                               <Mail size={12} /> {req.visitor.email}
@@ -248,18 +248,18 @@ const VendorApprovalRequests: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="bg-gray-50 p-3 rounded-xl border border-gray-100 text-xs space-y-1">
-                      <div className="flex justify-between items-center text-gray-700">
+                    <div className="bg-gray-50 dark:bg-darkElevated p-3 rounded-xl border border-gray-100 dark:border-zinc-700/60 text-xs space-y-1">
+                      <div className="flex justify-between items-center text-gray-700 dark:text-zinc-300">
                         <span className="font-medium">Requested Package:</span>
-                        <span className="font-bold text-gray-900">
+                        <span className="font-bold text-gray-900 dark:text-zinc-100">
                           {req.package?.name}
                         </span>
                       </div>
-                      <div className="flex justify-between items-center text-gray-700">
+                      <div className="flex justify-between items-center text-gray-700 dark:text-zinc-300">
                         <span className="font-medium">Pricing / Advance:</span>
                         <span>
                           LKR {req.package?.pricing.toLocaleString()} (Advance 20%:{" "}
-                          <strong>
+                          <strong className="text-gray-900 dark:text-zinc-100">
                             LKR {((req.package?.pricing || 0) * 0.2).toLocaleString()}
                           </strong>
                           )
@@ -268,10 +268,10 @@ const VendorApprovalRequests: React.FC = () => {
                     </div>
 
                     {req.userNote && (
-                      <div className="text-xs bg-amber-50/60 border border-amber-200/70 p-2.5 rounded-xl text-amber-900 flex items-start gap-2">
-                        <MessageSquare size={14} className="mt-0.5 flex-shrink-0 text-amber-700" />
+                      <div className="text-xs bg-amber-50/60 dark:bg-amber-950/30 border border-amber-200/70 dark:border-amber-800/40 p-2.5 rounded-xl text-amber-900 dark:text-amber-200 flex items-start gap-2">
+                        <MessageSquare size={14} className="mt-0.5 flex-shrink-0 text-amber-700 dark:text-amber-400" />
                         <div>
-                          <span className="font-semibold block text-[11px] uppercase tracking-wider text-amber-700">
+                          <span className="font-semibold block text-[11px] uppercase tracking-wider text-amber-700 dark:text-amber-400">
                             Couple's Note:
                           </span>
                           <span>"{req.userNote}"</span>
@@ -280,8 +280,8 @@ const VendorApprovalRequests: React.FC = () => {
                     )}
 
                     {req.vendorMessage && (
-                      <div className="text-xs bg-blue-50/60 border border-blue-200/70 p-2.5 rounded-xl text-blue-900">
-                        <span className="font-semibold block text-[11px] uppercase tracking-wider text-blue-700">
+                      <div className="text-xs bg-blue-50/60 dark:bg-blue-950/30 border border-blue-200/70 dark:border-blue-800/40 p-2.5 rounded-xl text-blue-900 dark:text-blue-200">
+                        <span className="font-semibold block text-[11px] uppercase tracking-wider text-blue-700 dark:text-blue-400">
                           Your Note to Couple:
                         </span>
                         <span>"{req.vendorMessage}"</span>
@@ -291,12 +291,12 @@ const VendorApprovalRequests: React.FC = () => {
 
                   {/* Right Column: Date & Status / Actions */}
                   <div className="flex flex-col md:items-end justify-between gap-3 md:min-w-[200px]">
-                    <div className="bg-blue-50/80 border border-blue-200 px-3.5 py-2 rounded-xl text-center md:text-right">
-                      <span className="text-[10px] uppercase font-bold text-blue-700 tracking-wider block">
+                    <div className="bg-blue-50/80 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/40 px-3.5 py-2 rounded-xl text-center md:text-right">
+                      <span className="text-[10px] uppercase font-bold text-blue-700 dark:text-blue-400 tracking-wider block">
                         Requested Event Date
                       </span>
-                      <span className="text-sm font-bold text-blue-950 flex items-center gap-1.5 md:justify-end mt-0.5">
-                        <CalendarIcon size={14} className="text-blue-600" />
+                      <span className="text-sm font-bold text-blue-950 dark:text-blue-200 flex items-center gap-1.5 md:justify-end mt-0.5">
+                        <CalendarIcon size={14} className="text-blue-600 dark:text-blue-400" />
                         {format(new Date(req.bookingDate), "EEEE, MMM d, yyyy")}
                       </span>
                     </div>
@@ -304,32 +304,32 @@ const VendorApprovalRequests: React.FC = () => {
                     {/* Status Pill */}
                     <div>
                       {status === "pending" && (
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300">
                           <Clock size={12} /> Pending Your Review
                         </span>
                       )}
                       {status === "approved" && !req.isExpired && (
                         <div className="flex flex-col md:items-end gap-1">
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300">
                             <CheckCircle2 size={12} /> Approved (Awaiting Payment)
                           </span>
-                          <span className="text-[11px] font-semibold text-amber-600">
+                          <span className="text-[11px] font-semibold text-amber-600 dark:text-amber-400">
                             {formatRemaining(req.secondsRemaining)}
                           </span>
                         </div>
                       )}
                       {status === "rejected" && (
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-800">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-300">
                           <XCircle size={12} /> Declined
                         </span>
                       )}
                       {status === "purchased" && (
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-800 border border-green-300">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 border border-green-300 dark:border-green-800">
                           <CheckCircle2 size={12} /> Paid & Confirmed
                         </span>
                       )}
                       {(status === "expired" || (status === "approved" && req.isExpired)) && (
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-600">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-gray-100 dark:bg-darkElevated text-gray-600 dark:text-zinc-400">
                           <Clock size={12} /> 24h Window Expired
                         </span>
                       )}
@@ -350,7 +350,7 @@ const VendorApprovalRequests: React.FC = () => {
                           onClick={() =>
                             setActiveActionModal({ request: req, action: "reject" })
                           }
-                          className="flex-1 md:flex-initial px-4 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 font-semibold text-xs border border-red-200 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+                          className="flex-1 md:flex-initial px-4 py-2 rounded-xl bg-red-50 dark:bg-red-950/40 hover:bg-red-100 dark:hover:bg-red-900/60 text-red-700 dark:text-red-300 font-semibold text-xs border border-red-200 dark:border-red-800/60 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
                         >
                           <XCircle size={14} /> Reject
                         </button>
@@ -366,14 +366,14 @@ const VendorApprovalRequests: React.FC = () => {
 
       {/* Decision Modal (Approve or Reject with optional note) */}
       {activeActionModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 animate-in fade-in duration-200">
-          <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-md w-full relative">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 animate-in fade-in duration-200 backdrop-blur-sm">
+          <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-2xl border border-gray-100 dark:border-zinc-800 p-6 max-w-md w-full relative">
             <button
               onClick={() => {
                 setActiveActionModal(null);
                 setVendorMessage("");
               }}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-300"
             >
               <X size={18} />
             </button>
@@ -382,8 +382,8 @@ const VendorApprovalRequests: React.FC = () => {
               <div
                 className={`w-9 h-9 rounded-xl flex items-center justify-center ${
                   activeActionModal.action === "approve"
-                    ? "bg-emerald-50 text-emerald-600"
-                    : "bg-red-50 text-red-600"
+                    ? "bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400"
+                    : "bg-red-50 dark:bg-red-950/50 text-red-600 dark:text-red-400"
                 }`}
               >
                 {activeActionModal.action === "approve" ? (
@@ -392,29 +392,29 @@ const VendorApprovalRequests: React.FC = () => {
                   <XCircle size={20} />
                 )}
               </div>
-              <h3 className="font-title text-lg font-bold text-gray-900">
+              <h3 className="font-title text-lg font-bold text-gray-900 dark:text-zinc-100">
                 {activeActionModal.action === "approve"
                   ? "Approve Booking Request"
                   : "Decline Booking Request"}
               </h3>
             </div>
 
-            <p className="text-xs text-gray-600 mb-4 leading-relaxed">
+            <p className="text-xs text-gray-600 dark:text-zinc-300 mb-4 leading-relaxed">
               {activeActionModal.action === "approve" ? (
                 <>
                   Approving this request for{" "}
-                  <strong>
+                  <strong className="text-gray-900 dark:text-zinc-100">
                     {format(
                       new Date(activeActionModal.request.bookingDate),
                       "MMM d, yyyy"
                     )}
                   </strong>{" "}
-                  will notify the couple and unlock a <strong>24-hour payment window</strong> for them to pay the advance.
+                  will notify the couple and unlock a <strong className="text-gray-900 dark:text-zinc-100">24-hour payment window</strong> for them to pay the advance.
                 </>
               ) : (
                 <>
                   Are you sure you want to decline this request for{" "}
-                  <strong>
+                  <strong className="text-gray-900 dark:text-zinc-100">
                     {format(
                       new Date(activeActionModal.request.bookingDate),
                       "MMM d, yyyy"
@@ -426,7 +426,7 @@ const VendorApprovalRequests: React.FC = () => {
             </p>
 
             <div className="space-y-1.5 mb-5">
-              <label className="text-xs font-semibold text-gray-700 block">
+              <label className="text-xs font-semibold text-gray-700 dark:text-zinc-300 block">
                 Message to Couple (Optional)
               </label>
               <textarea
@@ -438,7 +438,7 @@ const VendorApprovalRequests: React.FC = () => {
                     : "e.g. Unfortunately we are unavailable on this date, but we have availability the following week."
                 }
                 rows={3}
-                className="w-full resize-none rounded-xl border border-gray-200 p-3 text-xs text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange/20 focus:border-orange"
+                className="w-full resize-none rounded-xl border border-gray-200 dark:border-zinc-700 bg-white dark:bg-darkElevated p-3 text-xs text-gray-800 dark:text-zinc-100 placeholder-gray-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-orange/20 focus:border-orange"
               />
             </div>
 
@@ -450,7 +450,7 @@ const VendorApprovalRequests: React.FC = () => {
                   setVendorMessage("");
                 }}
                 disabled={isResponding}
-                className="px-4 py-2 rounded-xl text-xs font-medium text-gray-600 hover:bg-gray-100 transition-colors"
+                className="px-4 py-2 rounded-xl text-xs font-medium text-gray-600 dark:text-zinc-400 hover:bg-gray-100 dark:hover:bg-darkElevated transition-colors"
               >
                 Cancel
               </button>

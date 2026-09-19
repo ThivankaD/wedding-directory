@@ -47,12 +47,24 @@ export const OfferingRepository = (dataSource: DataSource): OfferingRepositoryTy
         .leftJoinAndSelect('offering.vendor', 'vendor') // Join with vendor
         .andWhere('offering.visible = :visible', { visible: true }); // Only public offerings
 
-      if (category) {
-        query.andWhere('offering.category = :category', { category });
+      if (category && category.trim()) {
+        query.andWhere(
+          '(LOWER(TRIM(offering.category)) = LOWER(TRIM(:category)) OR offering.category ILIKE :catPattern)',
+          {
+            category: category.trim(),
+            catPattern: `%${category.trim()}%`,
+          }
+        );
       }
 
-      if (city) {
-        query.andWhere('vendor.city = :city', { city });
+      if (city && city.trim()) {
+        query.andWhere(
+          '(LOWER(TRIM(vendor.city)) = LOWER(TRIM(:city)) OR vendor.city ILIKE :cityPattern)',
+          {
+            city: city.trim(),
+            cityPattern: `%${city.trim()}%`,
+          }
+        );
       }
 
       return query.getMany();

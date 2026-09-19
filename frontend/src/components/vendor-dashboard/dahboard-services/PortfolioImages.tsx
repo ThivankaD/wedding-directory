@@ -51,7 +51,7 @@ const PortfolioImages: React.FC<PortfolioImagesProps> = ({
   return (
     <div className="w-full max-w-7xl mx-auto">
       {/* Cover Image - Full Width */}
-      <div className="relative w-full h-[360px] sm:h-[420px] md:h-[480px] rounded-2xl overflow-hidden shadow-sm border border-gray-100 bg-gray-100 group">
+      <div className="relative w-full h-[360px] sm:h-[420px] md:h-[480px] rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-zinc-800 bg-gray-100 dark:bg-darkElevated group">
         <Image
           src={activeImage}
           alt="Service Cover Image"
@@ -96,7 +96,7 @@ const PortfolioImages: React.FC<PortfolioImagesProps> = ({
                 <Link
                   key={index}
                   href={portfolioLink}
-                  className="relative flex-shrink-0 w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 aspect-square rounded-xl overflow-hidden border-2 border-gray-200 group cursor-pointer"
+                  className="relative flex-shrink-0 w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 aspect-square rounded-xl overflow-hidden border-2 border-gray-200 dark:border-zinc-700 group cursor-pointer"
                   title="View full gallery"
                 >
                   <Image
@@ -124,7 +124,7 @@ const PortfolioImages: React.FC<PortfolioImagesProps> = ({
                 className={`relative flex-shrink-0 w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 aspect-square rounded-xl overflow-hidden transition-all duration-150 cursor-pointer border-2 ${
                   isSelected
                     ? "border-orange shadow-sm opacity-100"
-                    : "border-gray-200 hover:border-orange/50 opacity-70 hover:opacity-100"
+                    : "border-gray-200 dark:border-zinc-700 hover:border-orange/50 opacity-70 hover:opacity-100"
                 }`}
                 title={`Click to view ${item.label}`}
               >

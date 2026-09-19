@@ -98,8 +98,8 @@ const EditSocialLinks: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 flex items-center justify-center min-h-[300px]">
-        <div className="flex items-center gap-3 text-gray-500">
+      <div className="bg-white dark:bg-darkSurface rounded-2xl p-8 shadow-sm border border-gray-100 dark:border-zinc-800 flex items-center justify-center min-h-[300px]">
+        <div className="flex items-center gap-3 text-gray-500 dark:text-zinc-400">
           <div className="w-5 h-5 border-2 border-orange border-t-transparent rounded-full animate-spin"></div>
           <span>Loading social links...</span>
         </div>
@@ -109,7 +109,7 @@ const EditSocialLinks: React.FC = () => {
 
   if (error) {
     return (
-      <div className="bg-white rounded-2xl p-8 shadow-sm border border-red-100 text-red-600">
+      <div className="bg-white dark:bg-darkSurface rounded-2xl p-8 shadow-sm border border-red-100 dark:border-red-900/30 text-red-600">
         <p>Error loading service: {error.message}</p>
       </div>
     );
@@ -154,18 +154,18 @@ const EditSocialLinks: React.FC = () => {
   ];
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 font-body">
+    <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 p-6 sm:p-8 font-body">
       {/* Header section matching Settings theme */}
-      <div className="pb-6 mb-6 border-b border-gray-100">
+      <div className="pb-6 mb-6 border-b border-gray-100 dark:border-zinc-800">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-lg bg-orange/10 flex items-center justify-center text-orange">
             <FiShare2 className="text-lg" />
           </div>
-          <h2 className="font-title text-2xl font-bold text-gray-900">
+          <h2 className="font-title text-2xl font-bold text-gray-900 dark:text-zinc-100">
             Social & Web Links
           </h2>
         </div>
-        <p className="text-gray-500 font-body text-sm mt-1">
+        <p className="text-gray-500 dark:text-zinc-400 font-body text-sm mt-1">
           Connect your official website and social media profiles so couples can easily discover and follow your storefront.
         </p>
       </div>
@@ -175,12 +175,12 @@ const EditSocialLinks: React.FC = () => {
           const Icon = field.icon;
           return (
             <div key={field.name}>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-2">
                 {field.label}
               </label>
               <div className="relative flex items-center">
-                <div className="h-11 px-3.5 rounded-l-xl bg-gray-50 border border-r-0 border-gray-300 flex items-center justify-center text-gray-400 select-none">
-                  <Icon className="text-base text-gray-500" />
+                <div className="h-11 px-3.5 rounded-l-xl bg-gray-50 dark:bg-darkElevated border border-r-0 border-gray-300 dark:border-zinc-700 flex items-center justify-center text-gray-400 select-none">
+                  <Icon className="text-base text-gray-500 dark:text-zinc-400" />
                 </div>
                 <input
                   type="url"
@@ -188,7 +188,7 @@ const EditSocialLinks: React.FC = () => {
                   value={field.value}
                   onChange={handleInputChange}
                   placeholder={field.placeholder}
-                  className="w-full h-11 px-3.5 text-sm rounded-r-xl border border-gray-300 focus:border-orange focus:ring-2 focus:ring-orange/20 outline-none transition-all text-gray-800 placeholder:text-gray-400"
+                  className="w-full h-11 px-3.5 text-sm rounded-r-xl border border-gray-300 dark:border-zinc-700 focus:border-orange focus:ring-2 focus:ring-orange/20 outline-none transition-all text-gray-800 dark:text-zinc-100 dark:bg-darkElevated placeholder:text-gray-400 dark:placeholder:text-zinc-600"
                 />
               </div>
             </div>
@@ -196,7 +196,7 @@ const EditSocialLinks: React.FC = () => {
         })}
 
         {/* Footer save button integrated inside the card */}
-        <div className="flex justify-end pt-6 mt-6 border-t border-gray-100">
+        <div className="flex justify-end pt-6 mt-6 border-t border-gray-100 dark:border-zinc-800">
           <button
             type="submit"
             disabled={isSaving}

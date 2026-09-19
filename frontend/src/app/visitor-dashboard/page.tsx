@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, Suspense } from "react";
-import Header from "@/components/shared/Headers/Header";
+import VisitorHeader from "@/components/shared/Headers/VisitorHeader";
 import Footer from "@/components/shared/Footer";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -141,8 +141,8 @@ const VisitorDashboardContent: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-lightYellow flex flex-col">
-        <Header />
+      <div className="min-h-screen bg-lightYellow dark:bg-darkBg flex flex-col">
+      <VisitorHeader />
         <div className="flex-grow flex items-center justify-center p-8">
           <LoaderHelix />
         </div>
@@ -153,12 +153,12 @@ const VisitorDashboardContent: React.FC = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-lightYellow flex flex-col">
-        <Header />
+      <div className="min-h-screen bg-lightYellow dark:bg-darkBg flex flex-col">
+      <VisitorHeader />
         <div className="flex-grow flex items-center justify-center p-8">
-          <div className="bg-white rounded-2xl p-8 border border-red-100 text-center max-w-md shadow-sm">
+          <div className="bg-white dark:bg-darkSurface rounded-2xl p-8 border border-red-100 dark:border-red-900/30 text-center max-w-md shadow-sm">
             <p className="text-red-500 font-semibold mb-2">Error loading profile</p>
-            <p className="text-gray-500 text-xs">{error.message}</p>
+            <p className="text-gray-500 dark:text-zinc-400 text-xs">{error.message}</p>
           </div>
         </div>
         <Footer />
@@ -171,17 +171,17 @@ const VisitorDashboardContent: React.FC = () => {
   const groomName = visitorData?.visitor_fname || "Groom";
 
   return (
-    <div className="min-h-screen bg-lightYellow flex flex-col font-body">
-      <Header />
+    <div className="min-h-screen bg-lightYellow dark:bg-darkBg flex flex-col font-body transition-colors duration-200">
+      <VisitorHeader />
 
       <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
         {/* Top Header Banner matching Vendor Dashboard */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div>
-            <h1 className="font-title text-3xl font-bold text-gray-900">
+            <h1 className="font-title text-3xl font-bold text-gray-900 dark:text-zinc-100">
               Wedding Dashboard
             </h1>
-            <p className="text-gray-500 font-body text-sm mt-1">
+            <p className="text-gray-500 dark:text-zinc-400 font-body text-sm mt-1">
               Welcome back, {brideName} & {groomName}!
             </p>
           </div>
@@ -240,8 +240,8 @@ const VisitorDashboardContent: React.FC = () => {
             {/* Tab 2: Booking Calendar */}
             {dashboardTab === "calendar" && (
               <div className="space-y-4">
-                <div className="flex items-center justify-between bg-white rounded-2xl border border-orange/20 px-5 py-3 shadow-xs">
-                  <div className="flex items-center gap-2 text-sm font-bold text-gray-900 font-title">
+                <div className="flex items-center justify-between bg-white dark:bg-darkSurface rounded-2xl border border-orange/20 dark:border-zinc-800 px-5 py-3 shadow-xs">
+                  <div className="flex items-center gap-2 text-sm font-bold text-gray-900 dark:text-zinc-100 font-title">
                     <FiCalendar className="text-orange" size={18} />
                     <span>Booking Calendar</span>
                   </div>
@@ -255,7 +255,7 @@ const VisitorDashboardContent: React.FC = () => {
                 {visitor?.id ? (
                   <VisitorBookingCalendar visitorId={visitor.id} />
                 ) : (
-                  <div className="bg-white rounded-2xl border border-orange/20 p-8 text-center text-gray-500 text-sm">
+                  <div className="bg-white dark:bg-darkSurface rounded-2xl border border-orange/20 dark:border-zinc-800 p-8 text-center text-gray-500 dark:text-zinc-400 text-sm">
                     Log in to view your wedding calendar.
                   </div>
                 )}
@@ -275,7 +275,7 @@ const VisitorDashboard: React.FC = () => {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-lightYellow flex flex-col items-center justify-center p-8">
+        <div className="min-h-screen bg-lightYellow dark:bg-darkBg flex flex-col items-center justify-center p-8">
           <LoaderHelix />
         </div>
       }

@@ -114,8 +114,8 @@ const BookingCalendar: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 flex items-center justify-center min-h-[360px]">
-        <div className="flex flex-col items-center gap-2 text-gray-500 text-sm">
+      <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 p-8 flex items-center justify-center min-h-[360px]">
+        <div className="flex flex-col items-center gap-2 text-gray-500 dark:text-zinc-400 text-sm">
           <div className="w-6 h-6 border-2 border-orange border-t-transparent rounded-full animate-spin"></div>
           <span>Loading bookings...</span>
         </div>
@@ -125,27 +125,27 @@ const BookingCalendar: React.FC = () => {
 
   if (error) {
     return (
-      <div className="bg-white rounded-2xl shadow-sm border border-red-100 p-8 text-center text-red-500 text-sm">
+      <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-red-100 dark:border-red-900/30 p-8 text-center text-red-500 text-sm">
         Error loading bookings. Please refresh the page.
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-7 flex flex-col h-full">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6 pb-4 border-b border-gray-100">
+    <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 p-6 sm:p-7 flex flex-col h-full">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6 pb-4 border-b border-gray-100 dark:border-zinc-800">
         <div>
-          <h2 className="font-title text-xl sm:text-2xl font-bold text-gray-900">
+          <h2 className="font-title text-xl sm:text-2xl font-bold text-gray-900 dark:text-zinc-100">
             Booking Calendar
           </h2>
-          <p className="text-gray-400 text-xs mt-0.5">
+          <p className="text-gray-400 dark:text-zinc-500 text-xs mt-0.5">
             Monitor client event dates and manage your availability
           </p>
         </div>
 
         {/* Legend */}
         <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-medium">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60 text-xs font-medium">
             <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
             Confirmed Bookings
           </span>
@@ -156,18 +156,18 @@ const BookingCalendar: React.FC = () => {
       <div className="flex justify-between items-center mb-4">
         <button
           onClick={goToPreviousMonth}
-          className="inline-flex items-center gap-1 px-3 py-1.5 bg-gray-50 hover:bg-orange/10 hover:text-orange border border-gray-200 hover:border-orange/30 rounded-xl text-xs font-semibold text-gray-700 transition-colors"
+          className="inline-flex items-center gap-1 px-3 py-1.5 bg-gray-50 dark:bg-darkElevated hover:bg-orange/10 hover:text-orange border border-gray-200 dark:border-zinc-700 hover:border-orange/30 rounded-xl text-xs font-semibold text-gray-700 dark:text-zinc-300 transition-colors cursor-pointer"
           title="Previous Month"
         >
           <FiChevronLeft size={16} />
           <span>Prev</span>
         </button>
-        <h3 className="text-base sm:text-lg font-title font-bold text-gray-900">
+        <h3 className="text-base sm:text-lg font-title font-bold text-gray-900 dark:text-zinc-100">
           {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
         </h3>
         <button
           onClick={goToNextMonth}
-          className="inline-flex items-center gap-1 px-3 py-1.5 bg-gray-50 hover:bg-orange/10 hover:text-orange border border-gray-200 hover:border-orange/30 rounded-xl text-xs font-semibold text-gray-700 transition-colors"
+          className="inline-flex items-center gap-1 px-3 py-1.5 bg-gray-50 dark:bg-darkElevated hover:bg-orange/10 hover:text-orange border border-gray-200 dark:border-zinc-700 hover:border-orange/30 rounded-xl text-xs font-semibold text-gray-700 dark:text-zinc-300 transition-colors cursor-pointer"
           title="Next Month"
         >
           <span>Next</span>
@@ -181,7 +181,7 @@ const BookingCalendar: React.FC = () => {
         {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
           <div
             key={day}
-            className="text-center font-semibold text-gray-400 py-1.5 text-xs uppercase tracking-wider"
+            className="text-center font-semibold text-gray-400 dark:text-zinc-500 py-1.5 text-xs uppercase tracking-wider"
           >
             {day}
           </div>
@@ -198,11 +198,11 @@ const BookingCalendar: React.FC = () => {
           const isSelected = selectedDate?.toDateString() === date.toDateString();
           const dateBookings = getBookingsForDate(date);
 
-          let cellClass = 'bg-white hover:bg-orange/5 border-gray-200 text-gray-800';
+          let cellClass = 'bg-white dark:bg-darkElevated hover:bg-orange/5 dark:hover:bg-darkElevated/80 border-gray-200 dark:border-zinc-700 text-gray-800 dark:text-zinc-200';
           if (status === 'completed') {
-            cellClass = 'bg-emerald-50/80 hover:bg-emerald-100 text-emerald-900 border-emerald-300 font-semibold';
+            cellClass = 'bg-emerald-50/80 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-950/60 text-emerald-900 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800/80 font-semibold';
           } else if (status === 'pending') {
-            cellClass = 'bg-amber-50/80 hover:bg-amber-100 text-amber-900 border-amber-300 font-semibold';
+            cellClass = 'bg-amber-50/80 dark:bg-amber-950/40 hover:bg-amber-100 dark:hover:bg-amber-950/60 text-amber-900 dark:text-amber-300 border-amber-300 dark:border-amber-800/80 font-semibold';
           } else if (status === 'mixed') {
             cellClass = 'bg-gradient-to-br from-emerald-50 to-amber-50 hover:opacity-95 text-gray-900 border-emerald-300 font-semibold';
           }
@@ -211,7 +211,7 @@ const BookingCalendar: React.FC = () => {
             <button
               key={index}
               onClick={() => handleDateClick(date)}
-              className={`aspect-square p-1 border rounded-xl transition-all flex flex-col items-center justify-center ${cellClass} ${
+              className={`aspect-square p-1 border rounded-xl transition-all flex flex-col items-center justify-center cursor-pointer ${cellClass} ${
                 isToday ? 'border-orange ring-1 ring-orange/30 font-bold' : ''
               } ${isSelected ? 'ring-2 ring-orange border-orange shadow-sm scale-105' : ''}`}
             >
@@ -228,12 +228,12 @@ const BookingCalendar: React.FC = () => {
 
       {/* Selected Date Bookings Details */}
       {selectedDate && selectedDateBookings.length > 0 && (
-        <div className="border border-gray-100 rounded-xl p-4 bg-gray-50/60 mb-6 max-h-72 overflow-y-auto">
+        <div className="border border-gray-100 dark:border-zinc-800 rounded-xl p-4 bg-gray-50/60 dark:bg-darkElevated/40 mb-6 max-h-72 overflow-y-auto">
           <div className="flex items-center justify-between mb-3">
-            <h4 className="font-title font-bold text-sm text-gray-900">
+            <h4 className="font-title font-bold text-sm text-gray-900 dark:text-zinc-100">
               Bookings for {selectedDate.toLocaleDateString(undefined, { dateStyle: 'medium' })}
             </h4>
-            <span className="text-xs text-gray-500 font-medium">
+            <span className="text-xs text-gray-500 dark:text-zinc-400 font-medium">
               {selectedDateBookings.length} {selectedDateBookings.length === 1 ? 'booking' : 'bookings'}
             </span>
           </div>
@@ -242,22 +242,22 @@ const BookingCalendar: React.FC = () => {
             {selectedDateBookings.map((booking) => (
               <div
                 key={booking.id}
-                className="bg-white border border-gray-100 rounded-xl p-3 shadow-xs text-xs sm:text-sm"
+                className="bg-white dark:bg-darkElevated border border-gray-100 dark:border-zinc-700 rounded-xl p-3 shadow-xs text-xs sm:text-sm"
               >
                 <div className="flex justify-between items-start gap-2">
                   <div className="flex-1 min-w-0">
-                    <div className="font-semibold text-gray-900 truncate">
+                    <div className="font-semibold text-gray-900 dark:text-zinc-100 truncate">
                       {formatCoupleName(booking.visitor, "Couple")}
                     </div>
-                    <div className="text-xs text-gray-500 truncate mt-0.5">
+                    <div className="text-xs text-gray-500 dark:text-zinc-400 truncate mt-0.5">
                       {booking.visitor.email}
                     </div>
-                    <div className="mt-2 space-y-1 text-xs text-gray-600">
+                    <div className="mt-2 space-y-1 text-xs text-gray-600 dark:text-zinc-300">
                       <div>
-                        <span className="font-medium text-gray-700">Service:</span> {booking.package.offering.name}
+                        <span className="font-medium text-gray-700 dark:text-zinc-300">Service:</span> {booking.package.offering.name}
                       </div>
                       <div>
-                        <span className="font-medium text-gray-700">Package:</span> {booking.package.name}
+                        <span className="font-medium text-gray-700 dark:text-zinc-300">Package:</span> {booking.package.name}
                       </div>
                       <div className="flex items-center gap-2 mt-1">
                         <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-orange/10 text-orange font-semibold text-xs">
@@ -274,16 +274,16 @@ const BookingCalendar: React.FC = () => {
       )}
 
       {/* Summary Statistics Section */}
-      <div className="mt-auto pt-4 border-t border-gray-100">
-        <h4 className="font-title text-xs font-bold uppercase tracking-wider text-gray-500 mb-3">
+      <div className="mt-auto pt-4 border-t border-gray-100 dark:border-zinc-800">
+        <h4 className="font-title text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400 mb-3">
           Booking Overview
         </h4>
-        <div className="bg-emerald-50/70 border border-emerald-100 rounded-xl p-3.5 flex items-center justify-between">
+        <div className="bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900/50 rounded-xl p-3.5 flex items-center justify-between">
           <div>
-            <div className="text-xs font-medium text-emerald-700">Confirmed Bookings</div>
-            <p className="text-[11px] text-gray-400 mt-0.5">Active reservations on your calendar</p>
+            <div className="text-xs font-medium text-emerald-700 dark:text-emerald-400">Confirmed Bookings</div>
+            <p className="text-[11px] text-gray-400 dark:text-zinc-500 mt-0.5">Active reservations on your calendar</p>
           </div>
-          <div className="text-2xl font-bold text-emerald-800 font-title leading-none">
+          <div className="text-2xl font-bold text-emerald-800 dark:text-emerald-300 font-title leading-none">
             {bookingsWithDates.length}
           </div>
         </div>
@@ -291,21 +291,21 @@ const BookingCalendar: React.FC = () => {
 
       {/* Recent Bookings List */}
       {bookingsWithDates.length > 0 && (
-        <div className="mt-5 pt-4 border-t border-gray-100">
-          <h4 className="font-title text-xs font-bold uppercase tracking-wider text-gray-500 mb-3">
+        <div className="mt-5 pt-4 border-t border-gray-100 dark:border-zinc-800">
+          <h4 className="font-title text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400 mb-3">
             Recent Client Bookings
           </h4>
           <div className="space-y-2 max-h-48 overflow-y-auto">
             {bookingsWithDates.slice(0, 5).map((booking) => (
               <div
                 key={booking.id}
-                className="bg-gray-50/70 hover:bg-gray-50 border border-gray-100 rounded-xl p-2.5 text-xs transition-colors flex items-center justify-between gap-3"
+                className="bg-gray-50/70 dark:bg-darkElevated hover:bg-gray-50 dark:hover:bg-darkElevated/80 border border-gray-100 dark:border-zinc-700 rounded-xl p-2.5 text-xs transition-colors flex items-center justify-between gap-3"
               >
                 <div className="min-w-0">
-                  <div className="font-semibold text-gray-900 truncate">
+                  <div className="font-semibold text-gray-900 dark:text-zinc-100 truncate">
                     {formatCoupleName(booking.visitor, "Couple")}
                   </div>
-                  <div className="text-gray-500 truncate text-[11px] mt-0.5">
+                  <div className="text-gray-500 dark:text-zinc-400 truncate text-[11px] mt-0.5">
                     {booking.package.name} • {new Date(booking.bookingDate!).toLocaleDateString(undefined, { dateStyle: 'medium' })}
                   </div>
                 </div>

@@ -5,6 +5,7 @@ import "./globals.css";
 import "leaflet/dist/leaflet.css";
 import PageTransition from "@/components/PageTransition";
 import { VendorAuthProvider } from "@/contexts/VendorAuthContext";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 import { Toaster } from "react-hot-toast";
 import GoogleAuthProviderWrapper from "@/components/auth/GoogleAuthProviderWrapper";
 import Script from "next/script"
@@ -184,10 +185,12 @@ export default function RootLayout({
             {/* Wrapping the application with VisitorProvider */}
             <VisitorAuthProvider>
               <VendorAuthProvider>
-                <PageTransition>
-                  {children}
-                  <Toaster reverseOrder={false} />
-                </PageTransition>
+                <ThemeProvider>
+                  <PageTransition>
+                    {children}
+                    <Toaster reverseOrder={false} />
+                  </PageTransition>
+                </ThemeProvider>
               </VendorAuthProvider>
               {/* PageTransition can wrap around the children to handle animations */}
             </VisitorAuthProvider>

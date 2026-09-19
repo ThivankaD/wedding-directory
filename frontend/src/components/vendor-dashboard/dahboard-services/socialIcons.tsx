@@ -64,7 +64,7 @@ const SocialIcons = ({ offering }: { offering?: SocialTypes }) => {
             className={`transition-all duration-150 cursor-pointer ${
               hasLink
                 ? "text-orange hover:scale-110 active:scale-95"
-                : "text-gray-300 hover:text-gray-400"
+                : "text-gray-300 dark:text-zinc-600 hover:text-gray-400 dark:hover:text-zinc-500"
             }`}
             title={
               hasLink ? item.title : `No ${item.name} link provided`

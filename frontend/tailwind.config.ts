@@ -32,6 +32,10 @@ const config = {
         orange: "#FC7B54",
         lightYellow: "#FFEFEB",
         lightOrange: "#FFEFEB",
+        darkBg: "#141211",
+        darkSurface: "#1E1A19",
+        darkElevated: "#2A2523",
+        darkBorder: "rgba(252, 123, 84, 0.2)",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",

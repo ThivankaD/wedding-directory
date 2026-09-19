@@ -17,7 +17,7 @@ const ChatDetailPage = () => {
       <div className="flex items-center justify-between">
         <Link
           href={`/visitor-dashboard/chats/${visitorId}`}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-white text-gray-700 hover:text-orange hover:border-orange/40 text-sm font-semibold rounded-2xl border-2 border-orange/15 shadow-xs transition-all"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-darkSurface text-gray-700 dark:text-zinc-300 hover:text-orange dark:hover:text-orange hover:border-orange/40 text-sm font-semibold rounded-2xl border-2 border-orange/15 dark:border-zinc-800 shadow-xs transition-all"
         >
           <FiArrowLeft className="text-base text-orange" />
           <span>Back to Conversations</span>
@@ -25,7 +25,7 @@ const ChatDetailPage = () => {
       </div>
 
       {/* Themed Chat Container */}
-      <div className="bg-white rounded-3xl border-2 border-orange/20 shadow-sm overflow-hidden">
+      <div className="bg-white dark:bg-darkSurface rounded-3xl border-2 border-orange/20 dark:border-zinc-800 shadow-sm overflow-hidden">
         <VisitorChatWindow chatId={chatId} />
       </div>
     </div>

@@ -20,17 +20,17 @@ export default function MessageList({ messages }: MessageListProps) {
 
   if (!messages || messages.length === 0) {
     return (
-      <div className="flex-1 flex items-center justify-center p-8 text-center text-gray-400 bg-gray-50/40">
+      <div className="flex-1 flex items-center justify-center p-8 text-center text-gray-400 dark:text-zinc-500 bg-gray-50/40 dark:bg-darkBg/60">
         <div>
-          <p className="font-title font-medium text-gray-600 text-sm mb-1">Start of Conversation</p>
-          <p className="text-xs text-gray-400">Send a message to begin chatting with this couple.</p>
+          <p className="font-title font-medium text-gray-600 dark:text-zinc-300 text-sm mb-1">Start of Conversation</p>
+          <p className="text-xs text-gray-400 dark:text-zinc-500">Send a message to begin chatting with this couple.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-3.5 bg-gray-50/40">
+    <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-3.5 bg-gray-50/40 dark:bg-darkBg/60">
       {messages.map((message, index) => {
         const isVendor = message.senderType === "vendor";
         const isSystemOrPayment =
@@ -39,13 +39,13 @@ export default function MessageList({ messages }: MessageListProps) {
         if (isSystemOrPayment) {
           return (
             <div key={index} className="flex justify-center my-3">
-              <div className="bg-amber-50/90 border border-amber-200/80 rounded-2xl p-3.5 max-w-[90%] sm:max-w-[75%] text-xs sm:text-sm text-amber-900 shadow-xs">
+              <div className="bg-amber-50/90 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/60 rounded-2xl p-3.5 max-w-[90%] sm:max-w-[75%] text-xs sm:text-sm text-amber-900 dark:text-amber-200 shadow-xs">
                 <div className="font-semibold flex items-center gap-1.5 mb-1">
                   <span>📦</span>
                   <span>Booking Payment Notification</span>
                 </div>
                 <p className="leading-relaxed font-body whitespace-pre-line">{message.content.replace(/^📦\s*/, "")}</p>
-                <div className="text-[10px] text-amber-700/80 mt-1.5 text-right font-body">
+                <div className="text-[10px] text-amber-700/80 dark:text-amber-400 mt-1.5 text-right font-body">
                   {formatDistanceToNow(new Date(message.timestamp), { addSuffix: true })}
                 </div>
               </div>
@@ -65,7 +65,7 @@ export default function MessageList({ messages }: MessageListProps) {
               className={`w-7 h-7 rounded-full flex items-center justify-center font-bold text-[11px] flex-shrink-0 mb-0.5 shadow-xs ${
                 isVendor
                   ? "bg-orange text-white"
-                  : "bg-gray-200 text-gray-700"
+                  : "bg-gray-200 dark:bg-darkElevated text-gray-700 dark:text-zinc-300"
               }`}
             >
               {isVendor ? "V" : "C"}
@@ -81,13 +81,13 @@ export default function MessageList({ messages }: MessageListProps) {
                 className={`px-4 py-2.5 rounded-2xl shadow-xs text-sm font-body ${
                   isVendor
                     ? "bg-orange text-white rounded-br-xs"
-                    : "bg-white text-gray-800 rounded-bl-xs border border-gray-100"
+                    : "bg-white dark:bg-darkElevated text-gray-800 dark:text-zinc-100 rounded-bl-xs border border-gray-100 dark:border-zinc-700"
                 }`}
               >
                 <p className="leading-relaxed whitespace-pre-wrap break-words">{message.content}</p>
                 <span
                   className={`text-[10px] mt-1 block ${
-                    isVendor ? "text-white/80 text-right" : "text-gray-400 text-left"
+                    isVendor ? "text-white/80 text-right" : "text-gray-400 dark:text-zinc-500 text-left"
                   }`}
                 >
                   {formatDistanceToNow(new Date(message.timestamp), {

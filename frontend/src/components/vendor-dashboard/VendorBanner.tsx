@@ -42,10 +42,10 @@ const VendorBanner = ({ vendor }: VendorProps) => {
   ];
 
   return (
-    <div className="w-full bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-7 flex flex-col items-center text-center">
+    <div className="w-full bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 p-6 sm:p-7 flex flex-col items-center text-center">
       {/* Profile Image with subtle ring */}
       <div className="relative mb-3">
-        <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full ring-4 ring-orange/10 overflow-hidden shadow-sm relative">
+        <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full ring-4 ring-orange/10 dark:ring-orange/20 overflow-hidden shadow-sm relative">
           <Image
             src={vendor?.profile_pic_url || vendor?.profilePic || '/images/visitorPlaceholder.png'}
             alt={vendor?.busname || 'Vendor profile'}
@@ -60,13 +60,13 @@ const VendorBanner = ({ vendor }: VendorProps) => {
         <span className="inline-block text-xs font-semibold uppercase tracking-wider text-orange mb-1">
           {getGreeting()}, {vendor?.fname || 'Vendor'}!
         </span>
-        <h2 className="font-title text-2xl font-bold text-gray-900 leading-tight">
+        <h2 className="font-title text-2xl font-bold text-gray-900 dark:text-zinc-100 leading-tight">
           {vendor?.busname || 'Your Business'}
         </h2>
       </div>
 
       {/* Contact Details Card */}
-      <div className="w-full bg-gray-50/70 border border-gray-100 rounded-xl p-3.5 mb-6 text-left flex flex-col gap-2.5 text-xs sm:text-sm text-gray-600">
+      <div className="w-full bg-gray-50/70 dark:bg-darkElevated border border-gray-100 dark:border-zinc-700 rounded-xl p-3.5 mb-6 text-left flex flex-col gap-2.5 text-xs sm:text-sm text-gray-600 dark:text-zinc-300">
         <div className="flex items-center gap-2.5">
           <div className="w-7 h-7 rounded-lg bg-orange/10 text-orange flex items-center justify-center flex-shrink-0">
             <FaLocationDot size={13} />
@@ -91,7 +91,7 @@ const VendorBanner = ({ vendor }: VendorProps) => {
 
       {/* Portal Quick Links */}
       <div className="w-full text-left">
-        <h3 className="font-title text-sm font-bold text-gray-900 uppercase tracking-wider mb-3">
+        <h3 className="font-title text-sm font-bold text-gray-900 dark:text-zinc-100 uppercase tracking-wider mb-3">
           Quick Links
         </h3>
         <div className="flex flex-col gap-2">
@@ -101,22 +101,22 @@ const VendorBanner = ({ vendor }: VendorProps) => {
               <Link
                 key={item.href}
                 href={item.href}
-                className="group flex items-center justify-between p-3 rounded-xl border border-gray-100 hover:border-orange/30 hover:bg-orange/5 transition-all"
+                className="group flex items-center justify-between p-3 rounded-xl border border-gray-100 dark:border-zinc-800 hover:border-orange/30 dark:hover:border-orange/30 hover:bg-orange/5 dark:hover:bg-darkElevated transition-all"
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="w-9 h-9 rounded-xl bg-orange/10 text-orange flex items-center justify-center flex-shrink-0 group-hover:bg-orange group-hover:text-white transition-colors">
                     <Icon size={16} />
                   </div>
                   <div className="min-w-0">
-                    <div className="text-sm font-semibold text-gray-800 group-hover:text-orange transition-colors truncate">
+                    <div className="text-sm font-semibold text-gray-800 dark:text-zinc-200 group-hover:text-orange transition-colors truncate">
                       {item.title}
                     </div>
-                    <div className="text-xs text-gray-400 truncate">
+                    <div className="text-xs text-gray-400 dark:text-zinc-500 truncate">
                       {item.description}
                     </div>
                   </div>
                 </div>
-                <FiChevronRight className="text-gray-400 group-hover:text-orange group-hover:translate-x-0.5 transition-all flex-shrink-0 ml-2" size={16} />
+                <FiChevronRight className="text-gray-400 dark:text-zinc-500 group-hover:text-orange group-hover:translate-x-0.5 transition-all flex-shrink-0 ml-2" size={16} />
               </Link>
             );
           })}

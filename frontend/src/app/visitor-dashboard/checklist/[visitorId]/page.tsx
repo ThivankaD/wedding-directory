@@ -277,7 +277,7 @@ const ChecklistPage = () => {
   return (
     <div className="w-full space-y-6">
       {/* 1. Hero Card */}
-      <div className="bg-white rounded-3xl border-2 border-orange/20 shadow-sm p-6 sm:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+      <div className="bg-white dark:bg-darkSurface rounded-3xl border-2 border-orange/20 shadow-sm p-6 sm:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div className="space-y-3">
           <Breadcrumbs
             items={[
@@ -290,10 +290,10 @@ const ChecklistPage = () => {
               <FiCheckSquare size={24} />
             </div>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold font-title text-gray-900">
+              <h1 className="text-2xl sm:text-3xl font-bold font-title text-gray-900 dark:text-zinc-100">
                 My Wedding Checklist
               </h1>
-              <p className="text-xs sm:text-sm text-gray-500 font-body">
+              <p className="text-xs sm:text-sm text-gray-500 dark:text-zinc-400 font-body">
                 Stay organized and stress-free throughout your wedding journey.
               </p>
             </div>
@@ -301,9 +301,9 @@ const ChecklistPage = () => {
         </div>
 
         {/* Progress Card on the right */}
-        <div className="bg-orange/[0.05] border-2 border-orange/15 rounded-2xl p-5 flex items-center gap-6 shrink-0 justify-between lg:justify-end">
+        <div className="bg-orange/[0.05] dark:bg-orange/[0.08] border-2 border-orange/15 rounded-2xl p-5 flex items-center gap-6 shrink-0 justify-between lg:justify-end">
           <div>
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider font-body">
+            <p className="text-xs font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider font-body">
               Completed
             </p>
             <p className="text-3xl sm:text-4xl font-black font-title text-orange">
@@ -312,10 +312,10 @@ const ChecklistPage = () => {
           </div>
           <div className="h-10 w-px bg-orange/20" />
           <div>
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider font-body">
+            <p className="text-xs font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider font-body">
               Tasks Done
             </p>
-            <p className="text-2xl sm:text-3xl font-black font-title text-gray-900">
+            <p className="text-2xl sm:text-3xl font-black font-title text-gray-900 dark:text-zinc-100">
               {completedTasks} / {totalTasks}
             </p>
           </div>
@@ -324,27 +324,27 @@ const ChecklistPage = () => {
 
       {/* 2. Metrics Summary Pills */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-5">
-        <div className="bg-white rounded-2xl border-2 border-orange/20 p-4 sm:p-5 shadow-2xs">
-          <div className="flex items-center gap-2 text-xs font-bold text-gray-500 uppercase tracking-wider font-body">
+        <div className="bg-white dark:bg-darkSurface rounded-2xl border-2 border-orange/20 p-4 sm:p-5 shadow-2xs">
+          <div className="flex items-center gap-2 text-xs font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider font-body">
             <FiList className="text-orange" size={14} />
             <span>Total Tasks</span>
           </div>
-          <p className="text-2xl sm:text-3xl font-black font-title text-gray-900 mt-2">
+          <p className="text-2xl sm:text-3xl font-black font-title text-gray-900 dark:text-zinc-100 mt-2">
             {totalTasks}
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl border-2 border-orange/20 p-4 sm:p-5 shadow-2xs">
-          <div className="flex items-center gap-2 text-xs font-bold text-emerald-600 uppercase tracking-wider font-body">
-            <FiCheckCircle className="text-emerald-600" size={14} />
+        <div className="bg-white dark:bg-darkSurface rounded-2xl border-2 border-orange/20 p-4 sm:p-5 shadow-2xs">
+          <div className="flex items-center gap-2 text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider font-body">
+            <FiCheckCircle className="text-emerald-600 dark:text-emerald-400" size={14} />
             <span>Completed</span>
           </div>
-          <p className="text-2xl sm:text-3xl font-black font-title text-emerald-600 mt-2">
+          <p className="text-2xl sm:text-3xl font-black font-title text-emerald-600 dark:text-emerald-400 mt-2">
             {completedTasks}
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl border-2 border-orange/20 p-4 sm:p-5 shadow-2xs">
+        <div className="bg-white dark:bg-darkSurface rounded-2xl border-2 border-orange/20 p-4 sm:p-5 shadow-2xs">
           <div className="flex items-center gap-2 text-xs font-bold text-orange uppercase tracking-wider font-body">
             <FiClock className="text-orange" size={14} />
             <span>Remaining</span>
@@ -354,26 +354,26 @@ const ChecklistPage = () => {
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl border-2 border-orange/20 p-4 sm:p-5 shadow-2xs">
-          <div className="flex items-center gap-2 text-xs font-bold text-gray-500 uppercase tracking-wider font-body">
+        <div className="bg-white dark:bg-darkSurface rounded-2xl border-2 border-orange/20 p-4 sm:p-5 shadow-2xs">
+          <div className="flex items-center gap-2 text-xs font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider font-body">
             <FiFolder className="text-orange" size={14} />
             <span>Categories</span>
           </div>
-          <p className="text-2xl sm:text-3xl font-black font-title text-gray-900 mt-2">
+          <p className="text-2xl sm:text-3xl font-black font-title text-gray-900 dark:text-zinc-100 mt-2">
             {categories.length}
           </p>
         </div>
       </div>
 
       {/* 3. Tasks Toolbar & Progress Card */}
-      <div className="bg-white rounded-3xl border-2 border-orange/20 shadow-sm p-6 sm:p-8 space-y-6">
+      <div className="bg-white dark:bg-darkSurface rounded-3xl border-2 border-orange/20 shadow-sm p-6 sm:p-8 space-y-6">
         {/* Header & Actions */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-orange/15">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-orange/15 dark:border-zinc-800">
           <div>
-            <h2 className="text-xl sm:text-2xl font-bold font-title text-gray-900">
+            <h2 className="text-xl sm:text-2xl font-bold font-title text-gray-900 dark:text-zinc-100">
               Tasks & Milestones
             </h2>
-            <p className="text-xs sm:text-sm text-gray-500 font-body">
+            <p className="text-xs sm:text-sm text-gray-500 dark:text-zinc-400 font-body">
               Filter by category, search by keyword, or manage wedding milestones.
             </p>
           </div>
@@ -384,7 +384,7 @@ const ChecklistPage = () => {
                 <button
                   onClick={handleClearAll}
                   disabled={clearingLoading}
-                  className="border-2 border-red-200 hover:border-red-500 text-red-600 hover:bg-red-50 px-3.5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm flex items-center gap-1.5 cursor-pointer transition-colors shadow-2xs"
+                  className="border-2 border-red-200 dark:border-red-900/60 hover:border-red-500 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 px-3.5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm flex items-center gap-1.5 cursor-pointer transition-colors shadow-2xs"
                   title="Wipe all tasks to start blank"
                 >
                   <FiTrash2 size={15} />
@@ -394,7 +394,7 @@ const ChecklistPage = () => {
                 <button
                   onClick={handleResetDefault}
                   disabled={resettingLoading}
-                  className="border-2 border-orange/20 hover:border-orange bg-orange/[0.04] text-gray-800 hover:text-orange px-3.5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm flex items-center gap-1.5 cursor-pointer transition-colors shadow-2xs"
+                  className="border-2 border-orange/20 hover:border-orange bg-orange/[0.04] dark:bg-orange/[0.08] text-gray-800 dark:text-zinc-200 hover:text-orange dark:hover:text-orange px-3.5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm flex items-center gap-1.5 cursor-pointer transition-colors shadow-2xs"
                   title="Reload standard 79-task timeline"
                 >
                   <FiRotateCcw size={15} />
@@ -415,7 +415,7 @@ const ChecklistPage = () => {
 
         {/* Progress Bar Component (Only if tasks exist) */}
         {totalTasks > 0 && (
-          <div className="bg-orange/[0.03] border-2 border-orange/15 rounded-2xl p-4 sm:p-5">
+          <div className="bg-orange/[0.03] dark:bg-darkElevated/40 border-2 border-orange/15 dark:border-zinc-800 rounded-2xl p-4 sm:p-5">
             <ProgressBar completed={completedTasks} total={totalTasks} />
           </div>
         )}
@@ -430,9 +430,9 @@ const ChecklistPage = () => {
                 placeholder="Search tasks..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 text-xs sm:text-sm bg-orange/[0.02] border-2 border-orange/20 focus:border-orange rounded-xl focus:outline-none focus:ring-1 focus:ring-orange text-gray-800 placeholder-gray-400 transition-all font-body"
+                className="w-full pl-10 pr-4 py-2.5 text-xs sm:text-sm bg-orange/[0.02] dark:bg-darkElevated border-2 border-orange/20 dark:border-zinc-700 focus:border-orange rounded-xl focus:outline-none focus:ring-1 focus:ring-orange text-gray-800 dark:text-zinc-100 placeholder-gray-400 dark:placeholder-zinc-500 transition-all font-body"
               />
-              <FiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+              <FiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-zinc-500" size={16} />
             </div>
 
             <div className="flex flex-wrap items-center gap-3">
@@ -440,7 +440,7 @@ const ChecklistPage = () => {
               <select
                 value={selectedMonth}
                 onChange={(e) => setSelectedMonth(e.target.value)}
-                className="border-2 border-orange/20 focus:border-orange rounded-xl px-3.5 py-2 text-xs sm:text-sm bg-white text-gray-800 font-semibold focus:outline-none cursor-pointer"
+                className="border-2 border-orange/20 dark:border-zinc-700 focus:border-orange rounded-xl px-3.5 py-2 text-xs sm:text-sm bg-white dark:bg-darkElevated text-gray-800 dark:text-zinc-100 font-semibold focus:outline-none cursor-pointer"
               >
                 <option value="">All Months</option>
                 {Array.from({ length: 12 }).map((_, index) => {
@@ -456,7 +456,7 @@ const ChecklistPage = () => {
               </select>
 
               {/* Show Completed Toggle */}
-              <label className="inline-flex items-center gap-2.5 cursor-pointer bg-orange/[0.04] border border-orange/20 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold text-gray-700 select-none">
+              <label className="inline-flex items-center gap-2.5 cursor-pointer bg-orange/[0.04] dark:bg-darkElevated border border-orange/20 dark:border-zinc-700 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold text-gray-700 dark:text-zinc-300 select-none">
                 <input
                   type="checkbox"
                   checked={showCompleted}
@@ -465,7 +465,7 @@ const ChecklistPage = () => {
                 />
                 <span
                   className={`relative inline-block w-9 h-5 transition-colors duration-200 ease-linear rounded-full ${
-                    showCompleted ? "bg-orange" : "bg-gray-300"
+                    showCompleted ? "bg-orange" : "bg-gray-300 dark:bg-zinc-700"
                   }`}
                 >
                   <span
@@ -482,15 +482,15 @@ const ChecklistPage = () => {
 
         {/* Empty State when 0 total tasks */}
         {totalTasks === 0 ? (
-          <div className="border-2 border-dashed border-orange/20 rounded-3xl p-10 sm:p-14 text-center space-y-4 bg-orange/[0.02]">
+          <div className="border-2 border-dashed border-orange/20 dark:border-zinc-800 rounded-3xl p-10 sm:p-14 text-center space-y-4 bg-orange/[0.02] dark:bg-darkElevated/30">
             <div className="w-16 h-16 rounded-full bg-orange/10 flex items-center justify-center text-orange mx-auto">
               <FiCheckSquare size={28} />
             </div>
             <div className="space-y-1">
-              <h3 className="text-base sm:text-lg font-bold font-title text-gray-800">
+              <h3 className="text-base sm:text-lg font-bold font-title text-gray-800 dark:text-zinc-100">
                 Your Checklist is Currently Empty
               </h3>
-              <p className="text-xs sm:text-sm text-gray-500 font-body max-w-md mx-auto">
+              <p className="text-xs sm:text-sm text-gray-500 dark:text-zinc-400 font-body max-w-md mx-auto">
                 You can load our curated 79-task master wedding timeline scheduled relative to your wedding date, or start with your own custom tasks.
               </p>
             </div>
@@ -505,7 +505,7 @@ const ChecklistPage = () => {
               </button>
               <button
                 onClick={() => handleAddTask()}
-                className="border-2 border-orange/20 hover:border-orange bg-white text-gray-800 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 cursor-pointer shadow-2xs transition-all"
+                className="border-2 border-orange/20 hover:border-orange bg-white dark:bg-darkElevated text-gray-800 dark:text-zinc-200 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 cursor-pointer shadow-2xs transition-all"
               >
                 <FiPlus size={15} />
                 <span>Add Custom Task</span>

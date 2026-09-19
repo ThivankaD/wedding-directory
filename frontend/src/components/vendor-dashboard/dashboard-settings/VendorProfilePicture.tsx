@@ -82,7 +82,7 @@ const VendorProfilePicture: React.FC<VendorProfilePictureProps> = ({
   };
 
   return (
-    <div className="flex items-center gap-5 pb-6 mb-6 border-b border-gray-100">
+    <div className="flex items-center gap-5 pb-6 mb-6 border-b border-gray-100 dark:border-zinc-800">
       <div
         className="relative group cursor-pointer w-20 h-20 rounded-full flex-shrink-0"
         onClick={handleContainerClick}
@@ -99,7 +99,7 @@ const VendorProfilePicture: React.FC<VendorProfilePictureProps> = ({
         </div>
 
         {/* Camera badge */}
-        <div className="absolute -bottom-1 -right-1 bg-orange text-white p-2 rounded-full shadow-md hover:bg-orange/90 transition-colors ring-2 ring-white">
+        <div className="absolute -bottom-1 -right-1 bg-orange text-white p-2 rounded-full shadow-md hover:bg-orange/90 transition-colors ring-2 ring-white dark:ring-darkSurface">
           <FiCamera className="text-sm" />
         </div>
 
@@ -112,7 +112,7 @@ const VendorProfilePicture: React.FC<VendorProfilePictureProps> = ({
 
       <div className="flex flex-col">
         <span className="text-xs font-semibold uppercase tracking-wider text-orange">Profile Photo</span>
-        <h4 className="text-base font-medium text-gray-900 mt-0.5">Display Picture</h4>
+        <h4 className="text-base font-medium text-gray-900 dark:text-zinc-100 mt-0.5">Display Picture</h4>
         <div className="flex items-center gap-3 mt-2">
           <button
             type="button"
@@ -123,7 +123,7 @@ const VendorProfilePicture: React.FC<VendorProfilePictureProps> = ({
             <FiUploadCloud className="text-sm" />
             {isUploading ? "Updating..." : "Change Photo"}
           </button>
-          <span className="text-xs text-gray-400">JPG, PNG, WEBP &bull; Max 5MB</span>
+          <span className="text-xs text-gray-400 dark:text-zinc-500">JPG, PNG, WEBP &bull; Max 5MB</span>
         </div>
       </div>
 

@@ -13,22 +13,22 @@ interface BreadcrumbsProps {
 
 const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ items }) => {
   return (
-    <nav aria-label="breadcrumb" className="text-sm text-gray-600">
-      <ol className="flex space-x-2">
+    <nav aria-label="breadcrumb" className="text-xs sm:text-sm text-gray-500 dark:text-zinc-400 font-body">
+      <ol className="flex items-center space-x-1 sm:space-x-1.5">
         {items.map((item, index) => (
           <li key={index} className="flex items-center">
             {item.href && index < items.length - 1 ? (
               <Link
                 href={item.href}
-                className="text-slate-800 font-title hover:underline"
+                className="text-gray-700 dark:text-zinc-300 font-title hover:underline hover:text-orange dark:hover:text-orange transition-colors"
               >
                 {item.label}
               </Link>
             ) : (
-              <span className="text-slate-600">{item.label}</span>
+              <span className="text-gray-500 dark:text-zinc-400 font-medium">{item.label}</span>
             )}
             {index < items.length - 1 && (
-              <span className="mx-2 text-gray-400">/</span>
+              <span className="mx-1.5 sm:mx-2 text-gray-400 dark:text-zinc-600 select-none">/</span>
             )}
           </li>
         ))}

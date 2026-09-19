@@ -18,19 +18,19 @@ const CategoryInput: React.FC<BusinessCategoryProps> = ({ onCategoryChange }) =>
     <Select onValueChange={handleCategorySelect}>
       <SelectTrigger 
         id="bcategory"
-        className="h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-left font-body text-[16px] text-black shadow-sm  focus:outline-none"
+        className="h-10 w-full rounded-md border border-gray-300 dark:border-zinc-700 bg-white dark:bg-darkElevated px-3 py-2 text-left font-body text-[16px] text-black dark:text-zinc-100 shadow-sm focus:outline-none"
       >
         <SelectValue placeholder="Business Category" />
       </SelectTrigger>
       <SelectContent 
-        className="w-full rounded-md border border-gray-300 bg-white shadow-lg"
+        className="w-full rounded-md border border-gray-300 dark:border-zinc-700 bg-white dark:bg-darkSurface shadow-lg"
         position="popper"
       >
         {categories.map((category, index) => (
           <SelectItem 
             key={index} 
             value={category} 
-            className="p-2 hover:bg-gray-100 font-body"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-darkElevated dark:focus:bg-darkElevated text-gray-800 dark:text-zinc-200 font-body"
           >
             {category}
           </SelectItem>

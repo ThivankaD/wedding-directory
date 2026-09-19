@@ -38,7 +38,7 @@ const FilterSearchBar: React.FC<FilterSearchBarProps> = ({
 
   return (
     <div className="flex items-center justify-center px-4 py-1">
-      <div className="flex items-center bg-white shadow-xs rounded-full border-2 border-orange/20 w-full max-w-2xl h-[52px] px-3 sm:px-4 gap-2 sm:gap-3">
+      <div className="flex items-center bg-white dark:bg-darkSurface shadow-xs rounded-full border-2 border-orange/20 dark:border-zinc-700 w-full max-w-2xl h-[52px] px-3 sm:px-4 gap-2 sm:gap-3">
         {/* Category Input */}
         <div className="relative flex-1 min-w-0 flex flex-col justify-center">
           <span className="text-[10px] font-bold uppercase tracking-wider text-orange/80 px-2 leading-none">
@@ -51,7 +51,7 @@ const FilterSearchBar: React.FC<FilterSearchBarProps> = ({
         </div>
 
         {/* Divider */}
-        <div className="w-px h-6 bg-orange/20 shrink-0" />
+        <div className="w-px h-6 bg-orange/20 dark:bg-zinc-700 shrink-0" />
 
         {/* Location Input */}
         <div className="relative flex-1 min-w-0 flex flex-col justify-center">

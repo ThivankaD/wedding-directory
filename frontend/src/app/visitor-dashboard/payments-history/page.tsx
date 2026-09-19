@@ -66,28 +66,28 @@ const PaymentsHistoryPage = () => {
     switch (status?.toLowerCase()) {
       case 'completed':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-            <FiCheckCircle size={12} className="text-emerald-600" />
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60">
+            <FiCheckCircle size={12} className="text-emerald-600 dark:text-emerald-400" />
             <span>Completed</span>
           </span>
         );
       case 'pending':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
-            <FiClock size={12} className="text-amber-600" />
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800/60">
+            <FiClock size={12} className="text-amber-600 dark:text-amber-400" />
             <span>Pending</span>
           </span>
         );
       case 'failed':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200">
-            <FiAlertCircle size={12} className="text-rose-600" />
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800/60">
+            <FiAlertCircle size={12} className="text-rose-600 dark:text-rose-400" />
             <span>Failed</span>
           </span>
         );
       default:
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-700 border border-gray-200">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-gray-100 dark:bg-darkElevated text-gray-700 dark:text-zinc-300 border border-gray-200 dark:border-zinc-700">
             <span>{status || 'Unknown'}</span>
           </span>
         );
@@ -163,7 +163,7 @@ const PaymentsHistoryPage = () => {
   return (
     <div className="w-full space-y-6">
       {/* 1. Hero Card */}
-      <div className="bg-white rounded-3xl border-2 border-orange/20 shadow-sm p-6 sm:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+      <div className="bg-white dark:bg-darkSurface rounded-3xl border-2 border-orange/20 dark:border-zinc-800 shadow-sm p-6 sm:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div className="space-y-3">
           <Breadcrumbs
             items={[
@@ -176,10 +176,10 @@ const PaymentsHistoryPage = () => {
               <FiCreditCard size={24} />
             </div>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold font-title text-gray-900">
+              <h1 className="text-2xl sm:text-3xl font-bold font-title text-gray-900 dark:text-zinc-100">
                 Payments History
               </h1>
-              <p className="text-xs sm:text-sm text-gray-500 font-body">
+              <p className="text-xs sm:text-sm text-gray-500 dark:text-zinc-400 font-body">
                 Track all your wedding service payments, invoices, and transaction records.
               </p>
             </div>
@@ -187,22 +187,22 @@ const PaymentsHistoryPage = () => {
         </div>
 
         {/* Total Paid Badge Card */}
-        <div className="bg-orange/[0.05] border-2 border-orange/15 rounded-2xl p-5 flex items-center gap-6 shrink-0 justify-between lg:justify-end">
+        <div className="bg-orange/[0.05] dark:bg-darkElevated border-2 border-orange/15 dark:border-zinc-800 rounded-2xl p-5 flex items-center gap-6 shrink-0 justify-between lg:justify-end">
           <div>
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider font-body">
+            <p className="text-xs font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider font-body">
               Total Amount Paid
             </p>
             <p className="text-2xl sm:text-3xl font-black font-title text-orange">
               {totalPaid.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{" "}
-              <span className="text-xs font-bold text-gray-500">LKR</span>
+              <span className="text-xs font-bold text-gray-500 dark:text-zinc-400">LKR</span>
             </p>
           </div>
-          <div className="h-10 w-px bg-orange/20" />
+          <div className="h-10 w-px bg-orange/20 dark:bg-zinc-700" />
           <div>
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider font-body">
+            <p className="text-xs font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider font-body">
               Total Transactions
             </p>
-            <p className="text-2xl sm:text-3xl font-black font-title text-gray-900">
+            <p className="text-2xl sm:text-3xl font-black font-title text-gray-900 dark:text-zinc-100">
               {payments.length}
             </p>
           </div>
@@ -211,68 +211,68 @@ const PaymentsHistoryPage = () => {
 
       {/* 2. Metrics Summary Pills */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-5">
-        <div className="bg-white rounded-2xl border-2 border-orange/20 p-4 sm:p-5 shadow-2xs">
-          <div className="flex items-center gap-2 text-xs font-bold text-gray-500 uppercase tracking-wider font-body">
+        <div className="bg-white dark:bg-darkSurface rounded-2xl border-2 border-orange/20 dark:border-zinc-800 p-4 sm:p-5 shadow-2xs">
+          <div className="flex items-center gap-2 text-xs font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider font-body">
             <FiCreditCard className="text-orange" size={14} />
             <span>Total Payments</span>
           </div>
-          <p className="text-2xl sm:text-3xl font-black font-title text-gray-900 mt-2">
+          <p className="text-2xl sm:text-3xl font-black font-title text-gray-900 dark:text-zinc-100 mt-2">
             {payments.length}
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl border-2 border-orange/20 p-4 sm:p-5 shadow-2xs">
-          <div className="flex items-center gap-2 text-xs font-bold text-emerald-600 uppercase tracking-wider font-body">
-            <FiCheckCircle className="text-emerald-600" size={14} />
+        <div className="bg-white dark:bg-darkSurface rounded-2xl border-2 border-orange/20 dark:border-zinc-800 p-4 sm:p-5 shadow-2xs">
+          <div className="flex items-center gap-2 text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider font-body">
+            <FiCheckCircle className="text-emerald-600 dark:text-emerald-400" size={14} />
             <span>Completed</span>
           </div>
-          <p className="text-2xl sm:text-3xl font-black font-title text-emerald-600 mt-2">
+          <p className="text-2xl sm:text-3xl font-black font-title text-emerald-600 dark:text-emerald-400 mt-2">
             {completedPayments.length}
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl border-2 border-orange/20 p-4 sm:p-5 shadow-2xs">
-          <div className="flex items-center gap-2 text-xs font-bold text-amber-600 uppercase tracking-wider font-body">
-            <FiClock className="text-amber-600" size={14} />
+        <div className="bg-white dark:bg-darkSurface rounded-2xl border-2 border-orange/20 dark:border-zinc-800 p-4 sm:p-5 shadow-2xs">
+          <div className="flex items-center gap-2 text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider font-body">
+            <FiClock className="text-amber-600 dark:text-amber-400" size={14} />
             <span>Pending</span>
           </div>
-          <p className="text-2xl sm:text-3xl font-black font-title text-amber-600 mt-2">
+          <p className="text-2xl sm:text-3xl font-black font-title text-amber-600 dark:text-amber-400 mt-2">
             {pendingCount}
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl border-2 border-orange/20 p-4 sm:p-5 shadow-2xs">
-          <div className="flex items-center gap-2 text-xs font-bold text-rose-600 uppercase tracking-wider font-body">
-            <FiAlertCircle className="text-rose-600" size={14} />
+        <div className="bg-white dark:bg-darkSurface rounded-2xl border-2 border-orange/20 dark:border-zinc-800 p-4 sm:p-5 shadow-2xs">
+          <div className="flex items-center gap-2 text-xs font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wider font-body">
+            <FiAlertCircle className="text-rose-600 dark:text-rose-400" size={14} />
             <span>Failed</span>
           </div>
-          <p className="text-2xl sm:text-3xl font-black font-title text-rose-600 mt-2">
+          <p className="text-2xl sm:text-3xl font-black font-title text-rose-600 dark:text-rose-400 mt-2">
             {failedCount}
           </p>
         </div>
       </div>
 
       {/* 3. Main Payments Table Card */}
-      <div className="bg-white rounded-3xl border-2 border-orange/20 shadow-sm p-6 sm:p-8 space-y-6">
+      <div className="bg-white dark:bg-darkSurface rounded-3xl border-2 border-orange/20 dark:border-zinc-800 shadow-sm p-6 sm:p-8 space-y-6">
         {/* Search & Filter Toolbar */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pb-4 border-b border-orange/15">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pb-4 border-b border-orange/15 dark:border-zinc-800">
           <div className="relative flex-1 max-w-md">
             <input
               type="text"
               placeholder="Search by service, vendor, package, or reference..."
-              className="w-full pl-10 pr-4 py-2.5 text-xs sm:text-sm bg-orange/[0.02] border-2 border-orange/20 focus:border-orange rounded-xl focus:outline-none focus:ring-1 focus:ring-orange text-gray-800 placeholder-gray-400 transition-all font-body"
+              className="w-full pl-10 pr-4 py-2.5 text-xs sm:text-sm bg-orange/[0.02] dark:bg-darkElevated border-2 border-orange/20 dark:border-zinc-700 focus:border-orange rounded-xl focus:outline-none focus:ring-1 focus:ring-orange text-gray-800 dark:text-zinc-100 placeholder-gray-400 dark:placeholder-zinc-500 transition-all font-body"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <FiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+            <FiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-zinc-500" size={16} />
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-gray-500 uppercase tracking-wider font-body whitespace-nowrap">
+            <span className="text-xs font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider font-body whitespace-nowrap">
               Status:
             </span>
             <select
-              className="border-2 border-orange/20 focus:border-orange rounded-xl px-3.5 py-2 text-xs sm:text-sm bg-white text-gray-800 font-semibold focus:outline-none cursor-pointer"
+              className="border-2 border-orange/20 dark:border-zinc-700 focus:border-orange rounded-xl px-3.5 py-2 text-xs sm:text-sm bg-white dark:bg-darkElevated text-gray-800 dark:text-zinc-100 font-semibold focus:outline-none cursor-pointer"
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
             >
@@ -286,15 +286,15 @@ const PaymentsHistoryPage = () => {
 
         {/* Table Content */}
         {filteredPayments.length === 0 ? (
-          <div className="border-2 border-dashed border-orange/20 rounded-3xl p-10 sm:p-14 text-center space-y-4 bg-orange/[0.02]">
+          <div className="border-2 border-dashed border-orange/20 dark:border-zinc-800 rounded-3xl p-10 sm:p-14 text-center space-y-4 bg-orange/[0.02] dark:bg-darkElevated/30">
             <div className="w-16 h-16 rounded-full bg-orange/10 flex items-center justify-center text-orange mx-auto">
               <FiCreditCard size={28} />
             </div>
             <div className="space-y-1">
-              <h3 className="text-base sm:text-lg font-bold font-title text-gray-800">
+              <h3 className="text-base sm:text-lg font-bold font-title text-gray-800 dark:text-zinc-200">
                 {payments.length === 0 ? "No payment records found" : "No matching payments found"}
               </h3>
-              <p className="text-xs sm:text-sm text-gray-500 font-body max-w-sm mx-auto">
+              <p className="text-xs sm:text-sm text-gray-500 dark:text-zinc-400 font-body max-w-sm mx-auto">
                 {payments.length === 0
                   ? "When you book wedding vendor packages, your payment receipts and invoice history will appear here."
                   : "Try adjusting your search keyword or clearing the status filter."}
@@ -302,10 +302,10 @@ const PaymentsHistoryPage = () => {
             </div>
           </div>
         ) : (
-          <div className="border-2 border-orange/15 rounded-2xl overflow-hidden shadow-2xs">
+          <div className="border-2 border-orange/15 dark:border-zinc-800 rounded-2xl overflow-hidden shadow-2xs">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs sm:text-sm font-body">
-                <thead className="bg-orange/[0.06] text-gray-900 font-bold uppercase tracking-wider text-xs border-b border-orange/15 font-title">
+                <thead className="bg-orange/[0.06] dark:bg-darkElevated text-gray-900 dark:text-zinc-100 font-bold uppercase tracking-wider text-xs border-b border-orange/15 dark:border-zinc-800 font-title">
                   <tr>
                     <th className="py-3.5 px-4 w-12 text-center">#</th>
                     <th className="py-3.5 px-4">Service & Vendor</th>
@@ -316,7 +316,7 @@ const PaymentsHistoryPage = () => {
                     <th className="py-3.5 px-4 text-right">Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-orange/10 bg-white">
+                <tbody className="divide-y divide-orange/10 dark:divide-zinc-800 bg-white dark:bg-darkSurface">
                   {filteredPayments.map((payment, idx) => {
                     const serviceName = payment.package?.offering?.name || 'Wedding Service';
                     const offeringId = payment.package?.offering?.id;
@@ -330,10 +330,10 @@ const PaymentsHistoryPage = () => {
                     return (
                       <tr
                         key={payment.id}
-                        className="hover:bg-orange/[0.02] transition-colors"
+                        className="hover:bg-orange/[0.02] dark:hover:bg-darkElevated/50 transition-colors"
                       >
                         {/* Index */}
-                        <td className="py-3.5 px-4 text-center text-xs font-semibold text-gray-400">
+                        <td className="py-3.5 px-4 text-center text-xs font-semibold text-gray-400 dark:text-zinc-500">
                           {idx + 1}
                         </td>
 
@@ -347,18 +347,18 @@ const PaymentsHistoryPage = () => {
                               {offeringId ? (
                                 <Link
                                   href={`/services/${offeringId}`}
-                                  className="font-bold text-gray-900 hover:text-orange transition-colors font-title text-sm inline-flex items-center gap-1 group"
+                                  className="font-bold text-gray-900 dark:text-zinc-100 hover:text-orange dark:hover:text-orange transition-colors font-title text-sm inline-flex items-center gap-1 group"
                                 >
                                   <span>{serviceName}</span>
                                   <FiExternalLink size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
                                 </Link>
                               ) : (
-                                <p className="font-bold text-gray-900 font-title text-sm">
+                                <p className="font-bold text-gray-900 dark:text-zinc-100 font-title text-sm">
                                   {serviceName}
                                 </p>
                               )}
                               {vendorBusname && (
-                                <p className="text-[11px] text-gray-500 line-clamp-1">
+                                <p className="text-[11px] text-gray-500 dark:text-zinc-400 line-clamp-1">
                                   {vendorBusname}
                                 </p>
                               )}
@@ -375,14 +375,14 @@ const PaymentsHistoryPage = () => {
 
                         {/* Amount */}
                         <td className="py-3.5 px-4">
-                          <p className="font-bold text-gray-900 font-title text-sm">
+                          <p className="font-bold text-gray-900 dark:text-zinc-100 font-title text-sm">
                             {Number(payment.amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{" "}
-                            <span className="text-xs font-semibold text-gray-500">LKR</span>
+                            <span className="text-xs font-semibold text-gray-500 dark:text-zinc-400">LKR</span>
                           </p>
                         </td>
 
                         {/* Date */}
-                        <td className="py-3.5 px-4 text-gray-600">
+                        <td className="py-3.5 px-4 text-gray-600 dark:text-zinc-400">
                           <span className="inline-flex items-center gap-1.5 text-xs">
                             <FiCalendar className="text-orange shrink-0" size={13} />
                             <span>{paymentDate}</span>
@@ -417,23 +417,23 @@ const PaymentsHistoryPage = () => {
       {/* 4. Themed Receipt Modal */}
       {selectedReceipt && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-in fade-in duration-150">
-          <div className="bg-white rounded-3xl border-2 border-orange/20 shadow-2xl max-w-md w-full overflow-hidden p-6 sm:p-7 space-y-5">
+          <div className="bg-white dark:bg-darkSurface rounded-3xl border-2 border-orange/20 dark:border-zinc-800 shadow-2xl max-w-md w-full overflow-hidden p-6 sm:p-7 space-y-5">
             {/* Modal Header */}
-            <div className="flex items-center justify-between pb-4 border-b border-orange/15">
+            <div className="flex items-center justify-between pb-4 border-b border-orange/15 dark:border-zinc-800">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-orange/10 flex items-center justify-center text-orange shrink-0">
+                <div className="w-10 h-10 rounded-2xl bg-orange/10 text-orange flex items-center justify-center shrink-0">
                   <FiFileText size={20} />
                 </div>
                 <div>
-                  <h3 className="font-bold text-gray-900 font-title text-lg sm:text-xl">
+                  <h3 className="font-bold text-gray-900 dark:text-zinc-100 font-title text-lg sm:text-xl">
                     Payment Receipt
                   </h3>
-                  <p className="text-xs text-gray-500 font-body">Transaction details and receipt</p>
+                  <p className="text-xs text-gray-500 dark:text-zinc-400 font-body">Transaction details and receipt</p>
                 </div>
               </div>
               <button
                 onClick={() => setSelectedReceipt(null)}
-                className="w-9 h-9 rounded-full bg-gray-100 hover:bg-orange/10 hover:text-orange flex items-center justify-center text-gray-500 transition-colors cursor-pointer"
+                className="w-9 h-9 rounded-full bg-gray-100 dark:bg-darkElevated hover:bg-orange/10 hover:text-orange flex items-center justify-center text-gray-500 dark:text-zinc-400 transition-colors cursor-pointer"
               >
                 <FiX size={18} />
               </button>
@@ -441,56 +441,56 @@ const PaymentsHistoryPage = () => {
 
             {/* Modal Breakdown */}
             <div className="space-y-2.5 text-xs sm:text-sm font-body">
-              <div className="flex justify-between py-2 border-b border-orange/10">
-                <span className="text-gray-500 font-medium">Service</span>
-                <span className="font-bold text-gray-900 text-right">
+              <div className="flex justify-between py-2 border-b border-orange/10 dark:border-zinc-800">
+                <span className="text-gray-500 dark:text-zinc-400 font-medium">Service</span>
+                <span className="font-bold text-gray-900 dark:text-zinc-100 text-right">
                   {selectedReceipt.package?.offering?.name || 'Wedding Service'}
                 </span>
               </div>
 
               {selectedReceipt.vendor?.busname && (
-                <div className="flex justify-between py-2 border-b border-orange/10">
-                  <span className="text-gray-500 font-medium">Vendor</span>
-                  <span className="font-semibold text-gray-800 text-right">
+                <div className="flex justify-between py-2 border-b border-orange/10 dark:border-zinc-800">
+                  <span className="text-gray-500 dark:text-zinc-400 font-medium">Vendor</span>
+                  <span className="font-semibold text-gray-800 dark:text-zinc-200 text-right">
                     {selectedReceipt.vendor.busname}
                   </span>
                 </div>
               )}
 
-              <div className="flex justify-between py-2 border-b border-orange/10">
-                <span className="text-gray-500 font-medium">Package</span>
-                <span className="text-gray-800 font-semibold text-right">
+              <div className="flex justify-between py-2 border-b border-orange/10 dark:border-zinc-800">
+                <span className="text-gray-500 dark:text-zinc-400 font-medium">Package</span>
+                <span className="text-gray-800 dark:text-zinc-200 font-semibold text-right">
                   {selectedReceipt.package?.name || 'Standard'}
                 </span>
               </div>
 
-              <div className="flex justify-between py-2 border-b border-orange/10">
-                <span className="text-gray-500 font-medium">Amount</span>
-                <span className="font-black text-gray-900 font-title text-base text-right">
+              <div className="flex justify-between py-2 border-b border-orange/10 dark:border-zinc-800">
+                <span className="text-gray-500 dark:text-zinc-400 font-medium">Amount</span>
+                <span className="font-black text-gray-900 dark:text-zinc-100 font-title text-base text-right">
                   {Number(selectedReceipt.amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{" "}
-                  <span className="text-xs font-semibold text-gray-500">LKR</span>
+                  <span className="text-xs font-semibold text-gray-500 dark:text-zinc-400">LKR</span>
                 </span>
               </div>
 
-              <div className="flex justify-between py-2 border-b border-orange/10">
-                <span className="text-gray-500 font-medium">Reference</span>
-                <span className="font-mono text-xs font-semibold text-gray-700 text-right break-all">
+              <div className="flex justify-between py-2 border-b border-orange/10 dark:border-zinc-800">
+                <span className="text-gray-500 dark:text-zinc-400 font-medium">Reference</span>
+                <span className="font-mono text-xs font-semibold text-gray-700 dark:text-zinc-300 text-right break-all">
                   {selectedReceipt.paymentReference || selectedReceipt.id}
                 </span>
               </div>
 
               {selectedReceipt.gatewayPaymentId && (
-                <div className="flex justify-between py-2 border-b border-orange/10">
-                  <span className="text-gray-500 font-medium">Gateway Payment ID</span>
-                  <span className="font-mono text-xs font-semibold text-gray-700 text-right break-all">
+                <div className="flex justify-between py-2 border-b border-orange/10 dark:border-zinc-800">
+                  <span className="text-gray-500 dark:text-zinc-400 font-medium">Gateway Payment ID</span>
+                  <span className="font-mono text-xs font-semibold text-gray-700 dark:text-zinc-300 text-right break-all">
                     {selectedReceipt.gatewayPaymentId}
                   </span>
                 </div>
               )}
 
-              <div className="flex justify-between py-2 border-b border-orange/10">
-                <span className="text-gray-500 font-medium">Date</span>
-                <span className="text-gray-800 font-semibold text-right">
+              <div className="flex justify-between py-2 border-b border-orange/10 dark:border-zinc-800">
+                <span className="text-gray-500 dark:text-zinc-400 font-medium">Date</span>
+                <span className="text-gray-800 dark:text-zinc-200 font-semibold text-right">
                   {new Date(selectedReceipt.createdAt).toLocaleDateString(undefined, {
                     year: 'numeric',
                     month: 'short',
@@ -500,16 +500,16 @@ const PaymentsHistoryPage = () => {
               </div>
 
               <div className="flex justify-between items-center py-2">
-                <span className="text-gray-500 font-medium">Status</span>
+                <span className="text-gray-500 dark:text-zinc-400 font-medium">Status</span>
                 <span>{getStatusBadge(selectedReceipt.status)}</span>
               </div>
             </div>
 
             {/* Modal Actions */}
-            <div className="pt-4 border-t border-orange/15 flex gap-3">
+            <div className="pt-4 border-t border-orange/15 dark:border-zinc-800 flex gap-3">
               <button
                 onClick={() => handlePrint(selectedReceipt.paymentReference)}
-                className="flex-1 inline-flex items-center justify-center gap-2 border-2 border-gray-200 text-gray-700 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold hover:bg-gray-100 transition-colors cursor-pointer"
+                className="flex-1 inline-flex items-center justify-center gap-2 border-2 border-gray-200 dark:border-zinc-700 text-gray-700 dark:text-zinc-300 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold hover:bg-gray-100 dark:hover:bg-darkElevated transition-colors cursor-pointer"
               >
                 <FiPrinter size={15} />
                 <span>Print</span>

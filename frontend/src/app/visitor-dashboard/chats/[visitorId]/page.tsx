@@ -11,7 +11,7 @@ const ChatPage = () => {
   return (
     <div className="w-full space-y-6">
       {/* Hero Card */}
-      <div className="bg-white rounded-3xl border-2 border-orange/20 shadow-sm p-6 sm:p-8">
+      <div className="bg-white dark:bg-darkSurface rounded-3xl border-2 border-orange/20 dark:border-zinc-800 shadow-sm p-6 sm:p-8">
         <div className="space-y-3">
           <Breadcrumbs
             items={[
@@ -24,10 +24,10 @@ const ChatPage = () => {
               <FiMessageSquare size={24} />
             </div>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold font-title text-gray-900">
+              <h1 className="text-2xl sm:text-3xl font-bold font-title text-gray-900 dark:text-zinc-100">
                 My Conversations
               </h1>
-              <p className="text-xs sm:text-sm text-gray-500 font-body">
+              <p className="text-xs sm:text-sm text-gray-500 dark:text-zinc-400 font-body">
                 Connect directly with wedding vendors in real-time, get quotes, and manage bookings.
               </p>
             </div>
@@ -36,7 +36,7 @@ const ChatPage = () => {
       </div>
 
       {/* Main Conversations Card */}
-      <div className="bg-white rounded-3xl border-2 border-orange/20 shadow-sm overflow-hidden">
+      <div className="bg-white dark:bg-darkSurface rounded-3xl border-2 border-orange/20 dark:border-zinc-800 shadow-sm overflow-hidden">
         <VisitorChatList visitorId={visitorId} />
       </div>
     </div>

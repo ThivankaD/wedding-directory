@@ -32,7 +32,7 @@ const WeddingCoupleCard: React.FC<WeddingCoupleProps> = ({
     : null;
 
   return (
-    <div className="w-full bg-white shadow-sm rounded-2xl sm:rounded-3xl p-6 sm:p-7 border-2 border-orange/20">
+    <div className="w-full bg-white dark:bg-darkSurface shadow-sm rounded-2xl sm:rounded-3xl p-6 sm:p-7 border-2 border-orange/20">
       <div className="grid grid-cols-1 md:grid-cols-3 items-center gap-6">
         {/* Couple Names - Left column */}
         <div className="flex flex-col items-center md:items-start text-center md:text-left justify-center px-2">
@@ -40,13 +40,13 @@ const WeddingCoupleCard: React.FC<WeddingCoupleProps> = ({
             The marriage of
           </span>
           <div className="flex flex-col items-center md:items-start">
-            <h2 className="text-3xl lg:text-4xl font-marck text-gray-900 capitalize tracking-wide break-words max-w-full">
+            <h2 className="text-3xl lg:text-4xl font-marck text-gray-900 dark:text-zinc-100 capitalize tracking-wide break-words max-w-full">
               {brideName || "Bride"}
             </h2>
             <span className="text-xs font-semibold text-orange my-1 tracking-widest uppercase font-body">
               and
             </span>
-            <h2 className="text-3xl lg:text-4xl font-marck text-gray-900 capitalize tracking-wide break-words max-w-full">
+            <h2 className="text-3xl lg:text-4xl font-marck text-gray-900 dark:text-zinc-100 capitalize tracking-wide break-words max-w-full">
               {groomName || "Groom"}
             </h2>
           </div>
@@ -54,18 +54,18 @@ const WeddingCoupleCard: React.FC<WeddingCoupleProps> = ({
 
         {/* Countdown Container - Center column */}
         <div className="flex flex-col items-center justify-center text-center">
-          <div className="bg-orange/[0.04] border border-orange/20 rounded-2xl px-6 py-4 w-full max-w-[240px] shadow-xs">
-            <p className="text-gray-500 text-xs font-medium mb-1 font-body">
+          <div className="bg-orange/[0.04] dark:bg-orange/[0.08] border border-orange/20 rounded-2xl px-6 py-4 w-full max-w-[240px] shadow-xs">
+            <p className="text-gray-500 dark:text-zinc-400 text-xs font-medium mb-1 font-body">
               Days until the wedding
             </p>
             <div className="text-3xl lg:text-4xl font-bold font-title text-orange">
               {daysLeft}{" "}
-              <span className="text-sm font-normal text-gray-600 font-body">
+              <span className="text-sm font-normal text-gray-600 dark:text-zinc-400 font-body">
                 {daysLeft === 1 ? "day" : "days"}
               </span>
             </div>
             {formattedWeddingDate && (
-              <p className="text-[11px] text-gray-400 mt-1 font-body">
+              <p className="text-[11px] text-gray-400 dark:text-zinc-500 mt-1 font-body">
                 Date: {formattedWeddingDate}
               </p>
             )}

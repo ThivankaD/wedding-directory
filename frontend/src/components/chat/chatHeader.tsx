@@ -22,14 +22,14 @@ export default function ChatHeader({ visitor, offeringId }: ChatHeaderProps) {
   const coupleName = formatCoupleName(visitor, "Wedding Couple");
 
   return (
-    <div className="bg-white border-b-2 border-orange/10 px-4 sm:px-6 py-4 flex items-center justify-between gap-3 flex-shrink-0">
+    <div className="bg-white dark:bg-darkSurface border-b border-gray-100 dark:border-zinc-800 px-4 sm:px-6 py-4 flex items-center justify-between gap-3 flex-shrink-0">
       <div className="flex items-center gap-3 min-w-0">
         <div className="w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center bg-orange/10 text-orange font-bold text-base sm:text-lg rounded-2xl flex-shrink-0 border border-orange/20 shadow-xs">
           {coupleName[0]?.toUpperCase() || "C"}
         </div>
         <div className="min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <h2 className="font-title font-bold text-base sm:text-lg text-gray-900 truncate leading-tight">
+            <h2 className="font-title font-bold text-base sm:text-lg text-gray-900 dark:text-zinc-100 truncate leading-tight">
               {coupleName}
             </h2>
             {offering && (
@@ -38,7 +38,7 @@ export default function ChatHeader({ visitor, offeringId }: ChatHeaderProps) {
               </span>
             )}
           </div>
-          <p className="text-xs text-gray-500 truncate mt-0.5 font-body">
+          <p className="text-xs text-gray-500 dark:text-zinc-400 truncate mt-0.5 font-body">
             {visitor.email}
             {visitor.phone ? ` • ${visitor.phone}` : ""}
             {offering && ` • ${offering.category}`}

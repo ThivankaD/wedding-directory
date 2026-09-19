@@ -77,26 +77,26 @@ const AddEditTaskModal: React.FC<AddEditTaskModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-3xl border-2 border-orange/20 shadow-2xl p-6 sm:p-8 max-w-md w-full animate-in fade-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center z-50 p-4">
+      <div className="bg-white dark:bg-darkSurface rounded-3xl border-2 border-orange/20 shadow-2xl p-6 sm:p-8 max-w-md w-full animate-in fade-in zoom-in-95 duration-200">
         {/* Header */}
-        <div className="flex items-center justify-between pb-4 mb-5 border-b border-orange/15">
+        <div className="flex items-center justify-between pb-4 mb-5 border-b border-orange/15 dark:border-zinc-800">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-2xl bg-orange/10 flex items-center justify-center text-orange shrink-0">
               <CheckSquare size={20} />
             </div>
             <div>
-              <h2 className="text-xl sm:text-2xl font-bold font-title text-gray-900">
+              <h2 className="text-xl sm:text-2xl font-bold font-title text-gray-900 dark:text-zinc-100">
                 {initialData ? "Edit Task" : "Add Task"}
               </h2>
-              <p className="text-xs text-gray-500 font-body">
+              <p className="text-xs text-gray-500 dark:text-zinc-400 font-body">
                 {initialData ? "Update your checklist task details." : "Create a new wedding preparation task."}
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-9 h-9 rounded-full bg-gray-100 hover:bg-orange/10 hover:text-orange flex items-center justify-center text-gray-500 transition-colors cursor-pointer"
+            className="w-9 h-9 rounded-full bg-gray-100 dark:bg-darkElevated hover:bg-orange/10 dark:hover:bg-orange/20 hover:text-orange flex items-center justify-center text-gray-500 dark:text-zinc-400 transition-colors cursor-pointer"
           >
             <X size={18} />
           </button>
@@ -105,7 +105,7 @@ const AddEditTaskModal: React.FC<AddEditTaskModalProps> = ({
         {/* Form Fields */}
         <div className="space-y-4">
           <div>
-            <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider font-body mb-1.5">
+            <label className="block text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider font-body mb-1.5">
               Task Name *
             </label>
             <input
@@ -113,19 +113,19 @@ const AddEditTaskModal: React.FC<AddEditTaskModalProps> = ({
               placeholder="e.g. Book Photographer"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full h-11 px-3.5 border-2 border-orange/20 focus:border-orange rounded-xl bg-orange/[0.02] text-sm text-gray-900 focus:outline-none transition-colors"
+              className="w-full h-11 px-3.5 border-2 border-orange/20 dark:border-zinc-700 focus:border-orange rounded-xl bg-orange/[0.02] dark:bg-darkElevated text-sm text-gray-900 dark:text-zinc-100 placeholder-gray-400 dark:placeholder-zinc-500 focus:outline-none transition-colors"
               required
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider font-body mb-1.5">
+            <label className="block text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider font-body mb-1.5">
               Category *
             </label>
             <select
               value={formData.category}
               onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-              className="w-full h-11 px-3 border-2 border-orange/20 focus:border-orange rounded-xl bg-white text-sm text-gray-900 font-medium focus:outline-none transition-colors"
+              className="w-full h-11 px-3 border-2 border-orange/20 dark:border-zinc-700 focus:border-orange rounded-xl bg-white dark:bg-darkElevated text-sm text-gray-900 dark:text-zinc-100 font-medium focus:outline-none transition-colors"
               required
             >
               <option value="" disabled>
@@ -153,35 +153,35 @@ const AddEditTaskModal: React.FC<AddEditTaskModalProps> = ({
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider font-body mb-1.5">
+            <label className="block text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider font-body mb-1.5">
               Due Date
             </label>
             <input
               type="date"
               value={formData.due_date}
               onChange={(e) => setFormData({ ...formData, due_date: e.target.value })}
-              className="w-full h-11 px-3.5 border-2 border-orange/20 focus:border-orange rounded-xl bg-white text-sm text-gray-900 focus:outline-none transition-colors"
+              className="w-full h-11 px-3.5 border-2 border-orange/20 dark:border-zinc-700 focus:border-orange rounded-xl bg-white dark:bg-darkElevated text-sm text-gray-900 dark:text-zinc-100 focus:outline-none transition-colors"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider font-body mb-1.5">
+            <label className="block text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider font-body mb-1.5">
               Notes (Optional)
             </label>
             <textarea
               placeholder="Add details, contact info, or reminders..."
               value={formData.notes}
               onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-              className="w-full p-3 border-2 border-orange/20 focus:border-orange rounded-xl bg-orange/[0.02] text-sm text-gray-900 focus:outline-none transition-colors min-h-[80px] resize-none"
+              className="w-full p-3 border-2 border-orange/20 dark:border-zinc-700 focus:border-orange rounded-xl bg-orange/[0.02] dark:bg-darkElevated text-sm text-gray-900 dark:text-zinc-100 placeholder-gray-400 dark:placeholder-zinc-500 focus:outline-none transition-colors min-h-[80px] resize-none"
             />
           </div>
 
           {/* Footer Actions */}
-          <div className="pt-4 border-t border-orange/15 flex items-center justify-end gap-3">
+          <div className="pt-4 border-t border-orange/15 dark:border-zinc-800 flex items-center justify-end gap-3">
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 rounded-xl border-2 border-gray-200 text-gray-700 hover:bg-gray-100 font-semibold text-sm transition-colors cursor-pointer"
+              className="px-5 py-2.5 rounded-xl border-2 border-gray-200 dark:border-zinc-700 text-gray-700 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800 font-semibold text-sm transition-colors cursor-pointer"
             >
               Cancel
             </button>

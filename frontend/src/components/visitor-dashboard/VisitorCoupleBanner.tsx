@@ -152,7 +152,7 @@ const VisitorCoupleBanner: React.FC<VisitorCoupleBannerProps> = ({
   ];
 
   return (
-    <div className="w-full h-full bg-white rounded-2xl shadow-sm border border-orange/20 p-6 sm:p-7 flex flex-col items-center text-center">
+    <div className="w-full h-full bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-orange/20 p-6 sm:p-7 flex flex-col items-center text-center transition-colors duration-200">
       {/* Couple Photo Upload Card */}
       <div className="w-full flex justify-center mb-5">
         <ProfilePicture profilePic={profilePic} setProfilePic={setProfilePic} />
@@ -163,7 +163,7 @@ const VisitorCoupleBanner: React.FC<VisitorCoupleBannerProps> = ({
         <span className="text-[11px] font-semibold text-orange uppercase tracking-wider block mb-1">
           The Marriage Of
         </span>
-        <h2 className="font-marck text-3xl sm:text-4xl text-gray-900 leading-tight">
+        <h2 className="font-marck text-3xl sm:text-4xl text-gray-900 dark:text-zinc-100 leading-tight">
           {brideName}
           <span className="text-orange font-title text-2xl mx-2 font-normal">&</span>
           {groomName}
@@ -171,19 +171,19 @@ const VisitorCoupleBanner: React.FC<VisitorCoupleBannerProps> = ({
       </div>
 
       {/* Countdown Card matching vendor profile detail cards */}
-      <div className="w-full bg-orange/[0.04] border border-orange/20 rounded-2xl p-4 mb-6 text-center">
-        <div className="flex items-center justify-center gap-1.5 text-xs text-gray-500 font-medium mb-1">
+      <div className="w-full bg-orange/[0.04] dark:bg-orange/[0.08] border border-orange/20 rounded-2xl p-4 mb-6 text-center">
+        <div className="flex items-center justify-center gap-1.5 text-xs text-gray-500 dark:text-zinc-400 font-medium mb-1">
           <FiCalendar size={13} className="text-orange" />
           <span>Days Until The Wedding</span>
         </div>
         <div className="font-title text-3xl sm:text-4xl font-bold text-orange">
           {daysLeft}{" "}
-          <span className="text-sm font-normal text-gray-600">
+          <span className="text-sm font-normal text-gray-600 dark:text-zinc-400">
             {daysLeft === 1 ? "Day" : "Days"}
           </span>
         </div>
         {formattedWeddingDate && (
-          <p className="text-xs text-gray-400 mt-1 font-body">
+          <p className="text-xs text-gray-400 dark:text-zinc-500 mt-1 font-body">
             Date: {formattedWeddingDate}
           </p>
         )}
@@ -192,10 +192,10 @@ const VisitorCoupleBanner: React.FC<VisitorCoupleBannerProps> = ({
       {/* Integrated Planning Navigation Menu */}
       <div className="w-full text-left">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="font-title text-xs font-bold text-gray-900 uppercase tracking-wider">
+          <h3 className="font-title text-xs font-bold text-gray-900 dark:text-zinc-200 uppercase tracking-wider">
             Planning Portal Navigation
           </h3>
-          <span className="text-[10px] text-orange font-semibold bg-orange/10 px-2 py-0.5 rounded-md">
+          <span className="text-[10px] text-orange font-semibold bg-orange/10 dark:bg-orange/20 px-2 py-0.5 rounded-md">
             9 Tools
           </span>
         </div>
@@ -212,7 +212,7 @@ const VisitorCoupleBanner: React.FC<VisitorCoupleBannerProps> = ({
                 className={`group flex items-center justify-between p-2.5 sm:p-3 rounded-xl border transition-all ${
                   isActive
                     ? "bg-orange text-white border-orange shadow-sm"
-                    : "border-gray-100 hover:border-orange/30 hover:bg-orange/5 text-gray-700 hover:text-orange"
+                    : "border-gray-100 dark:border-zinc-800 hover:border-orange/30 hover:bg-orange/5 dark:hover:bg-zinc-800/60 text-gray-700 dark:text-zinc-300 hover:text-orange"
                 }`}
               >
                 <div className="flex items-center gap-3 min-w-0">
@@ -220,7 +220,7 @@ const VisitorCoupleBanner: React.FC<VisitorCoupleBannerProps> = ({
                     className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors ${
                       isActive
                         ? "bg-white/20 text-white"
-                        : "bg-orange/10 text-orange group-hover:bg-orange group-hover:text-white"
+                        : "bg-orange/10 dark:bg-orange/20 text-orange group-hover:bg-orange group-hover:text-white"
                     }`}
                   >
                     <Icon size={16} />
@@ -228,14 +228,14 @@ const VisitorCoupleBanner: React.FC<VisitorCoupleBannerProps> = ({
                   <div className="min-w-0">
                     <div
                       className={`text-xs sm:text-sm font-semibold truncate ${
-                        isActive ? "text-white" : "text-gray-900 group-hover:text-orange"
+                        isActive ? "text-white" : "text-gray-900 dark:text-zinc-200 group-hover:text-orange"
                       }`}
                     >
                       {item.title}
                     </div>
                     <div
                       className={`text-[11px] truncate ${
-                        isActive ? "text-white/80" : "text-gray-400"
+                        isActive ? "text-white/80" : "text-gray-400 dark:text-zinc-500"
                       }`}
                     >
                       {item.subtitle}
@@ -249,7 +249,7 @@ const VisitorCoupleBanner: React.FC<VisitorCoupleBannerProps> = ({
                       className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
                         isActive
                           ? "bg-white text-orange"
-                          : "bg-orange/10 text-orange group-hover:bg-orange group-hover:text-white"
+                          : "bg-orange/10 dark:bg-orange/20 text-orange group-hover:bg-orange group-hover:text-white"
                       }`}
                     >
                       {item.badge}
@@ -259,7 +259,7 @@ const VisitorCoupleBanner: React.FC<VisitorCoupleBannerProps> = ({
                     className={`transition-transform duration-200 group-hover:translate-x-0.5 ${
                       isActive
                         ? "text-white"
-                        : "text-gray-300 group-hover:text-orange"
+                        : "text-gray-300 dark:text-zinc-600 group-hover:text-orange"
                     }`}
                     size={14}
                   />

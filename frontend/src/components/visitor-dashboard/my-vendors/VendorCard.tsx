@@ -13,9 +13,9 @@ interface VendorCardProps {
 
 const VendorCard = ({ name, vendor, city, banner, link }: VendorCardProps) => {
   return (
-    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-2xl border-2 border-orange/20 hover:border-orange bg-white shadow-xs hover:shadow-md transition-all group w-full">
+    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-2xl border-2 border-orange/20 dark:border-zinc-800 hover:border-orange dark:hover:border-orange bg-white dark:bg-darkSurface shadow-xs hover:shadow-md transition-all group w-full">
       <div className="flex items-center gap-4 min-w-0 flex-1">
-        <div className="relative w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 overflow-hidden rounded-xl bg-orange/5 border border-orange/10">
+        <div className="relative w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 overflow-hidden rounded-xl bg-orange/5 dark:bg-darkElevated border border-orange/10 dark:border-zinc-800">
           <Image
             src={banner}
             alt={`${name} banner`}
@@ -29,10 +29,10 @@ const VendorCard = ({ name, vendor, city, banner, link }: VendorCardProps) => {
           <span className="inline-block text-xs font-bold text-orange uppercase tracking-wider mb-0.5">
             {vendor}
           </span>
-          <h3 className="font-title text-base sm:text-lg font-bold text-gray-900 group-hover:text-orange transition-colors truncate">
+          <h3 className="font-title text-base sm:text-lg font-bold text-gray-900 dark:text-zinc-100 group-hover:text-orange dark:group-hover:text-orange transition-colors truncate">
             {name}
           </h3>
-          <p className="flex items-center gap-1.5 text-xs sm:text-sm text-gray-500 mt-1">
+          <p className="flex items-center gap-1.5 text-xs sm:text-sm text-gray-500 dark:text-zinc-400 mt-1">
             <FiMapPin className="text-orange shrink-0" size={13} />
             <span className="truncate">{city}</span>
           </p>

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import Header from "@/components/shared/Headers/Header";
+import VendorHeader from "@/components/shared/Headers/VendorHeader";
 import VendorBanner from "@/components/vendor-dashboard/VendorBanner";
 import SettingsMenu from "@/components/vendor-dashboard/dashboard-settings/SettingsMenu";
 import EditProfile from "@/components/vendor-dashboard/dashboard-settings/EditProfile";
@@ -36,13 +36,13 @@ const VendorDashBoardSettings = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
-      <div className="bg-lightYellow flex-grow">
+    <div className="flex flex-col min-h-screen bg-lightYellow dark:bg-darkBg transition-colors duration-200">
+      <VendorHeader />
+      <div className="bg-lightYellow dark:bg-darkBg flex-grow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
           <div className="mb-6">
-            <h1 className="font-title text-3xl font-bold text-gray-900">Settings</h1>
-            <p className="text-gray-500 font-body text-sm mt-1">
+            <h1 className="font-title text-3xl font-bold text-gray-900 dark:text-zinc-100">Settings</h1>
+            <p className="text-gray-500 dark:text-zinc-400 font-body text-sm mt-1">
               Manage your business storefront, contact information, and account security.
             </p>
           </div>

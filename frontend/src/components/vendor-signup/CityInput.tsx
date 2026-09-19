@@ -14,7 +14,7 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import cities from '../../utils/city.json';
-import { Button } from "../ui/button";
+import { ChevronDown } from "lucide-react";
 import { CityProps } from "@/types/signupInput";
 import { useState } from "react";
 
@@ -46,31 +46,46 @@ const CityInput: React.FC<CityProps> = ({ onCityChange, placeholder, className }
   };
 
   return (
-    <div className={className || "border-black border-solid border-2 rounded-lg flex flex-row space-y-1.5 bg-white"}>
+    <div className={className || "border-black border-solid border-2 rounded-lg flex flex-row space-y-1.5 bg-white dark:bg-darkElevated"}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button className="flex flex-row justify-start text-left w-full space-y-1.5 text-black hover:bg-transparent bg-transparent h-full px-3 font-normal">
-            {selectedCity ? selectedCity : placeholder} {/* Show selected city */}
-          </Button>
+          <button
+            type="button"
+            className="flex flex-row justify-between items-center text-left w-full text-gray-800 dark:text-zinc-100 hover:bg-transparent bg-transparent h-full px-3 font-normal focus:outline-none focus:ring-0 cursor-pointer text-sm"
+          >
+            <span className="truncate">{selectedCity ? selectedCity : placeholder}</span>
+            <ChevronDown className="ml-1 h-3.5 w-3.5 text-gray-400 dark:text-zinc-500 shrink-0" />
+          </button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-56">
-          <DropdownMenuLabel>Find Your City</DropdownMenuLabel>
+        <DropdownMenuContent className="w-56 bg-white dark:bg-darkElevated border border-gray-200 dark:border-zinc-700 shadow-xl rounded-xl max-h-60 overflow-y-auto font-body z-50">
+          <DropdownMenuLabel className="font-body px-3 py-2 text-gray-500 dark:text-zinc-400 text-xs">
+            Find Your City
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator className="dark:bg-zinc-700" />
           <DropdownMenuGroup>
             {/* Provinces */}
             {provinces.map((province, provinceIndex) => (
               <DropdownMenuSub key={provinceIndex}>
-                <DropdownMenuSubTrigger>{province}</DropdownMenuSubTrigger>
+                <DropdownMenuSubTrigger className="px-3 py-2 text-gray-800 dark:text-zinc-200 hover:bg-orange/10 dark:hover:bg-darkSurface rounded-lg cursor-pointer transition duration-150 text-sm">
+                  {province}
+                </DropdownMenuSubTrigger>
                 <DropdownMenuPortal>
-                  <DropdownMenuSubContent>
+                  <DropdownMenuSubContent className="bg-white dark:bg-darkElevated border border-gray-200 dark:border-zinc-700 shadow-xl rounded-xl max-h-60 overflow-y-auto font-body z-50">
                     {/* Districts */}
                     {getDistrictsByProvince(province).map((district, districtIndex) => (
                       <DropdownMenuSub key={districtIndex}>
-                        <DropdownMenuSubTrigger>{district}</DropdownMenuSubTrigger>
+                        <DropdownMenuSubTrigger className="px-3 py-2 text-gray-800 dark:text-zinc-200 hover:bg-orange/10 dark:hover:bg-darkSurface rounded-lg cursor-pointer transition duration-150 text-sm">
+                          {district}
+                        </DropdownMenuSubTrigger>
                         <DropdownMenuPortal>
-                          <DropdownMenuSubContent>
+                          <DropdownMenuSubContent className="bg-white dark:bg-darkElevated border border-gray-200 dark:border-zinc-700 shadow-xl rounded-xl max-h-60 overflow-y-auto font-body z-50">
                             {/* Cities */}
                             {getCitiesByDistrict(district).map((city, cityIndex) => (
-                              <DropdownMenuItem key={cityIndex} onClick={() => handleCitySelect(city)}>
+                              <DropdownMenuItem
+                                key={cityIndex}
+                                onClick={() => handleCitySelect(city)}
+                                className="px-3 py-2 text-gray-800 dark:text-zinc-200 hover:bg-orange/10 dark:hover:bg-darkSurface rounded-lg cursor-pointer transition duration-150 text-sm"
+                              >
                                 {city}
                               </DropdownMenuItem>
                             ))}
@@ -83,7 +98,7 @@ const CityInput: React.FC<CityProps> = ({ onCityChange, placeholder, className }
               </DropdownMenuSub>
             ))}
           </DropdownMenuGroup>
-          <DropdownMenuSeparator />
+          <DropdownMenuSeparator className="dark:bg-zinc-700" />
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
