@@ -309,7 +309,7 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ initialRole }) => {
   };
 
   return (
-    <div className="min-h-screen bg-lightYellow dark:bg-darkBg flex flex-col font-body">
+    <div className="flex-grow flex flex-col font-body">
       <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 w-full">
         {/* Minimized Header Banner */}
         <div className="mb-6 pb-4 border-b border-orange/15 dark:border-zinc-800">
