@@ -23,31 +23,56 @@ const Carousel: React.FC<CarouselProps> = ({ images }) => {
   };
 
   return (
-    <div className="relative w-full container h-[500px] md:h-[400px] mt-20 ">
+    <div className="relative w-full h-[260px] sm:h-[380px] md:h-[440px] lg:h-[480px] rounded-2xl overflow-hidden shadow-lg border border-black/5 dark:border-zinc-800 bg-gray-100 dark:bg-darkSurface group">
       {/* Display the current image */}
       <Image
         src={images[currentIndex]}
-        layout="fill"
-        objectFit="cover"
-        alt={`Carousel image ${currentIndex + 1}`}
-        className='rounded-2xl shadow-xl'
+        fill
+        sizes="(max-width: 768px) 100vw, 1200px"
+        priority={currentIndex === 0}
+        alt={`Say I Do Wedding Showcase ${currentIndex + 1}`}
+        className="object-cover transition-all duration-500 rounded-2xl"
       />
+
+      {/* Subtle top and bottom gradient overlay for contrast */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/20 pointer-events-none rounded-2xl" />
 
       {/* Left Arrow */}
       <button
+        type="button"
         onClick={handlePrev}
-        className="absolute left-0 top-1/2 transform -translate-y-1/2 text-white p-3 rounded-full"
+        aria-label="Previous image"
+        className="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/40 hover:bg-black/70 text-white flex items-center justify-center backdrop-blur-xs transition-all active:scale-95 cursor-pointer shadow-md border border-white/20 hover:border-white/40 z-10"
       >
-        <MdArrowBackIos size={40} />
+        <MdArrowBackIos className="w-4 h-4 sm:w-5 sm:h-5 ml-1" />
       </button>
 
       {/* Right Arrow */}
       <button
+        type="button"
         onClick={handleNext}
-        className="absolute right-0 top-1/2 transform -translate-y-1/2  text-white p-3 rounded-full"
+        aria-label="Next image"
+        className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/40 hover:bg-black/70 text-white flex items-center justify-center backdrop-blur-xs transition-all active:scale-95 cursor-pointer shadow-md border border-white/20 hover:border-white/40 z-10"
       >
-        <MdArrowForwardIos size={40}/>
+        <MdArrowForwardIos className="w-4 h-4 sm:w-5 sm:h-5" />
       </button>
+
+      {/* Slide Dots / Indicators */}
+      <div className="absolute bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 sm:gap-2 z-10 bg-black/30 backdrop-blur-xs px-3 py-1.5 rounded-full border border-white/10">
+        {images.map((_, idx) => (
+          <button
+            key={idx}
+            type="button"
+            onClick={() => setCurrentIndex(idx)}
+            aria-label={`Go to image ${idx + 1}`}
+            className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
+              currentIndex === idx
+                ? "w-6 sm:w-7 bg-orange shadow-xs"
+                : "w-2 bg-white/60 hover:bg-white/90"
+            }`}
+          />
+        ))}
+      </div>
     </div>
   );
 };
