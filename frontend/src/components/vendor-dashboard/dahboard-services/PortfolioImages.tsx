@@ -51,7 +51,7 @@ const PortfolioImages: React.FC<PortfolioImagesProps> = ({
   return (
     <div className="w-full max-w-7xl mx-auto">
       {/* Cover Image - Full Width */}
-      <div className="relative w-full h-[360px] sm:h-[420px] md:h-[480px] rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-zinc-800 bg-gray-100 dark:bg-darkElevated group">
+      <div className="relative w-full h-[240px] sm:h-[340px] md:h-[440px] lg:h-[480px] rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-zinc-800 bg-gray-100 dark:bg-darkElevated group">
         <Image
           src={activeImage}
           alt="Service Cover Image"

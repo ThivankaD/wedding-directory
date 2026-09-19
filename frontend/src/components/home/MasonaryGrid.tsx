@@ -56,7 +56,7 @@ const MasonaryGrid = () => {
   ];
 
   return (
-    <section className="bg-lightYellow/60 dark:bg-darkBg py-12 sm:py-16 px-4 md:px-8 transition-colors duration-200">
+    <section className="bg-lightYellow/60 dark:bg-darkBg py-10 sm:py-16 px-4 sm:px-6 lg:px-8 transition-colors duration-200">
       <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-10">
         <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-title text-gray-900 dark:text-zinc-100 tracking-tight">
           Locate Vendors For Every Vibe
@@ -66,22 +66,34 @@ const MasonaryGrid = () => {
         </p>
       </div>
 
-      <div className="container mx-auto max-w-full sm:max-w-screen-sm lg:max-w-screen-xl">
-        <div className="columns-2 sm:columns-2 lg:columns-3 gap-4 space-y-4 px-0 sm:p-4">
+      <div className="max-w-7xl mx-auto w-full">
+        <div className="columns-2 lg:columns-3 gap-3 sm:gap-4 space-y-3 sm:space-y-4">
           {photos.map((photo) => (
             <div
               key={photo.id}
               className="relative overflow-hidden rounded-2xl break-inside-avoid group border border-orange/15 dark:border-zinc-800 shadow-2xs hover:shadow-md transition-all"
             >
-              <Link href="/vendor-search" className="block">
+              <Link href="/vendor-search" className="block relative">
                 <Image
                   src={photo.src}
                   alt={photo.alt}
-                  className="w-full h-full object-cover rounded-2xl group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-auto object-cover rounded-2xl group-hover:scale-105 transition-transform duration-500"
                   width={500}
                   height={500}
                 />
-                <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all duration-300 p-4">
+
+                {/* Mobile Persistent Badge (Touchscreens lack hover) */}
+                <div className="sm:hidden absolute bottom-2 left-2 right-2 bg-black/60 backdrop-blur-xs px-2.5 py-1.5 rounded-xl border border-white/15 text-white flex items-center justify-between">
+                  <span className="font-title font-semibold text-xs truncate">
+                    {photo.alt}
+                  </span>
+                  <span className="text-[10px] text-orange font-bold uppercase tracking-wider shrink-0 ml-1">
+                    Explore
+                  </span>
+                </div>
+
+                {/* Desktop Hover Overlay */}
+                <div className="hidden sm:flex absolute inset-0 items-center justify-center bg-black/60 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all duration-300 p-4">
                   <div className="text-center">
                     <h3 className="text-white text-lg sm:text-xl font-bold font-title">
                       {photo.alt}

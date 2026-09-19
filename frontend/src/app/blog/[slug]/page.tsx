@@ -111,12 +111,12 @@ export default function BlogPostPage() {
 
   if (loading) {
     return (
-      <div className="bg-lightYellow font-body min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col bg-lightYellow dark:bg-darkBg text-gray-900 dark:text-zinc-100 font-body transition-colors duration-200">
         <Header />
-        <div className="container mx-auto p-6 flex-grow">
+        <div className="flex-1 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 w-full">
           <Link
             href="/blog"
-            className="text-orange hover:text-orange-700 mb-6 inline-flex items-center"
+            className="text-orange hover:text-orange/80 mb-6 inline-flex items-center font-semibold text-sm"
           >
             <svg
               className="w-4 h-4 mr-2"
@@ -135,23 +135,19 @@ export default function BlogPostPage() {
           </Link>
 
           {/* Improved skeleton loader with shimmer effect */}
-          <div className="bg-white rounded-xl shadow-md overflow-hidden animate-pulse relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent shimmer"></div>
-            <div className="h-72 bg-gray-200"></div>
+          <div className="bg-white dark:bg-darkSurface border border-gray-100 dark:border-zinc-800 rounded-2xl shadow-sm overflow-hidden animate-pulse relative">
+            <div className="h-64 sm:h-72 bg-gray-200 dark:bg-darkElevated"></div>
             <div className="p-6 md:p-8">
-              <div className="h-8 bg-gray-200 rounded w-3/4 mb-4"></div>
+              <div className="h-8 bg-gray-200 dark:bg-darkElevated rounded-xl w-3/4 mb-4"></div>
               <div className="flex space-x-4 mb-8">
-                <div className="h-4 bg-gray-200 rounded w-24"></div>
-                <div className="h-4 bg-gray-200 rounded w-32"></div>
+                <div className="h-4 bg-gray-200 dark:bg-darkElevated rounded w-24"></div>
+                <div className="h-4 bg-gray-200 dark:bg-darkElevated rounded w-32"></div>
               </div>
               <div className="space-y-4">
-                <div className="h-4 bg-gray-200 rounded w-full"></div>
-                <div className="h-4 bg-gray-200 rounded w-full"></div>
-                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                <div className="h-4 bg-gray-200 rounded w-full"></div>
-                <div className="h-4 bg-gray-200 rounded w-5/6"></div>
-                <div className="h-4 bg-gray-200 rounded w-full"></div>
-                <div className="h-4 bg-gray-200 rounded w-4/5"></div>
+                <div className="h-4 bg-gray-200 dark:bg-darkElevated rounded w-full"></div>
+                <div className="h-4 bg-gray-200 dark:bg-darkElevated rounded w-full"></div>
+                <div className="h-4 bg-gray-200 dark:bg-darkElevated rounded w-3/4"></div>
+                <div className="h-4 bg-gray-200 dark:bg-darkElevated rounded w-full"></div>
               </div>
             </div>
           </div>
@@ -163,10 +159,10 @@ export default function BlogPostPage() {
 
   if (error || !post) {
     return (
-      <div className="bg-lightYellow font-body min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col bg-lightYellow dark:bg-darkBg text-gray-900 dark:text-zinc-100 font-body transition-colors duration-200">
         <Header />
-        <div className="container mx-auto p-4 text-center flex-grow flex items-center justify-center">
-          <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full">
+        <div className="flex-1 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex items-center justify-center">
+          <div className="bg-white dark:bg-darkSurface border border-gray-100 dark:border-zinc-800 p-8 rounded-2xl shadow-sm max-w-md w-full text-center">
             <svg
               className="w-16 h-16 text-red-500 mx-auto mb-4"
               fill="none"
@@ -209,7 +205,7 @@ export default function BlogPostPage() {
   const readingTime = calculateReadingTime(post.Content);
 
   return (
-    <div className="bg-lightYellow font-body min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-lightYellow dark:bg-darkBg text-gray-900 dark:text-zinc-100 font-body transition-colors duration-200">
       <Header />
 
       {/* Reading progress bar */}
@@ -218,11 +214,11 @@ export default function BlogPostPage() {
         style={{ width: `${readingProgress}%` }}
       ></div>
 
-      <div className="container mx-auto px-4 py-8 flex-grow">
-        <div className="max-w-4xl mx-auto">
+      <div className="flex-1 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 w-full">
+        <div>
           <Link
             href="/blog"
-            className="text-orange hover:text-orange-700 mb-8 inline-flex items-center group"
+            className="text-orange hover:text-orange/80 mb-6 sm:mb-8 inline-flex items-center group font-semibold text-sm"
           >
             <svg
               className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform"
@@ -242,7 +238,7 @@ export default function BlogPostPage() {
 
           <article
             ref={articleRef}
-            className="bg-white rounded-xl shadow-lg overflow-hidden"
+            className="bg-white dark:bg-darkSurface border border-gray-100 dark:border-zinc-800 rounded-2xl shadow-lg overflow-hidden"
           >
             {/* Hero Image Section with elegant overlay */}
             {imageUrl && (
@@ -384,33 +380,34 @@ export default function BlogPostPage() {
                 {/* Decorative first letter cap */}
                 <div
                   className="prose prose-lg max-w-none font-body 
-                             prose-headings:font-title prose-headings:text-gray-800 
+                             prose-headings:font-title prose-headings:text-gray-900 dark:prose-headings:text-zinc-100
                              prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4
                              prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3
-                             prose-p:leading-relaxed prose-p:mb-6
+                             prose-p:leading-relaxed prose-p:mb-6 prose-p:text-gray-700 dark:prose-p:text-zinc-300
+                             prose-li:text-gray-700 dark:prose-li:text-zinc-300
                              prose-a:text-orange prose-a:no-underline hover:prose-a:underline 
-                             prose-img:rounded-lg prose-img:shadow-md
-                             prose-blockquote:border-orange prose-blockquote:bg-orange/5 prose-blockquote:p-4 prose-blockquote:rounded-r-lg
+                             prose-img:rounded-xl prose-img:shadow-md
+                             prose-blockquote:border-orange prose-blockquote:bg-orange/5 dark:prose-blockquote:bg-darkElevated prose-blockquote:p-4 prose-blockquote:rounded-r-lg dark:prose-blockquote:text-zinc-200
                              prose-ul:my-6 prose-ol:my-6
                              prose-li:mb-2 
-                             prose-hr:border-gray-200 prose-hr:my-12"
+                             prose-hr:border-gray-200 dark:prose-hr:border-zinc-800 prose-hr:my-12"
                 >
                   <ReactMarkdown>{post.Content}</ReactMarkdown>
                 </div>
 
                 {/* Share buttons */}
-                <div className="mt-12 pt-6 border-t border-gray-200">
-                  <div className="flex items-center justify-between flex-wrap">
-                    
-
+                <div className="mt-12 pt-6 border-t border-gray-200 dark:border-zinc-800">
+                  <div className="flex items-center justify-between flex-wrap gap-4">
                     <div>
-                      <h3 className="text-sm uppercase tracking-wider text-gray-500 mb-3">
+                      <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-zinc-400 mb-3">
                         Share This Post
                       </h3>
                       <div className="flex space-x-3">
                         <button
+                          type="button"
                           onClick={() => handleShare("facebook")}
-                          className="w-10 h-10 rounded-full bg-gray-100 hover:bg-blue-100 flex items-center justify-center text-gray-600 hover:text-blue-600 transition-colors"
+                          className="w-10 h-10 rounded-full bg-gray-100 dark:bg-darkElevated hover:bg-blue-100 dark:hover:bg-blue-900/30 flex items-center justify-center text-gray-600 dark:text-zinc-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors border border-transparent dark:border-zinc-700 cursor-pointer"
+                          aria-label="Share on Facebook"
                         >
                           <svg
                             className="w-5 h-5"
@@ -421,8 +418,10 @@ export default function BlogPostPage() {
                           </svg>
                         </button>
                         <button
+                          type="button"
                           onClick={() => handleShare("twitter")}
-                          className="w-10 h-10 rounded-full bg-gray-100 hover:bg-blue-100 flex items-center justify-center text-gray-600 hover:text-blue-400 transition-colors"
+                          className="w-10 h-10 rounded-full bg-gray-100 dark:bg-darkElevated hover:bg-blue-100 dark:hover:bg-blue-900/30 flex items-center justify-center text-gray-600 dark:text-zinc-300 hover:text-blue-400 transition-colors border border-transparent dark:border-zinc-700 cursor-pointer"
+                          aria-label="Share on Twitter"
                         >
                           <svg
                             className="w-5 h-5"
@@ -433,8 +432,10 @@ export default function BlogPostPage() {
                           </svg>
                         </button>
                         <button
+                          type="button"
                           onClick={() => handleShare("pinterest")}
-                          className="w-10 h-10 rounded-full bg-gray-100 hover:bg-red-100 flex items-center justify-center text-gray-600 hover:text-red-600 transition-colors"
+                          className="w-10 h-10 rounded-full bg-gray-100 dark:bg-darkElevated hover:bg-red-100 dark:hover:bg-red-900/30 flex items-center justify-center text-gray-600 dark:text-zinc-300 hover:text-red-600 transition-colors border border-transparent dark:border-zinc-700 cursor-pointer"
+                          aria-label="Share on Pinterest"
                         >
                           <svg
                             className="w-5 h-5"
@@ -445,8 +446,10 @@ export default function BlogPostPage() {
                           </svg>
                         </button>
                         <button
+                          type="button"
                           onClick={() => handleShare("clipboard")}
-                          className="w-10 h-10 rounded-full bg-gray-100 hover:bg-green-100 flex items-center justify-center text-gray-600 hover:text-green-600 transition-colors"
+                          className="w-10 h-10 rounded-full bg-gray-100 dark:bg-darkElevated hover:bg-green-100 dark:hover:bg-green-900/30 flex items-center justify-center text-gray-600 dark:text-zinc-300 hover:text-green-600 transition-colors border border-transparent dark:border-zinc-700 cursor-pointer"
+                          aria-label="Copy Link"
                         >
                           <svg
                             className="w-5 h-5"
