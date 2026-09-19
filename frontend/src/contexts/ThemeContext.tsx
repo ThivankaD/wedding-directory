@@ -29,12 +29,15 @@ const STORAGE_KEY = "sayido_dashboard_theme";
 export const isDashboardRoute = (pathname: string | null): boolean => {
   if (!pathname) return false;
   return (
-    pathname.startsWith("/visitor-dashboard") ||
-    pathname.startsWith("/visitor-profile") ||
+    pathname === "/" ||
+    pathname.startsWith("/visitor-") ||
+    pathname.startsWith("/vendor-") ||
     pathname.startsWith("/guest-list") ||
-    pathname.startsWith("/vendor-dashboard") ||
     pathname.startsWith("/services") ||
-    pathname.startsWith("/vendor-search")
+    pathname.startsWith("/login") ||
+    pathname.startsWith("/sign-up") ||
+    pathname.startsWith("/forgot-password") ||
+    pathname.startsWith("/blog")
   );
 };
 

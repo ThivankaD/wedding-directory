@@ -51,7 +51,7 @@ const Nav = () => {
               ${
                 isActive
                   ? "bg-orange text-white shadow-xs font-bold"
-                  : "text-gray-700 hover:text-orange hover:bg-orange/10 font-semibold"
+                  : "text-gray-700 dark:text-zinc-300 hover:text-orange hover:bg-orange/10 dark:hover:bg-zinc-800 font-semibold"
               }
             `}
           >

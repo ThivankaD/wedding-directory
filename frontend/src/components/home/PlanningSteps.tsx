@@ -35,52 +35,55 @@ const cards = [
 
 const PlanningSteps = () => {
   return (
-    <section className="flex justify-center py-16 bg-white">
-      <div className="container mx-auto flex flex-col items-center">
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold font-title mb-8 text-center">
+    <section className="flex justify-center py-12 sm:py-16 bg-white dark:bg-darkSurface border-y border-orange/10 dark:border-zinc-800 transition-colors duration-200">
+      <div className="container mx-auto px-4 max-w-6xl flex flex-col items-center">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-title text-gray-900 dark:text-zinc-100 mb-8 sm:mb-12 text-center tracking-tight">
           Wedding planning has never been easier
         </h2>
 
-        <div className="flex flex-col lg:flex-row lg:items-stretch lg:space-x-8 w-full">
+        <div className="flex flex-col lg:flex-row lg:items-stretch gap-6 lg:gap-8 w-full">
           {/* Responsive image container */}
-          <div className="hidden lg:block lg:w-1/3">
-            <div className="relative h-full">
+          <div className="hidden lg:block lg:w-5/12">
+            <div className="relative h-full min-h-[380px] rounded-2xl overflow-hidden border border-orange/15 dark:border-zinc-800 shadow-sm">
               <Image
                 src="/images/bridaldressing.webp"
                 alt="Wedding Planning"
-                className="rounded-lg object-cover w-full h-full"
-                width={500}
-                height={500}
+                className="object-cover w-full h-full"
+                fill
               />
             </div>
           </div>
 
           {/* Responsive cards container */}
-          <div className="w-full lg:w-2/3 flex flex-col space-y-6 md:space-y-8 lg:space-y-8">
+          <div className="w-full lg:w-7/12 flex flex-col space-y-4 sm:space-y-5">
             {cards.map((card) => (
               <div
                 key={card.id}
-                className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-4 p-4 border rounded-lg shadow-lg"
+                className="flex flex-col sm:flex-row items-center sm:items-start gap-4 p-5 sm:p-6 bg-white dark:bg-darkElevated border border-orange/15 dark:border-zinc-700/80 rounded-2xl shadow-2xs hover:shadow-sm transition-all"
               >
-                <Image
-                  src={card.image}
-                  alt={card.title}
-                  className="rounded-lg"
-                  width={100}
-                  height={100}
-                />
-                <div className="flex flex-col text-center sm:text-left">
-                  <h3 className="text-lg sm:text-xl font-semibold font-body">
+                <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden shrink-0 border border-orange/10 dark:border-zinc-700">
+                  <Image
+                    src={card.image}
+                    alt={card.title}
+                    className="object-cover"
+                    fill
+                  />
+                </div>
+                <div className="flex flex-col text-center sm:text-left flex-1 min-w-0">
+                  <h3 className="text-lg sm:text-xl font-bold font-title text-gray-900 dark:text-zinc-100">
                     {card.title}
                   </h3>
-                  <p className="text-sm font-body mt-2 sm:mt-4">
+                  <p className="text-xs sm:text-sm font-body text-gray-600 dark:text-zinc-400 mt-1.5 leading-relaxed">
                     {card.description}
                   </p>
-                  <Link href="#">
-                    <Button variant="ornageOutline" className="mt-4 font-body">
+                  <div className="mt-3 flex justify-center sm:justify-start">
+                    <Link
+                      href="/visitor-signup"
+                      className="px-4 py-1.5 rounded-xl border border-orange text-orange hover:bg-orange hover:text-white font-title text-sm font-semibold transition-colors"
+                    >
                       {card.buttonText}
-                    </Button>
-                  </Link>
+                    </Link>
+                  </div>
                 </div>
               </div>
             ))}
@@ -88,12 +91,20 @@ const PlanningSteps = () => {
         </div>
 
         {/* Signup section */}
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold font-title mb-8 text-center mt-8">
-          Join with Say I Do
-        </h2>
-        <Button variant="signup">
-          <Link href="#">Sign up with us for free</Link>
-        </Button>
+        <div className="mt-12 sm:mt-16 text-center">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-title text-gray-900 dark:text-zinc-100 mb-4 tracking-tight">
+            Join with Say I Do
+          </h2>
+          <p className="text-sm sm:text-base text-gray-600 dark:text-zinc-400 font-body max-w-md mx-auto mb-6">
+            Create your free couple account to explore vendors, manage budgets, and build your custom wedding checklist.
+          </p>
+          <Link
+            href="/visitor-signup"
+            className="inline-flex items-center justify-center px-6 py-3 rounded-xl font-title text-base sm:text-lg font-semibold text-white bg-orange hover:bg-orange/90 active:scale-[0.98] transition-all shadow-xs"
+          >
+            Sign up with us for free
+          </Link>
+        </div>
       </div>
     </section>
   );

@@ -34,44 +34,51 @@ const Testimonials = () => {
   };
 
   return (
-    <section className="flex justify-center py-16 bg-white">
-      <div className="container mx-auto">
-        <h2 className="text-3xl md:text-5xl font-bold font-title text-center mb-7">
+    <section className="flex justify-center py-12 sm:py-16 bg-lightYellow/40 dark:bg-darkBg transition-colors duration-200">
+      <div className="container mx-auto px-4 max-w-4xl">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-title text-gray-900 dark:text-zinc-100 text-center mb-8 sm:mb-10 tracking-tight">
           What other couples say about us
         </h2>
-        <div className="flex items-center justify-center w-full">
-          <FaCaretLeft
+        <div className="flex items-center justify-center w-full gap-2 sm:gap-4">
+          <button
+            type="button"
             onClick={prevTestimonial}
-            className="cursor-pointer hover:text-gray-700 mx-2 md:mx-10"
-            size={25}
-          />
-          <div className="relative flex flex-col md:flex-row items-center justify-center w-full md:w-auto p-4">
-            <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4 p-6 border rounded-lg shadow-lg">
-              <Image
-                src={testimonials[currentTestimonial].image}
-                alt={testimonials[currentTestimonial].name}
-                className="w-28 h-28 md:w-48 md:h-48 rounded-full"
-                width={200}
-                height={200}
-              />
-              <div className="flex flex-col text-center md:text-left ">
-                <p className="text-sm md:text-base font-body px-2 md:px-4 pb-4">
-                  {testimonials[currentTestimonial].text}
+            className="p-2 rounded-full hover:bg-orange/10 dark:hover:bg-zinc-800 text-gray-400 hover:text-orange dark:text-zinc-500 dark:hover:text-orange transition-colors cursor-pointer"
+            aria-label="Previous testimonial"
+          >
+            <FaCaretLeft size={28} />
+          </button>
+          <div className="relative flex flex-col md:flex-row items-center justify-center w-full p-2">
+            <div className="flex flex-col md:flex-row items-center gap-6 p-6 sm:p-8 bg-white dark:bg-darkSurface border border-orange/15 dark:border-zinc-800 rounded-3xl shadow-sm w-full">
+              <div className="relative w-28 h-28 md:w-36 md:h-36 rounded-full overflow-hidden border-2 border-orange/25 dark:border-orange/30 shadow-xs shrink-0">
+                <Image
+                  src={testimonials[currentTestimonial].image}
+                  alt={testimonials[currentTestimonial].name}
+                  className="object-cover"
+                  fill
+                />
+              </div>
+              <div className="flex flex-col text-center md:text-left flex-1 min-w-0">
+                <p className="text-sm sm:text-base font-body text-gray-700 dark:text-zinc-300 italic leading-relaxed">
+                  &ldquo;{testimonials[currentTestimonial].text}&rdquo;
                 </p>
-                <h3 className="text-xl md:text-2xl px-2 font-montez">
+                <h3 className="text-2xl sm:text-3xl font-montez text-orange mt-3">
                   {testimonials[currentTestimonial].name}
                 </h3>
-                <p className="text-sm font-body font-bold px-2">
+                <p className="text-xs uppercase tracking-wider font-body font-semibold text-gray-500 dark:text-zinc-400 mt-0.5">
                   {testimonials[currentTestimonial].location}
                 </p>
               </div>
             </div>
           </div>
-          <FaCaretRight
+          <button
+            type="button"
             onClick={nextTestimonial}
-            className="cursor-pointer hover:text-gray-700 mx-2 md:mx-10"
-            size={25}
-          />
+            className="p-2 rounded-full hover:bg-orange/10 dark:hover:bg-zinc-800 text-gray-400 hover:text-orange dark:text-zinc-500 dark:hover:text-orange transition-colors cursor-pointer"
+            aria-label="Next testimonial"
+          >
+            <FaCaretRight size={28} />
+          </button>
         </div>
       </div>
     </section>

@@ -1,10 +1,8 @@
-'use client'
+'use client';
 
 import React, { useState } from 'react';
 import Header from '@/components/shared/Headers/Header';
-import Image from 'next/image';
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import Footer from '@/components/shared/Footer';
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
 import { loginVisitor as loginApi } from '@/api/auth/visitor.auth.api';
@@ -23,156 +21,160 @@ const LoginPage = () => {
   const { login } = useAuth();
 
   // Handle form submission logic
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setError(null); // reset any old errors
-  setIsLoading(true);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setIsLoading(true);
 
-  try {
-    // Send login request to backend
-    const response = await loginApi(email, password);
+    try {
+      const response = await loginApi(email, password);
 
-    // ✅ Check if backend returned token
-    if (response && response.access_token) {
-      const token = response.access_token;
-
-      // ✅ Save token in context (or localStorage if you prefer)
-      login(token);
-
-      // ✅ Redirect to dashboard
-      router.push('/visitor-dashboard');
-    } else {
-      // ❌ No token found in backend response
-      setError('No token received. Please try again.');
-      toast.error('No token received. Please try again.', {
+      if (response && response.access_token) {
+        const token = response.access_token;
+        login(token);
+        router.push('/visitor-dashboard');
+      } else {
+        setError('No token received. Please try again.');
+        toast.error('No token received. Please try again.', {
+          style: { background: '#333', color: '#fff' },
+        });
+      }
+    } catch (err) {
+      console.error('Login failed:', err);
+      setError('Login failed. Please check your credentials.');
+      toast.error('Login Failed', {
         style: { background: '#333', color: '#fff' },
       });
+    } finally {
+      setIsLoading(false);
     }
-  } catch (err) {
-    console.error('Login failed:', err);
-    setError('Login failed. Please check your credentials.');
-    toast.error('Login Failed', {
-      style: { background: '#333', color: '#fff' },
-    });
-  } finally {
-    setIsLoading(false);
-  }
-};
-
+  };
 
   return (
-    <div className="relative w-full min-h-screen overflow-hidden">
+    <div className="min-h-screen bg-lightYellow dark:bg-darkBg text-gray-900 dark:text-zinc-100 flex flex-col justify-between transition-colors duration-200">
       {/* Header */}
-      <div className="relative z-10">
-        <Header />
-      </div>
+      <Header />
 
-      {/* Background Image */}
-      <div className="absolute inset-0">
-        <Image
-          src="/images/hero.webp" // Same image used in Hero component
-          alt="Login Background"
-          className="object-cover"
-          fill
-          priority // Ensures the image is loaded faster
-        />
-        <div className="absolute inset-0 bg-black opacity-50"></div> {/* Dark overlay */}
-      </div>
+      {/* Main Content with theme orange background styling */}
+      <main className="flex-1 flex justify-center items-center px-4 py-12 relative overflow-hidden bg-gradient-to-b from-orange/10 via-lightYellow to-orange/5 dark:from-[#1F1715] dark:via-darkBg dark:to-[#161211]">
+        {/* Ambient Brand Glows */}
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[550px] h-[350px] bg-orange/15 dark:bg-orange/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-10 right-10 w-[300px] h-[250px] bg-orange/10 dark:bg-orange/5 rounded-full blur-3xl pointer-events-none" />
 
-      {/* Login Form */}
-      <div className="relative z-20 flex min-h-[calc(100vh-92px)] justify-center items-center px-4 py-10">
-        <div className="bg-white w-full max-w-[450px] rounded-md p-4 sm:p-8 font-body shadow-lg relative">
+        {/* Login Form Card */}
+        <div className="relative z-10 w-full max-w-[460px] bg-white dark:bg-darkSurface border border-orange/25 dark:border-zinc-700/80 rounded-3xl shadow-xl dark:shadow-[0_8px_30px_rgb(0,0,0,0.5)] p-6 sm:p-8 font-body transition-colors">
           {/* Loader */}
           {isLoading && (
-            <div className="absolute inset-0 bg-white bg-opacity-90 flex items-center justify-center z-30">
+            <div className="absolute inset-0 bg-white/90 dark:bg-darkSurface/90 backdrop-blur-xs flex items-center justify-center z-30 rounded-3xl">
               <LoaderJelly />
             </div>
           )}
 
           {!isLoading && (
             <>
-              <h1 className="text-4xl font-bold text-center font-title">
+              <h1 className="text-3xl sm:text-4xl font-bold text-center font-title text-gray-900 dark:text-zinc-100">
                 Start where you left off
               </h1>
-              <form onSubmit={handleSubmit}>
-                <div className="mt-8 grid grid-cols-1 w-full items-center gap-x-12 gap-y-5">
-                  <div className="border-black border-solid border-2 border-opacity-70 rounded-md flex flex-row space-y-1.5">
-                    <Input
-                      className="h-12 pl-6 pb-3"
+              <p className="text-sm text-gray-600 dark:text-zinc-400 text-center mt-2">
+                Welcome back! Please enter your details.
+              </p>
+
+              <form onSubmit={handleSubmit} className="mt-6">
+                <div className="grid grid-cols-1 w-full items-center gap-y-4">
+                  <div>
+                    <label
+                      htmlFor="email"
+                      className="block text-xs font-semibold text-gray-700 dark:text-zinc-300 mb-1.5"
+                    >
+                      Email Address
+                    </label>
+                    <input
+                      className="w-full h-12 px-4 rounded-xl text-base bg-white dark:bg-darkElevated border-2 border-gray-200 dark:border-zinc-700/80 text-gray-900 dark:text-zinc-100 placeholder:text-gray-400 dark:placeholder:text-zinc-500 outline-none focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 focus:border-orange dark:focus:border-orange transition-colors"
                       type="email"
                       id="email"
-                      placeholder="Email Address"
+                      placeholder="name@example.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
                     />
                   </div>
-                  <div className="border-black border-solid border-2 border-opacity-70 rounded-md flex flex-row space-y-1.5">
-                    <Input
-                      className="h-12 pl-6 pb-3"
+
+                  <div>
+                    <label
+                      htmlFor="password"
+                      className="block text-xs font-semibold text-gray-700 dark:text-zinc-300 mb-1.5"
+                    >
+                      Password
+                    </label>
+                    <input
+                      className="w-full h-12 px-4 rounded-xl text-base bg-white dark:bg-darkElevated border-2 border-gray-200 dark:border-zinc-700/80 text-gray-900 dark:text-zinc-100 placeholder:text-gray-400 dark:placeholder:text-zinc-500 outline-none focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 focus:border-orange dark:focus:border-orange transition-colors"
                       type="password"
                       id="password"
-                      placeholder="Password"
+                      placeholder="Enter your password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
                     />
                   </div>
                 </div>
+
                 {error && (
-                  <p className="text-red-500 text-sm text-center mt-2">{error}</p>
+                  <p className="text-red-500 text-sm text-center mt-3">{error}</p>
                 )}
+
                 <div className="mt-6 flex flex-col w-full">
-                  <Button type="submit" className="rounded-none text-white font-bold hover:bg-orange bg-orange text-lg">
+                  <button
+                    type="submit"
+                    className="w-full h-12 rounded-xl text-white font-title text-lg font-bold bg-orange hover:bg-orange/90 active:scale-[0.99] shadow-md hover:shadow-orange/20 transition-all cursor-pointer flex items-center justify-center disabled:opacity-50"
+                  >
                     Log In
-                  </Button>
+                  </button>
                 </div>
-                <div className="text-center mt-2">
+
+                <div className="text-center mt-3">
                   <Link
                     href="/forgot-password?role=visitor"
-                    className="text-sm text-gray-700 hover:text-orange hover:underline transition-colors"
+                    className="text-sm text-gray-600 dark:text-zinc-400 hover:text-orange dark:hover:text-orange hover:underline transition-colors"
                   >
                     Forget your password?
                   </Link>
                 </div>
 
                 <div className="flex items-center my-4">
-                  <div className="flex-grow border-t border-gray-300"></div>
-                  <span className="flex-shrink mx-3 text-gray-400 text-xs uppercase font-medium">or</span>
-                  <div className="flex-grow border-t border-gray-300"></div>
+                  <div className="flex-grow border-t border-gray-200 dark:border-zinc-800"></div>
+                  <span className="flex-shrink mx-3 text-gray-400 dark:text-zinc-500 text-xs uppercase font-medium">or</span>
+                  <div className="flex-grow border-t border-gray-200 dark:border-zinc-800"></div>
                 </div>
 
                 <GoogleAuthButton role="visitor" text="signin_with" />
 
-                <hr className="border-t-2 border-gray-300 my-4" />
+                <hr className="border-t border-gray-200 dark:border-zinc-800 my-4" />
+
                 <div className="text-center mt-3">
-                  <label
-                    htmlFor="terms"
-                    className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
+                  <p className="text-sm text-gray-600 dark:text-zinc-400 leading-none">
                     Don&apos;t have an account?{" "}
-                    <Link href="/visitor-signup" className="text-orange hover:underline">
+                    <Link href="/visitor-signup" className="text-orange font-semibold hover:underline">
                       Sign Up
                     </Link>
-                  </label>
+                  </p>
                 </div>
-                <div className="text-center mt-2">
-                  <label
-                    htmlFor="terms"
-                    className="text-sm font-bold leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
+
+                <div className="text-center mt-2.5">
+                  <p className="text-sm font-semibold text-gray-700 dark:text-zinc-300 leading-none">
                     Are you a wedding service provider?{" "}
-                    <Link href="/vendor-login" className="text-orange hover:underline">
+                    <Link href="/vendor-login" className="text-orange font-bold hover:underline">
                       Start from here
                     </Link>
-                  </label>
+                  </p>
                 </div>
               </form>
             </>
           )}
         </div>
-      </div>
+      </main>
 
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };

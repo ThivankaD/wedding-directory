@@ -1,180 +1,194 @@
-'use client'
+'use client';
 
 import React, { useState } from "react";
 import Header from "@/components/shared/Headers/Header";
-import Image from "next/image";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import Footer from "@/components/shared/Footer";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { loginVendor as loginVendorAPI } from "@/api/auth/vendor.auth.api";
 import { useVendorAuth } from "@/contexts/VendorAuthContext";
 import { toast } from 'react-hot-toast';
 import GoogleAuthButton from "@/components/auth/GoogleAuthButton";
+import LoaderJelly from "@/components/shared/Loaders/LoaderJelly";
 
 const VendorLoginPage = () => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [error, setError] = useState<string | null>(null);
-    const { login } = useVendorAuth();
-    const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const { login } = useVendorAuth();
+  const router = useRouter();
 
-   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setError(null);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setIsLoading(true);
 
-  try {
-    // Send login request to backend
-    const response = await loginVendorAPI(email, password);
+    try {
+      const response = await loginVendorAPI(email, password);
 
-    // Check if login was successful
-    if (response && (response.message === 'Login successful' || response.access_token)) {
-      // Prioritize access_token returned directly in response body (supports cross-domain/Vercel)
-      const storedToken = document.cookie
-        .split('; ')
-        .find(row => row.startsWith('access_tokenVendor='));
+      if (response && (response.message === 'Login successful' || response.access_token)) {
+        const storedToken = document.cookie
+          .split('; ')
+          .find(row => row.startsWith('access_tokenVendor='));
 
-      const token = response.access_token || (storedToken ? storedToken.split('=')[1] : null);
+        const token = response.access_token || (storedToken ? storedToken.split('=')[1] : null);
 
-      if (token) {
-        // Store token and trigger context login (which also sets the first-party cookie)
-        login(token);
-
-        // Show success message
-        toast.success('Login successful!', {
-          style: { background: '#333', color: '#fff' },
-        });
-
-        // Redirect to dashboard
-        router.push('/vendor-dashboard');
+        if (token) {
+          login(token);
+          toast.success('Login successful!', {
+            style: { background: '#333', color: '#fff' },
+          });
+          router.push('/vendor-dashboard');
+        } else {
+          setError('No token received. Please try again.');
+          toast.error('No token received. Please try again.', {
+            style: { background: '#333', color: '#fff' },
+          });
+        }
       } else {
-        // Token not found
-        setError('No token received. Please try again.');
-        toast.error('No token received. Please try again.', {
+        setError('Login failed. Please try again.');
+        toast.error('Login failed. Please try again.', {
           style: { background: '#333', color: '#fff' },
         });
       }
-    } else {
-      setError('Login failed. Please try again.');
-      toast.error('Login failed. Please try again.', {
+    } catch (err) {
+      console.error('Login failed:', err);
+      setError('Invalid credentials. Please try again.');
+      toast.error('Invalid credentials. Please try again.', {
         style: { background: '#333', color: '#fff' },
       });
+    } finally {
+      setIsLoading(false);
     }
-  } catch (err) {
-    console.error('Login failed:', err);
-    setError('Invalid credentials. Please try again.');
-    toast.error('Invalid credentials. Please try again.', {
-      style: { background: '#333', color: '#fff' },
-    });
-  }
-};
+  };
 
+  return (
+    <div className="min-h-screen bg-lightYellow dark:bg-darkBg text-gray-900 dark:text-zinc-100 flex flex-col justify-between transition-colors duration-200">
+      {/* Header */}
+      <Header />
 
-    return (
-      <div className="relative w-full min-h-screen overflow-hidden">
-          <div className="relative z-20">
-              <Header />
-          </div>
+      {/* Main Content with theme orange background styling */}
+      <main className="flex-1 flex justify-center items-center px-4 py-12 relative overflow-hidden bg-gradient-to-b from-orange/10 via-lightYellow to-orange/5 dark:from-[#1F1715] dark:via-darkBg dark:to-[#161211]">
+        {/* Ambient Brand Glows */}
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[550px] h-[350px] bg-orange/15 dark:bg-orange/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-10 right-10 w-[300px] h-[250px] bg-orange/10 dark:bg-orange/5 rounded-full blur-3xl pointer-events-none" />
 
-          <div className="absolute inset-0">
-              <Image
-                src="/images/login-signup.webp"
-                fill
-                className="object-cover"
-                alt="sign image"
-                priority
-              />
-              <div className="absolute inset-0 bg-black opacity-50"></div>
-          </div>
+        {/* Vendor Login Card */}
+        <div className="relative z-10 w-full max-w-[460px] bg-white dark:bg-darkSurface border border-orange/25 dark:border-zinc-700/80 rounded-3xl shadow-xl dark:shadow-[0_8px_30px_rgb(0,0,0,0.5)] p-6 sm:p-8 font-body transition-colors">
+          {/* Loader Overlay */}
+          {isLoading && (
+            <div className="absolute inset-0 bg-white/90 dark:bg-darkSurface/90 backdrop-blur-xs flex items-center justify-center z-30 rounded-3xl">
+              <LoaderJelly />
+            </div>
+          )}
 
-          <div className="relative z-10 flex min-h-[calc(100vh-92px)] justify-center items-center px-4 py-10 font-body">
-                  <div className="flex w-full flex-col justify-center items-center text-center">
-                      <div className="bg-white w-full max-w-[450px] rounded-md p-4 sm:p-8 shadow-lg">
-                          <h1 className="text-4xl font-bold text-center font-title">
-                              Vendor Login
-                          </h1>
-                          <form onSubmit={handleSubmit}>
-                              <div className="mt-8 grid grid-cols-1 w-full items-center gap-x-12 gap-y-5">
-                                  <div className="border-black border-solid border-2 border-opacity-70 rounded-md flex flex-row space-y-1.5">
-                                      <Input
-                                        className="h-12 pl-6"
-                                        type="email"
-                                        id="email"
-                                        placeholder="Email Address"
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)} // Set email state
-                                        required
-                                      />
-                                  </div>
-                                  <div className="border-black border-solid border-2 border-opacity-70 rounded-md flex flex-row space-y-1.5">
-                                      <Input
-                                        className="h-12 pl-6"
-                                        type="password"
-                                        id="password"
-                                        placeholder="Password"
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)} // Set password state
-                                        required
-                                      />
-                                  </div>
-                              </div>
-                              {/* Show error message */}
-                              {error && <p className="text-red-500 mt-2">{error}</p>}
+          {!isLoading && (
+            <>
+              <h1 className="text-3xl sm:text-4xl font-bold text-center font-title text-gray-900 dark:text-zinc-100">
+                Vendor Login
+              </h1>
+              <p className="text-sm text-gray-600 dark:text-zinc-400 text-center mt-2">
+                Welcome back! Access your wedding business portal.
+              </p>
 
-                              <div className="mt-6 flex flex-col w-full">
-                                  <Button
-                                    type="submit" // Submit button for the form
-                                    className="rounded-none text-white font-bold hover:bg-orange bg-orange text-lg"
-                                  >
-                                      Log In
-                                  </Button>
-                              </div>
-                          </form>
-                          <div className="text-center mt-2">
-                              <Link
-                                href="/forgot-password?role=vendor"
-                                className="text-sm text-gray-700 hover:text-orange hover:underline transition-colors"
-                              >
-                                  Forget your password?
-                              </Link>
-                          </div>
-
-                          <div className="flex items-center my-4">
-                              <div className="flex-grow border-t border-gray-300"></div>
-                              <span className="flex-shrink mx-3 text-gray-400 text-xs uppercase font-medium">or</span>
-                              <div className="flex-grow border-t border-gray-300"></div>
-                          </div>
-
-                          <GoogleAuthButton role="vendor" text="signin_with" />
-
-                          <hr className="border-t-2 border-gray-300 my-4" />
-                          <div className="text-center mt-3">
-                              <label
-                                htmlFor="terms"
-                                className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                              >
-                                  Don&apos;t have an account?{" "}
-                                  <Link href="/vendor-signup" className="text-orange hover:underline">
-                                      Register Here
-                                  </Link>
-                              </label>
-                          </div>
-                          <div className="text-center mt-2">
-                              <label
-                                htmlFor="visitor-login"
-                                className="text-sm font-bold leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                              >
-                                  Planning a wedding?{" "}
-                                  <Link href="/visitor-login" className="text-orange hover:underline">
-                                      User Login
-                                  </Link>
-                              </label>
-                          </div>
-                      </div>
+              <form onSubmit={handleSubmit} className="mt-6">
+                <div className="grid grid-cols-1 w-full items-center gap-y-4">
+                  <div>
+                    <label
+                      htmlFor="email"
+                      className="block text-xs font-semibold text-gray-700 dark:text-zinc-300 mb-1.5"
+                    >
+                      Email Address
+                    </label>
+                    <input
+                      className="w-full h-12 px-4 rounded-xl text-base bg-white dark:bg-darkElevated border-2 border-gray-200 dark:border-zinc-700/80 text-gray-900 dark:text-zinc-100 placeholder:text-gray-400 dark:placeholder:text-zinc-500 outline-none focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 focus:border-orange dark:focus:border-orange transition-colors"
+                      type="email"
+                      id="email"
+                      placeholder="vendor@example.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
                   </div>
-          </div>
-      </div>
-    );
+
+                  <div>
+                    <label
+                      htmlFor="password"
+                      className="block text-xs font-semibold text-gray-700 dark:text-zinc-300 mb-1.5"
+                    >
+                      Password
+                    </label>
+                    <input
+                      className="w-full h-12 px-4 rounded-xl text-base bg-white dark:bg-darkElevated border-2 border-gray-200 dark:border-zinc-700/80 text-gray-900 dark:text-zinc-100 placeholder:text-gray-400 dark:placeholder:text-zinc-500 outline-none focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 focus:border-orange dark:focus:border-orange transition-colors"
+                      type="password"
+                      id="password"
+                      placeholder="Enter your password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+
+                {error && <p className="text-red-500 text-sm text-center mt-3">{error}</p>}
+
+                <div className="mt-6 flex flex-col w-full">
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="w-full h-12 rounded-xl text-white font-title text-lg font-bold bg-orange hover:bg-orange/90 active:scale-[0.99] shadow-md hover:shadow-orange/20 transition-all cursor-pointer flex items-center justify-center disabled:opacity-50"
+                  >
+                    Log In
+                  </button>
+                </div>
+
+                <div className="text-center mt-3">
+                  <Link
+                    href="/forgot-password?role=vendor"
+                    className="text-sm text-gray-600 dark:text-zinc-400 hover:text-orange dark:hover:text-orange hover:underline transition-colors"
+                  >
+                    Forget your password?
+                  </Link>
+                </div>
+
+                <div className="flex items-center my-4">
+                  <div className="flex-grow border-t border-gray-200 dark:border-zinc-800"></div>
+                  <span className="flex-shrink mx-3 text-gray-400 dark:text-zinc-500 text-xs uppercase font-medium">or</span>
+                  <div className="flex-grow border-t border-gray-200 dark:border-zinc-800"></div>
+                </div>
+
+                <GoogleAuthButton role="vendor" text="signin_with" />
+
+                <hr className="border-t border-gray-200 dark:border-zinc-800 my-4" />
+
+                <div className="text-center mt-3">
+                  <p className="text-sm text-gray-600 dark:text-zinc-400 leading-none">
+                    Don&apos;t have an account?{" "}
+                    <Link href="/vendor-signup" className="text-orange font-semibold hover:underline">
+                      Register Here
+                    </Link>
+                  </p>
+                </div>
+
+                <div className="text-center mt-2.5">
+                  <p className="text-sm font-semibold text-gray-700 dark:text-zinc-300 leading-none">
+                    Planning a wedding?{" "}
+                    <Link href="/visitor-login" className="text-orange font-bold hover:underline">
+                      User Login
+                    </Link>
+                  </p>
+                </div>
+              </form>
+            </>
+          )}
+        </div>
+      </main>
+
+      {/* Footer */}
+      <Footer />
+    </div>
+  );
 };
 
 export default VendorLoginPage;

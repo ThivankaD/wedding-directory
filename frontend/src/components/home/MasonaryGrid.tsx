@@ -56,41 +56,46 @@ const MasonaryGrid = () => {
   ];
 
   return (
-    <section className="bg-background p-4 md:p-8 sm:p-16">
-      <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center font-title pt-8 pb-4">
-        Locate Vendors For Every Vibe
-      </h2>
-      <p className="text-center mb-8 font-body text-xl pb-4">
-        Find Top-Rated Pros for Every Budget, Background, and Style
-      </p>
+    <section className="bg-lightYellow/60 dark:bg-darkBg py-12 sm:py-16 px-4 md:px-8 transition-colors duration-200">
+      <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-10">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-title text-gray-900 dark:text-zinc-100 tracking-tight">
+          Locate Vendors For Every Vibe
+        </h2>
+        <p className="mt-2 text-sm sm:text-base text-gray-600 dark:text-zinc-400 font-body">
+          Find Top-Rated Pros for Every Budget, Background, and Style
+        </p>
+      </div>
+
       <div className="container mx-auto max-w-full sm:max-w-screen-sm lg:max-w-screen-xl">
-      <div className="columns-2 sm:columns-2 lg:columns-3 gap-4 space-y-4 px-0 sm:p-4">
-            {photos.map((photo) => (
-              <div
-                key={photo.id}
-                className="relative overflow-hidden rounded-lg break-inside-avoid group"
-              >
-                <Link href="/vendor-search" className="block">
-                  <Image
-                    src={photo.src}
-                    alt={photo.alt}
-                    className="w-full h-full object-cover rounded-lg"
-                    width={500}
-                    height={500}
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <div className="text-center">
-                      <h3 className="text-white text-xl font-bold font-title">
-                        {photo.alt}
-                      </h3>
-                      <p className="text-white mt-2 font-body">{photo.label}</p>
-                    </div>
+        <div className="columns-2 sm:columns-2 lg:columns-3 gap-4 space-y-4 px-0 sm:p-4">
+          {photos.map((photo) => (
+            <div
+              key={photo.id}
+              className="relative overflow-hidden rounded-2xl break-inside-avoid group border border-orange/15 dark:border-zinc-800 shadow-2xs hover:shadow-md transition-all"
+            >
+              <Link href="/vendor-search" className="block">
+                <Image
+                  src={photo.src}
+                  alt={photo.alt}
+                  className="w-full h-full object-cover rounded-2xl group-hover:scale-105 transition-transform duration-500"
+                  width={500}
+                  height={500}
+                />
+                <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all duration-300 p-4">
+                  <div className="text-center">
+                    <h3 className="text-white text-lg sm:text-xl font-bold font-title">
+                      {photo.alt}
+                    </h3>
+                    <p className="text-zinc-200 mt-1 text-xs sm:text-sm font-body max-w-xs mx-auto">
+                      {photo.label}
+                    </p>
                   </div>
-                </Link>
-              </div>
-            ))}
-          </div>
+                </div>
+              </Link>
+            </div>
+          ))}
         </div>
+      </div>
     </section>
   );
 };
