@@ -13,14 +13,14 @@ export const metadata: Metadata = {
 
 const HelpPage: React.FC = () => {
   return (
-    <div className="bg-lightYellow min-h-screen flex flex-col font-body">
+    <div className="min-h-screen flex flex-col bg-lightYellow dark:bg-darkBg text-gray-900 dark:text-zinc-100 font-body transition-colors duration-200">
       <Header />
       <Suspense
         fallback={
           <div className="flex-grow flex items-center justify-center p-12">
             <div className="flex flex-col items-center gap-3">
               <LoaderJelly />
-              <p className="text-xs font-medium text-gray-500">
+              <p className="text-xs font-medium text-gray-500 dark:text-zinc-400">
                 Loading Help Center...
               </p>
             </div>

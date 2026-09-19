@@ -94,17 +94,17 @@ const PortfolioPage: React.FC = () => {
   if (error) return <p>Error: {error.message}</p>;
 
   return (
-    <div className="bg-lightYellow min-h-screen font-body ">
+    <div className="bg-lightYellow dark:bg-darkBg text-gray-900 dark:text-zinc-100 transition-colors duration-200 min-h-screen font-body flex flex-col">
       <Header />
-      <div className="w-11/12 md:w-10/12 lg:w-3/4 xl:w-2/3 mx-auto py-6 px-4">
+      <div className="w-11/12 md:w-10/12 lg:w-3/4 xl:w-2/3 mx-auto py-6 px-4 flex-grow">
         <Link
           href={`/services/${id}`}
-          className="flex items-center mb-6 text-gray-700 hover:text-orange"
+          className="flex items-center mb-6 text-gray-700 dark:text-zinc-300 hover:text-orange dark:hover:text-orange"
         >
           <FaArrowLeft className="mr-2" /> Back to {offering?.name}
         </Link>
 
-        <h1 className="text-3xl font-bold mb-6">{offering?.name} - Gallery</h1>
+        <h1 className="text-3xl font-bold mb-6 text-gray-900 dark:text-zinc-100">{offering?.name} - Gallery</h1>
 
         {/* Masonry Grid Layout */}
         <ResponsiveMasonry columnsCountBreakPoints={{ 350: 1, 600: 2 }}>
