@@ -372,13 +372,13 @@ const Service: React.FC = () => {
   };
 
   return (
-    <div className="bg-lightYellow font-body">
+    <div className="bg-lightYellow dark:bg-darkBg font-body min-h-screen">
       <Header />
       <div className="container mx-auto justify-center py-2">
         <div className="mb-4 pt-2">
           <Link
             href={isVendorsOffering ? "/vendor-dashboard" : "/"}
-            className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-orange transition-colors group"
+            className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-zinc-400 hover:text-orange dark:hover:text-orange transition-colors group"
           >
             <FiArrowLeft className="text-base group-hover:-translate-x-0.5 transition-transform" />
             <span>{isVendorsOffering ? "Back to Dashboard" : "Back"}</span>
@@ -404,21 +404,21 @@ const Service: React.FC = () => {
 
         {/* Vendor Storefront View Mode Banner */}
         {isVendorsOffering && (
-          <div className="bg-white rounded-2xl shadow-sm border border-orange/20 p-4 sm:p-5 mt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-gradient-to-r from-orange/5 via-white to-white">
+          <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-orange/20 dark:border-zinc-800 p-4 sm:p-5 mt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-gradient-to-r from-orange/5 via-white to-white dark:from-orange/5 dark:via-darkSurface dark:to-darkSurface">
             <div className="flex items-center gap-3.5">
               <div className="w-10 h-10 rounded-xl bg-orange/10 flex items-center justify-center text-orange flex-shrink-0">
                 <FiEdit className="text-lg" />
               </div>
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="font-title font-bold text-gray-900 text-base">
+                  <span className="font-title font-bold text-gray-900 dark:text-zinc-100 text-base">
                     Vendor Storefront View
                   </span>
                   <span className="text-[11px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-orange/15 text-orange">
                     Your Listing
                   </span>
                 </div>
-                <p className="text-xs text-gray-500 font-body mt-0.5">
+                <p className="text-xs text-gray-500 dark:text-zinc-400 font-body mt-0.5">
                   This is how couples see your service. You can update your service details, media, and pricing packages anytime.
                 </p>
               </div>
@@ -436,20 +436,20 @@ const Service: React.FC = () => {
         <div className="flex flex-row gap-x-5 mt-4">
           <div className="w-3/4">
             {/* General Section */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-4">
+            <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 p-6 mb-4">
               <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                 <div className="flex-1">
                   <span className="text-xs font-semibold uppercase tracking-wider text-orange bg-orange/10 px-2.5 py-1 rounded-md inline-block mb-2">
                     {offering?.vendor.busname || "Vendor name not available"}
                   </span>
                   <div className="flex items-center gap-3 flex-wrap">
-                    <h1 className="text-3xl font-title font-bold text-gray-900">
+                    <h1 className="text-3xl font-title font-bold text-gray-900 dark:text-zinc-100">
                       {offering?.name}
                     </h1>
                     {!isVendorsOffering && visitor && (
                       <button
                         onClick={handleHeartClick}
-                        className="p-2 rounded-xl hover:bg-gray-100 text-gray-400 hover:text-red-500 transition-colors"
+                        className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-darkElevated text-gray-400 hover:text-red-500 transition-colors"
                         title={isInMyVendors ? "Remove from saved" : "Save to favorites"}
                       >
                         {isInMyVendors ? (
@@ -460,8 +460,8 @@ const Service: React.FC = () => {
                       </button>
                     )}
                   </div>
-                  <div className="text-gray-500 text-sm mt-2 flex items-center gap-1.5">
-                    <FiMapPin className="text-gray-400 text-sm flex-shrink-0" />
+                  <div className="text-gray-500 dark:text-zinc-400 text-sm mt-2 flex items-center gap-1.5">
+                    <FiMapPin className="text-gray-400 dark:text-zinc-500 text-sm flex-shrink-0" />
                     <span>{offering?.vendor.city || "Location not specified"}</span>
                   </div>
                   
@@ -483,18 +483,18 @@ const Service: React.FC = () => {
             </div>
 
             {/* Details Section */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-4 flex flex-col">
-              <h2 className="mb-2 text-xl font-bold font-title text-gray-900">About the Vendor</h2>
-              <div className="text-gray-600 font-body leading-relaxed">
+            <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 p-6 mb-4 flex flex-col">
+              <h2 className="mb-2 text-xl font-bold font-title text-gray-900 dark:text-zinc-100">About the Vendor</h2>
+              <div className="text-gray-600 dark:text-zinc-300 font-body leading-relaxed">
                 <p>{offering.vendor.about || "About not available"}</p>
               </div>
-              <hr className="border-t border-gray-100 my-6" />
+              <hr className="border-t border-gray-100 dark:border-zinc-800 my-6" />
 
-              <h2 className="mb-2 text-xl font-bold font-title text-gray-900">Details</h2>
-              <div className="text-gray-600 font-body leading-relaxed">
+              <h2 className="mb-2 text-xl font-bold font-title text-gray-900 dark:text-zinc-100">Details</h2>
+              <div className="text-gray-600 dark:text-zinc-300 font-body leading-relaxed">
                 <p>{offering.description || "Description not available"}</p>
               </div>
-              <hr className="border-t border-gray-100 my-6" />
+              <hr className="border-t border-gray-100 dark:border-zinc-800 my-6" />
 
               {/* Packages Section */}
               {packagesData?.findPackagesByOffering.some(
@@ -502,7 +502,7 @@ const Service: React.FC = () => {
               ) && (
                   <>
                     <div className="mb-6 flex items-center justify-between flex-wrap gap-3">
-                      <h2 className="text-2xl font-bold font-title text-gray-900">Packages</h2>
+                      <h2 className="text-2xl font-bold font-title text-gray-900 dark:text-zinc-100">Packages</h2>
                       {isVendorsOffering && (
                         <Link href={`/services/edit/${offering?.id}`}>
                           <button className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-orange hover:bg-orange/90 active:scale-[0.99] rounded-xl shadow-sm shadow-orange/20 transition-all">
@@ -518,10 +518,10 @@ const Service: React.FC = () => {
                         .map((pkg: Package) => (
                           <div
                             key={pkg.id}
-                            className="bg-white rounded-2xl border-2 border-gray-200 shadow-sm overflow-hidden transition-all duration-200 hover:shadow-md hover:border-orange flex flex-col h-full"
+                            className="bg-white dark:bg-darkElevated rounded-2xl border-2 border-gray-200 dark:border-zinc-700 shadow-sm overflow-hidden transition-all duration-200 hover:shadow-md hover:border-orange dark:hover:border-orange flex flex-col h-full"
                           >
                             {pkg.image && (
-                              <div className="relative w-full h-44 overflow-hidden border-b border-gray-200">
+                              <div className="relative w-full h-44 overflow-hidden border-b border-gray-200 dark:border-zinc-700">
                                 <Image
                                   src={pkg.image}
                                   alt={pkg.name}
@@ -530,21 +530,21 @@ const Service: React.FC = () => {
                                 />
                               </div>
                             )}
-                            <div className="p-4 text-center bg-gray-50 border-b border-gray-200">
-                              <h3 className="text-xl font-bold font-title text-gray-900">
+                            <div className="p-4 text-center bg-gray-50 dark:bg-darkSurface border-b border-gray-200 dark:border-zinc-700">
+                              <h3 className="text-xl font-bold font-title text-gray-900 dark:text-zinc-100">
                                 {pkg.name}
                               </h3>
                               <div className="mt-2 flex justify-center">
                                 {pkg.requiresApproval ? (
-                                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
                                     Requires Approval
                                   </span>
                                 ) : pkg.requiresReservation ? (
-                                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+                                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
                                     Requires Reservation
                                   </span>
                                 ) : (
-                                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
                                     Normal Package
                                   </span>
                                 )}
@@ -553,19 +553,19 @@ const Service: React.FC = () => {
                             <div className="p-6 flex flex-col flex-grow">
                               <div className="text-center mb-6">
                                 <div className="text-3xl font-bold font-title text-orange">
-                                  <span className="text-sm align-top text-gray-500 font-body font-normal">
+                                  <span className="text-sm align-top text-gray-500 dark:text-zinc-400 font-body font-normal">
                                     LKR
                                   </span>{" "}
                                   {pkg.pricing.toLocaleString()}
                                 </div>
-                                <p className="text-gray-500 font-body text-sm mt-2">
+                                <p className="text-gray-500 dark:text-zinc-400 font-body text-sm mt-2">
                                   {pkg.description}
                                 </p>
                               </div>
                               <div className="space-y-2.5 mb-6 min-h-[100px]">
                                 {pkg.features.map(
                                   (feature: string, idx: number) => (
-                                    <div key={idx} className="flex items-start text-sm text-gray-600 font-body">
+                                    <div key={idx} className="flex items-start text-sm text-gray-600 dark:text-zinc-300 font-body">
                                       <svg
                                         className="w-4 h-4 text-emerald-500 mr-2 mt-0.5 flex-shrink-0"
                                         fill="currentColor"
@@ -584,7 +584,7 @@ const Service: React.FC = () => {
                                   )
                                 )}
                               </div>
-                              <div className="pt-4 border-t border-gray-100 mt-auto">
+                              <div className="pt-4 border-t border-gray-100 dark:border-zinc-700 mt-auto">
                                   {(() => {
                                     // 1. Vendor viewing their own packages (cannot book their own services)
                                     if (isVendorsOffering) {
@@ -597,7 +597,7 @@ const Service: React.FC = () => {
                                             <FiEdit className="text-base" />
                                             <span>Edit Package</span>
                                           </Link>
-                                          <span className="text-[11px] text-gray-400 text-center font-body">
+                                          <span className="text-[11px] text-gray-400 dark:text-zinc-500 text-center font-body">
                                             Couple advance: LKR {(pkg.pricing * 0.2).toLocaleString()} (20%)
                                           </span>
                                         </div>
@@ -609,14 +609,14 @@ const Service: React.FC = () => {
                                     if (bookingStatus.booked && !bookingStatus.expired) {
                                       return (
                                         <div className="w-full flex flex-col items-center gap-1.5">
-                                          <div className="w-full py-2.5 px-4 rounded-xl font-semibold text-sm bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center justify-center gap-2">
+                                          <div className="w-full py-2.5 px-4 rounded-xl font-semibold text-sm bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center gap-2">
                                             <svg className="w-4 h-4 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
                                               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                             </svg>
                                             <span>You Booked This Package</span>
                                           </div>
                                           {bookingStatus.bookingDate && (
-                                            <span className="text-[11px] text-gray-400 text-center font-body">
+                                            <span className="text-[11px] text-gray-400 dark:text-zinc-500 text-center font-body">
                                               Booking Date: {bookingStatus.bookingDate.toLocaleDateString()}
                                             </span>
                                           )}
@@ -634,11 +634,11 @@ const Service: React.FC = () => {
                                         if (approvalReq.status === "pending") {
                                           return (
                                             <div className="w-full flex flex-col items-center gap-1.5">
-                                              <div className="w-full py-2.5 px-4 rounded-xl font-semibold text-sm text-amber-800 bg-amber-50 border border-amber-200 flex items-center justify-center gap-2">
+                                              <div className="w-full py-2.5 px-4 rounded-xl font-semibold text-sm text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800 flex items-center justify-center gap-2">
                                                 <Clock className="w-4 h-4 text-amber-600 animate-pulse" />
                                                 <span>Approval Pending</span>
                                               </div>
-                                              <span className="text-[11px] text-gray-400 text-center font-body">
+                                              <span className="text-[11px] text-gray-400 dark:text-zinc-500 text-center font-body">
                                                 Requested for {format(new Date(approvalReq.bookingDate), "MMM d, yyyy")} • Awaiting vendor review
                                               </span>
                                             </div>
@@ -658,10 +658,10 @@ const Service: React.FC = () => {
                                                 <ShieldCheck className="w-4 h-4" />
                                                 <span>Pay 20% Advance</span>
                                               </button>
-                                              <span className="text-[11px] text-gray-400 text-center font-body">
+                                              <span className="text-[11px] text-gray-400 dark:text-zinc-500 text-center font-body">
                                                 Advance: LKR {(pkg.pricing * 0.2).toLocaleString()} • For {format(new Date(approvalReq.bookingDate), "MMM d, yyyy")}
                                               </span>
-                                              <div className="text-[11px] font-semibold text-amber-600 flex items-center gap-1">
+                                              <div className="text-[11px] font-semibold text-amber-600 dark:text-amber-400 flex items-center gap-1">
                                                 <Clock className="w-3.5 h-3.5" />
                                                 <span>Expires in: {formatRemaining(approvalReq.secondsRemaining)}</span>
                                               </div>
@@ -672,10 +672,10 @@ const Service: React.FC = () => {
                                         if (approvalReq.status === "rejected") {
                                           return (
                                             <div className="w-full flex flex-col items-center gap-1.5">
-                                              <div className="w-full p-2.5 rounded-xl bg-red-50 border border-red-200 text-xs text-red-700 text-center">
+                                              <div className="w-full p-2.5 rounded-xl bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-900/50 text-xs text-red-700 dark:text-red-300 text-center">
                                                 <span className="font-semibold block">Request Declined</span>
                                                 {approvalReq.vendorMessage && (
-                                                  <span className="text-[11px] text-gray-600 block mt-0.5 italic">"{approvalReq.vendorMessage}"</span>
+                                                  <span className="text-[11px] text-gray-600 dark:text-zinc-400 block mt-0.5 italic">"{approvalReq.vendorMessage}"</span>
                                                 )}
                                               </div>
                                               <button
@@ -697,7 +697,7 @@ const Service: React.FC = () => {
                                         if (approvalReq.status === "expired") {
                                           return (
                                             <div className="w-full flex flex-col items-center gap-1.5">
-                                              <div className="w-full p-2 rounded-xl bg-gray-100 text-xs text-gray-600 text-center">
+                                              <div className="w-full p-2 rounded-xl bg-gray-100 dark:bg-darkElevated border border-transparent dark:border-zinc-700 text-xs text-gray-600 dark:text-zinc-400 text-center">
                                                 Previous 24-hour approval expired
                                               </div>
                                               <button
@@ -732,7 +732,7 @@ const Service: React.FC = () => {
                                             <ShieldCheck className="w-4 h-4" />
                                             <span>Request Vendor Approval</span>
                                           </button>
-                                          <span className="text-[11px] text-gray-400 text-center font-body">
+                                          <span className="text-[11px] text-gray-400 dark:text-zinc-500 text-center font-body">
                                             Couple advance: LKR {(pkg.pricing * 0.2).toLocaleString()} (20%)
                                           </span>
                                         </div>
@@ -743,7 +743,7 @@ const Service: React.FC = () => {
                                     if (bookingStatus.expired) {
                                       return (
                                         <div className="w-full flex flex-col items-center gap-1.5">
-                                          <div className="text-xs text-amber-600 text-center font-medium mb-0.5">
+                                          <div className="text-xs text-amber-600 dark:text-amber-400 text-center font-medium mb-0.5">
                                             Previous booking expired. You can book again.
                                           </div>
                                           <button
@@ -759,7 +759,7 @@ const Service: React.FC = () => {
                                             <FiCalendar className="text-base" />
                                             <span>Book Again</span>
                                           </button>
-                                          <span className="text-[11px] text-gray-400 text-center font-body">
+                                          <span className="text-[11px] text-gray-400 dark:text-zinc-500 text-center font-body">
                                             Couple advance: LKR {(pkg.pricing * 0.2).toLocaleString()} (20%)
                                           </span>
                                         </div>
@@ -784,7 +784,7 @@ const Service: React.FC = () => {
                                             {pkg.requiresReservation ? "See Details & Book" : "Select Date & Book"}
                                           </span>
                                         </button>
-                                        <span className="text-[11px] text-gray-400 text-center font-body">
+                                        <span className="text-[11px] text-gray-400 dark:text-zinc-500 text-center font-body">
                                           Couple advance: LKR {(pkg.pricing * 0.2).toLocaleString()} (20%)
                                         </span>
                                       </div>
@@ -795,11 +795,11 @@ const Service: React.FC = () => {
                           </div>
                         ))}
                     </div>
-                    <hr className="border-t border-gray-100 my-6" />
+                    <hr className="border-t border-gray-100 dark:border-zinc-800 my-6" />
                   </>
                 )}
 
-              <h2 className="mb-3 text-xl font-bold font-title text-gray-900">Reviews</h2>
+              <h2 className="mb-3 text-xl font-bold font-title text-gray-900 dark:text-zinc-100">Reviews</h2>
               <div>
                 <Reviews serviceId={offering?.id} />
               </div>
@@ -814,8 +814,8 @@ const Service: React.FC = () => {
                 <Comments serviceId={offering?.id} />
               </div>
 
-              <hr className="border-t border-gray-100 my-6" />
-              <h2 className="mb-3 text-xl font-bold font-title text-gray-900">Location</h2>
+              <hr className="border-t border-gray-100 dark:border-zinc-800 my-6" />
+              <h2 className="mb-3 text-xl font-bold font-title text-gray-900 dark:text-zinc-100">Location</h2>
               <div>
                 <GoogleMapComponent serviceId={offering?.id} />
               </div>
@@ -880,26 +880,26 @@ const Service: React.FC = () => {
       {/* Payment Gateway Redirect Overlay */}
       {paymentRedirectInfo && (
         <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full text-center animate-in fade-in zoom-in-95 duration-200">
+          <div className="bg-white dark:bg-darkSurface rounded-3xl shadow-2xl p-8 max-w-md w-full text-center border border-transparent dark:border-zinc-800 animate-in fade-in zoom-in-95 duration-200">
             <div className="relative inline-block mb-5">
               <div className="w-20 h-20 rounded-3xl bg-orange/10 flex items-center justify-center text-orange mx-auto">
                 <ShieldCheck className="w-10 h-10 text-orange animate-pulse" />
               </div>
-              <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-white shadow-md flex items-center justify-center border border-gray-100">
+              <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-white dark:bg-darkElevated shadow-md flex items-center justify-center border border-gray-100 dark:border-zinc-700">
                 <Loader2 className="w-4 h-4 text-orange animate-spin" />
               </div>
             </div>
 
-            <h3 className="text-2xl font-bold font-title text-gray-900 mb-6">
+            <h3 className="text-2xl font-bold font-title text-gray-900 dark:text-zinc-100 mb-6">
               Redirecting to PayHere...
             </h3>
 
-            <div className="inline-flex items-center gap-2 text-xs font-medium text-gray-600 bg-gray-50 px-4 py-2 rounded-full border border-gray-200 font-body">
-              <Lock className="w-3.5 h-3.5 text-emerald-600" />
+            <div className="inline-flex items-center gap-2 text-xs font-medium text-gray-600 dark:text-zinc-300 bg-gray-50 dark:bg-darkElevated px-4 py-2 rounded-full border border-gray-200 dark:border-zinc-700 font-body">
+              <Lock className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
               <span>256-bit SSL Encrypted Secure Checkout</span>
             </div>
 
-            <p className="text-xs text-gray-400 mt-5 font-body">
+            <p className="text-xs text-gray-400 dark:text-zinc-500 mt-5 font-body">
               Please do not close or refresh this page...
             </p>
           </div>

@@ -85,8 +85,8 @@ const EditAccount: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 flex items-center justify-center min-h-[300px]">
-        <div className="flex items-center gap-3 text-gray-500">
+      <div className="bg-white dark:bg-darkSurface rounded-2xl p-8 shadow-sm border border-gray-100 dark:border-zinc-800 flex items-center justify-center min-h-[300px]">
+        <div className="flex items-center gap-3 text-gray-500 dark:text-zinc-400">
           <div className="w-5 h-5 border-2 border-orange border-t-transparent rounded-full animate-spin"></div>
           <span>Loading account details...</span>
         </div>
@@ -95,10 +95,10 @@ const EditAccount: React.FC = () => {
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
-      <div className="pb-6 mb-6 border-b border-gray-100">
-        <h2 className="font-title text-2xl font-bold text-gray-900">Account & Security</h2>
-        <p className="text-gray-500 font-body text-sm mt-1">
+    <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 p-6 sm:p-8">
+      <div className="pb-6 mb-6 border-b border-gray-100 dark:border-zinc-800">
+        <h2 className="font-title text-2xl font-bold text-gray-900 dark:text-zinc-100">Account & Security</h2>
+        <p className="text-gray-500 dark:text-zinc-400 font-body text-sm mt-1">
           Manage your login email and security credentials.
         </p>
       </div>
@@ -106,7 +106,7 @@ const EditAccount: React.FC = () => {
       <form onSubmit={handleSubmit} className="space-y-6 font-body">
         {/* Email Address */}
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-2">
             Email Address
           </label>
           <div className="relative">
@@ -115,28 +115,28 @@ const EditAccount: React.FC = () => {
               value={vendorData?.email || vendor?.email || ""}
               readOnly
               disabled
-              className="h-11 rounded-lg border-gray-200 bg-gray-50 text-gray-500 pr-10 text-sm cursor-not-allowed"
+              className="h-11 rounded-lg border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-darkElevated/50 text-gray-500 dark:text-zinc-400 pr-10 text-sm cursor-not-allowed"
             />
-            <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-gray-400">
+            <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-gray-400 dark:text-zinc-500">
               <FiLock className="text-sm" />
             </div>
           </div>
-          <p className="text-xs text-gray-400 mt-1.5">
+          <p className="text-xs text-gray-400 dark:text-zinc-500 mt-1.5">
             Your login email cannot be changed directly. Contact support if you need to transfer your account.
           </p>
         </div>
 
         {/* Password Section */}
-        <div className="pt-2 border-t border-gray-100">
-          <h3 className="text-base font-semibold text-gray-900 mb-1">Change Password</h3>
-          <p className="text-xs text-gray-500 mb-5">
+        <div className="pt-2 border-t border-gray-100 dark:border-zinc-800">
+          <h3 className="text-base font-semibold text-gray-900 dark:text-zinc-100 mb-1">Change Password</h3>
+          <p className="text-xs text-gray-500 dark:text-zinc-400 mb-5">
             To change your password, please provide your current password for verification.
           </p>
 
           <div className="space-y-5">
             {/* Current Password */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-2">
                 Current Password
               </label>
               <div className="relative max-w-md">
@@ -146,12 +146,12 @@ const EditAccount: React.FC = () => {
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
                   placeholder="Enter your current password"
-                  className="h-11 rounded-lg border-gray-300 focus:border-orange focus:ring-2 focus:ring-orange/20 pr-10 text-sm"
+                  className="h-11 rounded-lg border-gray-300 dark:border-zinc-700 bg-white dark:bg-darkElevated text-gray-900 dark:text-zinc-100 focus:border-orange focus:ring-2 focus:ring-orange/20 pr-10 text-sm"
                 />
                 <button
                   type="button"
                   onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600 dark:text-zinc-500 dark:hover:text-zinc-300 transition-colors"
                 >
                   {showCurrentPassword ? <FiEyeOff className="text-base" /> : <FiEye className="text-base" />}
                 </button>
@@ -161,7 +161,7 @@ const EditAccount: React.FC = () => {
             {/* New Password & Confirm New Password */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-2">
                   New Password
                 </label>
                 <div className="relative">
@@ -171,12 +171,12 @@ const EditAccount: React.FC = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Min. 8 characters"
-                    className="h-11 rounded-lg border-gray-300 focus:border-orange focus:ring-2 focus:ring-orange/20 pr-10 text-sm"
+                    className="h-11 rounded-lg border-gray-300 dark:border-zinc-700 bg-white dark:bg-darkElevated text-gray-900 dark:text-zinc-100 focus:border-orange focus:ring-2 focus:ring-orange/20 pr-10 text-sm"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+                    className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600 dark:text-zinc-500 dark:hover:text-zinc-300 transition-colors"
                   >
                     {showPassword ? <FiEyeOff className="text-base" /> : <FiEye className="text-base" />}
                   </button>
@@ -184,7 +184,7 @@ const EditAccount: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-2">
                   Confirm New Password
                 </label>
                 <div className="relative">
@@ -194,12 +194,12 @@ const EditAccount: React.FC = () => {
                     value={rePassword}
                     onChange={(e) => setRePassword(e.target.value)}
                     placeholder="Re-enter new password"
-                    className="h-11 rounded-lg border-gray-300 focus:border-orange focus:ring-2 focus:ring-orange/20 pr-10 text-sm"
+                    className="h-11 rounded-lg border-gray-300 dark:border-zinc-700 bg-white dark:bg-darkElevated text-gray-900 dark:text-zinc-100 focus:border-orange focus:ring-2 focus:ring-orange/20 pr-10 text-sm"
                   />
                   <button
                     type="button"
                     onClick={() => setShowRePassword(!showRePassword)}
-                    className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+                    className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600 dark:text-zinc-500 dark:hover:text-zinc-300 transition-colors"
                   >
                     {showRePassword ? <FiEyeOff className="text-base" /> : <FiEye className="text-base" />}
                   </button>
@@ -209,7 +209,7 @@ const EditAccount: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex justify-end pt-4 border-t border-gray-100">
+        <div className="flex justify-end pt-4 border-t border-gray-100 dark:border-zinc-800">
           <button
             type="submit"
             disabled={isUpdating}

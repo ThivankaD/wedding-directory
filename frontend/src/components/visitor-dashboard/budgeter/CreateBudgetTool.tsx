@@ -43,9 +43,9 @@ const CreateBudgetTool: React.FC<CreateBudgetToolProps> = ({ visitorId }) => {
   };
 
   return (
-    <div className="w-full bg-white rounded-3xl border-2 border-orange/20 shadow-sm p-6 sm:p-10 relative overflow-hidden">
+    <div className="w-full bg-white dark:bg-darkSurface rounded-3xl border-2 border-orange/20 dark:border-zinc-800 shadow-sm p-6 sm:p-10 relative overflow-hidden">
       {/* Subtle background glow */}
-      <div className="absolute -top-24 -right-24 w-96 h-96 bg-orange/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -top-24 -right-24 w-96 h-96 bg-orange/5 dark:bg-orange/10 rounded-full blur-3xl pointer-events-none" />
 
       {/* Breadcrumbs */}
       <div className="mb-6 relative z-10">
@@ -65,17 +65,17 @@ const CreateBudgetTool: React.FC<CreateBudgetToolProps> = ({ visitorId }) => {
             <span>Wedding Budget Planner</span>
           </div>
 
-          <h1 className="font-title text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight mb-3">
+          <h1 className="font-title text-3xl sm:text-4xl font-bold text-gray-900 dark:text-zinc-100 tracking-tight mb-3">
             Get started with adding your budget
           </h1>
 
-          <p className="font-body text-gray-600 text-sm sm:text-base mb-6 leading-relaxed">
+          <p className="font-body text-gray-600 dark:text-zinc-400 text-sm sm:text-base mb-6 leading-relaxed">
             Plan your wedding expenses effectively, monitor vendor costs, and stay comfortably within budget for your dream celebration.
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-4 max-w-md">
             <div>
-              <label className="block text-sm font-bold text-gray-800 mb-2 font-body">
+              <label className="block text-sm font-bold text-gray-800 dark:text-zinc-200 mb-2 font-body">
                 Your Target Budget
               </label>
               <div className="flex items-center gap-2">
@@ -85,11 +85,11 @@ const CreateBudgetTool: React.FC<CreateBudgetToolProps> = ({ visitorId }) => {
                     placeholder="e.g. 1500000"
                     value={totalBudget}
                     onChange={(e) => setTotalBudget(e.target.value)}
-                    className="w-full h-12 text-base font-semibold bg-orange/[0.02] border-2 border-orange/20 focus:border-orange rounded-xl focus:ring-2 focus:ring-orange/20 text-gray-900 placeholder-gray-400 transition-all"
+                    className="w-full h-12 text-base font-semibold bg-orange/[0.02] dark:bg-darkElevated border-2 border-orange/20 dark:border-zinc-700 focus:border-orange rounded-xl focus:ring-2 focus:ring-orange/20 text-gray-900 dark:text-zinc-100 placeholder-gray-400 dark:placeholder-zinc-500 transition-all"
                     required
                   />
                 </div>
-                <div className="flex items-center justify-center px-4 h-12 bg-orange/10 border-2 border-orange/20 rounded-xl text-orange font-bold text-sm tracking-wider shrink-0">
+                <div className="flex items-center justify-center px-4 h-12 bg-orange/10 border-2 border-orange/20 dark:border-orange/30 rounded-xl text-orange font-bold text-sm tracking-wider shrink-0">
                   LKR
                 </div>
               </div>
@@ -115,7 +115,7 @@ const CreateBudgetTool: React.FC<CreateBudgetToolProps> = ({ visitorId }) => {
           </form>
 
           {/* Quick value props */}
-          <div className="flex flex-wrap items-center gap-4 mt-8 pt-6 border-t border-orange/15 text-xs text-gray-600 font-medium">
+          <div className="flex flex-wrap items-center gap-4 mt-8 pt-6 border-t border-orange/15 dark:border-zinc-800 text-xs text-gray-600 dark:text-zinc-400 font-medium">
             <span className="flex items-center gap-1.5">
               <FiCheckCircle className="text-orange" size={14} />
               Category expense breakdowns
@@ -129,7 +129,7 @@ const CreateBudgetTool: React.FC<CreateBudgetToolProps> = ({ visitorId }) => {
 
         {/* Right Illustration Section */}
         <div className="flex-1 w-full max-w-md flex justify-center items-center">
-          <div className="w-full p-6 sm:p-8 bg-orange/[0.03] rounded-3xl border-2 border-orange/15 shadow-2xs">
+          <div className="w-full p-6 sm:p-8 bg-orange/[0.03] dark:bg-darkElevated/50 rounded-3xl border-2 border-orange/15 dark:border-zinc-800 shadow-2xs">
             <Image
               src="/images/budgeter.png"
               alt="Budget Management Illustration"

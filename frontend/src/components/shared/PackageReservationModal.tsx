@@ -109,37 +109,37 @@ const PackageReservationModal: React.FC<PackageReservationModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 overflow-y-auto">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl overflow-hidden relative animate-in fade-in zoom-in-95 duration-200 my-8">
+      <div className="bg-white dark:bg-darkSurface rounded-xl shadow-2xl w-full max-w-4xl overflow-hidden relative border border-transparent dark:border-zinc-800 animate-in fade-in zoom-in-95 duration-200 my-8">
         <button
           onClick={onClose}
           disabled={isSubmitting}
-          className="absolute top-4 right-4 p-2 z-10 rounded-full hover:bg-gray-100 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+          className="absolute top-4 right-4 p-2 z-10 rounded-full hover:bg-gray-100 dark:hover:bg-darkElevated transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
         >
-          <X className="w-5 h-5 text-gray-500" />
+          <X className="w-5 h-5 text-gray-500 dark:text-zinc-400" />
         </button>
 
         {/* Redirecting Overlay */}
         {isSubmitting && (
-          <div className="absolute inset-0 bg-white/95 backdrop-blur-sm z-30 flex flex-col items-center justify-center p-6 md:p-8 text-center animate-in fade-in duration-200">
+          <div className="absolute inset-0 bg-white/95 dark:bg-darkSurface/95 backdrop-blur-sm z-30 flex flex-col items-center justify-center p-6 md:p-8 text-center animate-in fade-in duration-200">
             <div className="relative mb-5">
               <div className="w-20 h-20 rounded-3xl bg-orange/10 flex items-center justify-center text-orange animate-pulse">
                 <ShieldCheck className="w-10 h-10 text-orange" />
               </div>
-              <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-white shadow-md flex items-center justify-center border border-gray-100">
+              <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-white dark:bg-darkElevated shadow-md flex items-center justify-center border border-gray-100 dark:border-zinc-700">
                 <Loader2 className="w-4 h-4 text-orange animate-spin" />
               </div>
             </div>
 
-            <h3 className="text-2xl font-bold font-title text-gray-900 mb-6">
+            <h3 className="text-2xl font-bold font-title text-gray-900 dark:text-zinc-100 mb-6">
               Redirecting to PayHere...
             </h3>
 
-            <div className="inline-flex items-center gap-2 text-xs font-medium text-gray-600 bg-gray-50 px-4 py-2 rounded-full border border-gray-200/80 font-body">
-              <Lock className="w-3.5 h-3.5 text-emerald-600" />
+            <div className="inline-flex items-center gap-2 text-xs font-medium text-gray-600 dark:text-zinc-300 bg-gray-50 dark:bg-darkElevated px-4 py-2 rounded-full border border-gray-200/80 dark:border-zinc-700 font-body">
+              <Lock className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
               <span>256-bit SSL Encrypted Secure Checkout</span>
             </div>
 
-            <p className="text-xs text-gray-400 mt-5 font-body">
+            <p className="text-xs text-gray-400 dark:text-zinc-500 mt-5 font-body">
               Please do not refresh or close this window...
             </p>
           </div>
@@ -147,14 +147,14 @@ const PackageReservationModal: React.FC<PackageReservationModalProps> = ({
 
         <div className="p-6 md:p-8">
           <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
-            <h2 className="text-2xl font-bold text-gray-800">
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-zinc-100 font-title">
               {pkg.requiresReservation ? "Book Reservation Package" : "Book Package"}
             </h2>
             <span
               className={`text-xs font-semibold px-3 py-1 rounded-full border ${
                 pkg.requiresReservation
-                  ? "bg-amber-50 text-amber-700 border-amber-200"
-                  : "bg-emerald-50 text-emerald-700 border-emerald-200"
+                  ? "bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800"
+                  : "bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800"
               }`}
             >
               {pkg.requiresReservation ? "Requires Reservation" : "Normal Package"}
@@ -164,19 +164,19 @@ const PackageReservationModal: React.FC<PackageReservationModalProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Left Column - Package Details */}
             <div className="space-y-6">
-              <div className="bg-gradient-to-r from-orange/5 to-orange/10 border border-orange/20 rounded-xl p-6">
-                <h3 className="text-xl font-bold text-gray-800 mb-2">
+              <div className="bg-gradient-to-r from-orange/5 to-orange/10 dark:from-orange/10 dark:to-orange/5 border border-orange/20 dark:border-zinc-700 rounded-xl p-6">
+                <h3 className="text-xl font-bold text-gray-800 dark:text-zinc-100 mb-2 font-title">
                   {pkg.name}
                 </h3>
                 {pkg.description && (
-                  <p className="text-gray-600 leading-relaxed mb-4">
+                  <p className="text-gray-600 dark:text-zinc-300 leading-relaxed mb-4 text-sm font-body">
                     {pkg.description}
                   </p>
                 )}
 
                 {pkg.features && pkg.features.length > 0 && (
-                  <div className="space-y-3 mt-4 pt-4 border-t border-orange/10">
-                    <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                  <div className="space-y-3 mt-4 pt-4 border-t border-orange/10 dark:border-zinc-700">
+                    <h4 className="text-sm font-semibold text-gray-500 dark:text-zinc-400 uppercase tracking-wide mb-2">
                       Included Features
                     </h4>
                     {pkg.features.map((feature, idx) => (
@@ -192,7 +192,7 @@ const PackageReservationModal: React.FC<PackageReservationModalProps> = ({
                             clipRule="evenodd"
                           />
                         </svg>
-                        <span className="text-gray-700 text-sm">{feature}</span>
+                        <span className="text-gray-700 dark:text-zinc-300 text-sm font-body">{feature}</span>
                       </div>
                     ))}
                   </div>
@@ -201,8 +201,8 @@ const PackageReservationModal: React.FC<PackageReservationModalProps> = ({
 
               {/* Note to vendor - sent automatically on Pay */}
               {visitorId && offeringId && (
-                <div className="border border-gray-200 rounded-xl p-4 space-y-2">
-                  <p className="text-sm font-semibold text-gray-600">
+                <div className="border border-gray-200 dark:border-zinc-700 rounded-xl p-4 space-y-2">
+                  <p className="text-sm font-semibold text-gray-600 dark:text-zinc-300">
                     Add a note
                   </p>
 
@@ -211,7 +211,7 @@ const PackageReservationModal: React.FC<PackageReservationModalProps> = ({
                     onChange={(e) => setNote(e.target.value)}
                     placeholder="Write a message to the vendor (optional)"
                     rows={3}
-                    className="w-full resize-none rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange/30 focus:border-orange"
+                    className="w-full resize-none rounded-lg border border-gray-200 dark:border-zinc-700 dark:bg-darkElevated px-3 py-2 text-sm text-gray-800 dark:text-zinc-100 placeholder-gray-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-orange/30 focus:border-orange"
                   />
                 </div>
               )}
@@ -219,32 +219,32 @@ const PackageReservationModal: React.FC<PackageReservationModalProps> = ({
 
             {/* Right Column - Calendar & Payment */}
             <div className="flex flex-col h-full">
-              <p className="text-gray-600 mb-2">
+              <p className="text-gray-600 dark:text-zinc-300 mb-2 font-body">
                 Select your event date for{" "}
                 <span className="font-semibold text-orange">{pkg.name}</span>
               </p>
               {!pkg.requiresReservation && (
-                <p className="text-xs text-emerald-700 mb-3 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-lg flex items-center gap-1.5">
+                <p className="text-xs text-emerald-700 dark:text-emerald-300 mb-3 bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 px-3 py-1.5 rounded-lg flex items-center gap-1.5 font-body">
                   <span>✨</span>
                   <span>Normal package: No blackout dates — pick any upcoming date for your event.</span>
                 </p>
               )}
 
-              <div className="flex justify-center border rounded-lg p-4 mb-6 bg-gray-50">
+              <div className="flex justify-center border border-gray-200 dark:border-zinc-700 rounded-lg p-4 mb-6 bg-gray-50 dark:bg-darkElevated">
                 <Calendar
                   mode="single"
                   selected={selectedDate}
                   onSelect={setSelectedDate}
                   disabled={isDateDisabled}
-                  className="rounded-md border bg-white shadow-sm"
+                  className="rounded-md border border-gray-200 dark:border-zinc-700 bg-white dark:bg-darkSurface shadow-sm"
                 />
               </div>
 
               <div className="mt-auto space-y-4">
-                <div className="bg-orange/10 p-4 rounded-lg">
+                <div className="bg-orange/10 dark:bg-orange/15 p-4 rounded-lg">
                   <div className="flex justify-between items-center mb-1">
-                    <span className="text-sm text-gray-600">Package Price</span>
-                    <span className="font-semibold">
+                    <span className="text-sm text-gray-600 dark:text-zinc-400">Package Price</span>
+                    <span className="font-semibold text-gray-900 dark:text-zinc-100">
                       LKR {pkg.pricing.toLocaleString()}
                     </span>
                   </div>

@@ -25,28 +25,24 @@ const VendorSearchContent: React.FC = () => {
   const [category, setCategory] = useState<string>(urlCategory);
   const [keyword, setKeyword] = useState<string>(urlQuery);
 
-  // useLazyQuery hook to fetch services on demand
-  const [getServices, { loading, data, error }] = useLazyQuery(FIND_SERVICES);
+  // useLazyQuery hook to fetch services on demand with network-only fetch policy
+  const [getServices, { loading, data, error }] = useLazyQuery(FIND_SERVICES, {
+    fetchPolicy: "network-only",
+  });
 
-  // Trigger search with given filters or current state
-  const handleSearch = useCallback(
-    (targetCity?: string, targetCategory?: string) => {
-      const activeCity = targetCity !== undefined ? targetCity : city;
-      const activeCategory =
-        targetCategory !== undefined ? targetCategory : category;
-
-      if (getServices) {
-        getServices({
-          variables: {
-            filter: {
-              city: activeCity || null,
-              category: activeCategory || null,
-            },
+  // Helper to execute Apollo query
+  const executeQuery = useCallback(
+    (targetCity: string, targetCategory: string) => {
+      getServices({
+        variables: {
+          filter: {
+            city: targetCity ? targetCity.trim() : null,
+            category: targetCategory ? targetCategory.trim() : null,
           },
-        });
-      }
+        },
+      });
     },
-    [city, category, getServices]
+    [getServices]
   );
 
   // Sync state and run search when URL query parameters change
@@ -54,38 +50,88 @@ const VendorSearchContent: React.FC = () => {
     setCategory(urlCategory);
     setCity(urlCity);
     setKeyword(urlQuery);
-    handleSearch(urlCity, urlCategory);
-  }, [urlCategory, urlCity, urlQuery, handleSearch]);
+    executeQuery(urlCity, urlCategory);
+  }, [urlCategory, urlCity, urlQuery, executeQuery]);
 
   // Handlers for filter changes from FilterSearchBar
-  const handleCityChange = useCallback((newCity: string) => {
-    setCity(newCity);
-  }, []);
+  const handleCityChange = useCallback(
+    (newCity: string) => {
+      setCity(newCity);
+      const params = new URLSearchParams(searchParams.toString());
+      if (newCity && newCity.trim()) {
+        params.set("city", newCity.trim());
+      } else {
+        params.delete("city");
+      }
+      const qs = params.toString();
+      router.push(qs ? `/vendor-search?${qs}` : "/vendor-search");
+    },
+    [searchParams, router]
+  );
 
-  const handleCategoryChange = useCallback((newCategory: string) => {
-    setCategory(newCategory);
-  }, []);
+  const handleCategoryChange = useCallback(
+    (newCategory: string) => {
+      setCategory(newCategory);
+      const params = new URLSearchParams(searchParams.toString());
+      if (newCategory && newCategory.trim()) {
+        params.set("category", newCategory.trim());
+      } else {
+        params.delete("category");
+      }
+      const qs = params.toString();
+      router.push(qs ? `/vendor-search?${qs}` : "/vendor-search");
+    },
+    [searchParams, router]
+  );
+
+  // Search button click handler
+  const handleSearch = useCallback(
+    (targetCity?: string, targetCategory?: string) => {
+      const activeCity = targetCity !== undefined ? targetCity : city;
+      const activeCategory =
+        targetCategory !== undefined ? targetCategory : category;
+
+      const params = new URLSearchParams(searchParams.toString());
+      if (activeCity && activeCity.trim()) {
+        params.set("city", activeCity.trim());
+      } else {
+        params.delete("city");
+      }
+      if (activeCategory && activeCategory.trim()) {
+        params.set("category", activeCategory.trim());
+      } else {
+        params.delete("category");
+      }
+      const qs = params.toString();
+      router.push(qs ? `/vendor-search?${qs}` : "/vendor-search");
+      executeQuery(activeCity, activeCategory);
+    },
+    [city, category, searchParams, router, executeQuery]
+  );
 
   // Filter removal helpers
   const removeCategory = () => {
     const params = new URLSearchParams(searchParams.toString());
     params.delete("category");
     setCategory("");
-    router.push(`/vendor-search?${params.toString()}`);
+    const qs = params.toString();
+    router.push(qs ? `/vendor-search?${qs}` : "/vendor-search");
   };
 
   const removeCity = () => {
     const params = new URLSearchParams(searchParams.toString());
     params.delete("city");
     setCity("");
-    router.push(`/vendor-search?${params.toString()}`);
+    const qs = params.toString();
+    router.push(qs ? `/vendor-search?${qs}` : "/vendor-search");
   };
 
   const removeKeyword = () => {
     const params = new URLSearchParams(searchParams.toString());
     params.delete("q");
     setKeyword("");
-    router.push(`/vendor-search?${params.toString()}`);
+    const qs = params.toString();
+    router.push(qs ? `/vendor-search?${qs}` : "/vendor-search");
   };
 
   const clearAllFilters = () => {
@@ -95,10 +141,28 @@ const VendorSearchContent: React.FC = () => {
     router.push("/vendor-search");
   };
 
-  // Filter offerings by visibility and keyword query
+  // Filter offerings by visibility, category/city in-memory fallback, and keyword query
   const visibleOfferings = (data?.findOfferings || []).filter(
     (offering: Offering) => {
       if (!offering.visible) return false;
+
+      // In-memory verification for active category filter
+      if (category && category.trim()) {
+        const catTarget = category.toLowerCase().trim();
+        const offCat = (offering.category || "").toLowerCase().trim();
+        if (!offCat.includes(catTarget) && !catTarget.includes(offCat)) {
+          return false;
+        }
+      }
+
+      // In-memory verification for active city filter
+      if (city && city.trim()) {
+        const cityTarget = city.toLowerCase().trim();
+        const offCity = (offering.vendor?.city || "").toLowerCase().trim();
+        if (!offCity.includes(cityTarget) && !cityTarget.includes(offCity)) {
+          return false;
+        }
+      }
 
       if (keyword.trim()) {
         const q = keyword.toLowerCase().trim();
@@ -119,14 +183,14 @@ const VendorSearchContent: React.FC = () => {
   const hasActiveFilters = Boolean(category || city || keyword);
 
   return (
-    <div className="bg-lightYellow font-title min-h-screen flex flex-col justify-between">
+    <div className="bg-lightYellow dark:bg-darkBg font-title min-h-screen flex flex-col justify-between">
       <Header />
       <main className="flex-1">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-5 pb-2 text-center w-full">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-zinc-100">
             Find the perfect crew for your wedding
           </h1>
-          <p className="text-xs sm:text-sm text-gray-500 mt-1 font-body">
+          <p className="text-xs sm:text-sm text-gray-500 dark:text-zinc-400 mt-1 font-body">
             Filter by Category, Location, or Keyword
           </p>
         </div>
@@ -142,7 +206,7 @@ const VendorSearchContent: React.FC = () => {
         {/* Active Filter Chips */}
         {hasActiveFilters && (
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 w-full flex flex-wrap items-center justify-center gap-2">
-            <span className="text-xs font-semibold text-gray-500 font-body mr-1">
+            <span className="text-xs font-semibold text-gray-500 dark:text-zinc-400 font-body mr-1">
               Active filters:
             </span>
 
@@ -152,7 +216,7 @@ const VendorSearchContent: React.FC = () => {
                 <button
                   type="button"
                   onClick={removeCategory}
-                  className="hover:text-gray-900 p-0.5 rounded-full hover:bg-orange/20 transition-colors"
+                  className="hover:text-gray-900 dark:hover:text-zinc-100 p-0.5 rounded-full hover:bg-orange/20 transition-colors"
                   title="Remove category filter"
                 >
                   <IoClose className="w-3.5 h-3.5" />
@@ -166,7 +230,7 @@ const VendorSearchContent: React.FC = () => {
                 <button
                   type="button"
                   onClick={removeCity}
-                  className="hover:text-gray-900 p-0.5 rounded-full hover:bg-orange/20 transition-colors"
+                  className="hover:text-gray-900 dark:hover:text-zinc-100 p-0.5 rounded-full hover:bg-orange/20 transition-colors"
                   title="Remove city filter"
                 >
                   <IoClose className="w-3.5 h-3.5" />
@@ -180,7 +244,7 @@ const VendorSearchContent: React.FC = () => {
                 <button
                   type="button"
                   onClick={removeKeyword}
-                  className="hover:text-gray-900 p-0.5 rounded-full hover:bg-orange/20 transition-colors"
+                  className="hover:text-gray-900 dark:hover:text-zinc-100 p-0.5 rounded-full hover:bg-orange/20 transition-colors"
                   title="Remove keyword search"
                 >
                   <IoClose className="w-3.5 h-3.5" />
@@ -191,7 +255,7 @@ const VendorSearchContent: React.FC = () => {
             <button
               type="button"
               onClick={clearAllFilters}
-              className="text-xs font-semibold text-gray-500 hover:text-orange underline ml-2 font-body transition-colors"
+              className="text-xs font-semibold text-gray-500 dark:text-zinc-400 hover:text-orange underline ml-2 font-body transition-colors"
             >
               Clear all
             </button>
@@ -199,7 +263,7 @@ const VendorSearchContent: React.FC = () => {
         )}
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-          <div className="border-b border-orange/15 my-4" />
+          <div className="border-b border-orange/15 dark:border-zinc-800 my-4" />
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10 w-full">
@@ -209,13 +273,13 @@ const VendorSearchContent: React.FC = () => {
             {loading ? (
               <div className="py-16 flex flex-col items-center justify-center">
                 <LoaderJelly />
-                <p className="text-xs font-semibold text-gray-500 font-body mt-3">
+                <p className="text-xs font-semibold text-gray-500 dark:text-zinc-400 font-body mt-3">
                   Finding wedding vendors...
                 </p>
               </div>
             ) : error ? (
-              <div className="bg-white rounded-3xl border-2 border-rose-200 p-8 text-center my-6 max-w-md mx-auto">
-                <p className="text-rose-600 font-medium text-sm font-body">
+              <div className="bg-white dark:bg-darkSurface rounded-3xl border-2 border-rose-200 dark:border-rose-900/50 p-8 text-center my-6 max-w-md mx-auto">
+                <p className="text-rose-600 dark:text-rose-400 font-medium text-sm font-body">
                   Oops! We encountered an issue loading vendors. Please try again in a moment.
                 </p>
               </div>
@@ -223,7 +287,7 @@ const VendorSearchContent: React.FC = () => {
               <div>
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-3">
-                    <h2 className="font-title font-bold text-xl sm:text-2xl text-gray-900">
+                    <h2 className="font-title font-bold text-xl sm:text-2xl text-gray-900 dark:text-zinc-100">
                       Available Vendors
                     </h2>
                     <span className="px-3 py-0.5 text-xs font-bold rounded-full bg-orange/10 text-orange border border-orange/20 font-body">
@@ -255,11 +319,11 @@ const VendorSearchContent: React.FC = () => {
                 </div>
               </div>
             ) : (
-              <div className="bg-white rounded-3xl border-2 border-orange/20 p-12 text-center my-8 shadow-xs max-w-md mx-auto">
-                <h3 className="font-title font-bold text-lg text-gray-900 mb-1">
+              <div className="bg-white dark:bg-darkSurface rounded-3xl border-2 border-orange/20 dark:border-zinc-800 p-12 text-center my-8 shadow-xs max-w-md mx-auto">
+                <h3 className="font-title font-bold text-lg text-gray-900 dark:text-zinc-100 mb-1">
                   No vendors found
                 </h3>
-                <p className="text-xs sm:text-sm text-gray-500 font-body">
+                <p className="text-xs sm:text-sm text-gray-500 dark:text-zinc-400 font-body">
                   Try adjusting your city, category, or keyword search to discover more wedding services.
                 </p>
                 {hasActiveFilters && (
@@ -287,7 +351,7 @@ const VendorSearch: React.FC = () => {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-lightYellow flex flex-col items-center justify-center p-8">
+        <div className="min-h-screen bg-lightYellow dark:bg-darkBg flex flex-col items-center justify-center p-8">
           <LoaderJelly />
         </div>
       }

@@ -56,9 +56,9 @@ const OfferingCard: React.FC<OfferingProps> = ({
   const [imgSrc, setImgSrc] = useState(banner || "/images/offeringPlaceholder.webp");
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm hover:shadow-md border border-gray-100 hover:border-orange/30 transition-all duration-200 overflow-hidden flex flex-col h-full">
+    <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm hover:shadow-md border border-gray-100 dark:border-zinc-800 hover:border-orange/30 dark:hover:border-orange/30 transition-all duration-200 overflow-hidden flex flex-col h-full">
       <div className="p-3 sm:p-4 flex flex-col flex-1">
-        <div className="relative w-full h-48 mb-3 overflow-hidden rounded-xl bg-gray-100">
+        <div className="relative w-full h-48 mb-3 overflow-hidden rounded-xl bg-gray-100 dark:bg-darkElevated">
           <Image
             src={imgSrc}
             alt={name}
@@ -69,15 +69,15 @@ const OfferingCard: React.FC<OfferingProps> = ({
           />
         </div>
         <div className="flex flex-col mb-3 flex-1">
-          <h3 className="font-title text-lg font-bold text-gray-900 mb-1 line-clamp-1">{name}</h3>
+          <h3 className="font-title text-lg font-bold text-gray-900 dark:text-zinc-100 mb-1 line-clamp-1">{name}</h3>
           <div className="flex items-center gap-1 mb-1.5">
             <div className="flex items-center text-sm">{renderStars(numericRating)}</div>
-            <span className="text-xs text-gray-500 ml-1">
+            <span className="text-xs text-gray-500 dark:text-zinc-400 ml-1">
               ({numericRating.toFixed(1)})
             </span>
           </div>
-          <p className="text-gray-700 text-sm font-medium">{vendor}</p>
-          <p className="text-gray-400 text-xs mt-0.5">{city}</p>
+          <p className="text-gray-700 dark:text-zinc-300 text-sm font-medium">{vendor}</p>
+          <p className="text-gray-400 dark:text-zinc-500 text-xs mt-0.5">{city}</p>
         </div>
         
         <Link 

@@ -4,7 +4,7 @@ import Footer from "@/components/shared/Footer";
 
 const ChecklistLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="bg-lightYellow min-h-screen flex flex-col justify-between">
+    <div className="bg-lightYellow dark:bg-darkBg min-h-screen flex flex-col justify-between">
       <Header />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex-1">
         {children}

@@ -114,8 +114,8 @@ const WeddingDetails: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-2xl shadow-sm border border-orange/20 p-8 flex items-center justify-center min-h-[300px]">
-        <div className="flex items-center gap-3 text-gray-500 font-body">
+      <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-orange/20 p-8 flex items-center justify-center min-h-[300px]">
+        <div className="flex items-center gap-3 text-gray-500 dark:text-zinc-400 font-body">
           <div className="w-5 h-5 border-2 border-orange border-t-transparent rounded-full animate-spin"></div>
           <span>Loading wedding details...</span>
         </div>
@@ -125,23 +125,23 @@ const WeddingDetails: React.FC = () => {
 
   if (error) {
     return (
-      <div className="bg-white rounded-2xl shadow-sm border border-rose-200 p-8 text-center">
-        <p className="text-rose-600 font-semibold font-body text-sm mb-1">
+      <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-rose-200 dark:border-rose-900/50 p-8 text-center">
+        <p className="text-rose-600 dark:text-rose-400 font-semibold font-body text-sm mb-1">
           Error loading profile details
         </p>
-        <p className="text-gray-400 text-xs font-body">{error.message}</p>
+        <p className="text-gray-400 dark:text-zinc-500 text-xs font-body">{error.message}</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-orange/20 p-6 sm:p-8">
+    <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-orange/20 p-6 sm:p-8">
       {/* Card Header matching Vendor Settings */}
-      <div className="pb-6 mb-6 border-b border-orange/15">
-        <h2 className="font-title text-2xl font-bold text-gray-900">
+      <div className="pb-6 mb-6 border-b border-orange/15 dark:border-zinc-800">
+        <h2 className="font-title text-2xl font-bold text-gray-900 dark:text-zinc-100">
           Wedding Details
         </h2>
-        <p className="text-gray-500 font-body text-sm mt-1">
+        <p className="text-gray-500 dark:text-zinc-400 font-body text-sm mt-1">
           Update your couple information, ceremony dates, and venue location.
         </p>
       </div>
@@ -151,13 +151,13 @@ const WeddingDetails: React.FC = () => {
         <div>
           <div className="flex items-center gap-2 mb-3">
             <FiUser className="text-orange" size={16} />
-            <h3 className="font-title font-bold text-base text-gray-900">
+            <h3 className="font-title font-bold text-base text-gray-900 dark:text-zinc-100">
               Your Information
             </h3>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-1.5">
                 First Name <span className="text-orange">*</span>
               </label>
               <Input
@@ -166,11 +166,11 @@ const WeddingDetails: React.FC = () => {
                 onChange={handleInputChange}
                 placeholder="e.g. Vanuja"
                 required
-                className="h-11 rounded-xl border-orange/25 focus:border-orange focus:ring-2 focus:ring-orange/20 text-sm font-body bg-white"
+                className="h-11 rounded-xl border-orange/25 dark:border-zinc-700 focus:border-orange focus:ring-2 focus:ring-orange/20 text-sm font-body bg-white dark:bg-darkElevated dark:text-zinc-100 dark:placeholder:text-zinc-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-1.5">
                 Last Name <span className="text-orange">*</span>
               </label>
               <Input
@@ -179,23 +179,23 @@ const WeddingDetails: React.FC = () => {
                 onChange={handleInputChange}
                 placeholder="e.g. Karunaratne"
                 required
-                className="h-11 rounded-xl border-orange/25 focus:border-orange focus:ring-2 focus:ring-orange/20 text-sm font-body bg-white"
+                className="h-11 rounded-xl border-orange/25 dark:border-zinc-700 focus:border-orange focus:ring-2 focus:ring-orange/20 text-sm font-body bg-white dark:bg-darkElevated dark:text-zinc-100 dark:placeholder:text-zinc-500"
               />
             </div>
           </div>
         </div>
 
         {/* Section: Partner Details */}
-        <div className="pt-4 border-t border-orange/10">
+        <div className="pt-4 border-t border-orange/10 dark:border-zinc-800">
           <div className="flex items-center gap-2 mb-3">
             <FiHeart className="text-orange" size={16} />
-            <h3 className="font-title font-bold text-base text-gray-900">
+            <h3 className="font-title font-bold text-base text-gray-900 dark:text-zinc-100">
               Partner&apos;s Information
             </h3>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-1.5">
                 Partner&apos;s First Name
               </label>
               <Input
@@ -203,11 +203,11 @@ const WeddingDetails: React.FC = () => {
                 value={weddingDetails.partnerFirstName}
                 onChange={handleInputChange}
                 placeholder="e.g. Hansika"
-                className="h-11 rounded-xl border-orange/25 focus:border-orange focus:ring-2 focus:ring-orange/20 text-sm font-body bg-white"
+                className="h-11 rounded-xl border-orange/25 dark:border-zinc-700 focus:border-orange focus:ring-2 focus:ring-orange/20 text-sm font-body bg-white dark:bg-darkElevated dark:text-zinc-100 dark:placeholder:text-zinc-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-1.5">
                 Partner&apos;s Last Name
               </label>
               <Input
@@ -215,23 +215,23 @@ const WeddingDetails: React.FC = () => {
                 value={weddingDetails.partnerLastName}
                 onChange={handleInputChange}
                 placeholder="e.g. Perera"
-                className="h-11 rounded-xl border-orange/25 focus:border-orange focus:ring-2 focus:ring-orange/20 text-sm font-body bg-white"
+                className="h-11 rounded-xl border-orange/25 dark:border-zinc-700 focus:border-orange focus:ring-2 focus:ring-orange/20 text-sm font-body bg-white dark:bg-darkElevated dark:text-zinc-100 dark:placeholder:text-zinc-500"
               />
             </div>
           </div>
         </div>
 
         {/* Section: Dates & Venue */}
-        <div className="pt-4 border-t border-orange/10">
+        <div className="pt-4 border-t border-orange/10 dark:border-zinc-800">
           <div className="flex items-center gap-2 mb-3">
             <FiCalendar className="text-orange" size={16} />
-            <h3 className="font-title font-bold text-base text-gray-900">
+            <h3 className="font-title font-bold text-base text-gray-900 dark:text-zinc-100">
               Ceremony & Schedule
             </h3>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-1.5">
                 Engagement Date
               </label>
               <Input
@@ -239,11 +239,11 @@ const WeddingDetails: React.FC = () => {
                 name="engagementDate"
                 value={weddingDetails.engagementDate}
                 onChange={handleInputChange}
-                className="h-11 rounded-xl border-orange/25 focus:border-orange focus:ring-2 focus:ring-orange/20 text-sm font-body bg-white"
+                className="h-11 rounded-xl border-orange/25 dark:border-zinc-700 focus:border-orange focus:ring-2 focus:ring-orange/20 text-sm font-body bg-white dark:bg-darkElevated dark:text-zinc-100 dark:placeholder:text-zinc-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-1.5">
                 Wedding Date
               </label>
               <Input
@@ -251,13 +251,13 @@ const WeddingDetails: React.FC = () => {
                 name="weddingDate"
                 value={weddingDetails.weddingDate}
                 onChange={handleInputChange}
-                className="h-11 rounded-xl border-orange/25 focus:border-orange focus:ring-2 focus:ring-orange/20 text-sm font-body bg-white"
+                className="h-11 rounded-xl border-orange/25 dark:border-zinc-700 focus:border-orange focus:ring-2 focus:ring-orange/20 text-sm font-body bg-white dark:bg-darkElevated dark:text-zinc-100 dark:placeholder:text-zinc-500"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5 flex items-center gap-1.5">
+            <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-1.5 flex items-center gap-1.5">
               <FiMapPin className="text-orange" size={14} />
               <span>Wedding Venue</span>
             </label>
@@ -266,13 +266,13 @@ const WeddingDetails: React.FC = () => {
               value={weddingDetails.weddingVenue}
               onChange={handleInputChange}
               placeholder="e.g. Cinnamon Grand Colombo, Lotus Ballroom"
-              className="h-11 rounded-xl border-orange/25 focus:border-orange focus:ring-2 focus:ring-orange/20 text-sm font-body bg-white"
+              className="h-11 rounded-xl border-orange/25 dark:border-zinc-700 focus:border-orange focus:ring-2 focus:ring-orange/20 text-sm font-body bg-white dark:bg-darkElevated dark:text-zinc-100 dark:placeholder:text-zinc-500"
             />
           </div>
         </div>
 
         {/* Submit Button */}
-        <div className="pt-4 border-t border-orange/10 flex justify-end">
+        <div className="pt-4 border-t border-orange/10 dark:border-zinc-800 flex justify-end">
           <button
             type="submit"
             disabled={isUpdating}

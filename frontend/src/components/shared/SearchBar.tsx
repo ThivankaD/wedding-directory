@@ -146,13 +146,13 @@ const SearchBar: React.FC<SearchBarProps> = ({
               setIsOpen(true);
             }
           }}
-          className={`w-full py-2 text-xs sm:text-sm rounded-full border border-orange/25 bg-white/95 focus:bg-white text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange/20 focus:border-orange transition-all shadow-xs font-body ${
+          className={`w-full py-2 text-xs sm:text-sm rounded-full border border-orange/25 dark:border-zinc-700 bg-white/95 dark:bg-darkElevated focus:bg-white dark:focus:bg-darkElevated text-gray-800 dark:text-zinc-100 placeholder-gray-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-orange/20 focus:border-orange transition-all shadow-xs font-body ${
             showIcon ? "pl-9" : "pl-4"
           } ${searchTerm ? "pr-16" : "pr-9"}`}
         />
 
         {showIcon && (
-          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400 dark:text-zinc-500">
             <MdSearch className="w-5 h-5" />
           </div>
         )}
@@ -162,7 +162,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
           <button
             type="button"
             onClick={handleClear}
-            className="absolute inset-y-0 right-9 flex items-center pr-1 text-gray-400 hover:text-gray-600 transition-colors"
+            className="absolute inset-y-0 right-9 flex items-center pr-1 text-gray-400 dark:text-zinc-400 hover:text-gray-600 dark:hover:text-zinc-200 transition-colors"
             title="Clear search"
           >
             <MdClose className="w-4 h-4" />
@@ -181,7 +181,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
       {/* Autocomplete Dropdown */}
       {hasSuggestions && (
-        <div className="absolute left-0 right-0 mt-1.5 bg-white rounded-2xl shadow-xl border border-orange/20 overflow-hidden z-50 font-body divide-y divide-orange/10 animate-in fade-in slide-in-from-top-2 duration-150">
+        <div className="absolute left-0 right-0 mt-1.5 bg-white dark:bg-darkSurface rounded-2xl shadow-xl border border-orange/20 dark:border-zinc-800 overflow-hidden z-50 font-body divide-y divide-orange/10 dark:divide-zinc-800 animate-in fade-in slide-in-from-top-2 duration-150">
           {/* Categories */}
           {filteredCategories.length > 0 && (
             <div className="p-1.5">
@@ -194,7 +194,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                     key={`cat-${index}`}
                     type="button"
                     onClick={() => handleSelectCategory(category)}
-                    className="w-full text-left px-3 py-2 rounded-xl text-xs sm:text-sm font-medium text-gray-800 hover:bg-orange/10 hover:text-orange flex items-center justify-between transition-colors group"
+                    className="w-full text-left px-3 py-2 rounded-xl text-xs sm:text-sm font-medium text-gray-800 dark:text-zinc-200 hover:bg-orange/10 dark:hover:bg-darkElevated hover:text-orange dark:hover:text-orange flex items-center justify-between transition-colors group"
                   >
                     <span>{category}</span>
                     <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-orange/10 text-orange border border-orange/20 opacity-80 group-hover:opacity-100">
@@ -218,10 +218,10 @@ const SearchBar: React.FC<SearchBarProps> = ({
                     key={`city-${index}`}
                     type="button"
                     onClick={() => handleSelectCity(city)}
-                    className="w-full text-left px-3 py-2 rounded-xl text-xs sm:text-sm font-medium text-gray-800 hover:bg-orange/10 hover:text-orange flex items-center justify-between transition-colors group"
+                    className="w-full text-left px-3 py-2 rounded-xl text-xs sm:text-sm font-medium text-gray-800 dark:text-zinc-200 hover:bg-orange/10 dark:hover:bg-darkElevated hover:text-orange dark:hover:text-orange flex items-center justify-between transition-colors group"
                   >
                     <span>{city}</span>
-                    <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 border border-gray-200 group-hover:bg-orange/10 group-hover:text-orange group-hover:border-orange/20">
+                    <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-gray-100 dark:bg-darkElevated text-gray-600 dark:text-zinc-400 border border-gray-200 dark:border-zinc-700 group-hover:bg-orange/10 group-hover:text-orange group-hover:border-orange/20">
                       City
                     </span>
                   </button>

@@ -72,7 +72,7 @@ const ChatItem = ({
   return (
     <Link
       href={`/visitor-dashboard/chats/${visitorId}/${chat.chatId}`}
-      className="flex items-center px-5 sm:px-6 py-4 sm:py-4.5 border-l-4 border-transparent hover:border-orange hover:bg-orange/[0.02] transition-all group border-b border-orange/10 last:border-b-0 gap-3.5 sm:gap-4"
+      className="flex items-center px-5 sm:px-6 py-4 sm:py-4.5 border-l-4 border-transparent hover:border-orange hover:bg-orange/[0.02] dark:hover:bg-darkElevated/50 transition-all group border-b border-orange/10 dark:border-zinc-800 last:border-b-0 gap-3.5 sm:gap-4"
       onClick={() => {
         if (visitor?.id) {
           markChatAsRead({
@@ -90,7 +90,7 @@ const ChatItem = ({
       <div className="flex-1 min-w-0 flex flex-col justify-center">
         {/* Row 1: Title and Category */}
         <div className="flex items-center gap-2 flex-wrap">
-          <h3 className="font-bold text-gray-900 font-title text-sm sm:text-base truncate group-hover:text-orange transition-colors">
+          <h3 className="font-bold text-gray-900 dark:text-zinc-100 font-title text-sm sm:text-base truncate group-hover:text-orange dark:group-hover:text-orange transition-colors">
             {offering?.name || "Wedding Service"}
           </h3>
           {offering?.category && (
@@ -101,7 +101,7 @@ const ChatItem = ({
         </div>
 
         {/* Row 2: Vendor & Location */}
-        <div className="flex items-center font-body gap-1.5 text-xs text-gray-500 mt-1">
+        <div className="flex items-center font-body gap-1.5 text-xs text-gray-500 dark:text-zinc-400 mt-1">
           <IoLocationSharp className="text-orange shrink-0" size={13} />
           <span className="truncate">
             {vendor?.busname || "Vendor"}
@@ -112,7 +112,7 @@ const ChatItem = ({
         {/* Row 3: Last message preview */}
         <p
           className={`text-xs mt-1 truncate font-body ${
-            isPaymentNote ? "text-amber-800 font-semibold" : "text-gray-600"
+            isPaymentNote ? "text-amber-800 dark:text-amber-400 font-semibold" : "text-gray-600 dark:text-zinc-400"
           }`}
         >
           {previewText}
@@ -122,13 +122,13 @@ const ChatItem = ({
       {/* Right Meta Column: Timestamp & Action Arrow neatly aligned together */}
       <div className="flex items-center gap-2.5 sm:gap-3.5 shrink-0 ml-2 sm:ml-4 self-center">
         {lastMessage && (
-          <span className="text-[11px] sm:text-xs text-gray-400 font-body whitespace-nowrap">
+          <span className="text-[11px] sm:text-xs text-gray-400 dark:text-zinc-500 font-body whitespace-nowrap">
             {formatDistanceToNow(new Date(lastMessage.timestamp), {
               addSuffix: true,
             })}
           </span>
         )}
-        <div className="w-8 h-8 rounded-xl bg-orange/5 text-orange/60 group-hover:bg-orange group-hover:text-white flex items-center justify-center transition-all shrink-0">
+        <div className="w-8 h-8 rounded-xl bg-orange/5 dark:bg-darkElevated text-orange/60 group-hover:bg-orange group-hover:text-white flex items-center justify-center transition-all shrink-0">
           <FiChevronRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
         </div>
       </div>
@@ -162,10 +162,10 @@ const VisitorChatList = ({ visitorId }: VisitorChatListProps) => {
           <FiMessageSquare size={28} />
         </div>
         <div className="space-y-1">
-          <h3 className="text-base sm:text-lg font-bold font-title text-gray-800">
+          <h3 className="text-base sm:text-lg font-bold font-title text-gray-800 dark:text-zinc-200">
             No Conversations Yet
           </h3>
-          <p className="text-xs sm:text-sm text-gray-500 max-w-sm mx-auto">
+          <p className="text-xs sm:text-sm text-gray-500 dark:text-zinc-400 max-w-sm mx-auto">
             When you contact wedding vendors or book their packages, your direct conversations and quotes will appear here.
           </p>
         </div>
@@ -185,15 +185,15 @@ const VisitorChatList = ({ visitorId }: VisitorChatListProps) => {
   return (
     <div>
       {/* Search Header */}
-      <div className="p-4 sm:p-5 border-b-2 border-orange/10 bg-white">
+      <div className="p-4 sm:p-5 border-b-2 border-orange/10 dark:border-zinc-800 bg-white dark:bg-darkSurface">
         <div className="relative w-full">
-          <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+          <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-zinc-500" size={16} />
           <input
             type="text"
             placeholder="Search conversations by vendor or service..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-11 pr-12 py-2.5 sm:py-3 text-xs sm:text-sm bg-orange/[0.02] border-2 border-orange/15 focus:border-orange rounded-2xl focus:outline-none focus:bg-white text-gray-800 placeholder-gray-400 transition-all font-body"
+            className="w-full pl-11 pr-12 py-2.5 sm:py-3 text-xs sm:text-sm bg-orange/[0.02] dark:bg-darkElevated border-2 border-orange/15 dark:border-zinc-700 focus:border-orange rounded-2xl focus:outline-none focus:bg-white dark:focus:bg-darkElevated text-gray-800 dark:text-zinc-100 placeholder-gray-400 dark:placeholder-zinc-500 transition-all font-body"
           />
           {searchQuery && (
             <button
@@ -207,7 +207,7 @@ const VisitorChatList = ({ visitorId }: VisitorChatListProps) => {
       </div>
 
       {/* Conversations List */}
-      <div className="divide-y divide-orange/10">
+      <div className="divide-y divide-orange/10 dark:divide-zinc-800">
         {chats.map((chat: Chat) => (
           <ChatItem
             key={chat.chatId}

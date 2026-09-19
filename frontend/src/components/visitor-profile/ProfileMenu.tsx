@@ -28,17 +28,17 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
   ];
 
   return (
-    <div className="bg-white shadow-sm border border-orange/20 rounded-2xl p-6">
+    <div className="bg-white dark:bg-darkSurface shadow-sm border border-orange/20 rounded-2xl p-6">
       {/* Header */}
       <div className="flex items-center gap-2.5 mb-4 pb-4 border-b border-orange/15">
         <div className="w-8 h-8 rounded-lg bg-orange/10 flex items-center justify-center text-orange shrink-0">
           <FiSettings className="text-lg" />
         </div>
         <div>
-          <h2 className="font-title font-bold text-xl text-gray-900 leading-tight">
+          <h2 className="font-title font-bold text-xl text-gray-900 dark:text-zinc-100 leading-tight">
             Settings
           </h2>
-          <p className="text-xs text-gray-400 font-body">Preferences & account</p>
+          <p className="text-xs text-gray-400 dark:text-zinc-500 font-body">Preferences & account</p>
         </div>
       </div>
 
@@ -56,12 +56,12 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
               className={`flex items-center gap-3.5 px-4 py-3 rounded-xl text-left transition-all duration-150 ${
                 isActive
                   ? "bg-orange text-white shadow-md shadow-orange/20 font-medium"
-                  : "text-gray-600 hover:bg-orange/5 hover:text-gray-900"
+                  : "text-gray-600 dark:text-zinc-300 hover:bg-orange/5 dark:hover:bg-zinc-800/60 hover:text-gray-900 dark:hover:text-orange"
               }`}
             >
               <Icon
                 className={`text-lg flex-shrink-0 ${
-                  isActive ? "text-white" : "text-gray-400"
+                  isActive ? "text-white" : "text-gray-400 dark:text-zinc-400"
                 }`}
               />
               <div className="flex flex-col">
@@ -70,7 +70,7 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
                 </span>
                 <span
                   className={`text-[11px] ${
-                    isActive ? "text-white/80" : "text-gray-400"
+                    isActive ? "text-white/80" : "text-gray-400 dark:text-zinc-500"
                   }`}
                 >
                   {item.description}

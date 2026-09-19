@@ -53,23 +53,23 @@ const ServicesMenu: React.FC<ServicesMenuProps> = ({
   ];
 
   return (
-    <div className="bg-white shadow-sm border border-gray-100 rounded-2xl p-6">
+    <div className="bg-white dark:bg-darkSurface shadow-sm border border-gray-100 dark:border-zinc-800 rounded-2xl p-6">
       <div className="mb-4">
         <Link
           href={`/services/${id}`}
-          className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 hover:text-orange transition-colors mb-3 group"
+          className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 dark:text-zinc-400 hover:text-orange transition-colors mb-3 group"
         >
           <FiArrowLeft className="text-sm group-hover:-translate-x-0.5 transition-transform" />
           <span>Back to Service</span>
         </Link>
 
-        <div className="flex items-center gap-2 pb-4 border-b border-gray-100">
+        <div className="flex items-center gap-2 pb-4 border-b border-gray-100 dark:border-zinc-800">
           <div className="w-8 h-8 rounded-lg bg-orange/10 flex items-center justify-center text-orange">
             <FiLayers className="text-lg" />
           </div>
           <div>
-            <h2 className="font-title font-bold text-xl text-gray-900">Edit Service</h2>
-            <p className="text-xs text-gray-400">Manage listing details</p>
+            <h2 className="font-title font-bold text-xl text-gray-900 dark:text-zinc-100">Edit Service</h2>
+            <p className="text-xs text-gray-400 dark:text-zinc-500">Manage listing details</p>
           </div>
         </div>
       </div>
@@ -85,19 +85,19 @@ const ServicesMenu: React.FC<ServicesMenuProps> = ({
               className={`flex items-center gap-3.5 px-4 py-3 rounded-xl text-left transition-all duration-150 ${
                 isActive
                   ? "bg-orange text-white shadow-md shadow-orange/20 font-medium"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                  : "text-gray-600 dark:text-zinc-400 hover:bg-gray-50 dark:hover:bg-darkElevated hover:text-gray-900 dark:hover:text-zinc-100"
               }`}
             >
               <Icon
                 className={`text-lg flex-shrink-0 ${
-                  isActive ? "text-white" : "text-gray-400"
+                  isActive ? "text-white" : "text-gray-400 dark:text-zinc-500"
                 }`}
               />
               <div className="flex flex-col">
                 <span className="text-sm font-medium">{item.label}</span>
                 <span
                   className={`text-[11px] ${
-                    isActive ? "text-white/80" : "text-gray-400"
+                    isActive ? "text-white/80" : "text-gray-400 dark:text-zinc-500"
                   }`}
                 >
                   {item.description}

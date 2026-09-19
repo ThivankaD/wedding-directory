@@ -14,18 +14,18 @@ const CategoryInput: React.FC<CategoryProps> = ({ onCategoryChange, value }) => 
   };
 
   return (
-    <Select value={value || undefined} onValueChange={handleCategorySelect}>
+    <Select key={value || "empty"} value={value || undefined} onValueChange={handleCategorySelect}>
       <SelectTrigger
         id="bcategory"
         variant="borderless"
-        className="h-7 w-full bg-transparent px-2 py-0 text-left font-body text-xs sm:text-sm font-medium text-gray-800 focus:outline-none rounded-none shadow-none hover:bg-transparent border-none"
+        className="h-7 w-full bg-transparent px-2 py-0 text-left font-body text-xs sm:text-sm font-medium text-gray-800 dark:text-zinc-100 focus:outline-none focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-none dark:focus:ring-0 dark:focus:ring-offset-0 dark:focus-visible:ring-0 dark:focus-visible:ring-offset-0 dark:focus-visible:outline-none rounded-none shadow-none hover:bg-transparent border-none outline-none ring-0"
       >
         <SelectValue placeholder="Select Service" />
       </SelectTrigger>
-      <SelectContent className="w-full bg-white rounded-xl shadow-xl border border-orange/15 max-h-60 overflow-y-auto z-50">
+      <SelectContent className="w-full bg-white dark:bg-darkElevated rounded-xl shadow-xl border border-orange/15 dark:border-zinc-700 max-h-60 overflow-y-auto z-50">
         <SelectItem
           value="ALL"
-          className="p-2 text-gray-500 italic font-body hover:bg-orange/10 hover:text-orange rounded-lg cursor-pointer transition duration-150 ease-in-out"
+          className="p-2 text-gray-500 dark:text-zinc-400 italic font-body hover:bg-orange/10 dark:hover:bg-orange/20 hover:text-orange rounded-lg cursor-pointer transition duration-150 ease-in-out"
         >
           All Services
         </SelectItem>
@@ -33,7 +33,7 @@ const CategoryInput: React.FC<CategoryProps> = ({ onCategoryChange, value }) => 
           <SelectItem
             key={index}
             value={category}
-            className="p-2 text-gray-800 font-body hover:bg-orange/10 hover:text-orange rounded-lg cursor-pointer transition duration-150 ease-in-out"
+            className="p-2 text-gray-800 dark:text-zinc-200 font-body hover:bg-orange/10 dark:hover:bg-orange/20 hover:text-orange rounded-lg cursor-pointer transition duration-150 ease-in-out"
           >
             {category}
           </SelectItem>

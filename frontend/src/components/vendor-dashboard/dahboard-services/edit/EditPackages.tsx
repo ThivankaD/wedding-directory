@@ -289,8 +289,8 @@ const EditPackages: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 flex items-center justify-center min-h-[300px]">
-        <div className="flex items-center gap-3 text-gray-500">
+      <div className="bg-white dark:bg-darkSurface rounded-2xl p-8 shadow-sm border border-gray-100 dark:border-zinc-800 flex items-center justify-center min-h-[300px]">
+        <div className="flex items-center gap-3 text-gray-500 dark:text-zinc-400">
           <div className="w-5 h-5 border-2 border-orange border-t-transparent rounded-full animate-spin"></div>
           <span>Loading packages...</span>
         </div>
@@ -300,7 +300,7 @@ const EditPackages: React.FC = () => {
 
   if (error) {
     return (
-      <div className="bg-white rounded-2xl p-8 shadow-sm border border-red-100 text-red-600">
+      <div className="bg-white dark:bg-darkSurface rounded-2xl p-8 shadow-sm border border-red-100 dark:border-red-900/30 text-red-600">
         <p>Error loading packages: {error.message}</p>
       </div>
     );
@@ -310,18 +310,18 @@ const EditPackages: React.FC = () => {
     <Fragment>
       <div className="space-y-6">
         {/* Header section matching Settings page theme */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
+        <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 p-6 sm:p-8">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-lg bg-orange/10 flex items-center justify-center text-orange">
                   <FiPackage className="text-lg" />
                 </div>
-                <h2 className="font-title text-2xl font-bold text-gray-900">
+                <h2 className="font-title text-2xl font-bold text-gray-900 dark:text-zinc-100">
                   Service Packages
                 </h2>
               </div>
-              <p className="text-gray-500 font-body text-sm mt-1">
+              <p className="text-gray-500 dark:text-zinc-400 font-body text-sm mt-1">
                 Configure package tiers, pricing in LKR, and booking requirements for couples.
               </p>
             </div>
@@ -338,14 +338,14 @@ const EditPackages: React.FC = () => {
 
         {/* Empty state */}
         {packages.length === 0 && (
-          <div className="bg-white rounded-2xl p-12 text-center shadow-sm border border-gray-100">
+          <div className="bg-white dark:bg-darkSurface rounded-2xl p-12 text-center shadow-sm border border-gray-100 dark:border-zinc-800">
             <div className="w-14 h-14 mx-auto rounded-2xl bg-orange/10 flex items-center justify-center text-orange mb-4">
               <FiPackage className="text-2xl" />
             </div>
-            <h3 className="text-lg font-bold font-title text-gray-900 mb-1">
+            <h3 className="text-lg font-bold font-title text-gray-900 dark:text-zinc-100 mb-1">
               No packages added yet
             </h3>
-            <p className="text-sm text-gray-500 max-w-md mx-auto mb-5">
+            <p className="text-sm text-gray-500 dark:text-zinc-400 max-w-md mx-auto mb-5">
               Create customizable service packages with clear LKR pricing and feature inclusions for prospective couples.
             </p>
             <button
@@ -366,25 +366,25 @@ const EditPackages: React.FC = () => {
           return (
             <div
               key={index}
-              className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 transition-all hover:border-gray-200 font-body"
+              className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 p-6 sm:p-8 transition-all hover:border-gray-200 dark:hover:border-zinc-700 font-body"
             >
               {/* Package Card Top Bar */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-5 mb-6 border-b border-gray-100">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-5 mb-6 border-b border-gray-100 dark:border-zinc-800">
                 <div className="flex items-center gap-2.5 flex-wrap">
                   <span className="text-xs font-semibold px-2.5 py-1 rounded-md bg-orange/10 text-orange uppercase tracking-wider">
                     Package #{index + 1}
                   </span>
-                  <h3 className="font-title text-xl font-bold text-gray-900">
+                  <h3 className="font-title text-xl font-bold text-gray-900 dark:text-zinc-100">
                     {pkg.name || "Untitled Package"}
                   </h3>
                 </div>
 
                 <div className="flex items-center gap-3">
                   {/* Visibility toggle pill */}
-                  <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-gray-50 border border-gray-200">
+                  <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-gray-50 dark:bg-darkElevated border border-gray-200 dark:border-zinc-700">
                     <span
                       className={`text-xs font-semibold ${
-                        pkg.visible ? "text-emerald-600" : "text-gray-400"
+                        pkg.visible ? "text-emerald-600" : "text-gray-400 dark:text-zinc-500"
                       }`}
                     >
                       {pkg.visible ? "Visible" : "Hidden"}
@@ -402,7 +402,7 @@ const EditPackages: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => handleDeletePackage(pkg.id!)}
-                      className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-colors border border-gray-200 hover:border-red-200"
+                      className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors border border-gray-200 dark:border-zinc-700 hover:border-red-200 dark:hover:border-red-900/40"
                       title="Delete Package"
                     >
                       <FiTrash2 className="text-base" />
@@ -413,11 +413,11 @@ const EditPackages: React.FC = () => {
 
               {/* Package Image Section */}
               <div className="mb-6">
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Package Image <span className="text-xs font-normal text-gray-400">(Optional)</span>
+                <label className="block text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-2">
+                  Package Image <span className="text-xs font-normal text-gray-400 dark:text-zinc-500">(Optional)</span>
                 </label>
                 {pkg.image ? (
-                  <div className="relative w-full sm:w-64 h-40 rounded-xl overflow-hidden border border-gray-200 group bg-gray-50">
+                  <div className="relative w-full sm:w-64 h-40 rounded-xl overflow-hidden border border-gray-200 dark:border-zinc-700 group bg-gray-50 dark:bg-darkElevated">
                     <Image
                       src={pkg.image}
                       alt={pkg.name}
@@ -446,7 +446,7 @@ const EditPackages: React.FC = () => {
                     </label>
                   </div>
                 ) : (
-                  <div className="w-full sm:w-64 h-32 border-2 border-dashed border-gray-300 hover:border-orange rounded-xl relative flex flex-col items-center justify-center bg-gray-50 hover:bg-gray-100 cursor-pointer transition-colors">
+                  <div className="w-full sm:w-64 h-32 border-2 border-dashed border-gray-300 dark:border-zinc-700 hover:border-orange rounded-xl relative flex flex-col items-center justify-center bg-gray-50 dark:bg-darkElevated hover:bg-gray-100 dark:hover:bg-darkElevated/70 cursor-pointer transition-colors">
                     <input
                       type="file"
                       accept="image/jpeg,image/png,image/webp"
@@ -457,17 +457,17 @@ const EditPackages: React.FC = () => {
                     {uploadingPackageIndex === index ? (
                       <div className="flex flex-col items-center justify-center">
                         <span className="animate-spin text-2xl mb-1">⌛</span>
-                        <span className="text-xs text-gray-500 font-medium">
+                        <span className="text-xs text-gray-500 dark:text-zinc-400 font-medium">
                           Uploading image...
                         </span>
                       </div>
                     ) : (
                       <div className="flex flex-col items-center text-center p-3 pointer-events-none">
                         <CiCirclePlus size={28} className="text-orange mb-1" />
-                        <span className="text-xs font-medium text-gray-700">
+                        <span className="text-xs font-medium text-gray-700 dark:text-zinc-300">
                           Add Package Image
                         </span>
-                        <span className="text-[10px] text-gray-400 mt-0.5">
+                        <span className="text-[10px] text-gray-400 dark:text-zinc-500 mt-0.5">
                           JPG, PNG or WEBP (Max 5MB)
                         </span>
                       </div>
@@ -480,7 +480,7 @@ const EditPackages: React.FC = () => {
               <div className="space-y-5">
                 {/* Package Name */}
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-2">
                     Package Name <span className="text-orange">*</span>
                   </label>
                   <input
@@ -490,14 +490,14 @@ const EditPackages: React.FC = () => {
                       handlePackageChange(index, "name", e.target.value)
                     }
                     placeholder="e.g. Premium Buffet & Catering / Full Day Coverage"
-                    className="w-full h-11 px-3.5 text-sm rounded-xl border border-gray-300 focus:border-orange focus:ring-2 focus:ring-orange/20 outline-none transition-all text-gray-800"
+                    className="w-full h-11 px-3.5 text-sm rounded-xl border border-gray-300 dark:border-zinc-700 focus:border-orange focus:ring-2 focus:ring-orange/20 outline-none transition-all text-gray-800 dark:text-zinc-100 dark:bg-darkElevated"
                     required
                   />
                 </div>
 
                 {/* Description */}
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-2">
                     Description
                   </label>
                   <textarea
@@ -507,18 +507,18 @@ const EditPackages: React.FC = () => {
                       handlePackageChange(index, "description", e.target.value)
                     }
                     placeholder="Provide a helpful summary of what this package offers to couples..."
-                    className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-gray-300 focus:border-orange focus:ring-2 focus:ring-orange/20 outline-none transition-all text-gray-800 resize-y placeholder:text-gray-400"
+                    className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-gray-300 dark:border-zinc-700 focus:border-orange focus:ring-2 focus:ring-orange/20 outline-none transition-all text-gray-800 dark:text-zinc-100 dark:bg-darkElevated resize-y placeholder:text-gray-400 dark:placeholder:text-zinc-600"
                   />
                 </div>
 
                 {/* Price with special LKR Badge */}
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-2">
                     Package Price <span className="text-orange">*</span>
                   </label>
                   <div className="relative flex items-center">
                     {/* Special LKR badge */}
-                    <div className="h-11 px-4 rounded-l-xl bg-orange/10 border border-r-0 border-gray-300 flex items-center justify-center text-orange font-bold text-sm tracking-wider select-none">
+                    <div className="h-11 px-4 rounded-l-xl bg-orange/10 border border-r-0 border-gray-300 dark:border-zinc-700 flex items-center justify-center text-orange font-bold text-sm tracking-wider select-none">
                       LKR
                     </div>
                     <input
@@ -530,7 +530,7 @@ const EditPackages: React.FC = () => {
                         handlePackageChange(index, "pricing", e.target.value)
                       }
                       placeholder="0.00"
-                      className="w-full h-11 px-3.5 text-base font-semibold text-gray-900 rounded-r-xl border border-gray-300 focus:border-orange focus:ring-2 focus:ring-orange/20 outline-none transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none placeholder:text-gray-400 placeholder:font-normal"
+                      className="w-full h-11 px-3.5 text-base font-semibold text-gray-900 dark:text-zinc-100 rounded-r-xl border border-gray-300 dark:border-zinc-700 focus:border-orange focus:ring-2 focus:ring-orange/20 outline-none transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none placeholder:text-gray-400 placeholder:font-normal dark:bg-darkElevated"
                       required
                     />
                   </div>
@@ -541,9 +541,9 @@ const EditPackages: React.FC = () => {
                       <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-orange/10 text-orange font-bold font-title text-sm">
                         LKR {Number(pkg.pricing).toLocaleString()}
                       </span>
-                      <span className="text-gray-500 font-medium">
+                      <span className="text-gray-500 dark:text-zinc-400 font-medium">
                         (Online advance 20%:{" "}
-                        <span className="font-semibold text-gray-800">
+                        <span className="font-semibold text-gray-800 dark:text-zinc-200">
                           LKR {(Number(pkg.pricing) * 0.2).toLocaleString()}
                         </span>
                         )
@@ -554,17 +554,17 @@ const EditPackages: React.FC = () => {
 
                 {/* Requires Date Reservation card */}
                 <div className={`flex items-center justify-between p-4 rounded-xl border transition-all ${
-                  pkg.requiresApproval ? "bg-gray-100/60 border-gray-200 opacity-60" : "bg-gray-50/80 border-gray-200"
+                  pkg.requiresApproval ? "bg-gray-100/60 dark:bg-darkElevated/50 border-gray-200 dark:border-zinc-700 opacity-60" : "bg-gray-50/80 dark:bg-darkElevated border-gray-200 dark:border-zinc-700"
                 }`}>
                   <div className="flex items-center gap-3">
                     <div className="w-9 h-9 rounded-lg bg-orange/10 flex items-center justify-center text-orange flex-shrink-0">
                       <FiCalendar className="text-lg" />
                     </div>
                     <div>
-                      <div className="text-sm font-semibold text-gray-800">
+                      <div className="text-sm font-semibold text-gray-800 dark:text-zinc-200">
                         Requires Date Reservation
                       </div>
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs text-gray-500 dark:text-zinc-400">
                         {pkg.requiresApproval
                           ? "Disabled because Vendor Approval is enabled for this package."
                           : "Couples must select an available date on your calendar to book this package."}
@@ -582,17 +582,17 @@ const EditPackages: React.FC = () => {
 
                 {/* Requires Vendor Approval card */}
                 <div className={`flex items-center justify-between p-4 rounded-xl border transition-all ${
-                  pkg.requiresReservation ? "bg-gray-100/60 border-gray-200 opacity-60" : "bg-gray-50/80 border-gray-200"
+                  pkg.requiresReservation ? "bg-gray-100/60 dark:bg-darkElevated/50 border-gray-200 dark:border-zinc-700 opacity-60" : "bg-gray-50/80 dark:bg-darkElevated border-gray-200 dark:border-zinc-700"
                 }`}>
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 flex-shrink-0">
+                    <div className="w-9 h-9 rounded-lg bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-600 dark:text-blue-400 flex-shrink-0">
                       <FiShield className="text-lg" />
                     </div>
                     <div>
-                      <div className="text-sm font-semibold text-gray-800">
+                      <div className="text-sm font-semibold text-gray-800 dark:text-zinc-200">
                         Requires Prior Vendor Approval
                       </div>
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs text-gray-500 dark:text-zinc-400">
                         {pkg.requiresReservation
                           ? "Disabled because Date Reservation is enabled for this package."
                           : "Couples select a date & submit a request for your approval before they can pay."}
@@ -611,9 +611,9 @@ const EditPackages: React.FC = () => {
                 {/* Features Section */}
                 <div className="pt-2">
                   <div className="flex items-center justify-between mb-2.5">
-                    <label className="block text-sm font-semibold text-gray-700">
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-zinc-300">
                       Included Features & Inclusions{" "}
-                      <span className="text-xs font-normal text-gray-400">
+                      <span className="text-xs font-normal text-gray-400 dark:text-zinc-500">
                         ({pkg.features.filter((f) => f.trim()).length})
                       </span>
                     </label>
@@ -622,7 +622,7 @@ const EditPackages: React.FC = () => {
                   <div className="space-y-2.5">
                     {pkg.features.map((feature, fIndex) => (
                       <div key={fIndex} className="flex items-center gap-2">
-                        <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-xs flex-shrink-0 font-bold">
+                        <div className="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xs flex-shrink-0 font-bold">
                           <FiCheck className="text-sm" />
                         </div>
                         <input
@@ -632,13 +632,13 @@ const EditPackages: React.FC = () => {
                             handleFeatureChange(index, fIndex, e.target.value)
                           }
                           placeholder={`Inclusion detail (e.g. 5 hours coverage, 2 photographers)`}
-                          className="w-full h-10 px-3.5 text-sm rounded-xl border border-gray-300 focus:border-orange focus:ring-2 focus:ring-orange/20 outline-none transition-all text-gray-800"
+                          className="w-full h-10 px-3.5 text-sm rounded-xl border border-gray-300 dark:border-zinc-700 focus:border-orange focus:ring-2 focus:ring-orange/20 outline-none transition-all text-gray-800 dark:text-zinc-100 dark:bg-darkElevated"
                         />
                         {pkg.features.length > 1 && (
                           <button
                             type="button"
                             onClick={() => removeFeature(index, fIndex)}
-                            className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-colors flex-shrink-0"
+                            className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors flex-shrink-0"
                             title="Remove feature"
                           >
                             <FiX className="text-base" />
@@ -660,7 +660,7 @@ const EditPackages: React.FC = () => {
               </div>
 
               {/* Card Footer Actions */}
-              <div className="flex items-center justify-end gap-3 pt-6 mt-6 border-t border-gray-100">
+              <div className="flex items-center justify-end gap-3 pt-6 mt-6 border-t border-gray-100 dark:border-zinc-800">
                 <button
                   type="button"
                   onClick={() => handleSavePackage(pkg, index)}

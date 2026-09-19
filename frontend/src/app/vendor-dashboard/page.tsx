@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, Suspense } from "react";
-import Header from "@/components/shared/Headers/Header";
+import VendorHeader from "@/components/shared/Headers/VendorHeader";
 import VendorBanner from "@/components/vendor-dashboard/VendorBanner";
 import OfferingCard from "@/components/vendor-search/OfferingCard";
 import Link from "next/link";
@@ -75,12 +75,12 @@ const VendorDashBoardContent: React.FC = () => {
 
   if (vendorLoading || servicesLoading)
     return (
-      <div className="min-h-screen bg-lightYellow flex flex-col">
-        <Header />
+      <div className="min-h-screen bg-lightYellow dark:bg-darkBg flex flex-col">
+        <VendorHeader />
         <div className="flex-grow flex items-center justify-center p-8">
           <div className="flex flex-col items-center gap-3">
             <LoaderJelly />
-            <p className="text-sm font-medium text-gray-500">Loading your vendor dashboard...</p>
+            <p className="text-sm font-medium text-gray-500 dark:text-zinc-400">Loading your vendor dashboard...</p>
           </div>
         </div>
         <Footer />
@@ -89,12 +89,12 @@ const VendorDashBoardContent: React.FC = () => {
 
   if (vendorError || servicesError)
     return (
-      <div className="min-h-screen bg-lightYellow flex flex-col">
-        <Header />
+      <div className="min-h-screen bg-lightYellow dark:bg-darkBg flex flex-col">
+        <VendorHeader />
         <div className="flex-grow flex items-center justify-center p-8">
-          <div className="bg-white rounded-2xl p-8 border border-red-100 text-center max-w-md shadow-sm">
+          <div className="bg-white dark:bg-darkSurface rounded-2xl p-8 border border-red-100 dark:border-red-900/40 text-center max-w-md shadow-sm">
             <p className="text-red-500 font-medium mb-2">Error loading vendor dashboard</p>
-            <p className="text-gray-500 text-xs">{vendorError?.message || servicesError?.message}</p>
+            <p className="text-gray-500 dark:text-zinc-400 text-xs">{vendorError?.message || servicesError?.message}</p>
           </div>
         </div>
         <Footer />
@@ -104,15 +104,15 @@ const VendorDashBoardContent: React.FC = () => {
   const vendorInfo = vendorData?.findVendorById;
 
   return (
-    <div className="min-h-screen bg-lightYellow flex flex-col">
-      <Header />
+    <div className="min-h-screen bg-lightYellow dark:bg-darkBg flex flex-col">
+      <VendorHeader />
 
       <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
         {/* Top Header Banner */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div>
-            <h1 className="font-title text-3xl font-bold text-gray-900">Vendor Dashboard</h1>
-            <p className="text-gray-500 font-body text-sm mt-1">
+            <h1 className="font-title text-3xl font-bold text-gray-900 dark:text-zinc-100">Vendor Dashboard</h1>
+            <p className="text-gray-500 dark:text-zinc-400 font-body text-sm mt-1">
               Monitor customer bookings, manage your storefront profile, and track your active services.
             </p>
           </div>
@@ -131,16 +131,16 @@ const VendorDashBoardContent: React.FC = () => {
             <VendorBanner vendor={vendorInfo} />
           </div>
           <div className="lg:col-span-8 flex flex-col gap-4">
-            <div className="flex items-center gap-2 bg-white p-1.5 rounded-2xl shadow-sm border border-gray-100 w-fit self-start">
+            <div className="flex items-center gap-2 bg-white dark:bg-darkSurface p-1.5 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 w-fit self-start">
               <button
                 onClick={() => {
                   setDashboardTab("calendar");
                   window.history.replaceState(null, "", "/vendor-dashboard?tab=calendar");
                 }}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   dashboardTab === "calendar"
                     ? "bg-orange text-white shadow-sm"
-                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                    : "text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100 hover:bg-gray-50 dark:hover:bg-darkElevated"
                 }`}
               >
                 <FiCalendar size={14} />
@@ -151,10 +151,10 @@ const VendorDashBoardContent: React.FC = () => {
                   setDashboardTab("approvals");
                   window.history.replaceState(null, "", "/vendor-dashboard?tab=approvals");
                 }}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   dashboardTab === "approvals"
                     ? "bg-orange text-white shadow-sm"
-                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                    : "text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100 hover:bg-gray-50 dark:hover:bg-darkElevated"
                 }`}
               >
                 <FiShield size={14} />
@@ -171,9 +171,9 @@ const VendorDashBoardContent: React.FC = () => {
         </div>
 
         {/* About Section Card */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-7 mb-8">
-          <div className="flex items-center justify-between mb-3 pb-3 border-b border-gray-100">
-            <h2 className="font-title text-xl sm:text-2xl font-bold text-gray-900">
+        <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 p-6 sm:p-7 mb-8">
+          <div className="flex items-center justify-between mb-3 pb-3 border-b border-gray-100 dark:border-zinc-800">
+            <h2 className="font-title text-xl sm:text-2xl font-bold text-gray-900 dark:text-zinc-100">
               About {vendorInfo?.busname || "Your Business"}
             </h2>
             <Link
@@ -184,7 +184,7 @@ const VendorDashBoardContent: React.FC = () => {
               <span>Edit Bio</span>
             </Link>
           </div>
-          <p className="font-body text-gray-600 text-sm sm:text-base leading-relaxed whitespace-pre-line">
+          <p className="font-body text-gray-600 dark:text-zinc-400 text-sm sm:text-base leading-relaxed whitespace-pre-line">
             {vendorInfo?.about ||
               "No business description provided yet. Update your storefront settings to let couples know more about your story, expertise, and service options."}
           </p>
@@ -194,7 +194,7 @@ const VendorDashBoardContent: React.FC = () => {
         <div className="mb-10">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <h2 className="font-title text-xl sm:text-2xl font-bold text-gray-900">
+              <h2 className="font-title text-xl sm:text-2xl font-bold text-gray-900 dark:text-zinc-100">
                 Services by {vendorInfo?.busname || "You"}
               </h2>
               <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-orange/10 text-orange">
@@ -219,14 +219,14 @@ const VendorDashBoardContent: React.FC = () => {
               ))}
             </div>
           ) : (
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 sm:p-12 text-center flex flex-col items-center justify-center">
+            <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 p-8 sm:p-12 text-center flex flex-col items-center justify-center">
               <div className="w-16 h-16 rounded-2xl bg-orange/10 text-orange flex items-center justify-center mb-4">
                 <MdAdd size={32} />
               </div>
-              <h3 className="font-title text-xl font-bold text-gray-900 mb-1">
+              <h3 className="font-title text-xl font-bold text-gray-900 dark:text-zinc-100 mb-1">
                 No Services Listed Yet
               </h3>
-              <p className="text-gray-500 text-sm max-w-md mb-6">
+              <p className="text-gray-500 dark:text-zinc-400 text-sm max-w-md mb-6">
                 Create your first service listing to showcase your wedding packages and start receiving bookings from couples.
               </p>
               <Link
@@ -250,7 +250,7 @@ const VendorDashboardPage: React.FC = () => {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-lightYellow flex flex-col items-center justify-center">
+        <div className="min-h-screen bg-lightYellow dark:bg-darkBg flex flex-col items-center justify-center">
           <LoaderJelly />
         </div>
       }

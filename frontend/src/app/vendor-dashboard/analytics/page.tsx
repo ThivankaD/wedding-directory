@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import Header from "@/components/shared/Headers/Header";
+import VendorHeader from "@/components/shared/Headers/VendorHeader";
 import Footer from "@/components/shared/Footer";
 import { useVendorAuth } from "@/contexts/VendorAuthContext";
 import { useQuery } from "@apollo/client";
@@ -57,8 +57,8 @@ const VendorAnalytics: React.FC = () => {
 
   if (vendorLoading || analyticsLoading || paymentsLoading || chatsLoading) {
     return (
-      <div className="min-h-screen bg-lightYellow">
-        <Header />
+      <div className="min-h-screen bg-lightYellow dark:bg-darkBg transition-colors duration-200">
+        <VendorHeader />
         <div className="container mx-auto px-4 py-8">
           <LoaderJelly />
         </div>
@@ -69,10 +69,10 @@ const VendorAnalytics: React.FC = () => {
 
   if (vendorError || analyticsError || paymentsError || chatsError) {
     return (
-      <div className="min-h-screen bg-lightYellow">
-        <Header />
+      <div className="min-h-screen bg-lightYellow dark:bg-darkBg transition-colors duration-200">
+        <VendorHeader />
         <div className="container mx-auto px-4 py-8">
-          <p className="text-red-600">
+          <p className="text-red-600 dark:text-red-400">
             Error loading data: {vendorError?.message || analyticsError?.message || paymentsError?.message || chatsError?.message}
           </p>
         </div>
@@ -134,82 +134,80 @@ const VendorAnalytics: React.FC = () => {
   const totalInquiries = chatsData?.getVendorChats?.length ?? 0;
 
   return (
-    <div className="min-h-screen bg-lightYellow">
-      <Header />
+    <div className="min-h-screen bg-lightYellow dark:bg-darkBg transition-colors duration-200 flex flex-col">
+      <VendorHeader />
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+      <div className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
         {/* Page Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-text mb-2">{vendorInfo?.busname || "Analytics Dashboard"}</h1>
-          <p className="text-gray-600">Track your business performance and insights</p>
+          <h1 className="text-3xl sm:text-4xl font-bold font-title text-gray-900 dark:text-zinc-100 mb-2">{vendorInfo?.busname || "Analytics Dashboard"}</h1>
+          <p className="text-gray-600 dark:text-zinc-400 font-body text-sm">Track your business performance and insights</p>
         </div>
 
         {/* Key Metrics Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {/* Total Views Card - REAL DATA */}
-          <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+          <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 p-6 hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-700">Total  Views</h3>
+              <h3 className="text-sm font-semibold text-gray-700 dark:text-zinc-300">Total Views</h3>
             </div>
-            <p className="text-3xl font-bold text-text">{analytics.totalUniqueViews}</p>
-            <p className="text-sm text-gray-500 mt-2">
+            <p className="text-3xl font-bold font-title text-gray-900 dark:text-zinc-100">{analytics.totalUniqueViews}</p>
+            <p className="text-xs text-gray-500 dark:text-zinc-400 mt-2">
               Unique people who viewed your packages
             </p>
           </div>
 
           {/* Total Inquiries Card */}
-          <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+          <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 p-6 hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-700">Total Inquiries</h3>
+              <h3 className="text-sm font-semibold text-gray-700 dark:text-zinc-300">Total Inquiries</h3>
             </div>
-            <p className="text-3xl font-bold text-text">{totalInquiries}</p>
-            <p className="text-sm text-gray-500 mt-2">
+            <p className="text-3xl font-bold font-title text-gray-900 dark:text-zinc-100">{totalInquiries}</p>
+            <p className="text-xs text-gray-500 dark:text-zinc-400 mt-2">
               Active chat conversation{totalInquiries !== 1 ? "s" : ""} with couples
             </p>
           </div>
 
           {/* Total Bookings Card */}
-          <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+          <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 p-6 hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-700">Total Bookings</h3>
+              <h3 className="text-sm font-semibold text-gray-700 dark:text-zinc-300">Total Bookings</h3>
             </div>
-            <p className="text-3xl font-bold text-text">{totalBookings}</p>
-            <p className="text-sm text-gray-500 mt-2">
+            <p className="text-3xl font-bold font-title text-gray-900 dark:text-zinc-100">{totalBookings}</p>
+            <p className="text-xs text-gray-500 dark:text-zinc-400 mt-2">
               Completed bookings from {packagesWithBookings} package{packagesWithBookings !== 1 ? 's' : ''}
             </p>
           </div>
 
           {/* Revenue Card */}
-          <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+          <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 p-6 hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-700">Total Revenue</h3>
+              <h3 className="text-sm font-semibold text-gray-700 dark:text-zinc-300">Total Revenue</h3>
             </div>
-            <p className="text-3xl font-bold text-text">LKR {totalRevenue.toLocaleString()}</p>
-            <p className="text-sm text-gray-500 mt-2">
+            <p className="text-3xl font-bold font-title text-gray-900 dark:text-zinc-100">LKR {totalRevenue.toLocaleString()}</p>
+            <p className="text-xs text-gray-500 dark:text-zinc-400 mt-2">
               From {totalBookings} completed booking{totalBookings !== 1 ? 's' : ''}
             </p>
           </div>
 
-
-
           {/* Average Rating Card */}
-          <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+          <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 p-6 hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-700">Average Rating</h3>
+              <h3 className="text-sm font-semibold text-gray-700 dark:text-zinc-300">Average Rating</h3>
             </div>
-            <p className="text-3xl font-bold text-text">4.8/5.0</p>
-            <p className="text-sm text-gray-600 mt-2">
+            <p className="text-3xl font-bold font-title text-gray-900 dark:text-zinc-100">4.8/5.0</p>
+            <p className="text-xs text-gray-500 dark:text-zinc-400 mt-2">
               Based on 34 reviews
             </p>
           </div>
 
           {/* Packages Breakdown */}
-          <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+          <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 p-6 hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-700">Total Packages</h3>
+              <h3 className="text-sm font-semibold text-gray-700 dark:text-zinc-300">Total Packages</h3>
             </div>
-            <p className="text-3xl font-bold text-text">{analytics.packagesAnalytics.length}</p>
-            <p className="text-sm text-gray-600 mt-2">
+            <p className="text-3xl font-bold font-title text-gray-900 dark:text-zinc-100">{analytics.packagesAnalytics.length}</p>
+            <p className="text-xs text-gray-500 dark:text-zinc-400 mt-2">
               Active service packages
             </p>
           </div>
@@ -217,25 +215,25 @@ const VendorAnalytics: React.FC = () => {
 
         {/* Package Analytics Table */}
         {analytics.packagesAnalytics.length > 0 && (
-          <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-            <h2 className="text-2xl font-bold mb-6">Package Performance</h2>
+          <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 p-6 mb-8">
+            <h2 className="text-2xl font-bold font-title text-gray-900 dark:text-zinc-100 mb-6">Package Performance</h2>
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b-2 border-gray-200">
-                    <th className="text-left py-3 px-4 font-semibold text-gray-700">Package Name</th>
-                    <th className="text-left py-3 px-4 font-semibold text-gray-700">Unique Views</th>
-                    <th className="text-left py-3 px-4 font-semibold text-gray-700">Revenue (LKR)</th>
+                  <tr className="border-b-2 border-gray-200 dark:border-zinc-700 text-xs uppercase tracking-wider text-gray-700 dark:text-zinc-300">
+                    <th className="text-left py-3 px-4 font-semibold">Package Name</th>
+                    <th className="text-left py-3 px-4 font-semibold">Unique Views</th>
+                    <th className="text-left py-3 px-4 font-semibold">Revenue (LKR)</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-gray-100 dark:divide-zinc-800 text-sm">
                   {analytics.packagesAnalytics.map((pkg: any, index: number) => {
                     const revenue = packageRevenue[pkg.packageId]?.revenue || 0;
                     return (
-                      <tr key={index} className="border-b border-gray-100 hover:bg-gray-50">
-                        <td className="py-3 px-4">{pkg.packageName}</td>
+                      <tr key={index} className="hover:bg-gray-50 dark:hover:bg-darkElevated/50 text-gray-800 dark:text-zinc-200 transition-colors">
+                        <td className="py-3 px-4 font-medium">{pkg.packageName}</td>
                         <td className="py-3 px-4">{pkg.uniqueViews}</td>
-                        <td className="py-3 px-4">{revenue.toLocaleString()}</td>
+                        <td className="py-3 px-4 font-semibold text-gray-900 dark:text-zinc-100">{revenue.toLocaleString()}</td>
                       </tr>
                     );
                   })}
@@ -247,32 +245,32 @@ const VendorAnalytics: React.FC = () => {
 
         {/* Monthly Trends Cards */}
         {analytics.monthlyViews.length > 0 && (
-          <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-            <h2 className="text-2xl font-bold mb-6">Monthly View Trends</h2>
+          <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 p-6 mb-8">
+            <h2 className="text-2xl font-bold font-title text-gray-900 dark:text-zinc-100 mb-6">Monthly View Trends</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
               {analytics.monthlyViews.map((data: any, index: number) => {
                 const revenue = monthlyRevenue[data.month] || 0;
                 return (
                   <div
                     key={index}
-                    className="bg-lightYellow rounded-xl p-4 flex flex-col gap-3 hover:shadow-md transition-shadow"
+                    className="bg-lightYellow dark:bg-darkElevated rounded-xl p-4 flex flex-col gap-3 border border-orange/10 dark:border-zinc-700 hover:shadow-md transition-shadow"
                   >
-                    <span className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+                    <span className="text-xs font-semibold text-gray-500 dark:text-zinc-400 uppercase tracking-wide">
                       {data.month}
                     </span>
                     <div>
                       <div className="flex items-center gap-1 mb-1">
                         <FiEye className="text-blue-500 text-sm" />
-                        <span className="text-xs text-gray-500">Views</span>
+                        <span className="text-xs text-gray-500 dark:text-zinc-400">Views</span>
                       </div>
-                      <p className="text-3xl font-bold text-text">{analytics.totalUniqueViews}</p>
+                      <p className="text-2xl font-bold font-title text-gray-900 dark:text-zinc-100">{analytics.totalUniqueViews}</p>
                     </div>
                     <div>
                       <div className="flex items-center gap-1 mb-1">
                         <FiDollarSign className="text-orange text-sm" />
-                        <span className="text-xs text-gray-500">Revenue</span>
+                        <span className="text-xs text-gray-500 dark:text-zinc-400">Revenue</span>
                       </div>
-                      <p className="text-sm font-bold text-text">
+                      <p className="text-xs font-bold text-gray-900 dark:text-zinc-100">
                         LKR {revenue.toLocaleString()}
                       </p>
                     </div>
@@ -284,28 +282,28 @@ const VendorAnalytics: React.FC = () => {
         )}
 
         {/* Performance Insights */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-2xl font-bold mb-6">Performance Insights</h2>
+        <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 p-6">
+          <h2 className="text-2xl font-bold font-title text-gray-900 dark:text-zinc-100 mb-6">Performance Insights</h2>
           <div className="space-y-4">
             <div className="flex items-start">
-              <div className="bg-green-100 rounded-full p-2 mr-4">
-                <FiTrendingUp className="text-green-600 text-xl" />
+              <div className="bg-green-100 dark:bg-green-950/50 rounded-full p-2 mr-4 flex-shrink-0">
+                <FiTrendingUp className="text-green-600 dark:text-green-400 text-xl" />
               </div>
               <div>
-                <h4 className="font-semibold text-gray-800">Unique Visitor Tracking</h4>
-                <p className="text-gray-600">
+                <h4 className="font-semibold text-gray-900 dark:text-zinc-100 text-sm">Unique Visitor Tracking</h4>
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-zinc-400 mt-0.5">
                   You have {analytics.totalUniqueViews} unique visitor{analytics.totalUniqueViews !== 1 ? 's' : ''} across {analytics.packagesAnalytics.length} package{analytics.packagesAnalytics.length !== 1 ? 's' : ''}. 
                   {analytics.totalUniqueViews === 0 && " Visitors will be tracked automatically when they view your service pages."}
                 </p>
               </div>
             </div>
             <div className="flex items-start">
-              <div className="bg-blue-100 rounded-full p-2 mr-4">
-                <FiDollarSign className="text-blue-600 text-xl" />
+              <div className="bg-blue-100 dark:bg-blue-950/50 rounded-full p-2 mr-4 flex-shrink-0">
+                <FiDollarSign className="text-blue-600 dark:text-blue-400 text-xl" />
               </div>
               <div>
-                <h4 className="font-semibold text-gray-800">Revenue Performance</h4>
-                <p className="text-gray-600">
+                <h4 className="font-semibold text-gray-900 dark:text-zinc-100 text-sm">Revenue Performance</h4>
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-zinc-400 mt-0.5">
                   Your total revenue is LKR {totalRevenue.toLocaleString()} from {totalBookings} completed booking{totalBookings !== 1 ? 's' : ''}. 
                   {totalRevenue === 0 && " Revenue will be tracked automatically when customers complete their payments."}
                 </p>

@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import CategoryInput from "@/components/vendor-signup/CategoryInput";
-import Header from "@/components/shared/Headers/Header";
+import VendorHeader from "@/components/shared/Headers/VendorHeader";
 import { CREATE_SERVICE } from "@/graphql/mutations";
 import { FIND_SERVICES_BY_VENDOR } from "@/graphql/queries";
 import { useMutation } from "@apollo/client";
@@ -162,10 +162,10 @@ const AddNewService: React.FC = () => {
   };
 
   return (
-    <div>
-      <Header />
-      <div className="bg-lightYellow font-title min-h-screen flex items-center justify-center py-8">
-        <div className="flex flex-col md:flex-row min-h-[650px] w-full md:w-11/12 lg:w-9/12 shadow-lg rounded-2xl overflow-hidden bg-white">
+    <div className="bg-lightYellow dark:bg-darkBg transition-colors duration-200 min-h-screen flex flex-col">
+      <VendorHeader />
+      <div className="font-title flex-grow flex items-center justify-center py-8 px-4 sm:px-6">
+        <div className="flex flex-col md:flex-row min-h-[650px] w-full md:w-11/12 lg:w-9/12 shadow-lg rounded-2xl overflow-hidden bg-white dark:bg-darkSurface border border-gray-100 dark:border-zinc-800">
           {/* Left Image Section */}
           <div className="relative w-full md:w-5/12 min-h-[250px] md:min-h-[650px]">
             <Image
@@ -175,7 +175,7 @@ const AddNewService: React.FC = () => {
               alt="onboard image"
               priority
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex flex-col justify-end p-8 text-white">
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent flex flex-col justify-end p-8 text-white">
               <span className="text-xs uppercase tracking-widest text-orange font-semibold">
                 {step === 1 ? "Step 1 of 2" : "Step 2 of 2"}
               </span>
@@ -194,19 +194,19 @@ const AddNewService: React.FC = () => {
           <div className="relative w-full md:w-7/12 p-8 md:p-10 flex flex-col justify-between">
             {step === 1 ? (
               <div className="flex flex-col items-center justify-center my-auto">
-                <h2 className="text-3xl font-semibold text-center mb-2">Add New Service</h2>
-                <p className="text-sm text-gray-500 mb-8 text-center">
+                <h2 className="text-3xl font-semibold text-center mb-2 text-gray-900 dark:text-zinc-100">Add New Service</h2>
+                <p className="text-sm text-gray-500 dark:text-zinc-400 mb-8 text-center">
                   Tell couples what service you offer
                 </p>
 
                 <form onSubmit={onSubmit} className="w-full max-w-md space-y-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-1">
                       Service Name
                     </label>
                     <Input
                       type="text"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange"
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-zinc-700 bg-white dark:bg-darkElevated text-gray-900 dark:text-zinc-100 rounded-lg focus:ring-2 focus:ring-orange"
                       name="name"
                       placeholder="e.g. Elegant Wedding Photography"
                       value={formData.name}
@@ -216,7 +216,7 @@ const AddNewService: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-1">
                       Category
                     </label>
                     <CategoryInput onCategoryChange={handleCategoryChange} />
@@ -239,10 +239,10 @@ const AddNewService: React.FC = () => {
                 <div>
                   <div className="flex justify-between items-start mb-4">
                     <div>
-                      <h2 className="text-2xl font-bold text-gray-800">
+                      <h2 className="text-2xl font-bold text-gray-800 dark:text-zinc-100">
                         Add Photos for {createdServiceName}
                       </h2>
-                      <p className="text-xs text-gray-500 mt-1">
+                      <p className="text-xs text-gray-500 dark:text-zinc-400 mt-1">
                         Upload images right away or skip this step and add them later.
                       </p>
                     </div>
@@ -250,10 +250,10 @@ const AddNewService: React.FC = () => {
 
                   {/* Banner Upload */}
                   <div className="mb-6">
-                    <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">
+                    <label className="block text-xs font-semibold text-gray-700 dark:text-zinc-300 uppercase tracking-wider mb-2">
                       Cover Banner (Optional)
                     </label>
-                    <div className="w-full h-[150px] border-2 border-dashed border-gray-300 hover:border-orange rounded-xl relative overflow-hidden bg-gray-50 flex items-center justify-center transition-colors">
+                    <div className="w-full h-[150px] border-2 border-dashed border-gray-300 dark:border-zinc-700 hover:border-orange rounded-xl relative overflow-hidden bg-gray-50 dark:bg-darkElevated flex items-center justify-center transition-colors">
                       <input
                         type="file"
                         accept="image/jpeg,image/png,image/webp"
@@ -262,9 +262,9 @@ const AddNewService: React.FC = () => {
                         disabled={isUploadingBanner}
                       />
                       {isUploadingBanner && (
-                        <div className="absolute inset-0 bg-white/80 z-30 flex items-center justify-center">
+                        <div className="absolute inset-0 bg-white/80 dark:bg-black/80 z-30 flex items-center justify-center">
                           <span className="animate-spin text-2xl mr-2">⌛</span>
-                          <span className="text-xs text-gray-600 font-medium">Uploading banner...</span>
+                          <span className="text-xs text-gray-600 dark:text-zinc-300 font-medium">Uploading banner...</span>
                         </div>
                       )}
                       {bannerPreview ? (
@@ -277,8 +277,8 @@ const AddNewService: React.FC = () => {
                       ) : (
                         <div className="flex flex-col items-center pointer-events-none p-4 text-center">
                           <CiCirclePlus size={28} className="text-orange mb-1" />
-                          <span className="text-xs font-medium text-gray-600">Click to upload cover banner</span>
-                          <span className="text-[10px] text-gray-400 mt-0.5">JPG, PNG or WEBP</span>
+                          <span className="text-xs font-medium text-gray-600 dark:text-zinc-300">Click to upload cover banner</span>
+                          <span className="text-[10px] text-gray-400 dark:text-zinc-500 mt-0.5">JPG, PNG or WEBP</span>
                         </div>
                       )}
                     </div>
@@ -286,7 +286,7 @@ const AddNewService: React.FC = () => {
 
                   {/* Showcase Photos Upload */}
                   <div className="mb-6">
-                    <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">
+                    <label className="block text-xs font-semibold text-gray-700 dark:text-zinc-300 uppercase tracking-wider mb-2">
                       Showcase Photos (Optional - up to 5)
                     </label>
                     <div className="grid grid-cols-5 gap-2">
@@ -299,7 +299,7 @@ const AddNewService: React.FC = () => {
                           return (
                             <div
                               key={index}
-                              className="aspect-square border-2 border-dashed border-gray-300 hover:border-orange rounded-xl relative overflow-hidden bg-gray-50 flex items-center justify-center transition-colors"
+                              className="aspect-square border-2 border-dashed border-gray-300 dark:border-zinc-700 hover:border-orange rounded-xl relative overflow-hidden bg-gray-50 dark:bg-darkElevated flex items-center justify-center transition-colors"
                             >
                               <input
                                 type="file"
@@ -310,7 +310,7 @@ const AddNewService: React.FC = () => {
                                 title={`Upload photo ${index + 1}`}
                               />
                               {isThisUploading && (
-                                <div className="absolute inset-0 bg-white/80 z-20 flex items-center justify-center">
+                                <div className="absolute inset-0 bg-white/80 dark:bg-black/80 z-20 flex items-center justify-center">
                                   <span className="animate-spin text-sm">⌛</span>
                                 </div>
                               )}
@@ -324,7 +324,7 @@ const AddNewService: React.FC = () => {
                               ) : (
                                 <div className="flex flex-col items-center pointer-events-none p-1 text-center">
                                   <CiCirclePlus size={20} className="text-orange mb-0.5" />
-                                  <span className="text-[10px] text-gray-500 font-medium">#{index + 1}</span>
+                                  <span className="text-[10px] text-gray-500 dark:text-zinc-400 font-medium">#{index + 1}</span>
                                 </div>
                               )}
                             </div>
@@ -335,12 +335,12 @@ const AddNewService: React.FC = () => {
                 </div>
 
                 {/* Actions: Upload images right away / Skip step */}
-                <div className="pt-4 border-t flex flex-col sm:flex-row justify-between items-center gap-3">
+                <div className="pt-4 border-t border-gray-100 dark:border-zinc-800 flex flex-col sm:flex-row justify-between items-center gap-3">
                   <Button
                     type="button"
                     variant="outline"
                     onClick={handleSkip}
-                    className="w-full sm:w-auto px-6 py-2 border-gray-300 text-gray-700 hover:bg-gray-100"
+                    className="w-full sm:w-auto px-6 py-2 border-gray-300 dark:border-zinc-700 text-gray-700 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-darkElevated"
                   >
                     Skip this step
                   </Button>

@@ -4,10 +4,10 @@ import React, { Fragment } from 'react'
 const EditServiceSettings = () => {
   return (
     <Fragment>
-      <div className="bg-white rounded-2xl p-4 px-8 shadow-lg">
+      <div className="bg-white dark:bg-darkSurface rounded-2xl p-4 px-8 shadow-lg dark:border dark:border-zinc-800">
         {/* Modified header section */}
         <div className="flex justify-between items-center">
-          <h2 className="font-title text-[30px]">Settings</h2>
+          <h2 className="font-title text-[30px] dark:text-zinc-100">Settings</h2>
           <Button
             type="button"
             onClick={() => {}}
@@ -16,7 +16,7 @@ const EditServiceSettings = () => {
             Delete Service
           </Button>
         </div>
-        <hr className="w-full h-px my-4 bg-gray-500 border-1" />
+        <hr className="w-full h-px my-4 bg-gray-500 border-1 dark:bg-zinc-700" />
       </div>
     </Fragment>  )
 }

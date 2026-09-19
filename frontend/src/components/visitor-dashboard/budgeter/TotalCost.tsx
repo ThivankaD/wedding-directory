@@ -8,10 +8,12 @@ import {
 } from 'chart.js';
 
 import { TotalCostProps, UtilizationPercentage } from '@/types/budgeterTypes';
+import { useTheme } from '@/contexts/ThemeContext';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const TotalCost: React.FC<TotalCostProps> = ({ totalCost = 0.00, budget = 0.00 })  => {
+  const { isDark } = useTheme();
   const rawPercentage = budget > 0 ? (totalCost / budget) * 100 : 0;
   const utilizationPercentage: UtilizationPercentage = rawPercentage.toFixed(0);
 
@@ -19,7 +21,7 @@ const TotalCost: React.FC<TotalCostProps> = ({ totalCost = 0.00, budget = 0.00 }
     datasets: [
       {
         data: [Number(utilizationPercentage), Math.max(0, 100 - Number(utilizationPercentage))],
-        backgroundColor: ['#FC7B54', '#FFEFEB'],
+        backgroundColor: ['#FC7B54', isDark ? '#2A2523' : '#FFEFEB'],
         borderWidth: 0,
         circumference: 360,
         rotation: -90,
@@ -38,7 +40,7 @@ const TotalCost: React.FC<TotalCostProps> = ({ totalCost = 0.00, budget = 0.00 }
   };
 
   return (
-    <div className="bg-white rounded-3xl border-2 border-orange/20 hover:border-orange shadow-xs hover:shadow-md transition-all p-6 flex flex-col sm:flex-row items-center gap-6 sm:gap-8">
+    <div className="bg-white dark:bg-darkSurface rounded-3xl border-2 border-orange/20 dark:border-zinc-800 hover:border-orange dark:hover:border-orange shadow-xs hover:shadow-md transition-all p-6 flex flex-col sm:flex-row items-center gap-6 sm:gap-8">
       <div className="relative h-32 w-32 shrink-0">
         <Doughnut data={data} options={options} />
         <div className="absolute inset-0 flex items-center justify-center">
@@ -49,13 +51,13 @@ const TotalCost: React.FC<TotalCostProps> = ({ totalCost = 0.00, budget = 0.00 }
       </div>
       <div className="text-center sm:text-left">
         <span className="text-xs font-bold uppercase tracking-wider text-orange">Estimated</span>
-        <h2 className="font-title text-xl sm:text-2xl font-bold text-gray-900 mt-0.5 mb-1">Total Cost</h2>
-        <p className="font-title text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
-          {totalCost.toLocaleString()} <span className="text-sm font-semibold text-gray-500">LKR</span>
+        <h2 className="font-title text-xl sm:text-2xl font-bold text-gray-900 dark:text-zinc-100 mt-0.5 mb-1">Total Cost</h2>
+        <p className="font-title text-2xl sm:text-3xl font-bold text-gray-900 dark:text-zinc-100 mb-2">
+          {totalCost.toLocaleString()} <span className="text-sm font-semibold text-gray-500 dark:text-zinc-400">LKR</span>
         </p>
-        <div className="text-xs text-gray-500 font-body bg-orange/[0.04] border border-orange/15 rounded-xl px-3 py-1.5 inline-block">
+        <div className="text-xs text-gray-500 dark:text-zinc-400 font-body bg-orange/[0.04] dark:bg-darkElevated border border-orange/15 dark:border-zinc-700 rounded-xl px-3 py-1.5 inline-block">
           <span>Target Budget: </span>
-          <strong className="text-gray-800 font-bold">{budget.toLocaleString()} LKR</strong>
+          <strong className="text-gray-800 dark:text-zinc-200 font-bold">{budget.toLocaleString()} LKR</strong>
         </div>
       </div>
     </div>

@@ -91,14 +91,14 @@ const BudgetItem: React.FC<BudgetItemComponentProps> = ({
   };
 
   return (
-    <div className="w-full bg-white rounded-2xl border-2 border-orange/20 hover:border-orange/50 shadow-2xs transition-all overflow-hidden">
+    <div className="w-full bg-white dark:bg-darkSurface rounded-2xl border-2 border-orange/20 dark:border-zinc-800 hover:border-orange/50 dark:hover:border-orange/50 shadow-2xs transition-all overflow-hidden">
       <div
         className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 sm:p-5 cursor-pointer select-none"
         onClick={() => setIsOpen(!isOpen)}
       >
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h3 className="font-title text-base sm:text-lg font-bold text-gray-900 truncate">
+            <h3 className="font-title text-base sm:text-lg font-bold text-gray-900 dark:text-zinc-100 truncate">
               {itemName}
             </h3>
             <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-semibold rounded-full bg-orange/10 text-orange border border-orange/20">
@@ -107,22 +107,22 @@ const BudgetItem: React.FC<BudgetItemComponentProps> = ({
             </span>
           </div>
           {specialNotes && (
-            <p className="text-xs text-gray-500 line-clamp-1 mt-1 font-body">{specialNotes}</p>
+            <p className="text-xs text-gray-500 dark:text-zinc-400 line-clamp-1 mt-1 font-body">{specialNotes}</p>
           )}
         </div>
 
         <div className="flex items-center gap-6 sm:gap-10 shrink-0">
           <div>
-            <p className="text-xs text-gray-500 font-medium">Estimated Cost</p>
-            <p className="font-title text-base sm:text-lg font-bold text-gray-800">
-              {estimatedCost.toLocaleString()} <span className="text-xs font-semibold text-gray-500">LKR</span>
+            <p className="text-xs text-gray-500 dark:text-zinc-400 font-medium">Estimated Cost</p>
+            <p className="font-title text-base sm:text-lg font-bold text-gray-800 dark:text-zinc-200">
+              {estimatedCost.toLocaleString()} <span className="text-xs font-semibold text-gray-500 dark:text-zinc-400">LKR</span>
             </p>
           </div>
 
           <div>
-            <p className="text-xs text-emerald-600 font-medium">Amount Paid</p>
-            <p className="font-title text-base sm:text-lg font-bold text-emerald-600">
-              {paidAmount.toLocaleString()} <span className="text-xs font-semibold text-emerald-600/80">LKR</span>
+            <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">Amount Paid</p>
+            <p className="font-title text-base sm:text-lg font-bold text-emerald-600 dark:text-emerald-400">
+              {paidAmount.toLocaleString()} <span className="text-xs font-semibold text-emerald-600/80 dark:text-emerald-400/80">LKR</span>
             </p>
           </div>
 
@@ -138,28 +138,28 @@ const BudgetItem: React.FC<BudgetItemComponentProps> = ({
       </div>
 
       {isOpen && (
-        <div className="p-5 sm:p-6 border-t-2 border-orange/15 bg-orange/[0.02] space-y-4">
+        <div className="p-5 sm:p-6 border-t-2 border-orange/15 dark:border-zinc-800 bg-orange/[0.02] dark:bg-darkElevated/40 space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 font-body">
+              <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-zinc-300 font-body">
                 Item Name
               </label>
               <input
                 type="text"
                 value={editedValues.itemName}
                 onChange={(e) => handleInputChange("itemName", e.target.value)}
-                className="w-full px-3.5 py-2.5 border-2 border-orange/20 focus:border-orange rounded-xl bg-white text-sm focus:outline-none"
+                className="w-full px-3.5 py-2.5 border-2 border-orange/20 dark:border-zinc-700 focus:border-orange rounded-xl bg-white dark:bg-darkElevated text-sm text-gray-900 dark:text-zinc-100 focus:outline-none"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 font-body">
+              <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-zinc-300 font-body">
                 Category
               </label>
               <select
                 value={getValidCategory(editedValues.category)}
                 onChange={(e) => handleInputChange("category", e.target.value)}
-                className="w-full px-3.5 py-2.5 border-2 border-orange/20 focus:border-orange rounded-xl bg-white text-sm focus:outline-none"
+                className="w-full px-3.5 py-2.5 border-2 border-orange/20 dark:border-zinc-700 focus:border-orange rounded-xl bg-white dark:bg-darkElevated text-sm text-gray-900 dark:text-zinc-100 focus:outline-none"
               >
                 {budgetCategories.map((cat: string) => (
                   <option key={cat} value={cat}>
@@ -170,7 +170,7 @@ const BudgetItem: React.FC<BudgetItemComponentProps> = ({
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 font-body">
+              <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-zinc-300 font-body">
                 Estimated Cost (LKR)
               </label>
               <input
@@ -179,12 +179,12 @@ const BudgetItem: React.FC<BudgetItemComponentProps> = ({
                 onChange={(e) =>
                   handleInputChange("estimatedCost", parseFloat(e.target.value) || 0)
                 }
-                className="w-full px-3.5 py-2.5 border-2 border-orange/20 focus:border-orange rounded-xl bg-white text-sm focus:outline-none"
+                className="w-full px-3.5 py-2.5 border-2 border-orange/20 dark:border-zinc-700 focus:border-orange rounded-xl bg-white dark:bg-darkElevated text-sm text-gray-900 dark:text-zinc-100 focus:outline-none"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 font-body">
+              <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-zinc-300 font-body">
                 Amount Paid (LKR)
               </label>
               <input
@@ -193,13 +193,13 @@ const BudgetItem: React.FC<BudgetItemComponentProps> = ({
                 onChange={(e) =>
                   handleInputChange("paidAmount", parseFloat(e.target.value) || 0)
                 }
-                className="w-full px-3.5 py-2.5 border-2 border-orange/20 focus:border-orange rounded-xl bg-white text-sm focus:outline-none"
+                className="w-full px-3.5 py-2.5 border-2 border-orange/20 dark:border-zinc-700 focus:border-orange rounded-xl bg-white dark:bg-darkElevated text-sm text-gray-900 dark:text-zinc-100 focus:outline-none"
               />
             </div>
           </div>
 
           <div className="space-y-1.5">
-            <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 font-body">
+            <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-zinc-300 font-body">
               Special Notes
             </label>
             <textarea
@@ -207,7 +207,7 @@ const BudgetItem: React.FC<BudgetItemComponentProps> = ({
               onChange={(e) =>
                 handleInputChange("specialNotes", e.target.value)
               }
-              className="w-full p-3 border-2 border-orange/20 focus:border-orange rounded-xl min-h-[90px] bg-white text-sm focus:outline-none resize-none"
+              className="w-full p-3 border-2 border-orange/20 dark:border-zinc-700 focus:border-orange rounded-xl min-h-[90px] bg-white dark:bg-darkElevated text-sm text-gray-900 dark:text-zinc-100 placeholder-gray-400 dark:placeholder-zinc-500 focus:outline-none resize-none"
               placeholder="Add notes about deposits, options, deadlines..."
             />
           </div>
@@ -215,7 +215,7 @@ const BudgetItem: React.FC<BudgetItemComponentProps> = ({
           <div className="flex flex-wrap items-center justify-end gap-3 pt-2">
             <button
               type="button"
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 font-semibold text-xs transition-colors cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900/60 hover:bg-red-100 dark:hover:bg-red-950/60 font-semibold text-xs transition-colors cursor-pointer"
               onClick={handleDelete}
             >
               <Trash2 size={16} />

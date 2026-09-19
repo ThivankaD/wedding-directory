@@ -5,7 +5,7 @@ import Image from 'next/image';
 
 const ProfileInfo = () => {
     return (
-        <div className="bg-white p-2 rounded-lg shadow-lg flex items-center justify-center container">
+        <div className="bg-white dark:bg-darkSurface text-gray-900 dark:text-zinc-100 border border-gray-100 dark:border-zinc-800 p-2 rounded-lg shadow-lg flex items-center justify-center container">
             <div className='w-1/4 pl-4'>
                 <Image
                     className="w-32 h-32 rounded-full"
@@ -14,11 +14,11 @@ const ProfileInfo = () => {
                 />
             </div>
             <div className='w-2/4 flex flex-col p-6'>
-                <p className='text-xl'>Good Morning</p>
+                <p className='text-xl text-gray-600 dark:text-zinc-400'>Good Morning</p>
                 <p className='text-2xl font-bold'>John Doe</p>
-                <p className='text-xl font-bold'>John&apos;s wedding services</p>
+                <p className='text-xl font-bold text-orange'>John&apos;s wedding services</p>
             </div>
-            <div className='w-2/4 flex flex-col p-6'>
+            <div className='w-2/4 flex flex-col p-6 text-gray-700 dark:text-zinc-300'>
                 <div className='flex items-center '>
                     <CiLocationOn />
                     <span className='ml-2'>Kandy</span>

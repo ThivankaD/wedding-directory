@@ -3,35 +3,35 @@ import { HomeIcon, CheckIcon, DollarSignIcon, UsersIcon, StoreIcon } from "lucid
 
 const BottomNavigationBar = () => {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white shadow-md w-full z-50 overflow-hidden md:hidden">
+    <nav className="fixed bottom-0 left-0 right-0 bg-white dark:bg-darkSurface border-t border-gray-200 dark:border-zinc-800 shadow-md w-full z-50 overflow-hidden md:hidden">
       <ul className="flex justify-around py-2 max-w-screen-sm mx-auto">
         <li>
-          <a href="/dashboard" className="flex flex-col items-center text-sm">
-            <HomeIcon className="h-6 w-6" />
+          <a href="/visitor-dashboard" className="flex flex-col items-center text-xs font-medium text-gray-700 dark:text-zinc-300 hover:text-orange dark:hover:text-orange transition-colors">
+            <HomeIcon className="h-5 w-5 mb-0.5" />
             <span>Dashboard</span>
           </a>
         </li>
         <li>
-          <a href="/checklist" className="flex flex-col items-center text-sm">
-            <CheckIcon className="h-6 w-6" />
+          <a href="/visitor-dashboard" className="flex flex-col items-center text-xs font-medium text-gray-700 dark:text-zinc-300 hover:text-orange dark:hover:text-orange transition-colors">
+            <CheckIcon className="h-5 w-5 mb-0.5" />
             <span>Checklist</span>
           </a>
         </li>
         <li>
-          <a href="/budgeter" className="flex flex-col items-center text-sm">
-            <DollarSignIcon className="h-6 w-6" />
+          <a href="/visitor-dashboard" className="flex flex-col items-center text-xs font-medium text-gray-700 dark:text-zinc-300 hover:text-orange dark:hover:text-orange transition-colors">
+            <DollarSignIcon className="h-5 w-5 mb-0.5" />
             <span>Budgeter</span>
           </a>
         </li>
         <li>
-          <a href="/guestlist" className="flex flex-col items-center text-sm">
-            <UsersIcon className="h-6 w-6" />
+          <a href="/guest-list" className="flex flex-col items-center text-xs font-medium text-gray-700 dark:text-zinc-300 hover:text-orange dark:hover:text-orange transition-colors">
+            <UsersIcon className="h-5 w-5 mb-0.5" />
             <span>Guestlist</span>
           </a>
         </li>
         <li>
-          <a href="/vendors" className="flex flex-col items-center text-sm">
-            <StoreIcon className="h-6 w-6" />
+          <a href="/vendor-search" className="flex flex-col items-center text-xs font-medium text-gray-700 dark:text-zinc-300 hover:text-orange dark:hover:text-orange transition-colors">
+            <StoreIcon className="h-5 w-5 mb-0.5" />
             <span>Vendors</span>
           </a>
         </li>

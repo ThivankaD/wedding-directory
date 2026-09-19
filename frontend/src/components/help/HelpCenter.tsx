@@ -309,14 +309,14 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ initialRole }) => {
   };
 
   return (
-    <div className="min-h-screen bg-lightYellow flex flex-col font-body">
+    <div className="min-h-screen bg-lightYellow dark:bg-darkBg flex flex-col font-body">
       <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 w-full">
         {/* Minimized Header Banner */}
-        <div className="mb-6 pb-4 border-b border-orange/15">
-          <h1 className="font-title text-2xl sm:text-3xl font-bold text-gray-900">
+        <div className="mb-6 pb-4 border-b border-orange/15 dark:border-zinc-800">
+          <h1 className="font-title text-2xl sm:text-3xl font-bold text-gray-900 dark:text-zinc-100">
             {activeRole === "vendor" ? "Vendor Help & Support" : "Couple Help & Support"}
           </h1>
-          <p className="text-gray-500 font-body text-xs sm:text-sm mt-1 max-w-2xl">
+          <p className="text-gray-500 dark:text-zinc-400 font-body text-xs sm:text-sm mt-1 max-w-2xl">
             {activeRole === "vendor"
               ? "Everything you need to know about managing your storefront, services, booking calendar, payments, and client communications."
               : "Find answers and guidance for finding the best vendors, planning your wedding budget, managing your guest list, and booking securely."}
@@ -324,17 +324,17 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ initialRole }) => {
         </div>
 
         {/* Search Bar Card */}
-        <div className="bg-white rounded-2xl shadow-sm border border-orange/20 p-5 sm:p-6 mb-6">
+        <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-orange/20 dark:border-zinc-800 p-5 sm:p-6 mb-6">
           <div className="max-w-2xl mx-auto text-center">
-            <h2 className="font-title text-xl sm:text-2xl font-bold text-gray-900 mb-1.5">
+            <h2 className="font-title text-xl sm:text-2xl font-bold text-gray-900 dark:text-zinc-100 mb-1.5">
               How can we help you today?
             </h2>
-            <p className="text-gray-500 text-xs sm:text-sm mb-5">
+            <p className="text-gray-500 dark:text-zinc-400 text-xs sm:text-sm mb-5">
               Search by question, keyword, or topic to find quick answers.
             </p>
 
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 dark:text-zinc-500">
                 <FiSearch size={18} />
               </div>
               <input
@@ -346,12 +346,12 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ initialRole }) => {
                     ? "Search packages, calendar, advance payments, payouts, chat..."
                     : "Search finding vendors, budgeter, deposits, checklist, RSVPs..."
                 }
-                className="w-full pl-11 pr-10 py-3 bg-gray-50/80 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange/20 focus:border-orange transition-all"
+                className="w-full pl-11 pr-10 py-3 bg-gray-50/80 dark:bg-darkElevated border border-gray-200 dark:border-zinc-700 rounded-xl text-sm text-gray-900 dark:text-zinc-100 placeholder-gray-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-orange/20 focus:border-orange transition-all"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery("")}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-zinc-300"
                 >
                   <FiX size={18} />
                 </button>
@@ -375,10 +375,10 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ initialRole }) => {
                 <button
                   key={cat.id}
                   onClick={() => setSelectedCategory(cat.id)}
-                  className={`inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all border ${
+                  className={`inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all border cursor-pointer ${
                     isActive
                       ? "bg-orange text-white border-orange shadow-sm ring-2 ring-orange/20"
-                      : "bg-white text-gray-700 border-orange/20 hover:border-orange hover:bg-orange/5 hover:text-orange shadow-xs"
+                      : "bg-white dark:bg-darkSurface text-gray-700 dark:text-zinc-300 border-orange/20 dark:border-zinc-800 hover:border-orange hover:bg-orange/5 dark:hover:bg-darkElevated hover:text-orange shadow-xs"
                   }`}
                 >
                   <Icon size={14} className={isActive ? "text-white" : "text-orange"} />
@@ -403,9 +403,9 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ initialRole }) => {
           {/* FAQ Accordion List */}
           <div className="lg:col-span-8 flex flex-col gap-4">
             <div className="flex items-center justify-between px-1">
-              <h2 className="font-title text-xl font-bold text-gray-900 flex items-center gap-2">
+              <h2 className="font-title text-xl font-bold text-gray-900 dark:text-zinc-100 flex items-center gap-2">
                 <span>Frequently Asked Questions</span>
-                <span className="text-xs font-normal text-gray-400">
+                <span className="text-xs font-normal text-gray-400 dark:text-zinc-500">
                   ({filteredFaqs.length} {filteredFaqs.length === 1 ? "answer" : "answers"})
                 </span>
               </h2>
@@ -415,7 +415,7 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ initialRole }) => {
                     setSearchQuery("");
                     setSelectedCategory("all");
                   }}
-                  className="text-xs text-orange font-semibold hover:underline"
+                  className="text-xs text-orange font-semibold hover:underline cursor-pointer"
                 >
                   Reset filters
                 </button>
@@ -429,10 +429,10 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ initialRole }) => {
                   return (
                     <div
                       key={faq.id}
-                      className={`bg-white rounded-2xl transition-all duration-200 overflow-hidden ${
+                      className={`bg-white dark:bg-darkSurface rounded-2xl transition-all duration-200 overflow-hidden ${
                         isExpanded
                           ? "border-2 border-orange shadow-md"
-                          : "border border-orange/20 hover:border-orange/60 shadow-xs hover:shadow-sm"
+                          : "border border-orange/20 dark:border-zinc-800 hover:border-orange/60 dark:hover:border-orange/60 shadow-xs hover:shadow-sm"
                       }`}
                     >
                       <button
@@ -454,13 +454,13 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ initialRole }) => {
                               className={`font-title text-base sm:text-lg font-bold block transition-colors ${
                                 isExpanded
                                   ? "text-orange"
-                                  : "text-gray-900 group-hover:text-orange"
+                                  : "text-gray-900 dark:text-zinc-100 group-hover:text-orange dark:group-hover:text-orange"
                               }`}
                             >
                               {faq.question}
                             </span>
                             <div className="flex items-center gap-2 mt-1">
-                              <span className="text-[11px] text-gray-400 capitalize font-medium">
+                              <span className="text-[11px] text-gray-400 dark:text-zinc-500 capitalize font-medium">
                                 Category: {faq.category}
                               </span>
                             </div>
@@ -470,7 +470,7 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ initialRole }) => {
                           className={`p-2 rounded-xl border transition-all duration-200 flex-shrink-0 ${
                             isExpanded
                               ? "rotate-180 border-orange bg-orange text-white"
-                              : "border-gray-200 bg-gray-50 text-gray-400 group-hover:border-orange/40 group-hover:text-orange"
+                              : "border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-darkElevated text-gray-400 dark:text-zinc-400 group-hover:border-orange/40 group-hover:text-orange"
                           }`}
                         >
                           <FiChevronDown size={16} />
@@ -478,13 +478,13 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ initialRole }) => {
                       </button>
 
                       {isExpanded && (
-                        <div className="px-5 sm:px-6 pb-6 pt-3 text-gray-700 text-sm sm:text-base leading-relaxed border-t border-orange/15 bg-orange/[0.02]">
+                        <div className="px-5 sm:px-6 pb-6 pt-3 text-gray-700 dark:text-zinc-300 text-sm sm:text-base leading-relaxed border-t border-orange/15 dark:border-zinc-800 bg-orange/[0.02] dark:bg-darkElevated/40">
                           <p className="mt-1">{faq.answer}</p>
-                          <div className="flex flex-wrap gap-1.5 mt-4 pt-3 border-t border-orange/10">
+                          <div className="flex flex-wrap gap-1.5 mt-4 pt-3 border-t border-orange/10 dark:border-zinc-800">
                             {faq.tags.map((tag) => (
                               <span
                                 key={tag}
-                                className="text-[11px] px-2.5 py-0.5 rounded-lg bg-white border border-orange/20 text-orange font-medium shadow-2xs"
+                                className="text-[11px] px-2.5 py-0.5 rounded-lg bg-white dark:bg-darkElevated border border-orange/20 dark:border-zinc-700 text-orange font-medium shadow-2xs"
                               >
                                 #{tag}
                               </span>
@@ -497,14 +497,14 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ initialRole }) => {
                 })}
               </div>
             ) : (
-              <div className="bg-white rounded-2xl p-12 text-center border border-orange/20 shadow-sm">
+              <div className="bg-white dark:bg-darkSurface rounded-2xl p-12 text-center border border-orange/20 dark:border-zinc-800 shadow-sm">
                 <div className="w-14 h-14 rounded-2xl bg-orange/10 border border-orange/20 text-orange flex items-center justify-center mx-auto mb-4">
                   <FiSearch size={26} />
                 </div>
-                <h3 className="font-title text-lg font-bold text-gray-900 mb-1">
+                <h3 className="font-title text-lg font-bold text-gray-900 dark:text-zinc-100 mb-1">
                   No matching questions found
                 </h3>
-                <p className="text-gray-500 text-sm max-w-md mx-auto mb-4">
+                <p className="text-gray-500 dark:text-zinc-400 text-sm max-w-md mx-auto mb-4">
                   We couldn&apos;t find any FAQs matching &ldquo;{searchQuery}&rdquo;. Try another search term or reach out directly to our support team.
                 </p>
                 <button
@@ -512,7 +512,7 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ initialRole }) => {
                     setSearchQuery("");
                     setSelectedCategory("all");
                   }}
-                  className="bg-orange text-white text-xs font-semibold px-4 py-2 rounded-xl hover:bg-orange/90 transition-all shadow-sm"
+                  className="bg-orange text-white text-xs font-semibold px-4 py-2 rounded-xl hover:bg-orange/90 transition-all shadow-sm cursor-pointer"
                 >
                   Clear Search
                 </button>
@@ -523,62 +523,62 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ initialRole }) => {
           {/* Quick Support & Dashboard Links (Right Column) */}
           <div className="lg:col-span-4 flex flex-col gap-6">
             {/* Direct Support Card */}
-            <div className="bg-white rounded-2xl shadow-sm border border-orange/20 p-6">
+            <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-orange/20 dark:border-zinc-800 p-6">
               <div className="flex items-center gap-2 text-orange mb-3">
                 <FiMail size={20} />
-                <h3 className="font-title text-lg font-bold text-gray-900">
+                <h3 className="font-title text-lg font-bold text-gray-900 dark:text-zinc-100">
                   Still Need Help?
                 </h3>
               </div>
-              <p className="text-gray-500 text-xs leading-relaxed mb-5">
+              <p className="text-gray-500 dark:text-zinc-400 text-xs leading-relaxed mb-5">
                 Our support team is available Mon - Sat from 9:00 AM to 6:00 PM to assist you with any questions or technical issues.
               </p>
 
               <div className="space-y-4 text-sm">
-                <div className="p-3.5 rounded-xl bg-gray-50 border border-gray-100 flex items-start gap-3">
+                <div className="p-3.5 rounded-xl bg-gray-50 dark:bg-darkElevated border border-gray-100 dark:border-zinc-800 flex items-start gap-3">
                   <div className="w-8 h-8 rounded-lg bg-orange/10 text-orange flex items-center justify-center flex-shrink-0 mt-0.5">
                     <FiMail size={16} />
                   </div>
                   <div className="overflow-hidden">
-                    <p className="text-xs text-gray-400 font-medium">Email Support</p>
+                    <p className="text-xs text-gray-400 dark:text-zinc-500 font-medium">Email Support</p>
                     <a
                       href="mailto:sayidolk@gmail.com"
-                      className="font-semibold text-gray-900 hover:text-orange transition-colors truncate block"
+                      className="font-semibold text-gray-900 dark:text-zinc-100 hover:text-orange dark:hover:text-orange transition-colors truncate block"
                     >
                       sayidolk@gmail.com
                     </a>
                   </div>
                 </div>
 
-                <div className="p-3.5 rounded-xl bg-gray-50 border border-gray-100 flex items-start gap-3">
+                <div className="p-3.5 rounded-xl bg-gray-50 dark:bg-darkElevated border border-gray-100 dark:border-zinc-800 flex items-start gap-3">
                   <div className="w-8 h-8 rounded-lg bg-orange/10 text-orange flex items-center justify-center flex-shrink-0 mt-0.5">
                     <FiPhone size={16} />
                   </div>
                   <div>
-                    <p className="text-xs text-gray-400 font-medium">Customer Hotline</p>
+                    <p className="text-xs text-gray-400 dark:text-zinc-500 font-medium">Customer Hotline</p>
                     <a
                       href="tel:+94477864913"
-                      className="font-semibold text-gray-900 hover:text-orange transition-colors"
+                      className="font-semibold text-gray-900 dark:text-zinc-100 hover:text-orange dark:hover:text-orange transition-colors"
                     >
                       +94 47 786 4913
                     </a>
                   </div>
                 </div>
 
-                <div className="p-3.5 rounded-xl bg-gray-50 border border-gray-100 flex items-start gap-3">
+                <div className="p-3.5 rounded-xl bg-gray-50 dark:bg-darkElevated border border-gray-100 dark:border-zinc-800 flex items-start gap-3">
                   <div className="w-8 h-8 rounded-lg bg-orange/10 text-orange flex items-center justify-center flex-shrink-0 mt-0.5">
                     <FiMapPin size={16} />
                   </div>
                   <div>
-                    <p className="text-xs text-gray-400 font-medium">Headquarters</p>
-                    <p className="text-xs font-semibold text-gray-700">
+                    <p className="text-xs text-gray-400 dark:text-zinc-500 font-medium">Headquarters</p>
+                    <p className="text-xs font-semibold text-gray-700 dark:text-zinc-300">
                       Hapugala, Galle, Sri Lanka
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-6 pt-5 border-t border-gray-100">
+              <div className="mt-6 pt-5 border-t border-gray-100 dark:border-zinc-800">
                 <Link
                   href="/contact"
                   className="w-full inline-flex items-center justify-center gap-2 bg-orange hover:bg-orange/90 text-white text-xs font-semibold py-3 px-4 rounded-xl transition-all shadow-sm"
@@ -590,13 +590,13 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ initialRole }) => {
             </div>
 
             {/* Quick Navigation Shortcuts based on role */}
-            <div className="bg-white rounded-2xl shadow-sm border border-orange/20 p-6">
-              <h3 className="font-title text-base font-bold text-gray-900 mb-3">
+            <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-orange/20 dark:border-zinc-800 p-6">
+              <h3 className="font-title text-base font-bold text-gray-900 dark:text-zinc-100 mb-3">
                 {activeRole === "vendor"
                   ? "Vendor Quick Tools"
                   : "Couple Planning Tools"}
               </h3>
-              <p className="text-xs text-gray-500 mb-4">
+              <p className="text-xs text-gray-500 dark:text-zinc-400 mb-4">
                 Jump directly to your relevant dashboard pages:
               </p>
 
@@ -605,78 +605,78 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ initialRole }) => {
                   <>
                     <Link
                       href="/vendor-dashboard"
-                      className="flex items-center justify-between p-3 rounded-xl bg-gray-50 hover:bg-orange/10 hover:text-orange text-gray-700 transition-colors"
+                      className="flex items-center justify-between p-3 rounded-xl bg-gray-50 dark:bg-darkElevated hover:bg-orange/10 dark:hover:bg-orange/20 hover:text-orange text-gray-700 dark:text-zinc-300 transition-colors"
                     >
                       <span className="flex items-center gap-2">
                         <FiGrid size={14} /> Vendor Dashboard
                       </span>
-                      <FiExternalLink size={12} className="text-gray-400" />
+                      <FiExternalLink size={12} className="text-gray-400 dark:text-zinc-500" />
                     </Link>
                     <Link
                       href="/vendor-dashboard/payments"
-                      className="flex items-center justify-between p-3 rounded-xl bg-gray-50 hover:bg-orange/10 hover:text-orange text-gray-700 transition-colors"
+                      className="flex items-center justify-between p-3 rounded-xl bg-gray-50 dark:bg-darkElevated hover:bg-orange/10 dark:hover:bg-orange/20 hover:text-orange text-gray-700 dark:text-zinc-300 transition-colors"
                     >
                       <span className="flex items-center gap-2">
                         <FiDollarSign size={14} /> Payments & Statements
                       </span>
-                      <FiExternalLink size={12} className="text-gray-400" />
+                      <FiExternalLink size={12} className="text-gray-400 dark:text-zinc-500" />
                     </Link>
                     <Link
                       href="/vendor-dashboard/chats"
-                      className="flex items-center justify-between p-3 rounded-xl bg-gray-50 hover:bg-orange/10 hover:text-orange text-gray-700 transition-colors"
+                      className="flex items-center justify-between p-3 rounded-xl bg-gray-50 dark:bg-darkElevated hover:bg-orange/10 dark:hover:bg-orange/20 hover:text-orange text-gray-700 dark:text-zinc-300 transition-colors"
                     >
                       <span className="flex items-center gap-2">
                         <FiMessageSquare size={14} /> Client Inquiries & Chats
                       </span>
-                      <FiExternalLink size={12} className="text-gray-400" />
+                      <FiExternalLink size={12} className="text-gray-400 dark:text-zinc-500" />
                     </Link>
                     <Link
                       href="/vendor-dashboard/settings"
-                      className="flex items-center justify-between p-3 rounded-xl bg-gray-50 hover:bg-orange/10 hover:text-orange text-gray-700 transition-colors"
+                      className="flex items-center justify-between p-3 rounded-xl bg-gray-50 dark:bg-darkElevated hover:bg-orange/10 dark:hover:bg-orange/20 hover:text-orange text-gray-700 dark:text-zinc-300 transition-colors"
                     >
                       <span className="flex items-center gap-2">
                         <FiSettings size={14} /> Storefront Settings
                       </span>
-                      <FiExternalLink size={12} className="text-gray-400" />
+                      <FiExternalLink size={12} className="text-gray-400 dark:text-zinc-500" />
                     </Link>
                   </>
                 ) : (
                   <>
                     <Link
                       href="/visitor-dashboard"
-                      className="flex items-center justify-between p-3 rounded-xl bg-gray-50 hover:bg-orange/10 hover:text-orange text-gray-700 transition-colors"
+                      className="flex items-center justify-between p-3 rounded-xl bg-gray-50 dark:bg-darkElevated hover:bg-orange/10 dark:hover:bg-orange/20 hover:text-orange text-gray-700 dark:text-zinc-300 transition-colors"
                     >
                       <span className="flex items-center gap-2">
                         <FiHeart size={14} /> Wedding Dashboard
                       </span>
-                      <FiExternalLink size={12} className="text-gray-400" />
+                      <FiExternalLink size={12} className="text-gray-400 dark:text-zinc-500" />
                     </Link>
                     <Link
                       href="/vendor-search"
-                      className="flex items-center justify-between p-3 rounded-xl bg-gray-50 hover:bg-orange/10 hover:text-orange text-gray-700 transition-colors"
+                      className="flex items-center justify-between p-3 rounded-xl bg-gray-50 dark:bg-darkElevated hover:bg-orange/10 dark:hover:bg-orange/20 hover:text-orange text-gray-700 dark:text-zinc-300 transition-colors"
                     >
                       <span className="flex items-center gap-2">
                         <FiShoppingBag size={14} /> Find & Filter Vendors
                       </span>
-                      <FiExternalLink size={12} className="text-gray-400" />
+                      <FiExternalLink size={12} className="text-gray-400 dark:text-zinc-500" />
                     </Link>
                     <Link
                       href="/guest-list"
-                      className="flex items-center justify-between p-3 rounded-xl bg-gray-50 hover:bg-orange/10 hover:text-orange text-gray-700 transition-colors"
+                      className="flex items-center justify-between p-3 rounded-xl bg-gray-50 dark:bg-darkElevated hover:bg-orange/10 dark:hover:bg-orange/20 hover:text-orange text-gray-700 dark:text-zinc-300 transition-colors"
                     >
                       <span className="flex items-center gap-2">
                         <FiUsers size={14} /> Guest List & RSVP Manager
                       </span>
-                      <FiExternalLink size={12} className="text-gray-400" />
+                      <FiExternalLink size={12} className="text-gray-400 dark:text-zinc-500" />
                     </Link>
                     <Link
                       href="/visitor-dashboard/budgeter"
-                      className="flex items-center justify-between p-3 rounded-xl bg-gray-50 hover:bg-orange/10 hover:text-orange text-gray-700 transition-colors"
+                      className="flex items-center justify-between p-3 rounded-xl bg-gray-50 dark:bg-darkElevated hover:bg-orange/10 dark:hover:bg-orange/20 hover:text-orange text-gray-700 dark:text-zinc-300 transition-colors"
                     >
                       <span className="flex items-center gap-2">
                         <FiDollarSign size={14} /> Wedding Budget Tool
                       </span>
-                      <FiExternalLink size={12} className="text-gray-400" />
+                      <FiExternalLink size={12} className="text-gray-400 dark:text-zinc-500" />
                     </Link>
                   </>
                 )}

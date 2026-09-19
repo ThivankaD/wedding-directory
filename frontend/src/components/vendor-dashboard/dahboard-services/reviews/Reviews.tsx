@@ -64,12 +64,12 @@ const Reviews: React.FC<ReviewsProps> = ({ serviceId }) => {
     if (totalReviews === 0) {
         return (
             <div className='font-body'>
-                <div className='rounded-2xl border border-dashed border-orange/30 bg-gradient-to-br from-white via-orange-50/20 to-orange-50/40 p-8 text-center shadow-sm'>
+                <div className='rounded-2xl border border-dashed border-orange/30 bg-gradient-to-br from-white dark:from-darkSurface via-orange-50/20 dark:via-darkElevated/40 to-orange-50/40 dark:to-darkElevated/60 p-8 text-center shadow-sm'>
                     <div className='mx-auto w-12 h-12 rounded-full bg-orange/15 text-orange flex items-center justify-center text-xl mb-3'>
                         <FaStar />
                     </div>
-                    <h3 className='text-lg font-title font-bold text-gray-900'>No reviews yet</h3>
-                    <p className='text-sm text-gray-600 max-w-md mx-auto mt-1'>
+                    <h3 className='text-lg font-title font-bold text-gray-900 dark:text-zinc-100'>No reviews yet</h3>
+                    <p className='text-sm text-gray-600 dark:text-zinc-400 max-w-md mx-auto mt-1'>
                         Couples love hearing real stories! If you booked this service, your feedback helps other couples plan their special day.
                     </p>
                 </div>
@@ -79,23 +79,23 @@ const Reviews: React.FC<ReviewsProps> = ({ serviceId }) => {
 
     return (
         <div className='font-body'>
-            <div className='rounded-2xl border border-gray-100 bg-white p-6 shadow-sm'>
+            <div className='rounded-2xl border border-gray-100 dark:border-zinc-800 bg-white dark:bg-darkSurface p-6 shadow-sm'>
                 <div className='grid grid-cols-1 md:grid-cols-12 gap-6 items-center'>
                     {/* Left: Overall Rating */}
-                    <div className='md:col-span-5 flex flex-col items-center md:items-start text-center md:text-left border-b md:border-b-0 md:border-r border-gray-100 pb-5 md:pb-0 md:pr-6'>
-                        <span className='text-xs font-bold uppercase tracking-wider text-gray-400'>
+                    <div className='md:col-span-5 flex flex-col items-center md:items-start text-center md:text-left border-b md:border-b-0 md:border-r border-gray-100 dark:border-zinc-800 pb-5 md:pb-0 md:pr-6'>
+                        <span className='text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-zinc-500'>
                             Overall Rating
                         </span>
                         <div className='mt-2 flex items-baseline gap-2'>
-                            <span className='text-5xl font-title font-extrabold text-gray-900 leading-none'>
+                            <span className='text-5xl font-title font-extrabold text-gray-900 dark:text-zinc-100 leading-none'>
                                 {avgRating.toFixed(1)}
                             </span>
-                            <span className='text-lg text-gray-400 font-medium'>/ 5</span>
+                            <span className='text-lg text-gray-400 dark:text-zinc-500 font-medium'>/ 5</span>
                         </div>
                         <div className='flex text-amber-400 text-xl my-2 gap-1'>
                             {renderStars(avgRating)}
                         </div>
-                        <p className='text-xs text-gray-500 font-medium'>
+                        <p className='text-xs text-gray-500 dark:text-zinc-400 font-medium'>
                             Based on {totalReviews} verified {totalReviews === 1 ? 'review' : 'reviews'}
                         </p>
                     </div>
@@ -104,16 +104,16 @@ const Reviews: React.FC<ReviewsProps> = ({ serviceId }) => {
                     <div className='md:col-span-7 space-y-2.5'>
                         {recentDistribution.map((item) => (
                             <div key={item.star} className='flex items-center gap-3 text-xs'>
-                                <span className='w-7 font-bold text-gray-700 text-right flex items-center justify-end gap-0.5'>
+                                <span className='w-7 font-bold text-gray-700 dark:text-zinc-300 text-right flex items-center justify-end gap-0.5'>
                                     {item.star} <FaStar className='text-amber-400 text-[10px]' />
                                 </span>
-                                <div className='h-2 flex-1 rounded-full bg-gray-100 overflow-hidden'>
+                                <div className='h-2 flex-1 rounded-full bg-gray-100 dark:bg-darkElevated overflow-hidden'>
                                     <div
                                         className='h-full bg-gradient-to-r from-amber-400 to-orange rounded-full transition-all duration-300'
                                         style={{ width: `${item.percentage}%` }}
                                     />
                                 </div>
-                                <span className='w-8 text-right font-medium text-gray-500'>
+                                <span className='w-8 text-right font-medium text-gray-500 dark:text-zinc-400'>
                                     {item.count}
                                 </span>
                             </div>

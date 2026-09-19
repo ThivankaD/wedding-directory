@@ -221,30 +221,30 @@ const GuestListPage = () => {
     switch (status?.toLowerCase()) {
       case "attending":
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-            <FiCheckCircle size={12} className="text-emerald-600" />
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60">
+            <FiCheckCircle size={12} className="text-emerald-600 dark:text-emerald-400" />
             <span>Attending</span>
           </span>
         );
       case "invited":
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200">
-            <FiClock size={12} className="text-blue-600" />
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-800/60">
+            <FiClock size={12} className="text-blue-600 dark:text-blue-400" />
             <span>Invited</span>
           </span>
         );
       case "declined":
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200">
-            <FiXCircle size={12} className="text-rose-600" />
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800/60">
+            <FiXCircle size={12} className="text-rose-600 dark:text-rose-400" />
             <span>Declined</span>
           </span>
         );
       case "not invited":
       default:
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-700 border border-gray-200">
-            <FiHelpCircle size={12} className="text-gray-500" />
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-zinc-300 border border-gray-200 dark:border-zinc-700">
+            <FiHelpCircle size={12} className="text-gray-500 dark:text-zinc-400" />
             <span>{status || "Not Invited"}</span>
           </span>
         );
@@ -254,7 +254,7 @@ const GuestListPage = () => {
   return (
     <div className="w-full space-y-6">
       {/* 1. Hero Card */}
-      <div className="bg-white rounded-3xl border-2 border-orange/20 shadow-sm p-6 sm:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+      <div className="bg-white dark:bg-darkSurface rounded-3xl border-2 border-orange/20 shadow-sm p-6 sm:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div className="space-y-3">
           <Breadcrumbs
             items={[
@@ -267,10 +267,10 @@ const GuestListPage = () => {
               <FiUsers size={24} />
             </div>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold font-title text-gray-900">
+              <h1 className="text-2xl sm:text-3xl font-bold font-title text-gray-900 dark:text-zinc-100">
                 My Guest List
               </h1>
-              <p className="text-xs sm:text-sm text-gray-500 font-body">
+              <p className="text-xs sm:text-sm text-gray-500 dark:text-zinc-400 font-body">
                 Plan and manage your wedding guests, invitations, party sizes, and RSVPs.
               </p>
             </div>
@@ -278,9 +278,9 @@ const GuestListPage = () => {
         </div>
 
         {/* Total Guests Badge Card */}
-        <div className="bg-orange/[0.05] border-2 border-orange/15 rounded-2xl p-5 flex items-center gap-6 shrink-0 justify-between lg:justify-end">
+        <div className="bg-orange/[0.05] dark:bg-orange/[0.08] border-2 border-orange/15 rounded-2xl p-5 flex items-center gap-6 shrink-0 justify-between lg:justify-end">
           <div>
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider font-body">
+            <p className="text-xs font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider font-body">
               Attending Seats
             </p>
             <p className="text-3xl sm:text-4xl font-black font-title text-orange">
@@ -289,10 +289,10 @@ const GuestListPage = () => {
           </div>
           <div className="h-10 w-px bg-orange/20" />
           <div>
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider font-body">
+            <p className="text-xs font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider font-body">
               Total Expected
             </p>
-            <p className="text-3xl sm:text-4xl font-black font-title text-gray-900">
+            <p className="text-3xl sm:text-4xl font-black font-title text-gray-900 dark:text-zinc-100">
               {totalExpectedSeats}
             </p>
           </div>
@@ -301,56 +301,56 @@ const GuestListPage = () => {
 
       {/* 2. Metrics Summary Pills */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-5">
-        <div className="bg-white rounded-2xl border-2 border-orange/20 p-4 sm:p-5 shadow-2xs">
-          <div className="flex items-center gap-2 text-xs font-bold text-gray-500 uppercase tracking-wider font-body">
+        <div className="bg-white dark:bg-darkSurface rounded-2xl border-2 border-orange/20 p-4 sm:p-5 shadow-2xs">
+          <div className="flex items-center gap-2 text-xs font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider font-body">
             <FiUsers className="text-orange" size={14} />
             <span>Total Entries</span>
           </div>
-          <p className="text-2xl sm:text-3xl font-black font-title text-gray-900 mt-2">
+          <p className="text-2xl sm:text-3xl font-black font-title text-gray-900 dark:text-zinc-100 mt-2">
             {totalEntries}
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl border-2 border-orange/20 p-4 sm:p-5 shadow-2xs">
-          <div className="flex items-center gap-2 text-xs font-bold text-emerald-600 uppercase tracking-wider font-body">
-            <FiUserCheck className="text-emerald-600" size={14} />
+        <div className="bg-white dark:bg-darkSurface rounded-2xl border-2 border-orange/20 p-4 sm:p-5 shadow-2xs">
+          <div className="flex items-center gap-2 text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider font-body">
+            <FiUserCheck className="text-emerald-600 dark:text-emerald-400" size={14} />
             <span>Attending</span>
           </div>
-          <p className="text-2xl sm:text-3xl font-black font-title text-emerald-600 mt-2">
+          <p className="text-2xl sm:text-3xl font-black font-title text-emerald-600 dark:text-emerald-400 mt-2">
             {attendingCount}
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl border-2 border-orange/20 p-4 sm:p-5 shadow-2xs">
-          <div className="flex items-center gap-2 text-xs font-bold text-blue-600 uppercase tracking-wider font-body">
-            <FiClock className="text-blue-600" size={14} />
+        <div className="bg-white dark:bg-darkSurface rounded-2xl border-2 border-orange/20 p-4 sm:p-5 shadow-2xs">
+          <div className="flex items-center gap-2 text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider font-body">
+            <FiClock className="text-blue-600 dark:text-blue-400" size={14} />
             <span>Invited</span>
           </div>
-          <p className="text-2xl sm:text-3xl font-black font-title text-blue-600 mt-2">
+          <p className="text-2xl sm:text-3xl font-black font-title text-blue-600 dark:text-blue-400 mt-2">
             {invitedCount}
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl border-2 border-orange/20 p-4 sm:p-5 shadow-2xs">
-          <div className="flex items-center gap-2 text-xs font-bold text-rose-600 uppercase tracking-wider font-body">
-            <FiXCircle className="text-rose-600" size={14} />
+        <div className="bg-white dark:bg-darkSurface rounded-2xl border-2 border-orange/20 p-4 sm:p-5 shadow-2xs">
+          <div className="flex items-center gap-2 text-xs font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wider font-body">
+            <FiXCircle className="text-rose-600 dark:text-rose-400" size={14} />
             <span>Declined</span>
           </div>
-          <p className="text-2xl sm:text-3xl font-black font-title text-rose-600 mt-2">
+          <p className="text-2xl sm:text-3xl font-black font-title text-rose-600 dark:text-rose-400 mt-2">
             {declinedCount}
           </p>
         </div>
       </div>
 
       {/* 3. Main Directory Card */}
-      <div className="bg-white rounded-3xl border-2 border-orange/20 shadow-sm p-6 sm:p-8 space-y-6">
+      <div className="bg-white dark:bg-darkSurface rounded-3xl border-2 border-orange/20 shadow-sm p-6 sm:p-8 space-y-6">
         {/* Header & Actions */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-6 border-b border-orange/15">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-6 border-b border-orange/15 dark:border-zinc-800">
           <div>
-            <h2 className="text-xl sm:text-2xl font-bold font-title text-gray-900">
+            <h2 className="text-xl sm:text-2xl font-bold font-title text-gray-900 dark:text-zinc-100">
               Guest Directory
             </h2>
-            <p className="text-xs sm:text-sm text-gray-500 font-body">
+            <p className="text-xs sm:text-sm text-gray-500 dark:text-zinc-400 font-body">
               View and filter your guest roster, edit party sizes, or import contacts.
             </p>
           </div>
@@ -359,7 +359,7 @@ const GuestListPage = () => {
             {/* Import vCard Button */}
             <button
               onClick={() => setIsVCardModalOpen(true)}
-              className="border-2 border-orange/20 hover:border-orange bg-orange/[0.04] text-gray-800 hover:text-orange px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm flex items-center gap-2 cursor-pointer transition-colors shadow-2xs"
+              className="border-2 border-orange/20 hover:border-orange bg-orange/[0.04] dark:bg-orange/[0.08] text-gray-800 dark:text-zinc-200 hover:text-orange dark:hover:text-orange px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm flex items-center gap-2 cursor-pointer transition-colors shadow-2xs"
             >
               <FiUploadCloud size={16} className="text-orange" />
               <span>Import vCard (.vcf)</span>
@@ -368,7 +368,7 @@ const GuestListPage = () => {
             {/* Download CSV */}
             <button
               onClick={downloadCSV}
-              className="border-2 border-orange/20 hover:border-orange bg-white text-gray-700 hover:text-orange px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm flex items-center gap-2 cursor-pointer transition-colors shadow-2xs"
+              className="border-2 border-orange/20 hover:border-orange bg-white dark:bg-darkElevated text-gray-700 dark:text-zinc-200 hover:text-orange dark:hover:text-orange px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm flex items-center gap-2 cursor-pointer transition-colors shadow-2xs"
             >
               <FiDownload size={16} />
               <span>Export CSV</span>
@@ -391,19 +391,19 @@ const GuestListPage = () => {
             <input
               type="text"
               placeholder="Search by name, contact, or email..."
-              className="w-full pl-10 pr-4 py-2.5 text-xs sm:text-sm bg-orange/[0.02] border-2 border-orange/20 focus:border-orange rounded-xl focus:outline-none focus:ring-1 focus:ring-orange text-gray-800 placeholder-gray-400 transition-all font-body"
+              className="w-full pl-10 pr-4 py-2.5 text-xs sm:text-sm bg-orange/[0.02] dark:bg-darkElevated border-2 border-orange/20 dark:border-zinc-700 focus:border-orange rounded-xl focus:outline-none focus:ring-1 focus:ring-orange text-gray-800 dark:text-zinc-100 placeholder-gray-400 dark:placeholder-zinc-500 transition-all font-body"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <FiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+            <FiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-zinc-500" size={16} />
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-gray-500 uppercase tracking-wider font-body whitespace-nowrap">
+            <span className="text-xs font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider font-body whitespace-nowrap">
               Filter:
             </span>
             <select
-              className="border-2 border-orange/20 focus:border-orange rounded-xl px-3.5 py-2 text-xs sm:text-sm bg-white text-gray-800 font-semibold focus:outline-none cursor-pointer"
+              className="border-2 border-orange/20 dark:border-zinc-700 focus:border-orange rounded-xl px-3.5 py-2 text-xs sm:text-sm bg-white dark:bg-darkElevated text-gray-800 dark:text-zinc-100 font-semibold focus:outline-none cursor-pointer"
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
             >
@@ -418,15 +418,15 @@ const GuestListPage = () => {
 
         {/* 4. Themed Table */}
         {filteredGuests.length === 0 ? (
-          <div className="border-2 border-dashed border-orange/20 rounded-3xl p-10 sm:p-14 text-center space-y-4 bg-orange/[0.02]">
+          <div className="border-2 border-dashed border-orange/20 dark:border-zinc-800 rounded-3xl p-10 sm:p-14 text-center space-y-4 bg-orange/[0.02] dark:bg-darkElevated/30">
             <div className="w-16 h-16 rounded-full bg-orange/10 flex items-center justify-center text-orange mx-auto">
               <FiUsers size={28} />
             </div>
             <div className="space-y-1">
-              <h3 className="text-base sm:text-lg font-bold font-title text-gray-800">
+              <h3 className="text-base sm:text-lg font-bold font-title text-gray-800 dark:text-zinc-100">
                 {guestlists.length === 0 ? "No guests added yet" : "No matching guests found"}
               </h3>
-              <p className="text-xs sm:text-sm text-gray-500 font-body max-w-sm mx-auto">
+              <p className="text-xs sm:text-sm text-gray-500 dark:text-zinc-400 font-body max-w-sm mx-auto">
                 {guestlists.length === 0
                   ? "Start by adding your guests manually or import them in seconds from a .vcf file."
                   : "Try clearing your search query or choosing a different status filter."}
@@ -436,7 +436,7 @@ const GuestListPage = () => {
               <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
                 <button
                   onClick={() => setIsVCardModalOpen(true)}
-                  className="border-2 border-orange/20 hover:border-orange bg-white text-gray-800 px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 cursor-pointer shadow-2xs"
+                  className="border-2 border-orange/20 hover:border-orange bg-white dark:bg-darkElevated text-gray-800 dark:text-zinc-200 px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 cursor-pointer shadow-2xs"
                 >
                   <FiUploadCloud size={15} className="text-orange" />
                   <span>Import vCard (.vcf)</span>
@@ -452,10 +452,10 @@ const GuestListPage = () => {
             )}
           </div>
         ) : (
-          <div className="border-2 border-orange/15 rounded-2xl overflow-hidden shadow-2xs">
+          <div className="border-2 border-orange/15 dark:border-zinc-800 rounded-2xl overflow-hidden shadow-2xs">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs sm:text-sm font-body">
-                <thead className="bg-orange/[0.06] text-gray-900 font-bold uppercase tracking-wider text-xs border-b border-orange/15 font-title">
+                <thead className="bg-orange/[0.06] dark:bg-darkElevated text-gray-900 dark:text-zinc-100 font-bold uppercase tracking-wider text-xs border-b border-orange/15 dark:border-zinc-800 font-title">
                   <tr>
                     <th className="py-3.5 px-4 w-12 text-center">#</th>
                     <th className="py-3.5 px-4">Guest Name</th>
@@ -465,14 +465,14 @@ const GuestListPage = () => {
                     <th className="py-3.5 px-4 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-orange/10 bg-white">
+                <tbody className="divide-y divide-orange/10 dark:divide-zinc-800 bg-white dark:bg-darkSurface">
                   {filteredGuests.map((guest, idx) => (
                     <tr
                       key={guest.id}
-                      className="hover:bg-orange/[0.02] transition-colors"
+                      className="hover:bg-orange/[0.02] dark:hover:bg-zinc-800/50 transition-colors"
                     >
                       {/* # index */}
-                      <td className="py-3.5 px-4 text-center text-xs font-semibold text-gray-400">
+                      <td className="py-3.5 px-4 text-center text-xs font-semibold text-gray-400 dark:text-zinc-500">
                         {idx + 1}
                       </td>
 
@@ -483,11 +483,11 @@ const GuestListPage = () => {
                             {guest.name.charAt(0).toUpperCase()}
                           </div>
                           <div>
-                            <p className="font-bold text-gray-900 font-title text-sm">
+                            <p className="font-bold text-gray-900 dark:text-zinc-100 font-title text-sm">
                               {guest.name}
                             </p>
                             {guest.address && (
-                              <p className="text-[11px] text-gray-400 line-clamp-1 max-w-xs">
+                              <p className="text-[11px] text-gray-400 dark:text-zinc-500 line-clamp-1 max-w-xs">
                                 {guest.address}
                               </p>
                             )}
@@ -512,19 +512,19 @@ const GuestListPage = () => {
                       <td className="py-3.5 px-4">
                         <div className="space-y-0.5">
                           {guest.contact ? (
-                            <p className="flex items-center gap-1.5 text-xs text-gray-700">
+                            <p className="flex items-center gap-1.5 text-xs text-gray-700 dark:text-zinc-300">
                               <FiPhone size={12} className="text-orange shrink-0" />
                               <span>{guest.contact}</span>
                             </p>
                           ) : null}
                           {guest.email ? (
-                            <p className="flex items-center gap-1.5 text-xs text-gray-500">
+                            <p className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-zinc-400">
                               <FiMail size={12} className="text-orange shrink-0" />
                               <span>{guest.email}</span>
                             </p>
                           ) : null}
                           {!guest.contact && !guest.email && (
-                            <span className="text-xs text-gray-400 italic">No contact info</span>
+                            <span className="text-xs text-gray-400 dark:text-zinc-500 italic">No contact info</span>
                           )}
                         </div>
                       </td>
@@ -534,14 +534,14 @@ const GuestListPage = () => {
                         <div className="flex items-center justify-end gap-1.5">
                           <button
                             onClick={() => handleEditGuest(guest)}
-                            className="w-8 h-8 rounded-xl bg-orange/[0.08] hover:bg-orange hover:text-white text-orange flex items-center justify-center transition-colors cursor-pointer shadow-2xs"
+                            className="w-8 h-8 rounded-xl bg-orange/[0.08] dark:bg-orange/20 hover:bg-orange hover:text-white text-orange flex items-center justify-center transition-colors cursor-pointer shadow-2xs"
                             title="Edit guest"
                           >
                             <FiEdit2 size={14} />
                           </button>
                           <button
                             onClick={() => handleDeleteGuest(guest.id, guest.name)}
-                            className="w-8 h-8 rounded-xl bg-red-50 hover:bg-red-600 hover:text-white text-red-600 flex items-center justify-center transition-colors cursor-pointer shadow-2xs"
+                            className="w-8 h-8 rounded-xl bg-red-50 dark:bg-red-950/40 hover:bg-red-600 hover:text-white text-red-600 dark:text-red-400 flex items-center justify-center transition-colors cursor-pointer shadow-2xs"
                             title="Delete guest"
                           >
                             <FiTrash2 size={14} />

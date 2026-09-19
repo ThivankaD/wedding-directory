@@ -39,8 +39,8 @@ const TaskRow: React.FC<TaskRowProps> = ({
     <div
       className={`group flex items-center justify-between p-3 sm:p-4 rounded-2xl border transition-all ${
         task.completed
-          ? "bg-emerald-50/40 border-emerald-200/60 hover:border-emerald-300"
-          : "bg-white border-orange/15 hover:border-orange/40 hover:bg-orange/[0.02]"
+          ? "bg-emerald-50/40 dark:bg-emerald-950/30 border-emerald-200/60 dark:border-emerald-800/40 hover:border-emerald-300 dark:hover:border-emerald-700"
+          : "bg-white dark:bg-darkSurface border-orange/15 dark:border-zinc-800 hover:border-orange/40 hover:bg-orange/[0.02] dark:hover:bg-zinc-800/40"
       }`}
     >
       <div className="flex items-start gap-3 min-w-0 flex-1">
@@ -62,18 +62,18 @@ const TaskRow: React.FC<TaskRowProps> = ({
         <div className="min-w-0 flex-1">
           <p
             className={`font-title text-sm sm:text-base font-bold transition-all truncate ${
-              task.completed ? "line-through text-gray-400" : "text-gray-900"
+              task.completed ? "line-through text-gray-400 dark:text-zinc-500" : "text-gray-900 dark:text-zinc-100"
             }`}
           >
             {task.title}
           </p>
-          <div className="flex flex-wrap items-center gap-3 mt-1 text-xs text-gray-500 font-body">
+          <div className="flex flex-wrap items-center gap-3 mt-1 text-xs text-gray-500 dark:text-zinc-400 font-body">
             <span className="inline-flex items-center gap-1">
               <FiCalendar className="text-orange shrink-0" size={12} />
               <span>{formatDate(task.due_date)}</span>
             </span>
             {task.notes && (
-              <span className="line-clamp-1 text-gray-400 italic max-w-xs">
+              <span className="line-clamp-1 text-gray-400 dark:text-zinc-500 italic max-w-xs">
                 {task.notes}
               </span>
             )}
@@ -85,14 +85,14 @@ const TaskRow: React.FC<TaskRowProps> = ({
       <div className="flex items-center gap-1.5 shrink-0 ml-3">
         <button
           onClick={onEdit}
-          className="w-8 h-8 rounded-xl bg-orange/10 hover:bg-orange text-orange hover:text-white flex items-center justify-center transition-colors cursor-pointer shadow-2xs"
+          className="w-8 h-8 rounded-xl bg-orange/10 dark:bg-orange/20 hover:bg-orange text-orange hover:text-white flex items-center justify-center transition-colors cursor-pointer shadow-2xs"
           title="Edit task"
         >
           <FiEdit2 size={13} />
         </button>
         <button
           onClick={onDelete}
-          className="w-8 h-8 rounded-xl bg-red-50 hover:bg-red-600 text-red-600 hover:text-white flex items-center justify-center transition-colors cursor-pointer shadow-2xs"
+          className="w-8 h-8 rounded-xl bg-red-50 dark:bg-red-950/40 hover:bg-red-600 text-red-600 dark:text-red-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer shadow-2xs"
           title="Delete task"
         >
           <FiTrash2 size={13} />

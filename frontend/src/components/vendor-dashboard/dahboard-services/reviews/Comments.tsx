@@ -67,10 +67,10 @@ const Comments: React.FC<CommentsProps> = ({ serviceId }) => {
   return (
     <div className="font-body space-y-4 mt-6" role="list" aria-live="polite">
       <div className="flex items-center justify-between pb-1">
-        <h3 className="text-base font-semibold text-gray-900 font-title">
+        <h3 className="text-base font-semibold text-gray-900 dark:text-zinc-100 font-title">
           Client Feedback ({totalReviews})
         </h3>
-        <span className="text-xs text-gray-400 font-medium">Newest first</span>
+        <span className="text-xs text-gray-400 dark:text-zinc-500 font-medium">Newest first</span>
       </div>
 
       <div className="space-y-4">
@@ -80,7 +80,7 @@ const Comments: React.FC<CommentsProps> = ({ serviceId }) => {
             <div
               key={review.id}
               role="listitem"
-              className="rounded-2xl border border-gray-100 bg-white p-5 md:p-6 shadow-sm hover:shadow-md transition-shadow"
+              className="rounded-2xl border border-gray-100 dark:border-zinc-800 bg-white dark:bg-darkSurface p-5 md:p-6 shadow-sm hover:shadow-md transition-shadow"
             >
               {/* Header: Avatar, Name, Verified Badge, Rating & Date */}
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -90,14 +90,14 @@ const Comments: React.FC<CommentsProps> = ({ serviceId }) => {
                   </div>
                   <div>
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-base font-semibold text-gray-900 font-title">
+                      <span className="text-base font-semibold text-gray-900 dark:text-zinc-100 font-title">
                         {review.visitor?.visitor_fname || "Couple"}
                       </span>
-                      <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                      <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800/60">
                         ✓ Verified Booking
                       </span>
                     </div>
-                    <div className="text-xs text-gray-400">
+                    <div className="text-xs text-gray-400 dark:text-zinc-500">
                       {new Date(review.createdAt).toLocaleDateString("en-US", {
                         year: "numeric",
                         month: "short",
@@ -118,7 +118,7 @@ const Comments: React.FC<CommentsProps> = ({ serviceId }) => {
                       )
                     )}
                   </div>
-                  <span className="text-xs font-bold text-gray-700 ml-1">
+                  <span className="text-xs font-bold text-gray-700 dark:text-zinc-300 ml-1">
                     {review.rating.toFixed(1)}
                   </span>
                 </div>
@@ -126,7 +126,7 @@ const Comments: React.FC<CommentsProps> = ({ serviceId }) => {
 
               {/* Review text */}
               {review.comment && (
-                <p className="mt-3 text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
+                <p className="mt-3 text-sm text-gray-700 dark:text-zinc-300 leading-relaxed whitespace-pre-wrap">
                   {review.comment}
                 </p>
               )}
@@ -153,7 +153,7 @@ const Comments: React.FC<CommentsProps> = ({ serviceId }) => {
                       href={url}
                       target="_blank"
                       rel="noreferrer"
-                      className="group relative block overflow-hidden rounded-xl border border-gray-200 shadow-sm"
+                      className="group relative block overflow-hidden rounded-xl border border-gray-200 dark:border-zinc-700 shadow-sm"
                     >
                       <img
                         src={url}

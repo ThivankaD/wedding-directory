@@ -45,15 +45,15 @@ export default function MessageInput({ chatId, onMessageSent }: MessageInputProp
   };
 
   return (
-    <div className="border-t border-gray-100 bg-white p-3 sm:p-4 flex-shrink-0">
+    <div className="border-t border-gray-100 dark:border-zinc-800 bg-white dark:bg-darkSurface p-3 sm:p-4 flex-shrink-0">
       <form onSubmit={handleSubmit} className="w-full">
-        <div className="flex items-center gap-2 bg-gray-50/80 rounded-2xl px-4 py-2 border border-gray-200 focus-within:border-orange focus-within:ring-2 focus-within:ring-orange/20 focus-within:bg-white transition-all">
+        <div className="flex items-center gap-2 bg-gray-50/80 dark:bg-darkElevated rounded-2xl px-4 py-2 border border-gray-200 dark:border-zinc-700 focus-within:border-orange focus-within:ring-2 focus-within:ring-orange/20 focus-within:bg-white dark:focus-within:bg-darkElevated transition-all">
           <input
             type="text"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Type your message..."
-            className="flex-1 bg-transparent border-none focus:outline-none text-sm text-gray-800 placeholder-gray-400 font-body"
+            className="flex-1 bg-transparent border-none focus:outline-none text-sm text-gray-800 dark:text-zinc-100 placeholder-gray-400 dark:placeholder-zinc-500 font-body"
           />
           <button
             type="submit"

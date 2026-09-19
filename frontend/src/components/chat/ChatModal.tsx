@@ -153,7 +153,7 @@ const ChatModal: React.FC<ChatModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl h-[600px] flex flex-col">
+      <div className="bg-white dark:bg-darkSurface rounded-lg shadow-xl w-full max-w-2xl h-[600px] flex flex-col border border-transparent dark:border-zinc-800">
         {/* Header */}
         <div className="bg-orange text-white p-4 rounded-t-lg flex justify-between items-center">
           <div>
@@ -175,13 +175,13 @@ const ChatModal: React.FC<ChatModalProps> = ({
         </div>
 
         {/* Messages Area */}
-        <div className="flex-1 overflow-y-auto p-4 bg-gray-50">
+        <div className="flex-1 overflow-y-auto p-4 bg-gray-50 dark:bg-darkBg">
           {chatLoading || historyLoading ? (
             <div className="flex items-center justify-center h-full">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange"></div>
             </div>
           ) : messages.length === 0 ? (
-            <div className="flex items-center justify-center h-full text-gray-500">
+            <div className="flex items-center justify-center h-full text-gray-500 dark:text-zinc-400">
               <div className="text-center">
                 <p className="text-lg font-semibold mb-2">Start a conversation</p>
                 <p className="text-sm">Send a message to {vendorName}</p>
@@ -200,13 +200,13 @@ const ChatModal: React.FC<ChatModalProps> = ({
                       className={`max-w-[70%] rounded-lg p-3 ${
                         isVisitor
                           ? "bg-orange text-white"
-                          : "bg-white text-gray-800 border border-gray-200"
+                          : "bg-white dark:bg-darkElevated text-gray-800 dark:text-zinc-200 border border-gray-200 dark:border-zinc-700"
                       }`}
                     >
                       <p className="whitespace-pre-wrap break-words">{msg.content}</p>
                       <p
                         className={`text-xs mt-1 ${
-                          isVisitor ? "text-white/80" : "text-gray-500"
+                          isVisitor ? "text-white/80" : "text-gray-500 dark:text-zinc-400"
                         }`}
                       >
                         {new Date(msg.timestamp).toLocaleTimeString([], {
@@ -224,7 +224,7 @@ const ChatModal: React.FC<ChatModalProps> = ({
         </div>
 
         {/* Input Area */}
-        <div className="p-4 border-t border-gray-200 bg-white rounded-b-lg">
+        <div className="p-4 border-t border-gray-200 dark:border-zinc-800 bg-white dark:bg-darkSurface rounded-b-lg">
           <div className="flex gap-2">
             <input
               type="text"
@@ -232,7 +232,7 @@ const ChatModal: React.FC<ChatModalProps> = ({
               onChange={(e) => setMessage(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Type your message..."
-              className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange focus:border-transparent"
+              className="flex-1 border border-gray-300 dark:border-zinc-700 dark:bg-darkElevated dark:text-zinc-100 placeholder:text-gray-400 dark:placeholder:text-zinc-500 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange focus:border-transparent"
               disabled={!connected || !chatId}
             />
             <button

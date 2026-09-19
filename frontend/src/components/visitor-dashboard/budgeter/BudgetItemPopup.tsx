@@ -74,14 +74,14 @@ const BudgetItemPopup: React.FC<BudgetItemPopupProps> = ({
       <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
 
       <div className="fixed inset-0 flex items-center justify-center p-4">
-        <Dialog.Panel className="mx-auto max-w-md rounded-3xl bg-white border-2 border-orange/20 shadow-2xl p-6 sm:p-7 w-full animate-in fade-in zoom-in-95 duration-200">
-          <div className="flex items-center justify-between mb-6 pb-4 border-b border-orange/15">
-            <Dialog.Title className="text-xl sm:text-2xl font-bold font-title text-gray-900">
+        <Dialog.Panel className="mx-auto max-w-md rounded-3xl bg-white dark:bg-darkSurface border-2 border-orange/20 dark:border-zinc-800 shadow-2xl p-6 sm:p-7 w-full animate-in fade-in zoom-in-95 duration-200">
+          <div className="flex items-center justify-between mb-6 pb-4 border-b border-orange/15 dark:border-zinc-800">
+            <Dialog.Title className="text-xl sm:text-2xl font-bold font-title text-gray-900 dark:text-zinc-100">
               Add New Budget Item
             </Dialog.Title>
             <button
               onClick={onClose}
-              className="w-8 h-8 rounded-full bg-gray-100 hover:bg-orange/10 hover:text-orange flex items-center justify-center text-gray-500 transition-colors"
+              className="w-8 h-8 rounded-full bg-gray-100 dark:bg-darkElevated hover:bg-orange/10 hover:text-orange flex items-center justify-center text-gray-500 dark:text-zinc-400 transition-colors cursor-pointer"
             >
               <X size={18} />
             </button>
@@ -89,7 +89,7 @@ const BudgetItemPopup: React.FC<BudgetItemPopupProps> = ({
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block mb-1.5 text-xs font-bold text-gray-700 font-body uppercase tracking-wider">Item Name</label>
+              <label className="block mb-1.5 text-xs font-bold text-gray-700 dark:text-zinc-300 font-body uppercase tracking-wider">Item Name</label>
               <Input
                 value={formData.itemName}
                 onChange={(e) =>
@@ -99,13 +99,13 @@ const BudgetItemPopup: React.FC<BudgetItemPopupProps> = ({
                   }))
                 }
                 placeholder="e.g. Wedding Reception Hall"
-                className="w-full h-11 border-2 border-orange/20 focus:border-orange rounded-xl bg-orange/[0.02]"
+                className="w-full h-11 border-2 border-orange/20 dark:border-zinc-700 focus:border-orange rounded-xl bg-orange/[0.02] dark:bg-darkElevated text-gray-900 dark:text-zinc-100 placeholder-gray-400 dark:placeholder-zinc-500"
                 required
               />
             </div>
 
             <div>
-              <label className="block mb-1.5 text-xs font-bold text-gray-700 font-body uppercase tracking-wider">Budget Category</label>
+              <label className="block mb-1.5 text-xs font-bold text-gray-700 dark:text-zinc-300 font-body uppercase tracking-wider">Budget Category</label>
               <select
                 value={formData.category || budgetCategories[0] || 'Venues'}
                 onChange={(e) =>
@@ -114,7 +114,7 @@ const BudgetItemPopup: React.FC<BudgetItemPopupProps> = ({
                     category: e.target.value,
                   }))
                 }
-                className="w-full rounded-xl border-2 border-orange/20 focus:border-orange font-body bg-white px-3 h-11 text-sm focus:outline-none"
+                className="w-full rounded-xl border-2 border-orange/20 dark:border-zinc-700 focus:border-orange font-body bg-white dark:bg-darkElevated px-3 h-11 text-sm text-gray-900 dark:text-zinc-100 focus:outline-none"
                 required
               >
                 {budgetCategories.map((category) => (
@@ -127,7 +127,7 @@ const BudgetItemPopup: React.FC<BudgetItemPopupProps> = ({
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block mb-1.5 text-xs font-bold text-gray-700 font-body uppercase tracking-wider">Estimated Cost</label>
+                <label className="block mb-1.5 text-xs font-bold text-gray-700 dark:text-zinc-300 font-body uppercase tracking-wider">Estimated Cost</label>
                 <Input
                   type="number"
                   step="0.01"
@@ -139,13 +139,13 @@ const BudgetItemPopup: React.FC<BudgetItemPopupProps> = ({
                     }))
                   }
                   placeholder="0.00"
-                  className="w-full h-11 border-2 border-orange/20 focus:border-orange rounded-xl bg-orange/[0.02]"
+                  className="w-full h-11 border-2 border-orange/20 dark:border-zinc-700 focus:border-orange rounded-xl bg-orange/[0.02] dark:bg-darkElevated text-gray-900 dark:text-zinc-100 placeholder-gray-400 dark:placeholder-zinc-500"
                   required
                 />
               </div>
 
               <div>
-                <label className="block mb-1.5 text-xs font-bold text-gray-700 font-body uppercase tracking-wider">Amount Paid</label>
+                <label className="block mb-1.5 text-xs font-bold text-gray-700 dark:text-zinc-300 font-body uppercase tracking-wider">Amount Paid</label>
                 <Input
                   type="number"
                   step="0.01"
@@ -157,14 +157,14 @@ const BudgetItemPopup: React.FC<BudgetItemPopupProps> = ({
                     }))
                   }
                   placeholder="0.00"
-                  className="w-full h-11 border-2 border-orange/20 focus:border-orange rounded-xl bg-orange/[0.02]"
+                  className="w-full h-11 border-2 border-orange/20 dark:border-zinc-700 focus:border-orange rounded-xl bg-orange/[0.02] dark:bg-darkElevated text-gray-900 dark:text-zinc-100 placeholder-gray-400 dark:placeholder-zinc-500"
                   required
                 />
               </div>
             </div>
 
             <div>
-              <label className="block mb-1.5 text-xs font-bold text-gray-700 font-body uppercase tracking-wider">Notes (Optional)</label>
+              <label className="block mb-1.5 text-xs font-bold text-gray-700 dark:text-zinc-300 font-body uppercase tracking-wider">Notes (Optional)</label>
               <textarea
                 value={formData.specialNotes}
                 onChange={(e) =>
@@ -174,7 +174,7 @@ const BudgetItemPopup: React.FC<BudgetItemPopupProps> = ({
                   }))
                 }
                 placeholder="Add notes about deposits, due dates, package choices..."
-                className="w-full p-3 border-2 border-orange/20 focus:border-orange rounded-xl h-20 resize-none text-sm bg-orange/[0.02] focus:outline-none"
+                className="w-full p-3 border-2 border-orange/20 dark:border-zinc-700 focus:border-orange rounded-xl h-20 resize-none text-sm bg-orange/[0.02] dark:bg-darkElevated text-gray-900 dark:text-zinc-100 placeholder-gray-400 dark:placeholder-zinc-500 focus:outline-none"
               />
             </div>
 

@@ -40,9 +40,9 @@ const BudgeterPage = () => {
 
   if (error) {
     return (
-      <div className="p-8 text-center bg-white rounded-2xl border-2 border-orange/20 max-w-lg mx-auto mt-12">
+      <div className="p-8 text-center bg-white dark:bg-darkSurface rounded-2xl border-2 border-orange/20 dark:border-zinc-800 max-w-lg mx-auto mt-12">
         <p className="text-red-500 font-semibold mb-2">Error loading budget</p>
-        <p className="text-xs text-gray-500">{error.message}</p>
+        <p className="text-xs text-gray-500 dark:text-zinc-400">{error.message}</p>
       </div>
     );
   }

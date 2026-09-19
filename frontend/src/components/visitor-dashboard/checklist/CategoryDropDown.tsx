@@ -26,10 +26,10 @@ const CategoryDropdown: React.FC<CategoryDropdownProps> = ({
   const completedCount = tasks.filter((t) => t.completed).length;
 
   return (
-    <div className="bg-white rounded-2xl border-2 border-orange/20 hover:border-orange/40 transition-all overflow-hidden shadow-2xs">
+    <div className="bg-white dark:bg-darkSurface rounded-2xl border-2 border-orange/20 dark:border-zinc-800 hover:border-orange/40 transition-all overflow-hidden shadow-2xs">
       {/* Category Header */}
       <div
-        className="flex items-center justify-between p-4 sm:p-5 bg-white hover:bg-orange/[0.02] cursor-pointer select-none transition-colors"
+        className="flex items-center justify-between p-4 sm:p-5 bg-white dark:bg-darkSurface hover:bg-orange/[0.02] dark:hover:bg-zinc-800/40 cursor-pointer select-none transition-colors"
         onClick={toggleDropdown}
       >
         <div className="flex items-center gap-3">
@@ -37,14 +37,14 @@ const CategoryDropdown: React.FC<CategoryDropdownProps> = ({
             <FiFolder size={18} />
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <h2 className="text-base sm:text-lg font-bold font-title text-gray-900">
+            <h2 className="text-base sm:text-lg font-bold font-title text-gray-900 dark:text-zinc-100">
               {category}
             </h2>
             <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-orange/10 text-orange border border-orange/20">
               {tasks.length} task{tasks.length === 1 ? '' : 's'}
             </span>
             {tasks.length > 0 && completedCount > 0 && (
-              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60">
                 {completedCount}/{tasks.length} completed
               </span>
             )}
@@ -63,7 +63,7 @@ const CategoryDropdown: React.FC<CategoryDropdownProps> = ({
 
       {/* Accordion Body */}
       {isOpen && (
-        <div className="p-4 sm:p-5 border-t-2 border-orange/15 bg-orange/[0.01] space-y-3">
+        <div className="p-4 sm:p-5 border-t-2 border-orange/15 dark:border-zinc-800 bg-orange/[0.01] dark:bg-darkElevated/20 space-y-3">
           {tasks.length > 0 ? (
             <div className="space-y-2.5">
               {tasks.map((task) => (

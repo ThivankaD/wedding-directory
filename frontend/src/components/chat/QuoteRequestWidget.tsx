@@ -97,7 +97,7 @@ const QuoteRequestWidget = ({ vendorId,offeringId }: QuoteRequestWidgetProps) =>
   return (
     <>
       {showSuccess && <Confetti />}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-7 max-w-2xl mx-auto">
+      <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 p-6 sm:p-7 max-w-2xl mx-auto">
         {isVendorsOffering ? (
           // 👇 VENDOR VIEW
           <div className="text-center space-y-3.5">
@@ -106,10 +106,10 @@ const QuoteRequestWidget = ({ vendorId,offeringId }: QuoteRequestWidgetProps) =>
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
               </svg>
             </div>
-            <h3 className="text-xl font-bold font-title text-gray-900">
+            <h3 className="text-xl font-bold font-title text-gray-900 dark:text-zinc-100">
               View your quotes
             </h3>
-            <p className="text-gray-500 font-body text-sm leading-relaxed">
+            <p className="text-gray-500 dark:text-zinc-400 font-body text-sm leading-relaxed">
               Couples can request quotes here. You can view and manage their messages in your dashboard inbox.
             </p>
             <Link
@@ -128,15 +128,15 @@ const QuoteRequestWidget = ({ vendorId,offeringId }: QuoteRequestWidgetProps) =>
               </svg>
             </div>
             <div>
-              <h3 className="text-xl font-bold font-title text-gray-900">
+              <h3 className="text-xl font-bold font-title text-gray-900 dark:text-zinc-100">
                 Get Your Personalized Quote
               </h3>
-              <p className="text-gray-500 font-body text-xs mt-1">
+              <p className="text-gray-500 dark:text-zinc-400 font-body text-xs mt-1">
                 Vendors usually respond within 24 hours
               </p>
             </div>
 
-            <p className="text-gray-600 font-body text-sm leading-relaxed px-2">
+            <p className="text-gray-600 dark:text-zinc-300 font-body text-sm leading-relaxed px-2">
               Have questions about pricing, availability, or custom packages? Sign in to chat directly with this vendor.
             </p>
 
@@ -147,7 +147,7 @@ const QuoteRequestWidget = ({ vendorId,offeringId }: QuoteRequestWidgetProps) =>
               >
                 <span>Log In to Request Quote</span>
               </Link>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-gray-500 dark:text-zinc-400">
                 New couple?{" "}
                 <Link
                   href="/visitor-signup"
@@ -164,26 +164,26 @@ const QuoteRequestWidget = ({ vendorId,offeringId }: QuoteRequestWidgetProps) =>
             <div className="space-y-6">
               {/* Header */}
               <div className="text-center mb-8">
-                <h3 className="text-2xl font-bold font-title text-gray-800">
+                <h3 className="text-2xl font-bold font-title text-gray-800 dark:text-zinc-100">
                   Get Your Personalized Quote
                 </h3>
-                <p className="text-gray-600 mt-2">
+                <p className="text-gray-600 dark:text-zinc-400 mt-2">
                   We&apos;ll get back to you within 24 hours
                 </p>
               </div>
 
               {/* User Info Card */}
-              <div className="shadow-md bg-slate-50 p-4 mb-6">
+              <div className="shadow-md bg-slate-50 dark:bg-darkElevated border border-gray-100 dark:border-zinc-700 p-4 mb-6 rounded-xl">
                 <div className="flex items-center space-x-4">
-                  <div className="h-12 w-12 bg-slate-100 rounded-full flex items-center justify-center">
+                  <div className="h-12 w-12 bg-slate-100 dark:bg-darkSurface rounded-full flex items-center justify-center">
                     <span className="text-orange text-lg font-semibold">
                       {fullName.split(" ")[0]?.[0]}
                     </span>
                   </div>
                   <div className="flex-1">
-                    <p className="text-gray-900 font-medium">{fullName}</p>
-                    <p className="text-gray-500 text-sm">{visitorInfo?.email}</p>
-                    <p className="text-gray-500 text-sm">
+                    <p className="text-gray-900 dark:text-zinc-100 font-medium">{fullName}</p>
+                    <p className="text-gray-500 dark:text-zinc-400 text-sm">{visitorInfo?.email}</p>
+                    <p className="text-gray-500 dark:text-zinc-400 text-sm">
                       Wedding Date: {weddingDate}
                     </p>
                   </div>
@@ -196,7 +196,7 @@ const QuoteRequestWidget = ({ vendorId,offeringId }: QuoteRequestWidgetProps) =>
                   <textarea
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-slate-600 focus:border-slate-600 resize-none transition-all duration-200"
+                    className="w-full px-4 py-3 border border-gray-200 dark:border-zinc-700 dark:bg-darkElevated dark:text-zinc-100 placeholder:text-gray-400 dark:placeholder:text-zinc-500 rounded-lg focus:ring-2 focus:ring-orange focus:border-orange resize-none transition-all duration-200"
                     rows={5}
                     placeholder="Tell us about your wedding plans and what you're looking for..."
                     required
@@ -220,7 +220,7 @@ const QuoteRequestWidget = ({ vendorId,offeringId }: QuoteRequestWidgetProps) =>
               </form>
 
               {/* Footer Note */}
-              <p className="text-center text-gray-500 text-sm mt-4">
+              <p className="text-center text-gray-500 dark:text-zinc-400 text-sm mt-4">
                 By sending this request, you&apos;ll create a conversation with
                 the vendor
               </p>
@@ -231,9 +231,9 @@ const QuoteRequestWidget = ({ vendorId,offeringId }: QuoteRequestWidgetProps) =>
 
       {showSuccess && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-8 max-w-md mx-4 relative animate-in fade-in slide-in-from-bottom duration-300">
+          <div className="bg-white dark:bg-darkSurface border border-gray-100 dark:border-zinc-700 rounded-xl p-8 max-w-md mx-4 relative animate-in fade-in slide-in-from-bottom duration-300">
             <div className="text-center space-y-4">
-              <div className="h-16 w-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+              <div className="h-16 w-16 bg-green-100 dark:bg-emerald-950/60 rounded-full flex items-center justify-center mx-auto">
                 <svg
                   className="h-8 w-8 text-green-500"
                   fill="none"
@@ -248,10 +248,10 @@ const QuoteRequestWidget = ({ vendorId,offeringId }: QuoteRequestWidgetProps) =>
                   />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold text-gray-800">
+              <h3 className="text-2xl font-bold text-gray-800 dark:text-zinc-100">
                 Message Sent Successfully!
               </h3>
-              <p className="text-gray-600">
+              <p className="text-gray-600 dark:text-zinc-300">
                 Your quote request has been sent. You can view and manage all
                 your conversations in your dashboard.
               </p>
@@ -264,7 +264,7 @@ const QuoteRequestWidget = ({ vendorId,offeringId }: QuoteRequestWidgetProps) =>
                 </Link>
                 <button
                   onClick={() => setShowSuccess(false)}
-                  className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-6 rounded-lg transition-colors duration-200"
+                  className="w-full bg-gray-100 dark:bg-darkElevated hover:bg-gray-200 dark:hover:bg-zinc-700 text-gray-700 dark:text-zinc-300 font-medium py-3 px-6 rounded-lg transition-colors duration-200"
                 >
                   Close
                 </button>

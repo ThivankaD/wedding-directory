@@ -1,6 +1,6 @@
 "use client";
 
-import Header from "@/components/shared/Headers/Header";
+import VisitorHeader from "@/components/shared/Headers/VisitorHeader";
 import WeddingDetails from "@/components/visitor-profile/WeddingDetails";
 import AccountDetails from "@/components/visitor-profile/AccountDetails";
 import ProfileMenu from "@/components/visitor-profile/ProfileMenu";
@@ -41,9 +41,9 @@ const VisitorProfile = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
-      <main className="flex-grow bg-lightYellow">
+    <div className="flex flex-col min-h-screen bg-lightYellow dark:bg-darkBg transition-colors duration-200">
+      <VisitorHeader />
+      <main className="flex-grow bg-lightYellow dark:bg-darkBg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
           {/* Wedding Couple Card Section */}
           <div className="mb-8">
@@ -58,10 +58,10 @@ const VisitorProfile = () => {
 
           {/* Page Header matching Vendor Settings */}
           <div className="mb-6">
-            <h1 className="font-title text-3xl font-bold text-gray-900">
+            <h1 className="font-title text-3xl font-bold text-gray-900 dark:text-zinc-100">
               Profile Settings
             </h1>
-            <p className="text-gray-500 font-body text-sm mt-1">
+            <p className="text-gray-500 dark:text-zinc-400 font-body text-sm mt-1">
               Manage your wedding details, partner information, and account security.
             </p>
           </div>

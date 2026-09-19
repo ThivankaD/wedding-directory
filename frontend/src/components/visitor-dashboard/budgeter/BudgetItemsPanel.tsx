@@ -141,7 +141,7 @@ const BudgetItemsPanel: React.FC<BudgetItemsPanelProps> = ({
     return Array.from(allCategories).map((category) => (
       <div key={category} className="mb-6">
         {/* Category Header */}
-        <div className="bg-orange/[0.06] px-5 py-3 rounded-2xl border-2 border-orange/15 font-title font-bold text-gray-900 flex items-center justify-between text-base sm:text-lg">
+        <div className="bg-orange/[0.06] dark:bg-darkElevated px-5 py-3 rounded-2xl border-2 border-orange/15 dark:border-zinc-800 font-title font-bold text-gray-900 dark:text-zinc-100 flex items-center justify-between text-base sm:text-lg">
           <span>{category}</span>
         </div>
 
@@ -179,19 +179,19 @@ const BudgetItemsPanel: React.FC<BudgetItemsPanelProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-3xl border-2 border-orange/20 shadow-sm p-6 sm:p-8 space-y-6">
+    <div className="bg-white dark:bg-darkSurface rounded-3xl border-2 border-orange/20 dark:border-zinc-800 shadow-sm p-6 sm:p-8 space-y-6">
       {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-orange/15">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-orange/15 dark:border-zinc-800">
         <div>
-          <h2 className="font-title text-2xl sm:text-3xl font-bold text-gray-900">Budget Items</h2>
-          <p className="text-xs sm:text-sm text-gray-500 font-body">Track, manage, and record expenses for all wedding categories.</p>
+          <h2 className="font-title text-2xl sm:text-3xl font-bold text-gray-900 dark:text-zinc-100">Budget Items</h2>
+          <p className="text-xs sm:text-sm text-gray-500 dark:text-zinc-400 font-body">Track, manage, and record expenses for all wedding categories.</p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2 bg-orange/[0.05] border border-orange/15 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold text-gray-700">
+          <div className="flex items-center gap-2 bg-orange/[0.05] dark:bg-darkElevated border border-orange/15 dark:border-zinc-700 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold text-gray-700 dark:text-zinc-300">
             <span>Total Items:</span>
             <strong className="text-orange font-bold">{totalItems}</strong>
           </div>
-          <div className="flex items-center gap-2 bg-orange/[0.05] border border-orange/15 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold text-gray-700">
+          <div className="flex items-center gap-2 bg-orange/[0.05] dark:bg-darkElevated border border-orange/15 dark:border-zinc-700 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold text-gray-700 dark:text-zinc-300">
             <span>Paid in Full:</span>
             <strong className="text-orange font-bold">{paidInFullItems}</strong>
           </div>
@@ -217,11 +217,11 @@ const BudgetItemsPanel: React.FC<BudgetItemsPanelProps> = ({
         <input
           type="text"
           placeholder="Search budget items..."
-          className="w-full pl-10 pr-4 py-2.5 text-sm bg-orange/[0.02] border-2 border-orange/20 focus:border-orange rounded-xl focus:outline-none focus:ring-1 focus:ring-orange text-gray-800 placeholder-gray-400 transition-all"
+          className="w-full pl-10 pr-4 py-2.5 text-sm bg-orange/[0.02] dark:bg-darkElevated border-2 border-orange/20 dark:border-zinc-700 focus:border-orange rounded-xl focus:outline-none focus:ring-1 focus:ring-orange text-gray-800 dark:text-zinc-100 placeholder-gray-400 dark:placeholder-zinc-500 transition-all"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-zinc-500" size={16} />
       </div>
 
       {/* Budget Items grouped by category */}

@@ -4,9 +4,10 @@ import { Fragment, useState, useEffect, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import { BiMessageRounded } from "react-icons/bi";
-import { FiCalendar, FiUser, FiLogOut } from "react-icons/fi";
+import { FiCalendar, FiUser, FiLogOut, FiSun, FiMoon } from "react-icons/fi";
 import Image from "next/image";
 import { useAuth } from "@/contexts/VisitorAuthContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import SearchBar from "../SearchBar";
 import { useQuery } from "@apollo/client";
 import { GET_VISITOR_BY_ID, GET_VISITOR_APPROVAL_REQUESTS } from "@/graphql/queries";
@@ -17,6 +18,7 @@ const VisitorHeader = () => {
   const router = useRouter();
   const pathname = usePathname();
   const { visitor, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const [profilePic, setProfilePic] = useState<string>("/images/visitorPlaceholder.png"); // Default placeholder
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showNotificationMenu, setShowNotificationMenu] = useState(false);
@@ -182,11 +184,11 @@ const VisitorHeader = () => {
 
   return (
     <Fragment>
-      <header className="py-4 xl:py-5 text-black bg-lightYellow border-b border-orange/15">
+      <header className="py-4 xl:py-5 text-black dark:text-white bg-lightYellow dark:bg-darkBg border-b border-orange/15 dark:border-orange/20 transition-colors duration-200">
         <div className="max-w-7xl mx-auto flex justify-between items-center px-4 sm:px-6 lg:px-8 w-full">
           {/* Logo - click disabled for logged-in visitor */}
           <div className="flex items-center select-none cursor-default">
-            <h1 className="text-2xl font-bold text-gray-900 font-title">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-zinc-100 font-title">
               Say I Do
             </h1>
           </div>
@@ -200,7 +202,7 @@ const VisitorHeader = () => {
           </div>
 
           {/* Dashboard, Notifications, and Profile dropdown */}
-          <div className="flex items-center justify-end gap-3 sm:gap-5 text-sm sm:text-base font-title text-text">
+          <div className="flex items-center justify-end gap-3 sm:gap-4 text-sm sm:text-base font-title text-text dark:text-zinc-200">
             <nav className="flex items-center gap-1 sm:gap-2">
               {navLinks.map((link) => {
                 const active = link.isActive(pathname);
@@ -211,7 +213,7 @@ const VisitorHeader = () => {
                     className={`px-3.5 py-1.5 rounded-xl transition-all ${
                       active
                         ? "bg-orange text-white shadow-xs font-semibold"
-                        : "text-gray-700 hover:text-orange hover:bg-orange/10 font-medium"
+                        : "text-gray-700 dark:text-zinc-300 hover:text-orange hover:bg-orange/10 dark:hover:bg-zinc-800 font-medium"
                     }`}
                   >
                     {link.name}
@@ -223,7 +225,7 @@ const VisitorHeader = () => {
             {/* Chat icon with unread badge */}
             <Link
               href={`/visitor-dashboard/chats/${visitor?.id}`}
-              className="relative p-2 rounded-xl hover:bg-orange/10 transition-colors text-gray-700 hover:text-orange flex items-center justify-center"
+              className="relative p-2 rounded-xl hover:bg-orange/10 dark:hover:bg-zinc-800 transition-colors text-gray-700 dark:text-zinc-300 hover:text-orange flex items-center justify-center"
               title="Messages"
             >
               <BiMessageRounded className="w-[26px] h-[26px]" />
@@ -239,7 +241,7 @@ const VisitorHeader = () => {
               <button
                 type="button"
                 onClick={() => setShowNotificationMenu((prev) => !prev)}
-                className="relative p-2 rounded-xl hover:bg-orange/10 transition-colors flex items-center justify-center text-gray-700 hover:text-orange"
+                className="relative p-2 rounded-xl hover:bg-orange/10 dark:hover:bg-zinc-800 transition-colors flex items-center justify-center text-gray-700 dark:text-zinc-300 hover:text-orange"
                 title={
                   notificationCount > 0
                     ? `${notificationCount} notification${notificationCount === 1 ? "" : "s"}`
@@ -256,10 +258,10 @@ const VisitorHeader = () => {
               </button>
 
               {showNotificationMenu && (
-                <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white shadow-2xl rounded-2xl py-2 z-50 border border-gray-100 animate-in fade-in slide-in-from-top-2 duration-150">
-                  <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+                <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white dark:bg-darkSurface shadow-2xl rounded-2xl py-2 z-50 border border-gray-100 dark:border-zinc-800 animate-in fade-in slide-in-from-top-2 duration-150">
+                  <div className="px-4 py-3 border-b border-gray-100 dark:border-zinc-800 flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className="font-title font-bold text-base text-gray-900">Notifications</span>
+                      <span className="font-title font-bold text-base text-gray-900 dark:text-zinc-100">Notifications</span>
                       {notificationCount > 0 && (
                         <span className="bg-orange/10 text-orange text-xs font-bold px-2 py-0.5 rounded-full">
                           {notificationCount} new
@@ -268,12 +270,12 @@ const VisitorHeader = () => {
                     </div>
                   </div>
 
-                  <div className="max-h-80 overflow-y-auto divide-y divide-gray-50">
+                  <div className="max-h-80 overflow-y-auto divide-y divide-gray-50 dark:divide-zinc-800">
                     {sortedRequests.length === 0 ? (
                       <div className="py-10 px-4 text-center">
-                        <IoIosNotificationsOutline className="w-12 h-12 text-gray-300 mx-auto mb-2.5" />
-                        <p className="text-sm font-semibold text-gray-700">No new notifications</p>
-                        <p className="text-xs text-gray-400 mt-1">You are all caught up!</p>
+                        <IoIosNotificationsOutline className="w-12 h-12 text-gray-300 dark:text-zinc-600 mx-auto mb-2.5" />
+                        <p className="text-sm font-semibold text-gray-700 dark:text-zinc-300">No new notifications</p>
+                        <p className="text-xs text-gray-400 dark:text-zinc-500 mt-1">You are all caught up!</p>
                       </div>
                     ) : (
                       sortedRequests.map((req: any) => {
@@ -369,6 +371,21 @@ const VisitorHeader = () => {
               )}
             </div>
 
+            {/* Theme Toggle Button */}
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="p-2 rounded-xl text-gray-700 dark:text-zinc-300 hover:text-orange hover:bg-orange/10 dark:hover:bg-zinc-800 transition-colors flex items-center justify-center cursor-pointer"
+              title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
+              aria-label="Toggle Theme"
+            >
+              {theme === "dark" ? (
+                <FiSun className="w-[24px] h-[24px] text-amber-400 hover:rotate-45 transition-transform" />
+              ) : (
+                <FiMoon className="w-[24px] h-[24px] text-gray-700 dark:text-zinc-300 hover:text-orange transition-transform" />
+              )}
+            </button>
+
             {/* Profile dropdown */}
             <div className="relative" ref={profileMenuRef}>
               <button
@@ -383,7 +400,7 @@ const VisitorHeader = () => {
                   className={`w-[46px] h-[46px] sm:w-[50px] sm:h-[50px] rounded-full object-cover transition-all border-2 ${
                     showProfileMenu
                       ? "border-orange ring-2 ring-orange/30 shadow-sm"
-                      : "border-orange/25 hover:border-orange shadow-xs"
+                      : "border-orange/25 dark:border-orange/40 hover:border-orange shadow-xs"
                   }`}
                   width={50}
                   height={50}
@@ -391,10 +408,10 @@ const VisitorHeader = () => {
               </button>
 
               {showProfileMenu && (
-                <div className="absolute right-0 mt-3 w-56 bg-white rounded-2xl shadow-xl border border-orange/20 py-1.5 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                <div className="absolute right-0 mt-3 w-56 bg-white dark:bg-darkSurface rounded-2xl shadow-xl border border-orange/20 dark:border-orange/30 py-1.5 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                   {/* User info banner */}
-                  <div className="px-4 py-2.5 border-b border-orange/15">
-                    <p className="font-title text-sm font-bold text-gray-900 truncate">
+                  <div className="px-4 py-2.5 border-b border-orange/15 dark:border-orange/20">
+                    <p className="font-title text-sm font-bold text-gray-900 dark:text-zinc-100 truncate">
                       {visitorInfo?.visitor_fname
                         ? `${visitorInfo.visitor_fname}${visitorInfo.partner_fname ? ` & ${visitorInfo.partner_fname}` : ""}`
                         : "Wedding Couple"}
@@ -406,12 +423,12 @@ const VisitorHeader = () => {
                     <Link
                       href="/visitor-profile"
                       onClick={() => setShowProfileMenu(false)}
-                      className="flex items-center gap-3 px-3 py-2 rounded-xl text-gray-700 hover:text-orange hover:bg-orange/5 transition-all group"
+                      className="flex items-center gap-3 px-3 py-2 rounded-xl text-gray-700 dark:text-zinc-200 hover:text-orange hover:bg-orange/5 dark:hover:bg-orange/15 transition-all group"
                     >
-                      <div className="w-8 h-8 rounded-lg bg-orange/10 border border-orange/20 text-orange flex items-center justify-center transition-colors group-hover:bg-orange group-hover:text-white flex-shrink-0">
+                      <div className="w-8 h-8 rounded-lg bg-orange/10 dark:bg-orange/20 border border-orange/20 text-orange flex items-center justify-center transition-colors group-hover:bg-orange group-hover:text-white flex-shrink-0">
                         <FiUser size={15} />
                       </div>
-                      <span className="font-title text-sm font-semibold text-gray-900 group-hover:text-orange transition-colors">
+                      <span className="font-title text-sm font-semibold text-gray-900 dark:text-zinc-100 group-hover:text-orange transition-colors">
                         Profile
                       </span>
                     </Link>
@@ -419,12 +436,12 @@ const VisitorHeader = () => {
                     <button
                       type="button"
                       onClick={handleLogout}
-                      className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-gray-700 hover:text-red-600 hover:bg-red-50/80 transition-all group text-left cursor-pointer"
+                      className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-gray-700 dark:text-zinc-200 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50/80 dark:hover:bg-red-950/40 transition-all group text-left cursor-pointer"
                     >
-                      <div className="w-8 h-8 rounded-lg bg-red-50 border border-red-200/60 text-red-500 flex items-center justify-center transition-colors group-hover:bg-red-500 group-hover:text-white group-hover:border-red-500 flex-shrink-0">
+                      <div className="w-8 h-8 rounded-lg bg-red-50 dark:bg-red-950/50 border border-red-200/60 dark:border-red-900/40 text-red-500 flex items-center justify-center transition-colors group-hover:bg-red-500 group-hover:text-white group-hover:border-red-500 flex-shrink-0">
                         <FiLogOut size={15} />
                       </div>
-                      <span className="font-title text-sm font-semibold text-gray-900 group-hover:text-red-600 transition-colors">
+                      <span className="font-title text-sm font-semibold text-gray-900 dark:text-zinc-100 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">
                         Logout
                       </span>
                     </button>

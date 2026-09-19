@@ -111,19 +111,19 @@ const EditGeneral: React.FC<EditProfileProps> = () => {
 
   return (
     <Fragment>
-      <div className="bg-white rounded-2xl p-4 px-8 shadow-lg">
-        <h2 className="font-title text-[30px]">General</h2>
-        <hr className="w-[168px] h-px my-4 bg-gray-500 border-0 dark:bg-gray-700"></hr>
+      <div className="bg-white dark:bg-darkSurface rounded-2xl p-4 px-8 shadow-lg dark:border dark:border-zinc-800">
+        <h2 className="font-title text-[30px] dark:text-zinc-100">General</h2>
+        <hr className="w-[168px] h-px my-4 bg-gray-500 border-0 dark:bg-zinc-700"></hr>
         
         {/* Service Visibility Toggle */}
         <div className="flex items-center mb-6">
-          <label className="font-body text-[16px] mr-4">Service Visibility</label>
+          <label className="font-body text-[16px] mr-4 dark:text-zinc-300">Service Visibility</label>
           <Switch checked={serviceVisibility} onCheckedChange={handleVisibilityToggle} />
         </div>
 
         <form onSubmit={handleSubmit} className="mb-8">
           <div>
-            <label className="font-body text-[16px]">Business Category</label>
+            <label className="font-body text-[16px] dark:text-zinc-300">Business Category</label>
             <div className="relative">
               {profile.showCategoryDropdown ? (
                 <div className="font-body rounded-md mt-2 mb-3">
@@ -135,7 +135,7 @@ const EditGeneral: React.FC<EditProfileProps> = () => {
               ) : (
                 <div 
                   onClick={toggleCategoryDropdown}
-                  className="font-body rounded-md mt-2 mb-3 p-2 border-2 border-gray-100 cursor-pointer hover:bg-gray-50"
+                  className="font-body rounded-md mt-2 mb-3 p-2 border-2 border-gray-100 dark:border-zinc-700 cursor-pointer hover:bg-gray-50 dark:hover:bg-darkElevated dark:bg-darkElevated dark:text-zinc-100"
                 >
                   {profile.category || "Select Category"}
                 </div>
@@ -143,36 +143,36 @@ const EditGeneral: React.FC<EditProfileProps> = () => {
             </div>
           </div>
           <div>
-            <label className="font-body text-[16px]">Business Phone</label>
+            <label className="font-body text-[16px] dark:text-zinc-300">Business Phone</label>
             <Input
               name="businessPhone"
               value={profile.businessPhone || ""}
               onChange={handleInputChange}
-              className="font-body rounded-md mt-2 mb-3"
+              className="font-body rounded-md mt-2 mb-3 dark:border-zinc-700 dark:bg-darkElevated dark:text-zinc-100"
             />
           </div>
           <div>
-            <label className="font-body text-[16px]">Business Email</label>
+            <label className="font-body text-[16px] dark:text-zinc-300">Business Email</label>
             <Input
               name="businessEmail"
               value={profile.businessEmail || ""}
               onChange={handleInputChange}
-              className="font-body rounded-md mt-2 mb-3"
+              className="font-body rounded-md mt-2 mb-3 dark:border-zinc-700 dark:bg-darkElevated dark:text-zinc-100"
             />
           </div>
           <div>
-            <label className="font-body text-[16px]">Description</label>
+            <label className="font-body text-[16px] dark:text-zinc-300">Description</label>
             <textarea
               name="description"
               value={profile.description || ""}
               onChange={handleInputChange}
-              className="font-body rounded-md mt-2 mb-3 w-full h-32 p-2 border-gray-100 border-2"
+              className="font-body rounded-md mt-2 mb-3 w-full h-32 p-2 border-gray-100 border-2 dark:border-zinc-700 dark:bg-darkElevated dark:text-zinc-100"
             />
           </div>
         </form>
       </div>
 
-      <div className="bg-white rounded-2xl p-4 px-8 shadow-lg my-8 justify-center flex">
+      <div className="bg-white dark:bg-darkSurface rounded-2xl p-4 px-8 shadow-lg my-8 justify-center flex dark:border dark:border-zinc-800">
         <Button variant="signup" onClick={handleSubmit} className="m-3 w-full">
           Save General information
         </Button>

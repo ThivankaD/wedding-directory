@@ -4,9 +4,10 @@ import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import { BiMessageRounded } from "react-icons/bi";
-import { FiCalendar, FiSettings, FiLogOut } from "react-icons/fi";
+import { FiCalendar, FiSettings, FiLogOut, FiSun, FiMoon } from "react-icons/fi";
 import Image from "next/image";
 import { useVendorAuth } from "@/contexts/VendorAuthContext"; // Added vendor auth context
+import { useTheme } from "@/contexts/ThemeContext";
 import { useChatSocket } from "@/hooks/useChatSocket";
 import { useQuery } from "@apollo/client";
 import { GET_VENDOR_BY_ID, GET_VENDOR_APPROVAL_REQUESTS } from "@/graphql/queries";
@@ -17,6 +18,7 @@ const VendorHeader = () => {
   const router = useRouter();
   const pathname = usePathname();
   const { logout, vendor } = useVendorAuth(); // Added logout function from vendor auth context
+  const { theme, toggleTheme } = useTheme();
   const [showProfileMenu, setShowProfileMenu] = useState(false); // State for the profile dropdown
   const [showNotificationMenu, setShowNotificationMenu] = useState(false); // State for notifications dropdown
   const profileMenuRef = useRef<HTMLDivElement>(null);
@@ -165,12 +167,12 @@ const VendorHeader = () => {
 
   return (
     <Fragment>
-      <header className="py-4 xl:py-5 text-black bg-lightYellow border-b border-orange/15">
+      <header className="py-4 xl:py-5 text-black dark:text-white bg-lightYellow dark:bg-darkBg border-b border-orange/15 dark:border-orange/20 transition-colors duration-200">
         <div className="max-w-7xl mx-auto flex justify-between items-center px-4 sm:px-6 lg:px-8 w-full">
           {/* Left section: Logo - click disabled for logged-in vendor */}
           <div className="flex items-start justify-start flex-1 select-none cursor-default">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 font-title">
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-zinc-100 font-title">
                 Say I Do
               </h1>
               <p className="text-xs font-semibold uppercase tracking-wider text-orange -mt-0.5">Vendors</p>
@@ -188,7 +190,7 @@ const VendorHeader = () => {
                   className={`px-3.5 py-1.5 rounded-xl transition-all ${
                     active
                       ? "bg-orange text-white shadow-xs font-semibold"
-                      : "text-gray-700 hover:text-orange hover:bg-orange/10 font-medium"
+                      : "text-gray-700 dark:text-zinc-300 hover:text-orange hover:bg-orange/10 dark:hover:bg-zinc-800 font-medium"
                   }`}
                 >
                   {link.name}
@@ -198,11 +200,11 @@ const VendorHeader = () => {
           </nav>
 
           {/* Right section: Notifications and Profile dropdown */}
-          <div className="flex items-center justify-end gap-3 sm:gap-5 flex-1">
+          <div className="flex items-center justify-end gap-3 sm:gap-4 flex-1">
             {/* Update the message icon section */}
             <Link
               href="/vendor-dashboard/chats"
-              className="relative p-2 rounded-xl hover:bg-orange/10 transition-colors text-gray-700 hover:text-orange flex items-center justify-center"
+              className="relative p-2 rounded-xl hover:bg-orange/10 dark:hover:bg-zinc-800 transition-colors text-gray-700 dark:text-zinc-300 hover:text-orange flex items-center justify-center"
               title="Messages"
             >
               <BiMessageRounded className="w-[26px] h-[26px]" />
@@ -218,7 +220,7 @@ const VendorHeader = () => {
               <button
                 type="button"
                 onClick={() => setShowNotificationMenu((prev) => !prev)}
-                className="relative p-2 rounded-xl hover:bg-orange/10 transition-colors flex items-center justify-center text-gray-700 hover:text-orange"
+                className="relative p-2 rounded-xl hover:bg-orange/10 dark:hover:bg-zinc-800 transition-colors flex items-center justify-center text-gray-700 dark:text-zinc-300 hover:text-orange"
                 title={pendingCount > 0 ? `${pendingCount} new notification${pendingCount === 1 ? "" : "s"}` : "Notifications"}
                 aria-label="Notifications"
               >
@@ -231,10 +233,10 @@ const VendorHeader = () => {
               </button>
 
               {showNotificationMenu && (
-                <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white shadow-2xl rounded-2xl py-2 z-50 border border-gray-100 animate-in fade-in slide-in-from-top-2 duration-150">
-                  <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+                <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white dark:bg-darkSurface shadow-2xl rounded-2xl py-2 z-50 border border-gray-100 dark:border-zinc-800 animate-in fade-in slide-in-from-top-2 duration-150">
+                  <div className="px-4 py-3 border-b border-gray-100 dark:border-zinc-800 flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className="font-title font-bold text-base text-gray-900">Notifications</span>
+                      <span className="font-title font-bold text-base text-gray-900 dark:text-zinc-100">Notifications</span>
                       {pendingCount > 0 && (
                         <span className="bg-orange/10 text-orange text-xs font-bold px-2 py-0.5 rounded-full">
                           {pendingCount} new
@@ -243,12 +245,12 @@ const VendorHeader = () => {
                     </div>
                   </div>
 
-                  <div className="max-h-80 overflow-y-auto divide-y divide-gray-50">
+                  <div className="max-h-80 overflow-y-auto divide-y divide-gray-50 dark:divide-zinc-800">
                     {pendingRequests.length === 0 ? (
                       <div className="py-10 px-4 text-center">
-                        <IoIosNotificationsOutline className="w-12 h-12 text-gray-300 mx-auto mb-2.5" />
-                        <p className="text-sm font-semibold text-gray-700">No new notifications</p>
-                        <p className="text-xs text-gray-400 mt-1">You are all caught up!</p>
+                        <IoIosNotificationsOutline className="w-12 h-12 text-gray-300 dark:text-zinc-600 mx-auto mb-2.5" />
+                        <p className="text-sm font-semibold text-gray-700 dark:text-zinc-300">No new notifications</p>
+                        <p className="text-xs text-gray-400 dark:text-zinc-500 mt-1">You are all caught up!</p>
                       </div>
                     ) : (
                       pendingRequests.map((req: any) => {
@@ -258,30 +260,19 @@ const VendorHeader = () => {
                             key={req.id}
                             href="/vendor-dashboard?tab=approvals"
                             onClick={() => setShowNotificationMenu(false)}
-                            className="block p-3.5 hover:bg-orange/5 transition-colors cursor-pointer text-left"
+                            className="p-3 sm:p-4 hover:bg-gray-50 dark:hover:bg-zinc-800/60 transition-colors block"
                           >
                             <div className="flex items-start gap-3">
-                              <div className="w-9 h-9 rounded-full bg-orange/10 text-orange flex items-center justify-center font-bold text-sm flex-shrink-0 mt-0.5">
-                                {visitorName.charAt(0).toUpperCase() || "C"}
+                              <div className="w-8 h-8 rounded-full bg-orange/10 dark:bg-orange/20 text-orange flex items-center justify-center flex-shrink-0 mt-0.5 font-bold text-xs">
+                                {visitorName.charAt(0)}
                               </div>
                               <div className="flex-1 min-w-0">
-                                <div className="flex items-center justify-between gap-1">
-                                  <p className="text-xs font-bold text-gray-900 truncate">
-                                    {visitorName}
-                                  </p>
-                                  <span className="text-[10px] font-semibold bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded border border-amber-200">
-                                    New Request
-                                  </span>
-                                </div>
-                                <p className="text-xs text-gray-600 mt-0.5">
-                                  Requested booking for <span className="font-semibold text-gray-800">{req.package?.name}</span>
+                                <p className="text-xs sm:text-sm font-semibold text-gray-900 dark:text-zinc-100 truncate">
+                                  {visitorName} requested a booking
                                 </p>
-                                <div className="flex items-center gap-1.5 mt-1.5 text-[11px] text-gray-400 font-medium">
-                                  <FiCalendar size={12} className="text-orange" />
-                                  <span>{req.bookingDate}</span>
-                                  <span className="text-gray-300">•</span>
-                                  <span className="text-orange font-semibold">Review request →</span>
-                                </div>
+                                <p className="text-xs text-gray-500 dark:text-zinc-400 mt-0.5">
+                                  {req.package?.name || "Service Package"} • {req.bookingDate}
+                                </p>
                               </div>
                             </div>
                           </Link>
@@ -292,6 +283,21 @@ const VendorHeader = () => {
                 </div>
               )}
             </div>
+
+            {/* Theme Toggle Button */}
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="p-2 rounded-xl text-gray-700 dark:text-zinc-300 hover:text-orange hover:bg-orange/10 dark:hover:bg-zinc-800 transition-colors flex items-center justify-center cursor-pointer"
+              title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
+              aria-label="Toggle Theme"
+            >
+              {theme === "dark" ? (
+                <FiSun className="w-[24px] h-[24px] text-amber-400 hover:rotate-45 transition-transform" />
+              ) : (
+                <FiMoon className="w-[24px] h-[24px] text-gray-700 dark:text-zinc-300 hover:text-orange transition-transform" />
+              )}
+            </button>
 
             {/* Profile dropdown */}
             <div className="relative" ref={profileMenuRef}>
@@ -307,7 +313,7 @@ const VendorHeader = () => {
                   className={`w-[46px] h-[46px] sm:w-[50px] sm:h-[50px] rounded-full object-cover transition-all border-2 ${
                     showProfileMenu
                       ? "border-orange ring-2 ring-orange/30 shadow-sm"
-                      : "border-orange/25 hover:border-orange shadow-xs"
+                      : "border-orange/25 dark:border-orange/40 hover:border-orange shadow-xs"
                   }`}
                   width={50}
                   height={50}
@@ -315,10 +321,10 @@ const VendorHeader = () => {
               </button>
 
               {showProfileMenu && (
-                <div className="absolute right-0 mt-3 w-56 bg-white rounded-2xl shadow-xl border border-orange/20 py-1.5 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                <div className="absolute right-0 mt-3 w-56 bg-white dark:bg-darkSurface rounded-2xl shadow-xl border border-orange/20 dark:border-orange/30 py-1.5 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                   {/* Vendor info header */}
-                  <div className="px-4 py-2.5 border-b border-orange/15">
-                    <p className="font-title text-sm font-bold text-gray-900 truncate">
+                  <div className="px-4 py-2.5 border-b border-orange/15 dark:border-orange/20">
+                    <p className="font-title text-sm font-bold text-gray-900 dark:text-zinc-100 truncate">
                       {data?.findVendorById?.busname ||
                         `${data?.findVendorById?.fname || ""} ${data?.findVendorById?.lname || ""}`.trim() ||
                         "Vendor Partner"}
@@ -330,12 +336,12 @@ const VendorHeader = () => {
                     <Link
                       href="/vendor-dashboard/settings"
                       onClick={() => setShowProfileMenu(false)}
-                      className="flex items-center gap-3 px-3 py-2 rounded-xl text-gray-700 hover:text-orange hover:bg-orange/5 transition-all group"
+                      className="flex items-center gap-3 px-3 py-2 rounded-xl text-gray-700 dark:text-zinc-200 hover:text-orange hover:bg-orange/5 dark:hover:bg-orange/15 transition-all group"
                     >
-                      <div className="w-8 h-8 rounded-lg bg-orange/10 border border-orange/20 text-orange flex items-center justify-center transition-colors group-hover:bg-orange group-hover:text-white flex-shrink-0">
+                      <div className="w-8 h-8 rounded-lg bg-orange/10 dark:bg-orange/20 border border-orange/20 text-orange flex items-center justify-center transition-colors group-hover:bg-orange group-hover:text-white flex-shrink-0">
                         <FiSettings size={15} />
                       </div>
-                      <span className="font-title text-sm font-semibold text-gray-900 group-hover:text-orange transition-colors">
+                      <span className="font-title text-sm font-semibold text-gray-900 dark:text-zinc-100 group-hover:text-orange transition-colors">
                         Settings
                       </span>
                     </Link>
@@ -343,12 +349,12 @@ const VendorHeader = () => {
                     <button
                       type="button"
                       onClick={handleLogout}
-                      className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-gray-700 hover:text-red-600 hover:bg-red-50/80 transition-all group text-left cursor-pointer"
+                      className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-gray-700 dark:text-zinc-200 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50/80 dark:hover:bg-red-950/40 transition-all group text-left cursor-pointer"
                     >
-                      <div className="w-8 h-8 rounded-lg bg-red-50 border border-red-200/60 text-red-500 flex items-center justify-center transition-colors group-hover:bg-red-500 group-hover:text-white group-hover:border-red-500 flex-shrink-0">
+                      <div className="w-8 h-8 rounded-lg bg-red-50 dark:bg-red-950/50 border border-red-200/60 dark:border-red-900/40 text-red-500 flex items-center justify-center transition-colors group-hover:bg-red-500 group-hover:text-white group-hover:border-red-500 flex-shrink-0">
                         <FiLogOut size={15} />
                       </div>
-                      <span className="font-title text-sm font-semibold text-gray-900 group-hover:text-red-600 transition-colors">
+                      <span className="font-title text-sm font-semibold text-gray-900 dark:text-zinc-100 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">
                         Logout
                       </span>
                     </button>

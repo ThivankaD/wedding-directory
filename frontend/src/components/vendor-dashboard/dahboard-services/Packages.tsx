@@ -32,26 +32,26 @@ const Packages = () => {
   });
 
   const PackageDetails: React.FC<PackageDetailsProps> = ({ name, description, pricing, features, image }) => (
-    <div className="space-y-6 bg-white p-6 rounded-lg shadow-md flex flex-col justify-between">
+    <div className="space-y-6 bg-white dark:bg-darkSurface border border-gray-100 dark:border-zinc-800 p-6 rounded-2xl shadow-md flex flex-col justify-between">
       <div>
         {image && (
-          <div className="relative w-full h-48 mb-4 rounded-lg overflow-hidden">
+          <div className="relative w-full h-48 mb-4 rounded-xl overflow-hidden bg-gray-100 dark:bg-darkElevated">
             <Image src={image} alt={name} fill className="object-cover" />
           </div>
         )}
-        <h2 className="text-2xl font-bold mb-2">{name}</h2>
-        <p className="text-gray-500 mb-4">{description}</p>
+        <h2 className="text-2xl font-bold font-title mb-2 text-gray-900 dark:text-zinc-100">{name}</h2>
+        <p className="text-gray-500 dark:text-zinc-400 font-body text-sm mb-4 leading-relaxed">{description}</p>
         <div className="mb-6">
-          <span className="text-3xl font-bold">{pricing.toLocaleString()}</span>
-          <span className="text-gray-500 ml-1">LKR</span>
+          <span className="text-3xl font-bold font-title text-gray-900 dark:text-zinc-100">{pricing.toLocaleString()}</span>
+          <span className="text-gray-500 dark:text-zinc-400 font-body text-sm ml-1 font-semibold">LKR</span>
         </div>
       </div>
       <div>
-        <h3 className="font-semibold mb-3">Features:</h3>
-        <ul className="space-y-2">
+        <h3 className="font-semibold font-title mb-3 text-gray-900 dark:text-zinc-200">Features:</h3>
+        <ul className="space-y-2 text-sm text-gray-700 dark:text-zinc-300 font-body">
           {features.map((feature, index) => (
             <li key={index} className="flex items-center gap-2">
-              <Check className="h-4 w-4 text-green-500" />
+              <Check className="h-4 w-4 text-emerald-500 shrink-0" />
               <span>{feature}</span>
             </li>
           ))}
@@ -60,9 +60,9 @@ const Packages = () => {
     </div>
   );
 
-  if (loading) return <div className="p-4">Loading packages...</div>;
-  if (error) return <div className="p-4 text-red-500">Error loading packages: {error.message}</div>;
-  if (!data?.findPackagesByOffering?.length) return <div className="p-4">No packages available</div>;
+  if (loading) return <div className="p-4 text-gray-500 dark:text-zinc-400 text-sm">Loading packages...</div>;
+  if (error) return <div className="p-4 text-red-500 text-sm">Error loading packages: {error.message}</div>;
+  if (!data?.findPackagesByOffering?.length) return <div className="p-4 text-gray-500 dark:text-zinc-400 text-sm">No packages available</div>;
 
   return (
     <div className="w-full max-w-7xl p-4">

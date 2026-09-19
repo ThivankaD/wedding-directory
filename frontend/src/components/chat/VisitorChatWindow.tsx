@@ -138,14 +138,14 @@ const VisitorChatWindow = ({ chatId }: VisitorChatWindowProps) => {
   return (
     <div className="flex flex-col h-[calc(100vh-210px)] min-h-[520px]">
       {/* Top Chat Header */}
-      <div className="bg-white border-b-2 border-orange/10 px-4 sm:px-6 py-4 flex items-center justify-between gap-4 flex-shrink-0">
+      <div className="bg-white dark:bg-darkSurface border-b-2 border-orange/10 dark:border-zinc-800 px-4 sm:px-6 py-4 flex items-center justify-between gap-4 flex-shrink-0">
         <div className="flex items-center gap-3.5 min-w-0">
           <div className="w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center bg-orange/10 text-orange font-bold text-base sm:text-lg rounded-2xl flex-shrink-0 border border-orange/20 shadow-xs">
             {vendorDisplayName[0]?.toUpperCase() || <FaStore />}
           </div>
           <div className="min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <h2 className="font-title font-bold text-base sm:text-lg text-gray-900 truncate leading-tight">
+              <h2 className="font-title font-bold text-base sm:text-lg text-gray-900 dark:text-zinc-100 truncate leading-tight">
                 {vendorDisplayName}
               </h2>
               {offering && (
@@ -158,10 +158,10 @@ const VisitorChatWindow = ({ chatId }: VisitorChatWindowProps) => {
                 </Link>
               )}
             </div>
-            <div className="flex items-center gap-2 text-xs text-gray-500 font-body truncate mt-0.5">
+            <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-zinc-400 font-body truncate mt-0.5">
               <span>{vendor?.city ? `${vendor.city} • ` : ""}{offering?.category || "Wedding Service"}</span>
-              <span className="inline-block w-1 h-1 rounded-full bg-gray-300" />
-              <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600">
+              <span className="inline-block w-1 h-1 rounded-full bg-gray-300 dark:bg-zinc-600" />
+              <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 Live Chat
               </span>
@@ -180,17 +180,17 @@ const VisitorChatWindow = ({ chatId }: VisitorChatWindowProps) => {
       </div>
 
       {/* Messages List Area */}
-      <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 bg-gradient-to-b from-[#FFFDFD] to-[#FFF7F4]">
+      <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 bg-gradient-to-b from-[#FFFDFD] to-[#FFF7F4] dark:from-[#141211] dark:to-[#1a1716]">
         {messages.length === 0 ? (
           <div className="flex-1 h-full flex items-center justify-center p-8 text-center text-gray-400">
-            <div className="max-w-xs p-6 bg-white rounded-3xl border-2 border-orange/15 shadow-xs">
+            <div className="max-w-xs p-6 bg-white dark:bg-darkSurface rounded-3xl border-2 border-orange/15 dark:border-zinc-800 shadow-xs">
               <div className="w-12 h-12 rounded-2xl bg-orange/10 text-orange flex items-center justify-center mx-auto mb-3 text-xl">
                 <FaStore />
               </div>
-              <p className="font-title font-semibold text-gray-800 text-sm mb-1">
+              <p className="font-title font-semibold text-gray-800 dark:text-zinc-100 text-sm mb-1">
                 Start of Conversation
               </p>
-              <p className="text-xs text-gray-500 font-body">
+              <p className="text-xs text-gray-500 dark:text-zinc-400 font-body">
                 Send a message to discuss dates, packages, and special requirements with {vendorDisplayName}.
               </p>
             </div>
@@ -204,15 +204,15 @@ const VisitorChatWindow = ({ chatId }: VisitorChatWindowProps) => {
             if (isSystemOrPayment) {
               return (
                 <div key={index} className="flex justify-center my-3">
-                  <div className="bg-[#FFF8F3] border-2 border-orange/25 rounded-2xl p-4 max-w-[92%] sm:max-w-[75%] text-xs sm:text-sm text-gray-800 shadow-xs">
+                  <div className="bg-[#FFF8F3] dark:bg-darkElevated border-2 border-orange/25 dark:border-orange/30 rounded-2xl p-4 max-w-[92%] sm:max-w-[75%] text-xs sm:text-sm text-gray-800 dark:text-zinc-200 shadow-xs">
                     <div className="font-semibold flex items-center gap-2 mb-1.5 text-orange">
                       <span className="text-base">📦</span>
                       <span className="font-title">Booking Payment Notification</span>
                     </div>
-                    <p className="leading-relaxed font-body whitespace-pre-line text-gray-700">
+                    <p className="leading-relaxed font-body whitespace-pre-line text-gray-700 dark:text-zinc-300">
                       {msg.content.replace(/^📦\s*/, "")}
                     </p>
-                    <div className="text-[10px] text-gray-400 mt-2 text-right font-body">
+                    <div className="text-[10px] text-gray-400 dark:text-zinc-500 mt-2 text-right font-body">
                       {formatDistanceToNow(new Date(msg.timestamp), {
                         addSuffix: true,
                       })}
@@ -234,7 +234,7 @@ const VisitorChatWindow = ({ chatId }: VisitorChatWindowProps) => {
                   className={`w-7 h-7 rounded-xl flex items-center justify-center font-bold text-[11px] flex-shrink-0 mb-0.5 shadow-xs border ${
                     isVisitor
                       ? "bg-orange text-white border-orange"
-                      : "bg-white text-orange border-orange/20"
+                      : "bg-white dark:bg-darkElevated text-orange border-orange/20 dark:border-zinc-700"
                   }`}
                 >
                   {isVisitor ? "You" : (vendorDisplayName[0]?.toUpperCase() || "V")}
@@ -250,13 +250,13 @@ const VisitorChatWindow = ({ chatId }: VisitorChatWindowProps) => {
                     className={`px-4 py-3 rounded-2xl shadow-xs text-sm font-body ${
                       isVisitor
                         ? "bg-orange text-white rounded-br-xs"
-                        : "bg-white text-gray-800 rounded-bl-xs border-2 border-orange/10"
+                        : "bg-white dark:bg-darkElevated text-gray-800 dark:text-zinc-100 rounded-bl-xs border-2 border-orange/10 dark:border-zinc-700"
                     }`}
                   >
                     <p className="leading-relaxed whitespace-pre-wrap break-words">{msg.content}</p>
                     <span
                       className={`text-[10px] mt-1.5 block ${
-                        isVisitor ? "text-white/80 text-right" : "text-gray-400 text-left"
+                        isVisitor ? "text-white/80 text-right" : "text-gray-400 dark:text-zinc-400 text-left"
                       }`}
                     >
                       {formatDistanceToNow(new Date(msg.timestamp), {
@@ -273,20 +273,20 @@ const VisitorChatWindow = ({ chatId }: VisitorChatWindowProps) => {
       </div>
 
       {/* Message Input Bar */}
-      <div className="border-t-2 border-orange/10 bg-white p-3.5 sm:p-4 flex-shrink-0">
+      <div className="border-t-2 border-orange/10 dark:border-zinc-800 bg-white dark:bg-darkSurface p-3.5 sm:p-4 flex-shrink-0">
         <form onSubmit={handleSendMessage} className="w-full">
-          <div className="flex items-center gap-2 bg-lightYellow/40 rounded-2xl px-4 py-2 border-2 border-orange/20 focus-within:border-orange focus-within:ring-2 focus-within:ring-orange/20 focus-within:bg-white transition-all">
+          <div className="flex items-center gap-2 bg-lightYellow/40 dark:bg-darkElevated rounded-2xl px-4 py-2 border-2 border-orange/20 dark:border-zinc-700 focus-within:border-orange focus-within:ring-2 focus-within:ring-orange/20 focus-within:bg-white dark:focus-within:bg-darkElevated transition-all">
             <input
               type="text"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Type your message..."
-              className="flex-1 bg-transparent border-none focus:outline-none text-sm text-gray-800 placeholder-gray-400 font-body"
+              className="flex-1 bg-transparent border-none focus:outline-none text-sm text-gray-800 dark:text-zinc-100 placeholder-gray-400 dark:placeholder-zinc-500 font-body"
             />
             <button
               type="submit"
               disabled={!message.trim()}
-              className="p-2.5 rounded-xl bg-orange text-white disabled:opacity-40 disabled:cursor-not-allowed hover:bg-orange/90 active:scale-95 transition-all shadow-sm flex-shrink-0"
+              className="p-2.5 rounded-xl bg-orange text-white disabled:opacity-40 disabled:cursor-not-allowed hover:bg-orange/90 active:scale-95 transition-all shadow-sm flex-shrink-0 cursor-pointer"
               title="Send message"
             >
               <IoSend className="text-sm" />
