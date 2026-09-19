@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
+import Image from "next/image";
 import { GET_OFFERING_DETAILS, GET_VISITOR_CHATS } from "@/graphql/queries";
 import { MARK_CHAT_AS_READ } from "@/graphql/mutations";
 import { IoLocationSharp } from "react-icons/io5";
@@ -82,8 +83,20 @@ const ChatItem = ({
       }}
     >
       {/* Avatar */}
-      <div className="w-12 h-12 flex items-center justify-center bg-orange/10 text-orange font-bold font-title text-base rounded-2xl shrink-0 group-hover:scale-105 transition-transform shadow-xs border border-orange/20">
-        {offering?.name ? offering.name[0].toUpperCase() : <FiShoppingBag size={20} />}
+      <div className="w-12 h-12 flex items-center justify-center bg-orange/10 text-orange font-bold font-title text-base rounded-2xl shrink-0 group-hover:scale-105 transition-transform shadow-xs border border-orange/20 overflow-hidden relative">
+        {vendor?.profile_pic_url ? (
+          <Image
+            src={vendor.profile_pic_url}
+            alt={vendor?.busname || offering?.name || "Vendor"}
+            fill
+            sizes="48px"
+            className="object-cover"
+          />
+        ) : offering?.name ? (
+          offering.name[0].toUpperCase()
+        ) : (
+          <FiShoppingBag size={20} />
+        )}
       </div>
 
       {/* Info Column */}
