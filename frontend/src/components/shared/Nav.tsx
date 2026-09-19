@@ -36,7 +36,7 @@ const Nav = () => {
   const pathname = usePathname();
 
   return (
-    <nav className="flex items-center gap-1 sm:gap-2 font-title text-sm sm:text-base">
+    <nav className="flex items-center gap-1.5 sm:gap-2.5 font-title">
       {Links.map((link, index) => {
         const isActive =
           link.path === "/"
@@ -47,11 +47,11 @@ const Nav = () => {
             href={link.path}
             key={index}
             className={`
-              capitalize px-3.5 py-1.5 rounded-xl transition-all
+              capitalize px-4 py-2 rounded-xl text-base lg:text-[17px] tracking-wide transition-all
               ${
                 isActive
-                  ? "bg-orange text-white shadow-xs font-semibold"
-                  : "text-gray-700 hover:text-orange hover:bg-orange/10 font-medium"
+                  ? "bg-orange text-white shadow-xs font-bold"
+                  : "text-gray-700 hover:text-orange hover:bg-orange/10 font-semibold"
               }
             `}
           >

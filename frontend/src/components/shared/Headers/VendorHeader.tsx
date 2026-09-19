@@ -180,17 +180,17 @@ const VendorHeader = () => {
           </div>
 
           {/* Center section: Navigation */}
-          <nav className="flex-1 hidden md:flex justify-center items-center gap-1 sm:gap-2 text-sm sm:text-base font-title">
+          <nav className="flex-1 hidden md:flex justify-center items-center gap-1.5 lg:gap-2.5 font-title">
             {navLinks.map((link) => {
               const active = link.isActive(pathname);
               return (
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`px-3.5 py-1.5 rounded-xl transition-all ${
+                  className={`px-4 py-2 rounded-xl text-base lg:text-[17px] tracking-wide transition-all ${
                     active
-                      ? "bg-orange text-white shadow-xs font-semibold"
-                      : "text-gray-700 dark:text-zinc-300 hover:text-orange hover:bg-orange/10 dark:hover:bg-zinc-800 font-medium"
+                      ? "bg-orange text-white shadow-xs font-bold"
+                      : "text-gray-700 dark:text-zinc-300 hover:text-orange hover:bg-orange/10 dark:hover:bg-zinc-800 font-semibold"
                   }`}
                 >
                   {link.name}

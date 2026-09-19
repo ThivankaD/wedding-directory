@@ -52,8 +52,8 @@ const SettingsMenu: React.FC<ServicesMenuProps> = ({ setActiveSection, activeSec
             >
               <Icon className={`text-lg flex-shrink-0 ${isActive ? "text-white" : "text-gray-400 dark:text-zinc-500"}`} />
               <div className="flex flex-col">
-                <span className="text-sm font-medium">{item.label}</span>
-                <span className={`text-[11px] ${isActive ? "text-white/80" : "text-gray-400 dark:text-zinc-500"}`}>
+                <span className="text-base font-semibold">{item.label}</span>
+                <span className={`text-xs ${isActive ? "text-white/80" : "text-gray-400 dark:text-zinc-500"}`}>
                   {item.description}
                 </span>
               </div>
