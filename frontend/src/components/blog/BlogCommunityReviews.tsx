@@ -186,31 +186,31 @@ const BlogCommunityReviews: React.FC = () => {
   };
 
   return (
-    <section className="mt-16 bg-white rounded-2xl shadow-md p-6 md:p-8">
-      <h2 className="text-3xl font-title font-bold text-gray-800 mb-2">Community Vendor Reviews</h2>
-      <p className="text-gray-600 mb-8">See what other couples said, and add your own review with vendor mentions and photos.</p>
+    <section className="mt-16 bg-white dark:bg-darkSurface border border-gray-100 dark:border-zinc-800 rounded-2xl shadow-md p-6 md:p-8">
+      <h2 className="text-3xl font-title font-bold text-gray-900 dark:text-zinc-100 mb-2">Community Vendor Reviews</h2>
+      <p className="text-gray-600 dark:text-zinc-400 mb-8 font-body">See what other couples said, and add your own review with vendor mentions and photos.</p>
 
       <div>
         <div>
-          <h3 className="text-2xl font-title font-semibold mb-4">All Reviews</h3>
+          <h3 className="text-2xl font-title font-semibold mb-4 text-gray-900 dark:text-zinc-100">All Reviews</h3>
 
-          <div className="mb-6 flex flex-col sm:flex-row gap-4 items-center bg-gray-50 p-4 rounded-lg border border-gray-200">
+          <div className="mb-6 flex flex-col sm:flex-row gap-4 items-center bg-gray-50 dark:bg-darkElevated p-4 rounded-lg border border-gray-200 dark:border-zinc-800">
             <div className="flex-1 w-full">
-              <label htmlFor="vendor-filter" className="block text-sm font-medium text-gray-700 mb-1">Filter by Vendor</label>
+              <label htmlFor="vendor-filter" className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-1">Filter by Vendor</label>
               <input
                 id="vendor-filter"
                 type="text"
                 placeholder="Search vendor name..."
-                className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                className="w-full border border-gray-300 dark:border-zinc-700 bg-white dark:bg-darkSurface text-gray-900 dark:text-zinc-100 rounded-lg px-3 py-2"
                 value={filterVendorName}
                 onChange={(e) => setFilterVendorName(e.target.value)}
               />
             </div>
             <div className="w-full sm:w-48">
-              <label htmlFor="star-filter" className="block text-sm font-medium text-gray-700 mb-1">Filter by Stars</label>
+              <label htmlFor="star-filter" className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-1">Filter by Stars</label>
               <select
                 id="star-filter"
-                className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                className="w-full border border-gray-300 dark:border-zinc-700 bg-white dark:bg-darkSurface text-gray-900 dark:text-zinc-100 rounded-lg px-3 py-2"
                 value={filterStars === null ? "" : filterStars.toString()}
                 onChange={(e) => setFilterStars(e.target.value === "" ? null : parseInt(e.target.value))}
               >
@@ -225,21 +225,21 @@ const BlogCommunityReviews: React.FC = () => {
           </div>
 
           {reviewsLoading ? (
-            <div className="text-gray-500">Loading reviews...</div>
+            <div className="text-gray-500 dark:text-zinc-400">Loading reviews...</div>
           ) : filteredReviews.length === 0 ? (
-            <div className="text-gray-500">No reviews match your filters.</div>
+            <div className="text-gray-500 dark:text-zinc-400">No reviews match your filters.</div>
           ) : (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                 {currentReviews.map((review) => (
-                  <div key={review.id} className="border border-gray-200 rounded-xl p-4 bg-white shadow-sm hover:shadow-md transition-shadow">
+                  <div key={review.id} className="border border-gray-200 dark:border-zinc-800 rounded-xl p-4 bg-white dark:bg-darkElevated shadow-sm hover:shadow-md transition-shadow">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-1 text-yellow-500">
                         {Array.from({ length: 5 }, (_, index) => (
                           index < review.rating ? <FaStar key={index} /> : <FaRegStar key={index} />
                         ))}
                       </div>
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-gray-500 dark:text-zinc-400">
                         {new Date(review.createdAt).toLocaleDateString("en-US", {
                           year: "numeric",
                           month: "short",
@@ -248,23 +248,23 @@ const BlogCommunityReviews: React.FC = () => {
                       </span>
                     </div>
 
-                    <p className="mt-2 text-sm text-gray-700">
-                      by <span className="font-semibold">{review.visitor?.visitor_fname || "User"}</span>
+                    <p className="mt-2 text-sm text-gray-700 dark:text-zinc-300">
+                      by <span className="font-semibold text-gray-900 dark:text-zinc-100">{review.visitor?.visitor_fname || "User"}</span>
                     </p>
 
                     {review.offering?.id && (
-                      <p className="text-sm text-gray-600 mt-1">
+                      <p className="text-sm text-gray-600 dark:text-zinc-400 mt-1">
                         Reviewed service:{" "}
-                        <Link href={`/services/${review.offering.id}`} className="text-orange hover:underline">
+                        <Link href={`/services/${review.offering.id}`} className="text-orange hover:underline font-medium">
                           {review.offering.vendor?.busname || "Vendor"} - {review.offering.name || "Service"}
                         </Link>
                       </p>
                     )}
 
-                    {review.comment && <p className="mt-3 text-gray-800 whitespace-pre-wrap">{review.comment}</p>}
+                    {review.comment && <p className="mt-3 text-gray-800 dark:text-zinc-200 whitespace-pre-wrap text-sm">{review.comment}</p>}
 
                     {review.mentionedOffering?.id && (
-                      <p className="mt-2 text-sm">
+                      <p className="mt-2 text-sm text-gray-600 dark:text-zinc-400">
                         Mentioned:{" "}
                         <Link href={`/services/${review.mentionedOffering.id}`} className="text-orange hover:underline font-semibold">
                           @{review.mentionedOffering.vendor?.busname || review.mentionedOffering.name || "Vendor"}
@@ -279,7 +279,7 @@ const BlogCommunityReviews: React.FC = () => {
                             <img
                               src={url}
                               alt={`Review ${idx + 1}`}
-                              className="w-full h-24 object-cover rounded-md border border-gray-200 hover:opacity-90 transition-opacity"
+                              className="w-full h-24 object-cover rounded-md border border-gray-200 dark:border-zinc-700 hover:opacity-90 transition-opacity"
                             />
                           </a>
                         ))}
@@ -303,29 +303,29 @@ const BlogCommunityReviews: React.FC = () => {
           )}
         </div>
 
-        <div className="mt-10 pt-8 border-t border-gray-200">
+        <div className="mt-10 pt-8 border-t border-gray-200 dark:border-zinc-800">
           <div id="community-add-review-form" />
-          <h3 className="text-2xl font-title font-semibold mb-4">Add Your Review</h3>
+          <h3 className="text-2xl font-title font-semibold mb-4 text-gray-900 dark:text-zinc-100">Add Your Review</h3>
 
           <div className="mb-4">
             <button
               type="button"
               onClick={openAddReviewForm}
-              className="bg-orange text-white px-5 py-2 rounded-lg hover:bg-orange-600"
+              className="bg-orange text-white px-5 py-2 rounded-lg hover:bg-orange-600 transition-colors font-medium text-sm cursor-pointer"
             >
               Add Review
             </button>
             {!visitor && (
-              <p className="text-sm text-gray-600 mt-2">You must be logged in as a visitor to submit a review.</p>
+              <p className="text-sm text-gray-600 dark:text-zinc-400 mt-2">You must be logged in as a visitor to submit a review.</p>
             )}
           </div>
 
           {showAddReviewForm && (
             <form onSubmit={submitReview} className="space-y-4 max-w-2xl">
               <div>
-                <label className="block text-sm font-medium mb-1">Choose Vendor Service</label>
+                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-zinc-300">Choose Vendor Service</label>
                 <select
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                  className="w-full border border-gray-300 dark:border-zinc-700 bg-white dark:bg-darkSurface text-gray-900 dark:text-zinc-100 rounded-lg px-3 py-2"
                   value={selectedOfferingId}
                   onChange={(e) => setSelectedOfferingId(e.target.value)}
                   disabled={creating || offeringsLoading}
@@ -338,19 +338,19 @@ const BlogCommunityReviews: React.FC = () => {
                   ))}
                 </select>
                 {!offeringsLoading && offerings.length === 0 && (
-                  <p className="text-xs text-gray-500 mt-1">No visible services found to review.</p>
+                  <p className="text-xs text-gray-500 dark:text-zinc-400 mt-1">No visible services found to review.</p>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">Rating</label>
+                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-zinc-300">Rating</label>
                 <div className="flex gap-2 text-2xl text-yellow-500">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <button
                       key={star}
                       type="button"
                       onClick={() => setRating(star)}
-                      className="hover:scale-110 transition-transform"
+                      className="hover:scale-110 transition-transform cursor-pointer"
                       aria-label={`Rate ${star} star`}
                     >
                       {star <= rating ? <FaStar /> : <FaRegStar />}
@@ -360,9 +360,9 @@ const BlogCommunityReviews: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">Review Comment</label>
+                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-zinc-300">Review Comment</label>
                 <textarea
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 min-h-[110px]"
+                  className="w-full border border-gray-300 dark:border-zinc-700 bg-white dark:bg-darkSurface text-gray-900 dark:text-zinc-100 rounded-lg px-3 py-2 min-h-[110px]"
                   placeholder="Share your experience..."
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
@@ -371,7 +371,7 @@ const BlogCommunityReviews: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">Add Images (max 5)</label>
+                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-zinc-300">Add Images (max 5)</label>
                 <input
                   type="file"
                   accept="image/*"
@@ -381,18 +381,20 @@ const BlogCommunityReviews: React.FC = () => {
                     setImages(selected);
                   }}
                   disabled={creating}
+                  className="text-sm text-gray-600 dark:text-zinc-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-orange/10 file:text-orange hover:file:bg-orange/20 cursor-pointer"
                 />
                 {images.length > 0 && (
-                  <p className="text-xs text-gray-600 mt-1">{images.length} image(s) selected</p>
+                  <p className="text-xs text-gray-600 dark:text-zinc-400 mt-1">{images.length} image(s) selected</p>
                 )}
               </div>
 
-              <label className="flex items-center gap-2">
+              <label className="flex items-center gap-2 text-gray-700 dark:text-zinc-300 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={mentionVendor}
                   onChange={(e) => setMentionVendor(e.target.checked)}
                   disabled={creating || !selectedOffering}
+                  className="accent-orange rounded"
                 />
                 <span className="text-sm">
                   Mention selected vendor {selectedOffering?.vendor?.busname ? `@${selectedOffering.vendor.busname}` : ""}
@@ -403,7 +405,7 @@ const BlogCommunityReviews: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowAddReviewForm(false)}
-                  className="px-5 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100"
+                  className="px-5 py-2 rounded-lg border border-gray-300 dark:border-zinc-700 text-gray-700 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-darkElevated cursor-pointer"
                   disabled={creating}
                 >
                   Cancel
@@ -412,7 +414,7 @@ const BlogCommunityReviews: React.FC = () => {
                 <button
                   type="submit"
                   disabled={creating || !visitor}
-                  className="bg-orange text-white px-5 py-2 rounded-lg hover:bg-orange-600 disabled:opacity-50"
+                  className="bg-orange text-white px-5 py-2 rounded-lg hover:bg-orange-600 disabled:opacity-50 transition-colors cursor-pointer font-medium text-sm"
                 >
                   {visitor ? (creating ? "Submitting..." : "Submit Review") : "Login to Submit"}
                 </button>

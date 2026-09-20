@@ -4,6 +4,7 @@
 @tailwind utilities;
 @layer base {
   :root {
+    color-scheme: light;
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
     --sidebar-primary: 240 5.9% 10%;
@@ -14,6 +15,7 @@
     --sidebar-ring: 217.2 91.2% 59.8%
   }
   .dark {
+    color-scheme: dark;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -38,6 +40,39 @@
   select:focus-visible {
     outline: none !important;
   }
+}
+
+/* Browser autofill styling to match theme */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+  -webkit-text-fill-color: #111827 !important;
+  caret-color: #111827 !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.dark input:-webkit-autofill,
+.dark input:-webkit-autofill:hover,
+.dark input:-webkit-autofill:focus,
+.dark input:-webkit-autofill:active,
+.dark textarea:-webkit-autofill,
+.dark textarea:-webkit-autofill:hover,
+.dark textarea:-webkit-autofill:focus,
+.dark select:-webkit-autofill,
+.dark select:-webkit-autofill:hover,
+.dark select:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #2A2523 inset !important; /* matches darkElevated */
+  -webkit-text-fill-color: #f4f4f5 !important; /* matches zinc-100 */
+  caret-color: #f4f4f5 !important;
+  transition: background-color 5000s ease-in-out 0s;
 }
 
 /* Custom sleek scrollbars matching light & dark themes */
