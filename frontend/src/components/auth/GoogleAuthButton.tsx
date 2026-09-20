@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
@@ -25,6 +25,25 @@ export default function GoogleAuthButton({
   const vendorAuth = useVendorAuth();
   const { isDark } = useTheme();
   const [loading, setLoading] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [buttonWidth, setButtonWidth] = useState<string>("380");
+
+  useEffect(() => {
+    const updateWidth = () => {
+      if (containerRef.current) {
+        const clientW = containerRef.current.clientWidth;
+        if (clientW > 0) {
+          // Google GSI accepts width between 200 and 400 pixels
+          const validWidth = Math.min(400, Math.max(240, clientW));
+          setButtonWidth(String(Math.floor(validWidth)));
+        }
+      }
+    };
+
+    updateWidth();
+    window.addEventListener('resize', updateWidth);
+    return () => window.removeEventListener('resize', updateWidth);
+  }, []);
 
   const handleSuccess = async (credentialResponse: CredentialResponse) => {
     if (!credentialResponse.credential) {
@@ -83,15 +102,27 @@ export default function GoogleAuthButton({
 
   return (
     <div className="w-full flex flex-col items-center justify-center my-2">
-      <div className={`w-full flex justify-center ${loading ? 'opacity-50 pointer-events-none' : ''}`}>
+      {/* 
+        colorScheme: 'light' is critical on the wrapper:
+        In dark mode, browsers force a white background canvas under cross-origin iframes
+        unless color-scheme is explicitly set to 'light' on the container.
+      */}
+      <div
+        ref={containerRef}
+        className={`w-full flex justify-center items-center rounded-xl overflow-hidden transition-all ${
+          loading ? 'opacity-50 pointer-events-none' : ''
+        }`}
+        style={{ colorScheme: 'light' }}
+      >
         <GoogleLogin
+          key={`${isDark ? 'dark' : 'light'}-${buttonWidth}`}
           onSuccess={handleSuccess}
           onError={handleError}
           text={text}
           theme={isDark ? "filled_black" : "outline"}
           size="large"
           shape="rectangular"
-          width="100%"
+          width={buttonWidth}
         />
       </div>
     </div>
