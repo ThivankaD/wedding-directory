@@ -116,7 +116,7 @@ export class PackageApprovalService {
     const pkg = await this.packageRepo.findOne({
       where: { id: packageId },
       relations: {
-        offering: {
+        service: {
           vendor: true,
         },
       },
@@ -139,7 +139,7 @@ export class PackageApprovalService {
       throw new NotFoundException('Visitor profile not found');
     }
 
-    const vendor = pkg.offering?.vendor;
+    const vendor = pkg.service?.vendor;
     if (!vendor) {
       throw new BadRequestException('Package vendor not found');
     }
@@ -208,7 +208,7 @@ export class PackageApprovalService {
         visitorEmail: visitor.email,
         visitorPhone: visitor.phone,
         packageName: pkg.name,
-        offeringName: pkg.offering?.name,
+        serviceName: pkg.service?.name,
         bookingDate: saved.bookingDate,
         userNote: saved.userNote,
         requestId: saved.id,
@@ -225,7 +225,7 @@ export class PackageApprovalService {
       where: { id: requestId },
       relations: {
         package: {
-          offering: true,
+          service: true,
         },
         visitor: true,
         vendor: true,
@@ -288,7 +288,7 @@ export class PackageApprovalService {
       relations: {
         visitor: true,
         package: {
-          offering: true,
+          service: true,
         },
         vendor: true,
       },
@@ -303,7 +303,7 @@ export class PackageApprovalService {
       where: { visitor: { id: visitorId } },
       relations: {
         package: {
-          offering: {
+          service: {
             vendor: true,
           },
         },

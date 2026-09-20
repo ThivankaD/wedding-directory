@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+﻿import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { v4 as uuid } from "uuid";
@@ -6,7 +6,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { VisitorEntity } from "../../database/entities/visitor.entity";
 import { VendorEntity } from "../../database/entities/vendor.entity";
-import { OfferingEntity } from "../../database/entities/offering.entity";
+import { ServiceEntity } from "../../database/entities/service.entity";
 import { IChat } from "../../database/schemas/chat.schema";
 
 @Injectable()
@@ -17,8 +17,8 @@ export class ChatService {
     private visitorRepository: Repository<VisitorEntity>,
     @InjectRepository(VendorEntity)
     private vendorRepository: Repository<VendorEntity>,
-    @InjectRepository(OfferingEntity)
-    private offeringRepository: Repository<OfferingEntity>
+    @InjectRepository(ServiceEntity)
+    private serviceRepository: Repository<ServiceEntity>
   ) {}
 
   private async sendPushToVendor(
@@ -78,34 +78,34 @@ export class ChatService {
   }
 
   async findOrCreateChat(
-    offeringId: string,
+    serviceId: string,
     visitorId: string
   ): Promise<IChat> {
-    let chat = await this.chatModel.findOne({ offeringId, visitorId });
+    let chat = await this.chatModel.findOne({ serviceId, visitorId });
 
     if (!chat) {
       const visitor = await this.visitorRepository.findOne({
         where: { id: visitorId },
       });
 
-      const offering = await this.offeringRepository.findOne({
-        where: { id: offeringId },
+      const service = await this.serviceRepository.findOne({
+        where: { id: serviceId },
         relations: ["vendor"],
       });
 
-      const vendorId = offering.vendor.id;
+      const vendorId = service.vendor.id;
       // const vendor = await this.vendorRepository.findOne({
       //   where: { id: vendorId },
       // });
 
       chat = new this.chatModel({
         chatId: uuid(),
-        offeringId,
+        serviceId,
         vendorId,
         visitorId,
         visitor: { id: visitor.id },
         vendor: { id: vendorId },
-        offering: { id: offering.id },
+        service: { id: service.id },
         messages: [],
       });
       await chat.save();
@@ -114,7 +114,7 @@ export class ChatService {
       ...chat.toObject(),
       visitor: { id: chat.visitorId },
       vendor: { id: chat.vendorId },
-      offering: { id: chat.offeringId },
+      service: { id: chat.serviceId },
     };
   }
 
@@ -122,7 +122,7 @@ export class ChatService {
     return this.chatModel
       .find({
         vendorId,
-        $or: [{ offeringId: { $exists: true } }, { offeringId: { $ne: null } }],
+        $or: [{ serviceId: { $exists: true } }, { serviceId: { $ne: null } }],
       })
       .sort({ updatedAt: -1 });
   }
@@ -131,13 +131,13 @@ export class ChatService {
     return this.chatModel
       .find({
         visitorId,
-        $or: [{ offeringId: { $exists: true } }, { offeringId: { $ne: null } }],
+        $or: [{ serviceId: { $exists: true } }, { serviceId: { $ne: null } }],
       })
       .sort({ updatedAt: -1 });
   }
 
-  async getOfferingChats(offeringId: string): Promise<IChat[]> {
-    return this.chatModel.find({ offeringId }).sort({ updatedAt: -1 });
+  async getServiceChats(serviceId: string): Promise<IChat[]> {
+    return this.chatModel.find({ serviceId }).sort({ updatedAt: -1 });
   }
 
   async addMessage(

@@ -1,5 +1,5 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { OfferingModel } from './offering.model';
+﻿import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { ServiceModel } from './service.model';
 import { VisitorModel } from './visitor.model';
 
 @ObjectType()
@@ -16,11 +16,11 @@ export class ReviewModel {
   @Field(() => [String], { nullable: true })
   image_urls?: string[];
 
-  @Field(() => OfferingModel)
-  offering: OfferingModel;
+  @Field(() => ServiceModel)
+  service: ServiceModel;
 
-  @Field(() => OfferingModel, { nullable: true })
-  mentionedOffering?: OfferingModel;
+  @Field(() => ServiceModel, { nullable: true })
+  mentionedService?: ServiceModel;
   
   @Field(() => VisitorModel, { nullable: true })
   visitor?: VisitorModel;

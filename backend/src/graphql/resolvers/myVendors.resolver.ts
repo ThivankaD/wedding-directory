@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+﻿import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { MyVendorsModel } from "../models/myVendors.model";
 import { MyVendorsService } from "../../modules/myVendors/myVendors.service";
 
@@ -25,24 +25,24 @@ export class MyVendorsResolver {
     @Query(() => MyVendorsModel)
     async findMyVendorById(
         @Args('visitorId') visitorId: string,
-        @Args('offeringId') offeringId: string
+        @Args('serviceId') serviceId: string
     ) {
-        return this.myVendorsService.findMyVendorById(visitorId, offeringId);
+        return this.myVendorsService.findMyVendorById(visitorId, serviceId);
     }
 
     @Mutation(() => MyVendorsModel)
     async addToMyVendors(
         @Args('visitorId') visitorId: string,
-        @Args('offeringId') offeringId: string
+        @Args('serviceId') serviceId: string
     ) {
-        return this.myVendorsService.addToMyVendors(visitorId, offeringId);
+        return this.myVendorsService.addToMyVendors(visitorId, serviceId);
     }
 
     @Mutation(() => MyVendorsModel)
     async removeFromMyVendors(
         @Args('visitorId') visitorId: string,
-        @Args('offeringId') offeringId: string
+        @Args('serviceId') serviceId: string
     ) {
-        return this.myVendorsService.removeFromMyVendors(visitorId, offeringId);
+        return this.myVendorsService.removeFromMyVendors(visitorId, serviceId);
     }
 }

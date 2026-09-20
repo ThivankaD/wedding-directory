@@ -1,7 +1,7 @@
-import { ObjectType, Field, ID, Int } from '@nestjs/graphql';
+﻿import { ObjectType, Field, ID, Int } from '@nestjs/graphql';
 
 @ObjectType()
-export class OfferingMediaModel {
+export class ServiceMediaModel {
   @Field(() => ID)
   id: string;
 

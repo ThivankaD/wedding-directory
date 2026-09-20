@@ -1,6 +1,6 @@
-import { Module } from '@nestjs/common';
+﻿import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { OfferingEntity } from '../../database/entities/offering.entity';
+import { ServiceEntity } from '../../database/entities/service.entity';
 import { PackageEntity } from '../../database/entities/package.entity';
 import { PackageViewEntity } from '../../database/entities/package-view.entity';
 import { PackageFeatureEntity } from '../../database/entities/package-feature.entity';
@@ -12,7 +12,7 @@ import { PaymentModule } from '../payment/payment.module';
   imports: [
     TypeOrmModule.forFeature([ 
       PackageEntity,
-      OfferingEntity,
+      ServiceEntity,
       PackageViewEntity,
       PackageFeatureEntity,
     ]),

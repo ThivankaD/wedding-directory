@@ -42,7 +42,7 @@ export class BookingModel {
   packageName: string;
 
   @Field({ nullable: true })
-  offeringName: string;
+  serviceName: string;
 
   @Field(() => Float)
   amount: number;

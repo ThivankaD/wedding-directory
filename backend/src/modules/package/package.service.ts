@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+﻿import { Injectable, NotFoundException } from "@nestjs/common";
 import { PackageEntity } from "../../database/entities/package.entity";
 import { PackageRepository } from "../../database/repositories/package.repository";
 import { PackageRepositoryType } from "../../database/types/packageTypes";
@@ -20,11 +20,11 @@ export class PackageService {
     return PackageViewRepository(this.dataSource);
   }
 
-  async createPackage(input: Partial<PackageEntity>, offeringId: string): Promise<PackageEntity> {
+  async createPackage(input: Partial<PackageEntity>, serviceId: string): Promise<PackageEntity> {
     if (input.requiresReservation && input.requiresApproval) {
       throw new Error('A package cannot have both Date Reservation and Vendor Approval enabled simultaneously.');
     }
-    return this.packageRepository.createPackage(input, offeringId);
+    return this.packageRepository.createPackage(input, serviceId);
   }
 
   async updatePackage(input: Partial<PackageEntity>): Promise<PackageEntity> {
@@ -36,20 +36,20 @@ export class PackageService {
 
   async deletePackage(id: string): Promise<boolean> {
     try {
-      const OfferingPackage = await this.packageRepository.findOne({ where: { id } });
-      if (!OfferingPackage) {
+      const ServicePackage = await this.packageRepository.findOne({ where: { id } });
+      if (!ServicePackage) {
         throw new NotFoundException(`Package with ID ${id} not found`);
       }
       
-      await this.packageRepository.remove(OfferingPackage);
+      await this.packageRepository.remove(ServicePackage);
       return true;
     } catch (error) {
       throw new Error(`Failed to delete package: ${error.message}`);
     }
   }
 
-  async findPackageByOffering(offeringId: string): Promise<PackageEntity[]> {
-    return this.packageRepository.findPackageByOffering(offeringId);
+  async findPackageByService(serviceId: string): Promise<PackageEntity[]> {
+    return this.packageRepository.findPackageByService(serviceId);
   }
 
   async trackPackageView(packageId: string, input: Partial<PackageViewEntity>) {
@@ -73,8 +73,8 @@ export class PackageService {
     const packages = await this.dataSource
       .getRepository(PackageEntity)
       .createQueryBuilder('package')
-      .innerJoin('package.offering', 'offering')
-      .innerJoin('offering.vendor', 'vendor')
+      .innerJoin('package.service', 'service')
+      .innerJoin('service.vendor', 'vendor')
       .where('vendor.id = :vendorId', { vendorId })
       .select(['package.id', 'package.name'])
       .getMany();

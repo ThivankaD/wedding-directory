@@ -1,4 +1,4 @@
-import {
+﻿import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
@@ -6,7 +6,7 @@ import {
   ManyToOne,
   JoinColumn
 } from 'typeorm';
-import { OfferingEntity } from './offering.entity';
+import { ServiceEntity } from './service.entity';
 import { VisitorEntity } from './visitor.entity';
 
 @Entity({ name: 'review' })
@@ -23,17 +23,17 @@ export class ReviewEntity {
   @Column('text', { array: true, nullable: true })
   image_urls?: string[];
 
-  @ManyToOne(() => OfferingEntity, (offering) => offering.review, { onDelete: 'CASCADE' })
+  @ManyToOne(() => ServiceEntity, (service) => service.review, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'service_id' })
-  offering: OfferingEntity;
+  service: ServiceEntity;
   
   @ManyToOne(() => VisitorEntity, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'visitor_id' })
   visitor: VisitorEntity;
 
-  @ManyToOne(() => OfferingEntity, { nullable: true, onDelete: 'SET NULL' })
+  @ManyToOne(() => ServiceEntity, { nullable: true, onDelete: 'SET NULL' })
   @JoinColumn({ name: 'mentioned_service_id' })
-  mentionedOffering?: OfferingEntity;
+  mentionedService?: ServiceEntity;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt: Date;

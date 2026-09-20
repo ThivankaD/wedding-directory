@@ -1,12 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
+﻿import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { VendorEntity } from './vendor.entity';
 import { ReviewEntity } from './review.entity';
 import { MyVendorsEntity } from './myVendors.entity';
 import { PackageEntity } from './package.entity';
-import { OfferingMediaEntity } from './offering-media.entity';
+import { ServiceMediaEntity } from './service-media.entity';
 
 @Entity({ name: 'service' })
-export class OfferingEntity {
+export class ServiceEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
@@ -52,21 +52,21 @@ export class OfferingEntity {
     @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
     updatedAt: Date;
 
-    @ManyToOne(() => VendorEntity, v => v.offering)
+    @ManyToOne(() => VendorEntity, v => v.service)
     @JoinColumn({ name: 'vendor_id' })
     vendor: VendorEntity;
 
-    @OneToMany(() => ReviewEntity, (r) => r.offering, { cascade: true })
+    @OneToMany(() => ReviewEntity, (r) => r.service, { cascade: true })
     review: ReviewEntity[]; 
 
-    @OneToMany(() => MyVendorsEntity, m => m.offering, {cascade: true})
+    @OneToMany(() => MyVendorsEntity, m => m.service, {cascade: true})
     @JoinColumn({ name: 'myvendors_id' })
     myVendors: MyVendorsEntity[];
     
-    @OneToMany(() => PackageEntity, p => p.offering, {cascade: true})
+    @OneToMany(() => PackageEntity, p => p.service, {cascade: true})
     @JoinColumn({ name: 'package_id' })
     packages: PackageEntity[];
 
-    @OneToMany(() => OfferingMediaEntity, (m) => m.offering, { cascade: true })
-    media?: OfferingMediaEntity[];
+    @OneToMany(() => ServiceMediaEntity, (m) => m.service, { cascade: true })
+    media?: ServiceMediaEntity[];
 }

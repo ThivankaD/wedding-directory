@@ -1,4 +1,4 @@
-import {
+﻿import {
   Entity,
   PrimaryGeneratedColumn,
   ManyToOne,
@@ -7,17 +7,17 @@ import {
   UpdateDateColumn
 } from 'typeorm';
 import { VisitorEntity } from './visitor.entity';
-import { OfferingEntity } from './offering.entity';
+import { ServiceEntity } from './service.entity';
 
 @Entity({ name: 'saved_vendor' })
 export class MyVendorsEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => OfferingEntity, (offering) => offering.myVendors, {
+  @ManyToOne(() => ServiceEntity, (service) => service.myVendors, {
     nullable: false, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'service_id' })
-  offering: OfferingEntity;
+  service: ServiceEntity;
 
   @ManyToOne(() => VisitorEntity, (visitor) => visitor.myVendors, {
     onDelete: 'CASCADE',

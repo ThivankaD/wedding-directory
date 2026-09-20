@@ -1,4 +1,4 @@
-import { InputType, Field } from '@nestjs/graphql';
+﻿import { InputType, Field } from '@nestjs/graphql';
 
 @InputType()
 export class CreateReviewInput {
@@ -13,10 +13,10 @@ export class CreateReviewInput {
     image_urls?: string[];
 
     @Field({ nullable: true })
-    mentioned_offering_id?: string;
+    mentioned_service_id?: string;
 
     @Field()
-    offering_id: string;
+    service_id: string;
     
     @Field()
     visitor_id: string;

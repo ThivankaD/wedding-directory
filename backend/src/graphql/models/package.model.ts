@@ -1,5 +1,5 @@
-import { ObjectType, Field } from '@nestjs/graphql';
-import { OfferingModel } from './offering.model';
+﻿import { ObjectType, Field } from '@nestjs/graphql';
+import { ServiceModel } from './service.model';
 import { PackageFeatureModel } from './package-feature.model';
 
 @ObjectType()
@@ -42,8 +42,8 @@ export class PackageModel {
   
 
 
-  @Field(() => OfferingModel, { nullable: true })
-  offering?: OfferingModel;
+  @Field(() => ServiceModel, { nullable: true })
+  service?: ServiceModel;
 
   @Field(() => [Date], { nullable: true })
   bookedDates?: Date[];

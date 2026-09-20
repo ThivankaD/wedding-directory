@@ -1,15 +1,15 @@
-import { Schema } from 'mongoose';
+﻿import { Schema } from 'mongoose';
 import { v4 as uuid } from 'uuid';
 
 
 export interface IChat {
   chatId: string;
-  offeringId: string;
+  serviceId: string;
   vendorId: string;
   visitorId: string;
   visitor: { id: string };
   vendor: { id: string };
-  offering: { id: string };
+  service: { id: string };
   messages: Array<{
     id : string;
     content: string;
@@ -24,7 +24,7 @@ export interface IChat {
 
 export const ChatSchema = new Schema({
   chatId: { type: String, required: true, unique: true },
-  offeringId: { type: String, required: true },
+  serviceId: { type: String, required: true },
   vendorId: { type: String, required: true },
   visitorId: { type: String, required: true },
   messages: [{

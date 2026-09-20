@@ -1,11 +1,11 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+﻿import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { ReviewEntity } from '../../database/entities/review.entity';
 import { DataSource,Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ReviewRepository } from '../../database/repositories/review.repository';
 import { ReviewRepositoryType } from '../../database/types/reviewTypes';
 import { CreateReviewInput } from '../../graphql/inputs/createReview.input';
-import { OfferingEntity } from '../../database/entities/offering.entity';
+import { ServiceEntity } from '../../database/entities/service.entity';
 import { VisitorEntity } from '../../database/entities/visitor.entity';
 import { PaymentEntity } from '../../database/entities/payment.entity';
 
@@ -31,8 +31,8 @@ export class ReviewService {
   constructor(
     private readonly dataSource: DataSource,
 
-    @InjectRepository(OfferingEntity)
-    private readonly offeringRepository: Repository<OfferingEntity>,
+    @InjectRepository(ServiceEntity)
+    private readonly serviceRepository: Repository<ServiceEntity>,
     @InjectRepository(VisitorEntity)
     private readonly visitorRepository: Repository<VisitorEntity>,
     @InjectRepository(PaymentEntity)
@@ -42,7 +42,7 @@ export class ReviewService {
   }
 
   async checkReviewEligibility(
-    offeringId: string,
+    serviceId: string,
     visitorId?: string,
   ): Promise<ReviewEligibilityResult> {
     if (!visitorId) {
@@ -55,7 +55,7 @@ export class ReviewService {
 
     const existingReview = await this.reviewRepository.findOne({
       where: {
-        offering: { id: offeringId },
+        service: { id: serviceId },
         visitor: { id: visitorId },
       },
     });
@@ -73,12 +73,12 @@ export class ReviewService {
         status: 'completed',
         visitor: { id: visitorId },
         package: {
-          offering: { id: offeringId },
+          service: { id: serviceId },
         },
       },
       relations: {
         package: {
-          offering: true,
+          service: true,
         },
       },
     });
@@ -132,25 +132,25 @@ export class ReviewService {
       throw new BadRequestException('You can upload a maximum of 3 review images');
     }
 
-    const offering = await this.offeringRepository.findOne({
-      where: { id: createReviewInput.offering_id },
+    const service = await this.serviceRepository.findOne({
+      where: { id: createReviewInput.service_id },
     });
 
     const visitor = await this.visitorRepository.findOne({
       where: { id: createReviewInput.visitor_id },
     });
 
-    if (!offering) {
-      throw new NotFoundException('Offering not found');
+    if (!service) {
+      throw new NotFoundException('Service not found');
     }
     if (!visitor) {
       throw new NotFoundException('Visitor not found');
     }
 
-    // Check if visitor has already submitted a review for this offering
+    // Check if visitor has already submitted a review for this service
     const existingReview = await this.reviewRepository.findOne({
       where: {
-        offering: { id: offering.id },
+        service: { id: service.id },
         visitor: { id: visitor.id },
       },
     });
@@ -158,18 +158,18 @@ export class ReviewService {
       throw new BadRequestException('You have already submitted a review for this service');
     }
 
-    // Check if visitor has completed payment for this offering
+    // Check if visitor has completed payment for this service
     const completedPayments = await this.paymentRepository.find({
       where: {
         status: 'completed',
         visitor: { id: visitor.id },
         package: {
-          offering: { id: offering.id },
+          service: { id: service.id },
         },
       },
       relations: {
         package: {
-          offering: true,
+          service: true,
         },
       },
     });
@@ -191,22 +191,22 @@ export class ReviewService {
       throw new BadRequestException('You can only leave a review after your booked event date has passed');
     }
 
-    let mentionedOffering: OfferingEntity | undefined;
-    if (createReviewInput.mentioned_offering_id) {
-      mentionedOffering = await this.offeringRepository.findOne({
-        where: { id: createReviewInput.mentioned_offering_id },
+    let mentionedService: ServiceEntity | undefined;
+    if (createReviewInput.mentioned_service_id) {
+      mentionedService = await this.serviceRepository.findOne({
+        where: { id: createReviewInput.mentioned_service_id },
         relations: ['vendor'],
       });
     }
 
-    const { mentioned_offering_id, ...reviewPayload } = createReviewInput;
+    const { mentioned_service_id, ...reviewPayload } = createReviewInput;
 
     return this.reviewRepository.createReview(
       {
         ...reviewPayload,
-        mentionedOffering,
+        mentionedService,
       },
-      offering,
+      service,
       visitor,
     );
   }
@@ -219,25 +219,25 @@ export class ReviewService {
     return this.reviewRepository.findReviewById(id);
   }
 
-  async findReviewsByOffering(offeringId: string): Promise<ReviewEntity[]> {
-    return this.reviewRepository.findReviewsByOffering(offeringId);
+  async findReviewsByService(serviceId: string): Promise<ReviewEntity[]> {
+    return this.reviewRepository.findReviewsByService(serviceId);
   }
 
-  async findReviewsByOfferingPaginated(
-    offeringId: string,
+  async findReviewsByServicePaginated(
+    serviceId: string,
     page: number,
     limit: number,
   ): Promise<PaginatedReviewResult> {
     const safePage = Math.max(1, page || 1);
     const safeLimit = Math.min(50, Math.max(1, limit || 5));
 
-    const [reviews, totalReviews] = await this.reviewRepository.findReviewsByOfferingPaginated(
-      offeringId,
+    const [reviews, totalReviews] = await this.reviewRepository.findReviewsByServicePaginated(
+      serviceId,
       safePage,
       safeLimit,
     );
 
-    const { averageRating } = await this.reviewRepository.getOfferingReviewStats(offeringId);
+    const { averageRating } = await this.reviewRepository.getServiceReviewStats(serviceId);
 
     return {
       reviews,

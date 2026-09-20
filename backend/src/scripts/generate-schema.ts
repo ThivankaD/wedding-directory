@@ -1,11 +1,11 @@
-import { NestFactory } from '@nestjs/core';
+﻿import { NestFactory } from '@nestjs/core';
 import { GraphQLSchemaBuilderModule, GraphQLSchemaFactory } from '@nestjs/graphql';
 import { printSchema } from 'graphql';
 import { writeFileSync } from 'fs';
 import { join } from 'path';
 import { VendorResolver } from '../graphql/resolvers/vendor.resolver';
 import { VisitorResolver } from '../graphql/resolvers/visitor.resolver';
-import { OfferingResolver } from '../graphql/resolvers/offering.resolver';
+import { ServiceResolver } from '../graphql/resolvers/service.resolver';
 //import { ReviewResolver } from '../graphql/resolvers/review.resolver';
 
 async function generateSchema() {
@@ -19,7 +19,7 @@ async function generateSchema() {
   const schema = await gqlSchemaFactory.create([
     VendorResolver,
     VisitorResolver,
-    OfferingResolver,
+    ServiceResolver,
  //   ReviewResolver,
   ]);
   const schemaPath = join(process.cwd(), 'dist/graphql/schema.gql');

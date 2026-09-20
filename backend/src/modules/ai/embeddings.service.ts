@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
+﻿import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { OpenAI } from 'openai';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { VendorEntity } from '../../database/entities/vendor.entity';
-import { OfferingEntity } from '../../database/entities/offering.entity';
+import { ServiceEntity } from '../../database/entities/service.entity';
 import { PackageEntity } from '../../database/entities/package.entity';
 
 @Injectable()
@@ -14,8 +14,8 @@ export class EmbeddingsService {
   constructor(
     @InjectRepository(VendorEntity)
     private vendorRepository: Repository<VendorEntity>,
-    @InjectRepository(OfferingEntity)
-    private offeringRepository: Repository<OfferingEntity>,
+    @InjectRepository(ServiceEntity)
+    private serviceRepository: Repository<ServiceEntity>,
     @InjectRepository(PackageEntity)
     private packageRepository: Repository<PackageEntity>,
     private configService: ConfigService,
@@ -42,7 +42,7 @@ export class EmbeddingsService {
   async processVendor(vendorId: string): Promise<void> {
     const vendor = await this.vendorRepository.findOne({
       where: { id: vendorId },
-      relations: ['offering', 'offering.packages'],
+      relations: ['service', 'service.packages'],
     });
 
     if (!vendor) {
@@ -67,50 +67,50 @@ export class EmbeddingsService {
       SET content = $2, embedding = $3::vector
     `, [vendor.id, vendorContent, pgVectorEmbedding]);
 
-    if (vendor.offering && vendor.offering.length > 0) {
-      for (const offering of vendor.offering) {
-        await this.processOffering(offering, vendor);
+    if (vendor.service && vendor.service.length > 0) {
+      for (const service of vendor.service) {
+        await this.processService(service, vendor);
       }
     }
   }
 
-  async processOffering(offering: OfferingEntity, vendor: VendorEntity): Promise<void> {
-    const offeringContent = `
+  async processService(service: ServiceEntity, vendor: VendorEntity): Promise<void> {
+    const serviceContent = `
       Vendor: ${vendor.busname}
-      Offering: ${offering.name}
-      Description: ${offering.description}
-      Category: ${offering.category}
-      Website: ${offering.website || ''}
-      Instagram: ${offering.instagram || ''}
-      Facebook: ${offering.facebook || ''}
-      X: ${offering.x || ''}
+      Service: ${service.name}
+      Description: ${service.description}
+      Category: ${service.category}
+      Website: ${service.website || ''}
+      Instagram: ${service.instagram || ''}
+      Facebook: ${service.facebook || ''}
+      X: ${service.x || ''}
     `;
 
-    const embedding = await this.generateEmbedding(offeringContent);
+    const embedding = await this.generateEmbedding(serviceContent);
     // Format the embedding array for pgvector
     const pgVectorEmbedding = this.formatEmbeddingForPgVector(embedding);
 
-    await this.offeringRepository.query(`
+    await this.serviceRepository.query(`
       INSERT INTO offering_embeddings (id, content, embedding)
       VALUES ($1, $2, $3::vector)
       ON CONFLICT (id) DO UPDATE
       SET content = $2, embedding = $3::vector
-    `, [offering.id, offeringContent, pgVectorEmbedding]);
+    `, [service.id, serviceContent, pgVectorEmbedding]);
 
-    if (offering.packages && offering.packages.length > 0) {
-      for (const pkg of offering.packages) {
-        await this.processPackage(pkg, offering, vendor);
+    if (service.packages && service.packages.length > 0) {
+      for (const pkg of service.packages) {
+        await this.processPackage(pkg, service, vendor);
       }
     }
   }
 
-  async processPackage(pkg: PackageEntity, offering: OfferingEntity, vendor: VendorEntity): Promise<void> {
+  async processPackage(pkg: PackageEntity, service: ServiceEntity, vendor: VendorEntity): Promise<void> {
     // Add null checks for features
     const features = pkg.features && Array.isArray(pkg.features) ? pkg.features.join(', ') : '';
     
     const packageContent = `
       Vendor: ${vendor.busname}
-      Offering: ${offering.name}
+      Service: ${service.name}
       Package: ${pkg.name}
       Description: ${pkg.description || ''}
       Features: ${features}

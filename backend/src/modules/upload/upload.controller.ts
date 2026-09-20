@@ -1,4 +1,4 @@
-import {
+﻿import {
   Controller,
   FileTypeValidator,
   MaxFileSizeValidator,
@@ -13,7 +13,7 @@ import {
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { UploadService } from './upload.service';
 import { VisitorService } from '../visitor/visitor.service';
-import { OfferingService} from '../offering/offering.service';
+import { ServiceService} from '../service/service.service';
 import { VendorService } from '../vendor/vendor.service';
 
 @Controller('upload')
@@ -21,7 +21,7 @@ export class UploadController {
   constructor(
     private readonly uploadService: UploadService,
     private readonly visitorService: VisitorService,
-    private readonly offeringService: OfferingService,
+    private readonly serviceService: ServiceService,
     private readonly vendorService: VendorService,
   ) {}
 
@@ -121,10 +121,10 @@ export class UploadController {
     }
   }
 
-  //Upload the offering banner image
-  @Post('offering-banner')
+  //Upload the service banner image
+  @Post('service-banner')
   @UseInterceptors(FileInterceptor('file'))
-  async uploadOfferingBanner(
+  async uploadServiceBanner(
     @UploadedFile(
       new ParseFilePipe({
         validators: [
@@ -134,11 +134,11 @@ export class UploadController {
       }),
     )
       file: Express.Multer.File,
-    @Body('offeringId') offeringID: string, // Expecting the visitorId in the body
+    @Body('serviceId') serviceID: string, // Expecting the serviceId in the body
   ) {
     // Check if file and visitorId exist
-    if (!file || !offeringID) {
-      throw new BadRequestException('File or Offering ID is missing.');
+    if (!file || !serviceID) {
+      throw new BadRequestException('File or Service ID is missing.');
     }
 
     const fileName = `${Date.now()}-${file.originalname}`;
@@ -146,7 +146,7 @@ export class UploadController {
     // Try to upload the file
     try {
       const fileUrl = await this.uploadService.uploadImage(fileName, file.buffer, file.mimetype);
-      await this.offeringService.updateOfferingBanner(offeringID, fileUrl);
+      await this.serviceService.updateServiceBanner(serviceID, fileUrl);
       return { fileUrl };
     } catch (error) {
       console.error('Upload failed:', error); // Log the error for debugging
@@ -154,16 +154,16 @@ export class UploadController {
     }
   }
 
-  // Upload the offering showcase images
-  @Post('offering-showcase')
+  // Upload the service showcase images
+  @Post('service-showcase')
   @UseInterceptors(FilesInterceptor('files', 5)) // Allows up to 5 images
-  async uploadOfferingShowcase(
+  async uploadServiceShowcase(
     @UploadedFiles() files: Array<Express.Multer.File>,
-    @Body('offeringId') offeringID: string,
+    @Body('serviceId') serviceID: string,
     @Body('index') index?: string,
   ) {
-    if (!files || files.length === 0 || !offeringID) {
-      throw new BadRequestException('Files or Offering ID is missing.');
+    if (!files || files.length === 0 || !serviceID) {
+      throw new BadRequestException('Files or Service ID is missing.');
     }
 
     if (files.length > 5) {
@@ -199,8 +199,8 @@ export class UploadController {
         ? parseInt(index, 10)
         : undefined;
 
-    await this.offeringService.updateOfferingShowcaseImages(
-      offeringID,
+    await this.serviceService.updateServiceShowcaseImages(
+      serviceID,
       uploadedUrls,
       Number.isNaN(slotIndex) ? undefined : slotIndex,
     );
@@ -208,10 +208,10 @@ export class UploadController {
   }
 
 
-  // Upload multiple offering videos
-  @Post('offering-videos')
+  // Upload multiple service videos
+  @Post('service-videos')
   @UseInterceptors(FilesInterceptor('files', 5)) // Allows up to 5 videos to be uploaded at once
-  async uploadOfferingVideos(
+  async uploadServiceVideos(
     @UploadedFiles(
       new ParseFilePipe({
         validators: [
@@ -220,11 +220,11 @@ export class UploadController {
         ],
       }),
     ) files: Array<Express.Multer.File>,
-    @Body('offeringId') offeringID: string
+    @Body('serviceId') serviceID: string
   ) {
-    // Check if files and offeringId exist
-    if (!files || files.length === 0 || !offeringID) {
-      throw new BadRequestException('Files or Offering ID is missing.');
+    // Check if files and serviceId exist
+    if (!files || files.length === 0 || !serviceID) {
+      throw new BadRequestException('Files or Service ID is missing.');
     }
 
     const uploadedUrls = [];
@@ -251,8 +251,8 @@ export class UploadController {
       }
     }
 
-    // Update the offering with the uploaded video URLs
-    await this.offeringService.updateOfferingVideos(offeringID, uploadedUrls);
+    // Update the service with the uploaded video URLs
+    await this.serviceService.updateServiceVideos(serviceID, uploadedUrls);
     return { uploadedUrls };
   }
 

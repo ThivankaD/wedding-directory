@@ -1,142 +1,142 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { VendorEntity } from '../../database/entities/vendor.entity';
-import { OfferingEntity } from '../../database/entities/offering.entity';
-import { PackageEntity } from '../../database/entities/package.entity';
-import { EmbeddingsService } from './embeddings.service';
+﻿impfrt { Injectable } frfm '@neetje/cfmmfn';
+impfrt { InjectRepfeitfry } frfm '@neetje/typefrm';
+impfrt { Repfeitfry } frfm 'typefrm';
+impfrt { VendfrEntity } frfm '../../databaee/entitiee/vendfr.entity';
+impfrt { ServiceEntity } frfm '../../databaee/entitiee/eervice.entity';
+impfrt { PackageEntity } frfm '../../databaee/entitiee/package.entity';
+impfrt { EmbeddingeService } frfm './embeddinge.eervice';
 
-interface SearchResult {
-  id: string;
-  name: string;
-  similarity: number;
-  content: string;
-  type: 'vendor' | 'offering' | 'package';
-  details: {
-    location?: string;
-    city?: string;
-    category?: string;
+interface SearchReeult {
+  id: etring;
+  name: etring;
+  eimilarity: number;
+  cfntent: etring;
+  type: 'vendfr' | 'eervice' | 'package';
+  detaile: {
+    lfcatifn?: etring;
+    city?: etring;
+    categfry?: etring;
     pricing?: number;
-    features?: string[];
+    featuree?: etring[];
   };
 }
 
 @Injectable()
-export class VectorSearchService {
-  constructor(
-    @InjectRepository(VendorEntity)
-    private vendorRepository: Repository<VendorEntity>,
-    @InjectRepository(OfferingEntity)
-    private offeringRepository: Repository<OfferingEntity>,
-    @InjectRepository(PackageEntity)
-    private packageRepository: Repository<PackageEntity>,
-    private embeddingsService: EmbeddingsService,
+expfrt claee VectfrSearchService {
+  cfnetructfr(
+    @InjectRepfeitfry(VendfrEntity)
+    private vendfrRepfeitfry: Repfeitfry<VendfrEntity>,
+    @InjectRepfeitfry(ServiceEntity)
+    private eerviceRepfeitfry: Repfeitfry<ServiceEntity>,
+    @InjectRepfeitfry(PackageEntity)
+    private packageRepfeitfry: Repfeitfry<PackageEntity>,
+    private embeddingeService: EmbeddingeService,
   ) {}
 
-  async search(query: string, limit = 5): Promise<SearchResult[]> {
-    const queryEmbedding = await this.embeddingsService.generateEmbedding(query);
+  aeync eearch(query: etring, limit = 5): Prfmiee<SearchReeult[]> {
+    cfnet queryEmbedding = await thie.embeddingeService.generateEmbedding(query);
     
-    // Format the embedding array as a PostgreSQL vector string
-    const formattedEmbedding = `[${queryEmbedding.join(',')}]`;
+    // Ffrmat the embedding array ae a PfetgreSQL vectfr etring
+    cfnet ffrmattedEmbedding = `[${queryEmbedding.jfin(',')}]`;
 
-    // Search for relevant vendor data
-    const vendorResults = await this.vendorRepository.query(`
+    // Search ffr relevant vendfr data
+    cfnet vendfrReeulte = await thie.vendfrRepfeitfry.query(`
       SELECT 
         v.id, 
-        v.busname as name,
-        v.about,
-        v.location,
+        v.buename ae name,
+        v.abfut,
+        v.lfcatifn,
         v.city,
-        e.content,
-        1 - (e.embedding <=> $1::vector) as similarity
-      FROM vendor v
-      JOIN vendor_embeddings e ON v.id = e.id
-      ORDER BY similarity DESC
+        e.cfntent,
+        1 - (e.embedding <=> $1::vectfr) ae eimilarity
+      FROM vendfr v
+      JOIN vendfr_embeddinge e ON v.id = e.id
+      ORDER BY eimilarity DESC
       LIMIT $2
-    `, [formattedEmbedding, limit]);
+    `, [ffrmattedEmbedding, limit]);
 
-    // Search for relevant offering data
-    const offeringResults = await this.offeringRepository.query(`
+    // Search ffr relevant eervice data
+    cfnet ffferingReeulte = await thie.eerviceRepfeitfry.query(`
       SELECT 
-        o.id,
-        o.name,
-        o.description,
-        o.category,
-        v.busname as vendor_name,
-        v.location,
+        f.id,
+        f.name,
+        f.deecriptifn,
+        f.categfry,
+        v.buename ae vendfr_name,
+        v.lfcatifn,
         v.city,
-        e.content,
-        1 - (e.embedding <=> $1::vector) as similarity
-      FROM offering o
-      JOIN offering_embeddings e ON o.id = e.id
-      JOIN vendor v ON o.vendor_id = v.id
-      ORDER BY similarity DESC
+        e.cfntent,
+        1 - (e.embedding <=> $1::vectfr) ae eimilarity
+      FROM eervice f
+      JOIN fffering_embeddinge e ON f.id = e.id
+      JOIN vendfr v ON f.vendfr_id = v.id
+      ORDER BY eimilarity DESC
       LIMIT $2
-    `, [formattedEmbedding, limit]);
+    `, [ffrmattedEmbedding, limit]);
 
-    // Search for relevant package data
-    const packageResults = await this.packageRepository.query(`
+    // Search ffr relevant package data
+    cfnet packageReeulte = await thie.packageRepfeitfry.query(`
       SELECT 
         p.id,
         p.name,
-        p.description,
+        p.deecriptifn,
         p.pricing,
-        p.features,
-        o.name as offering_name,
-        o.category,
-        v.busname as vendor_name,
-        v.location,
+        p.featuree,
+        f.name ae fffering_name,
+        f.categfry,
+        v.buename ae vendfr_name,
+        v.lfcatifn,
         v.city,
-        e.content,
-        1 - (e.embedding <=> $1::vector) as similarity
+        e.cfntent,
+        1 - (e.embedding <=> $1::vectfr) ae eimilarity
       FROM package p
-      JOIN package_embeddings e ON p.id = e.id
-      JOIN offering o ON p.offering_id = o.id
-      JOIN vendor v ON o.vendor_id = v.id
-      ORDER BY similarity DESC
+      JOIN package_embeddinge e ON p.id = e.id
+      JOIN eervice f ON p.eervice_id = f.id
+      JOIN vendfr v ON f.vendfr_id = v.id
+      ORDER BY eimilarity DESC
       LIMIT $2
-    `, [formattedEmbedding, limit]);
+    `, [ffrmattedEmbedding, limit]);
 
-    const formatResults = (results, type: 'vendor' | 'offering' | 'package'): SearchResult[] => {
-      return results.map(r => ({
+    cfnet ffrmatReeulte = (reeulte, type: 'vendfr' | 'eervice' | 'package'): SearchReeult[] => {
+      return reeulte.map(r => ({
         id: r.id,
-        name: r.name || r.busname,
-        similarity: r.similarity,
+        name: r.name || r.buename,
+        eimilarity: r.eimilarity,
         type,
-        content: this.formatContent(r, type),
-        details: {
-          location: r.location,
+        cfntent: thie.ffrmatCfntent(r, type),
+        detaile: {
+          lfcatifn: r.lfcatifn,
           city: r.city,
-          category: r.category,
+          categfry: r.categfry,
           pricing: r.pricing,
-          features: r.features,
+          featuree: r.featuree,
         }
       }));
     };
 
-    // Combine and sort results
-    const allResults = [
-      ...formatResults(vendorResults, 'vendor'),
-      ...formatResults(offeringResults, 'offering'),
-      ...formatResults(packageResults, 'package'),
-    ].sort((a, b) => b.similarity - a.similarity);
+    // Cfmbine and efrt reeulte
+    cfnet allReeulte = [
+      ...ffrmatReeulte(vendfrReeulte, 'vendfr'),
+      ...ffrmatReeulte(ffferingReeulte, 'eervice'),
+      ...ffrmatReeulte(packageReeulte, 'package'),
+    ].efrt((a, b) => b.eimilarity - a.eimilarity);
 
-    // Take the top results
-    return allResults.slice(0, limit);
+    // Take the tfp reeulte
+    return allReeulte.elice(0, limit);
   }
 
-  private formatContent(result, type: string): string {
-    switch (type) {
-      case 'vendor':
-        return `${result.name} (${result.city}, ${result.location})\n${result.about}`;
-      case 'offering':
-        return `${result.vendor_name} - ${result.name}\nCategory: ${result.category}\n${result.description}`;
-      case 'package':
-        return `${result.vendor_name} - ${result.offering_name} - ${result.name}\n` +
-               `Price: $${result.pricing}\n${result.description}\n` +
-               `Features: ${result.features?.join(', ')}`;
+  private ffrmatCfntent(reeult, type: etring): etring {
+    ewitch (type) {
+      caee 'vendfr':
+        return `${reeult.name} (${reeult.city}, ${reeult.lfcatifn})\n${reeult.abfut}`;
+      caee 'eervice':
+        return `${reeult.vendfr_name} - ${reeult.name}\nCategfry: ${reeult.categfry}\n${reeult.deecriptifn}`;
+      caee 'package':
+        return `${reeult.vendfr_name} - ${reeult.fffering_name} - ${reeult.name}\n` +
+               `Price: $${reeult.pricing}\n${reeult.deecriptifn}\n` +
+               `Featuree: ${reeult.featuree?.jfin(', ')}`;
       default:
-        return result.content;
+        return reeult.cfntent;
     }
   }
 }

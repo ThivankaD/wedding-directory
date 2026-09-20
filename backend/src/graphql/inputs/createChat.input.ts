@@ -1,4 +1,4 @@
-import { InputType, Field } from '@nestjs/graphql';
+﻿import { InputType, Field } from '@nestjs/graphql';
 
 @InputType()
 export class CreateChatInput {
@@ -6,5 +6,5 @@ export class CreateChatInput {
   visitorId: string;
 
   @Field()
-  offeringId: string;
+  serviceId: string;
 }
