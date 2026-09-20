@@ -1,4 +1,4 @@
-import { DataSource } from 'typeorm';
+﻿import { DataSource } from 'typeorm';
 import { VendorEntity } from '../entities/vendor.entity';
 import { VendorRepositoryType } from 'src/database/types/vendorTypes';
 
@@ -8,17 +8,17 @@ export const VendorRepository = (
 ): VendorRepositoryType =>
   dataSource.getRepository(VendorEntity).extend({
     findVendorById(id: string): Promise<VendorEntity | null> {
-      return this.findOne({ where: { id }, relations: ['offering'] });
+      return this.findOne({ where: { id }, relations: ['service'] });
     },
 
     findAllVendors(): Promise<VendorEntity[]> {
-      return this.find({ relations: ['offering'] });
+      return this.find({ relations: ['service'] });
     },
 
-    async findVendorsByOffering(offeringId: string): Promise<VendorEntity[]> {
+    async findVendorsByService(serviceId: string): Promise<VendorEntity[]> {
       return await this.createQueryBuilder('vendor')
-        .leftJoinAndSelect('vendor.offering', 'offering')
-        .where('offering.id = :offeringId', { offeringId })
+        .leftJoinAndSelect('vendor.service', 'service')
+        .where('service.id = :serviceId', { serviceId })
         .getMany();
     },
   });

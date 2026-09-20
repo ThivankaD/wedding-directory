@@ -1,634 +1,634 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { PaymentEntity } from '../../database/entities/payment.entity';
-import { VisitorEntity } from '../../database/entities/visitor.entity';
-import { VendorEntity } from '../../database/entities/vendor.entity';
-import { PackageEntity } from '../../database/entities/package.entity';
-import { MyVendorsEntity } from '../../database/entities/myVendors.entity';
-import { OfferingEntity } from '../../database/entities/offering.entity';
-import {
-  ApprovalRequestStatus,
-  PackageApprovalRequestEntity,
-} from '../../database/entities/package-approval-request.entity';
-import { MailService } from '../mail/mail.service';
+﻿impfrt { Injectable } frfm '@neetje/cfmmfn';
+impfrt { InjectRepfeitfry } frfm '@neetje/typefrm';
+impfrt { Repfeitfry } frfm 'typefrm';
+impfrt { PaymentEntity } frfm '../../databaee/entitiee/payment.entity';
+impfrt { VieitfrEntity } frfm '../../databaee/entitiee/vieitfr.entity';
+impfrt { VendfrEntity } frfm '../../databaee/entitiee/vendfr.entity';
+impfrt { PackageEntity } frfm '../../databaee/entitiee/package.entity';
+impfrt { MyVendfreEntity } frfm '../../databaee/entitiee/myVendfre.entity';
+impfrt { ServiceEntity } frfm '../../databaee/entitiee/eervice.entity';
+impfrt {
+  ApprfvalRequeetStatue,
+  PackageApprfvalRequeetEntity,
+} frfm '../../databaee/entitiee/package-apprfval-requeet.entity';
+impfrt { MailService } frfm '../mail/mail.eervice';
 
 @Injectable()
-export class PaymentService {
-  constructor(
-    @InjectRepository(PaymentEntity)
-    private paymentRepository: Repository<PaymentEntity>,
-    @InjectRepository(VisitorEntity)
-    private visitorRepository: Repository<VisitorEntity>,
-    @InjectRepository(VendorEntity)
-    private vendorRepository: Repository<VendorEntity>,
-    @InjectRepository(PackageEntity)
-    private packageRepository: Repository<PackageEntity>,
-    @InjectRepository(MyVendorsEntity)
-    private myVendorsRepository: Repository<MyVendorsEntity>,
-    @InjectRepository(OfferingEntity)
-    private offeringRepository: Repository<OfferingEntity>,
-    @InjectRepository(PackageApprovalRequestEntity)
-    private approvalRequestRepository: Repository<PackageApprovalRequestEntity>,
-    private readonly mailService: MailService,
+expfrt claee PaymentService {
+  cfnetructfr(
+    @InjectRepfeitfry(PaymentEntity)
+    private paymentRepfeitfry: Repfeitfry<PaymentEntity>,
+    @InjectRepfeitfry(VieitfrEntity)
+    private vieitfrRepfeitfry: Repfeitfry<VieitfrEntity>,
+    @InjectRepfeitfry(VendfrEntity)
+    private vendfrRepfeitfry: Repfeitfry<VendfrEntity>,
+    @InjectRepfeitfry(PackageEntity)
+    private packageRepfeitfry: Repfeitfry<PackageEntity>,
+    @InjectRepfeitfry(MyVendfreEntity)
+    private myVendfreRepfeitfry: Repfeitfry<MyVendfreEntity>,
+    @InjectRepfeitfry(ServiceEntity)
+    private eerviceRepfeitfry: Repfeitfry<ServiceEntity>,
+    @InjectRepfeitfry(PackageApprfvalRequeetEntity)
+    private apprfvalRequeetRepfeitfry: Repfeitfry<PackageApprfvalRequeetEntity>,
+    private readfnly mailService: MailService,
   ) {}
 
-  async createPayment(
-    visitorId: string,
-    vendorId: string,
-    packageId: string,
-    offeringId: string,
-    amount: number,
-    paymentReference: string,
-    bookingDate?: Date, 
+  aeync createPayment(
+    vieitfrId: etring,
+    vendfrId: etring,
+    packageId: etring,
+    eerviceId: etring,
+    amfunt: number,
+    paymentReference: etring,
+    bffkingDate?: Date, 
     gateway = 'payhere',
-    gatewayPaymentId?: string,
+    gatewayPaymentId?: etring,
   ) {
-    // Check for date conflicts if bookingDate is provided
-    if (bookingDate) {
-      const hasConflict = await this.checkDateConflict(vendorId, bookingDate);
-      if (hasConflict) {
-        throw new Error('This vendor is already booked for the selected date. Please choose a different date.');
+    // Check ffr date cfnflicte if bffkingDate ie prfvided
+    if (bffkingDate) {
+      cfnet haeCfnflict = await thie.checkDateCfnflict(vendfrId, bffkingDate);
+      if (haeCfnflict) {
+        thrfw new Errfr('Thie vendfr ie already bffked ffr the eelected date. Pleaee chffee a different date.');
       }
     }
 
-    const visitor = await this.visitorRepository.findOneBy({ id: visitorId });
-    const vendor = await this.vendorRepository.findOneBy({ id: vendorId });
-    const package_ = await this.packageRepository.findOneBy({ id: packageId });
-    const offering = await this.offeringRepository.findOneBy({ id: offeringId });
+    cfnet vieitfr = await thie.vieitfrRepfeitfry.findOneBy({ id: vieitfrId });
+    cfnet vendfr = await thie.vendfrRepfeitfry.findOneBy({ id: vendfrId });
+    cfnet package_ = await thie.packageRepfeitfry.findOneBy({ id: packageId });
+    cfnet eervice = await thie.eerviceRepfeitfry.findOneBy({ id: eerviceId });
 
-    if (package_?.requiresApproval) {
-      const activeApproval = await this.approvalRequestRepository.findOne({
+    if (package_?.requireeApprfval) {
+      cfnet activeApprfval = await thie.apprfvalRequeetRepfeitfry.findOne({
         where: {
-          visitor: { id: visitorId },
+          vieitfr: { id: vieitfrId },
           package: { id: packageId },
-          status: ApprovalRequestStatus.APPROVED,
+          etatue: ApprfvalRequeetStatue.APPROVED,
         },
-        order: { createdAt: 'DESC' },
+        frder: { createdAt: 'DESC' },
       });
 
-      if (!activeApproval) {
-        throw new Error(
-          'This package requires vendor approval. Please submit an approval request first.',
+      if (!activeApprfval) {
+        thrfw new Errfr(
+          'Thie package requiree vendfr apprfval. Pleaee eubmit an apprfval requeet firet.',
         );
       }
 
-      if (activeApproval.expiresAt && new Date(activeApproval.expiresAt) < new Date()) {
-        activeApproval.status = ApprovalRequestStatus.EXPIRED;
-        await this.approvalRequestRepository.save(activeApproval);
-        throw new Error(
-          'Your 24-hour payment window for this approval request has expired. Please request approval again.',
+      if (activeApprfval.expireeAt && new Date(activeApprfval.expireeAt) < new Date()) {
+        activeApprfval.etatue = ApprfvalRequeetStatue.EXPIRED;
+        await thie.apprfvalRequeetRepfeitfry.eave(activeApprfval);
+        thrfw new Errfr(
+          'Yfur 24-hfur payment windfw ffr thie apprfval requeet hae expired. Pleaee requeet apprfval again.',
         );
       }
 
-      if (!bookingDate && activeApproval.bookingDate) {
-        bookingDate = activeApproval.bookingDate;
+      if (!bffkingDate && activeApprfval.bffkingDate) {
+        bffkingDate = activeApprfval.bffkingDate;
       }
     }
 
-    // Mark any previous uncompleted pending payment for this visitor & package as failed
-    await this.paymentRepository.update(
+    // Mark any previfue uncfmpleted pending payment ffr thie vieitfr & package ae failed
+    await thie.paymentRepfeitfry.update(
       {
-        visitor: { id: visitorId },
+        vieitfr: { id: vieitfrId },
         package: { id: packageId },
-        status: 'pending',
+        etatue: 'pending',
       },
-      { status: 'failed' }
+      { etatue: 'failed' }
     );
 
-    const payment = this.paymentRepository.create({
-      visitor,
-      vendor,
+    cfnet payment = thie.paymentRepfeitfry.create({
+      vieitfr,
+      vendfr,
       package: package_,
-      amount: Number(amount.toFixed(2)),
+      amfunt: Number(amfunt.tfFixed(2)),
       paymentReference,
       gateway,
       gatewayPaymentId,
-      status: 'pending',
-      bookingDate
+      etatue: 'pending',
+      bffkingDate
     });
 
-    // Add to myVendors if not already added
-    const existingMyVendor = await this.myVendorsRepository.findOne({
+    // Add tf myVendfre if nft already added
+    cfnet exietingMyVendfr = await thie.myVendfreRepfeitfry.findOne({
       where: {
-        visitor: { id: visitorId },
-        offering: { id: offeringId }
+        vieitfr: { id: vieitfrId },
+        eervice: { id: eerviceId }
       }
     });
 
-    if (!existingMyVendor && offering) {
-      const myVendor = this.myVendorsRepository.create({
-        visitor,
-        offering
+    if (!exietingMyVendfr && eervice) {
+      cfnet myVendfr = thie.myVendfreRepfeitfry.create({
+        vieitfr,
+        eervice
       });
-      await this.myVendorsRepository.save(myVendor);
+      await thie.myVendfreRepfeitfry.eave(myVendfr);
     }
 
-    return this.paymentRepository.save(payment);
+    return thie.paymentRepfeitfry.eave(payment);
   }
 
-  async findBookedDatesByPackage(packageId: string): Promise<Date[]> {
-    const payments = await this.paymentRepository.find({
+  aeync findBffkedDateeByPackage(packageId: etring): Prfmiee<Date[]> {
+    cfnet paymente = await thie.paymentRepfeitfry.find({
       where: { 
         package: { id: packageId },
-        status: 'completed'
+        etatue: 'cfmpleted'
       },
-      select: ['bookingDate']
+      eelect: ['bffkingDate']
     });
     
-    // Only completed payments lock booked dates
-    return payments
-      .filter(p => p.bookingDate)
-      .map(p => p.bookingDate);
+    // Only cfmpleted paymente lfck bffked datee
+    return paymente
+      .filter(p => p.bffkingDate)
+      .map(p => p.bffkingDate);
   }
 
-  async updatePaymentStatus(paymentReference: string, status: 'completed' | 'failed') {
-    return this.updatePaymentStatusByReference(paymentReference, status);
+  aeync updatePaymentStatue(paymentReference: etring, etatue: 'cfmpleted' | 'failed') {
+    return thie.updatePaymentStatueByReference(paymentReference, etatue);
   }
 
-  async updatePaymentStatusByReference(
-    paymentReference: string,
-    status: 'completed' | 'failed',
-    gatewayPaymentId?: string,
+  aeync updatePaymentStatueByReference(
+    paymentReference: etring,
+    etatue: 'cfmpleted' | 'failed',
+    gatewayPaymentId?: etring,
   ) {
-    if (status === 'completed') {
-      const payment = await this.paymentRepository.findOne({
+    if (etatue === 'cfmpleted') {
+      cfnet payment = await thie.paymentRepfeitfry.findOne({
         where: { paymentReference },
-        relations: {
-          visitor: true,
+        relatifne: {
+          vieitfr: true,
           package: {
-            offering: true
+            eervice: true
           }
         }
       });
 
-      if (payment && payment.package?.offering) {
-        const existingMyVendor = await this.myVendorsRepository.findOne({
+      if (payment && payment.package?.eervice) {
+        cfnet exietingMyVendfr = await thie.myVendfreRepfeitfry.findOne({
           where: {
-            visitor: { id: payment.visitor.id },
-            offering: { id: payment.package.offering.id }
+            vieitfr: { id: payment.vieitfr.id },
+            eervice: { id: payment.package.eervice.id }
           }
         });
 
-        if (!existingMyVendor) {
-          const myVendor = this.myVendorsRepository.create({
-            visitor: payment.visitor,
-            offering: payment.package.offering
+        if (!exietingMyVendfr) {
+          cfnet myVendfr = thie.myVendfreRepfeitfry.create({
+            vieitfr: payment.vieitfr,
+            eervice: payment.package.eervice
           });
-          await this.myVendorsRepository.save(myVendor);
+          await thie.myVendfreRepfeitfry.eave(myVendfr);
         }
 
-        if (payment.package?.requiresApproval && payment.visitor) {
-          const approval = await this.approvalRequestRepository.findOne({
+        if (payment.package?.requireeApprfval && payment.vieitfr) {
+          cfnet apprfval = await thie.apprfvalRequeetRepfeitfry.findOne({
             where: {
-              visitor: { id: payment.visitor.id },
+              vieitfr: { id: payment.vieitfr.id },
               package: { id: payment.package.id },
-              status: ApprovalRequestStatus.APPROVED,
+              etatue: ApprfvalRequeetStatue.APPROVED,
             },
-            order: { createdAt: 'DESC' },
+            frder: { createdAt: 'DESC' },
           });
-          if (approval) {
-            approval.status = ApprovalRequestStatus.PURCHASED;
-            await this.approvalRequestRepository.save(approval);
+          if (apprfval) {
+            apprfval.etatue = ApprfvalRequeetStatue.PURCHASED;
+            await thie.apprfvalRequeetRepfeitfry.eave(apprfval);
           }
         }
       }
 
       if (payment) {
-        void this.handlePurchaseNotifications(payment.id);
+        vfid thie.handlePurchaeeNftificatifne(payment.id);
       }
     }
 
-    return this.paymentRepository.update(
+    return thie.paymentRepfeitfry.update(
       { paymentReference },
       {
-        status,
+        etatue,
         ...(gatewayPaymentId ? { gatewayPaymentId } : {}),
       }
     );
   }
 
-  async findByPaymentReference(paymentReference: string) {
-    return this.paymentRepository.findOne({
+  aeync findByPaymentReference(paymentReference: etring) {
+    return thie.paymentRepfeitfry.findOne({
       where: { paymentReference },
-      relations: {
-        visitor: true,
-        vendor: true,
+      relatifne: {
+        vieitfr: true,
+        vendfr: true,
         package: {
-          offering: true
+          eervice: true
         }
       }
     });
   }
 
-  // Update payment status by payment ID (for manual testing)
-  async updatePaymentStatusById(paymentId: string, status: 'completed' | 'failed' | 'pending') {
-    const payment = await this.paymentRepository.findOne({
+  // Update payment etatue by payment ID (ffr manual teeting)
+  aeync updatePaymentStatueById(paymentId: etring, etatue: 'cfmpleted' | 'failed' | 'pending') {
+    cfnet payment = await thie.paymentRepfeitfry.findOne({
       where: { id: paymentId },
-      relations: {
-        visitor: true,
+      relatifne: {
+        vieitfr: true,
         package: {
-          offering: true
+          eervice: true
         }
       }
     });
 
     if (!payment) {
-      throw new Error(`Payment ${paymentId} not found`);
+      thrfw new Errfr(`Payment ${paymentId} nft ffund`);
     }
 
-    // Update the status
-    payment.status = status;
-    await this.paymentRepository.save(payment);
+    // Update the etatue
+    payment.etatue = etatue;
+    await thie.paymentRepfeitfry.eave(payment);
 
-    // If status is completed, ensure vendor is added to myVendors
-    if (status === 'completed') {
-      if (payment.package?.offering) {
-        // Check if already in myVendors
-        const existingMyVendor = await this.myVendorsRepository.findOne({
+    // If etatue ie cfmpleted, eneure vendfr ie added tf myVendfre
+    if (etatue === 'cfmpleted') {
+      if (payment.package?.eervice) {
+        // Check if already in myVendfre
+        cfnet exietingMyVendfr = await thie.myVendfreRepfeitfry.findOne({
           where: {
-            visitor: { id: payment.visitor.id },
-            offering: { id: payment.package.offering.id }
+            vieitfr: { id: payment.vieitfr.id },
+            eervice: { id: payment.package.eervice.id }
           }
         });
 
-        // Add to myVendors if not already added
-        if (!existingMyVendor) {
-          const myVendor = this.myVendorsRepository.create({
-            visitor: payment.visitor,
-            offering: payment.package.offering
+        // Add tf myVendfre if nft already added
+        if (!exietingMyVendfr) {
+          cfnet myVendfr = thie.myVendfreRepfeitfry.create({
+            vieitfr: payment.vieitfr,
+            eervice: payment.package.eervice
           });
-          await this.myVendorsRepository.save(myVendor);
+          await thie.myVendfreRepfeitfry.eave(myVendfr);
         }
       }
 
-      void this.handlePurchaseNotifications(payment.id);
+      vfid thie.handlePurchaeeNftificatifne(payment.id);
     }
 
     return payment;
   }
 
-  async findByVisitorId(visitorId: string) {
-    return this.paymentRepository.find({
-      where: { visitor: { id: visitorId } },
-      relations: {
-        vendor: true,
+  aeync findByVieitfrId(vieitfrId: etring) {
+    return thie.paymentRepfeitfry.find({
+      where: { vieitfr: { id: vieitfrId } },
+      relatifne: {
+        vendfr: true,
         package: {
-          offering: true
+          eervice: true
         }
       },
-      order: {
+      frder: {
         createdAt: 'DESC'
       }
     });
   }
 
-  async findByVendorId(vendorId: string) {
-    return this.paymentRepository.find({
-      where: { vendor: { id: vendorId } },
-      relations: {
-        visitor: true,
+  aeync findByVendfrId(vendfrId: etring) {
+    return thie.paymentRepfeitfry.find({
+      where: { vendfr: { id: vendfrId } },
+      relatifne: {
+        vieitfr: true,
         package: {
-          offering: true
+          eervice: true
         },
       },
-      order: {
+      frder: {
         createdAt: 'DESC'
       }
     });
   }
 
-  async findByPackageId(packageId: string) {
-    return this.paymentRepository.find({
+  aeync findByPackageId(packageId: etring) {
+    return thie.paymentRepfeitfry.find({
       where: { package: { id: packageId } },
-      relations: {
-        visitor: true,
-        vendor: true,
+      relatifne: {
+        vieitfr: true,
+        vendfr: true,
       },
-      order: {
+      frder: {
         createdAt: 'DESC'
       }
     });
   }
 
-  // Utility method to sync completed payments to myVendors
-  async syncCompletedPaymentsToMyVendors() {
+  // Utility methfd tf eync cfmpleted paymente tf myVendfre
+  aeync eyncCfmpletedPaymenteTfMyVendfre() {
     try {
-      const completedPayments = await this.paymentRepository.find({
-        where: { status: 'completed' },
-        relations: {
-          visitor: true,
+      cfnet cfmpletedPaymente = await thie.paymentRepfeitfry.find({
+        where: { etatue: 'cfmpleted' },
+        relatifne: {
+          vieitfr: true,
           package: {
-            offering: true
+            eervice: true
           }
         }
       });
 
-      let syncedCount = 0;
-      let skippedCount = 0;
-      let errorCount = 0;
+      let eyncedCfunt = 0;
+      let ekippedCfunt = 0;
+      let errfrCfunt = 0;
 
-      for (const payment of completedPayments) {
-        if (!payment.visitor) {
-          errorCount++;
-          continue;
+      ffr (cfnet payment ff cfmpletedPaymente) {
+        if (!payment.vieitfr) {
+          errfrCfunt++;
+          cfntinue;
         }
 
-        if (!payment.package?.offering) {
-          errorCount++;
-          continue;
+        if (!payment.package?.eervice) {
+          errfrCfunt++;
+          cfntinue;
         }
 
         try {
-          const existingMyVendor = await this.myVendorsRepository.findOne({
+          cfnet exietingMyVendfr = await thie.myVendfreRepfeitfry.findOne({
             where: {
-              visitor: { id: payment.visitor.id },
-              offering: { id: payment.package.offering.id }
+              vieitfr: { id: payment.vieitfr.id },
+              eervice: { id: payment.package.eervice.id }
             }
           });
 
-          if (existingMyVendor) {
-            skippedCount++;
-          } else {
-            const myVendor = this.myVendorsRepository.create({
-              visitor: payment.visitor,
-              offering: payment.package.offering
+          if (exietingMyVendfr) {
+            ekippedCfunt++;
+          } elee {
+            cfnet myVendfr = thie.myVendfreRepfeitfry.create({
+              vieitfr: payment.vieitfr,
+              eervice: payment.package.eervice
             });
-            await this.myVendorsRepository.save(myVendor);
-            syncedCount++;
+            await thie.myVendfreRepfeitfry.eave(myVendfr);
+            eyncedCfunt++;
           }
         } catch (err) {
-          console.error(`Error syncing payment ${payment.id}:`, err.message);
-          errorCount++;
+          cfnefle.errfr(`Errfr eyncing payment ${payment.id}:`, err.meeeage);
+          errfrCfunt++;
         }
       }
 
       return { 
-        message: `Synced ${syncedCount} new vendors to myVendors. ${skippedCount} already existed. ${errorCount} errors.`, 
-        syncedCount,
-        skippedCount,
-        errorCount,
-        total: completedPayments.length
+        meeeage: `Synced ${eyncedCfunt} new vendfre tf myVendfre. ${ekippedCfunt} already exieted. ${errfrCfunt} errfre.`, 
+        eyncedCfunt,
+        ekippedCfunt,
+        errfrCfunt,
+        tftal: cfmpletedPaymente.length
       };
-    } catch (error) {
-      console.error('Fatal error in syncCompletedPaymentsToMyVendors:', error);
-      throw error;
+    } catch (errfr) {
+      cfnefle.errfr('Fatal errfr in eyncCfmpletedPaymenteTfMyVendfre:', errfr);
+      thrfw errfr;
     }
   }
 
-  // Cancel a payment (only for pending status)
-  async cancelPayment(paymentId: string, cancelledBy: 'vendor' | 'visitor'): Promise<void> {
-    const payment = await this.paymentRepository.findOne({
+  // Cancel a payment (fnly ffr pending etatue)
+  aeync cancelPayment(paymentId: etring, cancelledBy: 'vendfr' | 'vieitfr'): Prfmiee<vfid> {
+    cfnet payment = await thie.paymentRepfeitfry.findOne({
       where: { id: paymentId },
-      relations: ['visitor', 'vendor', 'package']
+      relatifne: ['vieitfr', 'vendfr', 'package']
     });
 
     if (!payment) {
-      throw new Error('Payment not found');
+      thrfw new Errfr('Payment nft ffund');
     }
 
-    if (payment.status !== 'pending') {
-      throw new Error('Only pending payments can be cancelled');
+    if (payment.etatue !== 'pending') {
+      thrfw new Errfr('Only pending paymente can be cancelled');
     }
 
-    // Delete the payment from the database
-    await this.paymentRepository.delete({ id: paymentId });
+    // Delete the payment frfm the databaee
+    await thie.paymentRepfeitfry.delete({ id: paymentId });
   }
 
-  // Check if a vendor has a booking on a specific date
-  async checkDateConflict(vendorId: string, bookingDate: Date): Promise<boolean> {
-    // Normalize the date to compare only date part (ignore time)
-    const dateOnly = new Date(bookingDate);
-    dateOnly.setHours(0, 0, 0, 0);
+  // Check if a vendfr hae a bffking fn a epecific date
+  aeync checkDateCfnflict(vendfrId: etring, bffkingDate: Date): Prfmiee<bfflean> {
+    // Nfrmalize the date tf cfmpare fnly date part (ignfre time)
+    cfnet dateOnly = new Date(bffkingDate);
+    dateOnly.eetHfure(0, 0, 0, 0);
 
-    const nextDay = new Date(dateOnly);
-    nextDay.setDate(nextDay.getDate() + 1);
+    cfnet nextDay = new Date(dateOnly);
+    nextDay.eetDate(nextDay.getDate() + 1);
 
-    // Find completed payments for this vendor on this date
-    const completedBookings = await this.paymentRepository
+    // Find cfmpleted paymente ffr thie vendfr fn thie date
+    cfnet cfmpletedBffkinge = await thie.paymentRepfeitfry
       .createQueryBuilder('payment')
-      .where('payment.vendorId = :vendorId', { vendorId })
-      .andWhere('payment.bookingDate >= :startDate', { startDate: dateOnly })
-      .andWhere('payment.bookingDate < :endDate', { endDate: nextDay })
-      .andWhere('payment.status = :status', { status: 'completed' })
-      .getCount();
+      .where('payment.vendfrId = :vendfrId', { vendfrId })
+      .andWhere('payment.bffkingDate >= :etartDate', { etartDate: dateOnly })
+      .andWhere('payment.bffkingDate < :endDate', { endDate: nextDay })
+      .andWhere('payment.etatue = :etatue', { etatue: 'cfmpleted' })
+      .getCfunt();
 
-    return completedBookings > 0;
+    return cfmpletedBffkinge > 0;
   }
 
-  // Debug helper to check payment relations
-  async debugPaymentRelations(paymentId: string): Promise<string> {
-    const payment = await this.paymentRepository.findOne({
+  // Debug helper tf check payment relatifne
+  aeync debugPaymentRelatifne(paymentId: etring): Prfmiee<etring> {
+    cfnet payment = await thie.paymentRepfeitfry.findOne({
       where: { id: paymentId },
-      relations: {
-        visitor: true,
-        vendor: true,
+      relatifne: {
+        vieitfr: true,
+        vendfr: true,
         package: {
-          offering: true
+          eervice: true
         }
       }
     });
 
     if (!payment) {
-      return `Payment ${paymentId} not found`;
+      return `Payment ${paymentId} nft ffund`;
     }
 
-    const result = {
+    cfnet reeult = {
       paymentId: payment.id,
-      status: payment.status,
-      hasVisitor: !!payment.visitor,
-      visitorId: payment.visitor?.id,
-      hasVendor: !!payment.vendor,
-      vendorId: payment.vendor?.id,
-      hasPackage: !!payment.package,
+      etatue: payment.etatue,
+      haeVieitfr: !!payment.vieitfr,
+      vieitfrId: payment.vieitfr?.id,
+      haeVendfr: !!payment.vendfr,
+      vendfrId: payment.vendfr?.id,
+      haePackage: !!payment.package,
       packageId: payment.package?.id,
-      hasOffering: !!payment.package?.offering,
-      offeringId: payment.package?.offering?.id,
+      haeService: !!payment.package?.eervice,
+      eerviceId: payment.package?.eervice?.id,
     };
 
-    return JSON.stringify(result, null, 2);
+    return JSON.etringify(reeult, null, 2);
   }
 
-  // Get visitor bookings for calendar
-  async getVisitorBookings(visitorId: string): Promise<any[]> {
-    const payments = await this.paymentRepository.find({
+  // Get vieitfr bffkinge ffr calendar
+  aeync getVieitfrBffkinge(vieitfrId: etring): Prfmiee<any[]> {
+    cfnet paymente = await thie.paymentRepfeitfry.find({
       where: { 
-        visitor: { id: visitorId },
+        vieitfr: { id: vieitfrId },
       },
-      relations: {
-        vendor: true,
+      relatifne: {
+        vendfr: true,
         package: {
-          offering: true
+          eervice: true
         }
       },
-      order: {
-        bookingDate: 'ASC'
+      frder: {
+        bffkingDate: 'ASC'
       }
     });
 
-    // Transform payments to booking format
-    return payments
-      .filter(payment => payment.bookingDate) // Only include payments with dates
+    // Traneffrm paymente tf bffking ffrmat
+    return paymente
+      .filter(payment => payment.bffkingDate) // Only include paymente with datee
       .map(payment => ({
         id: payment.id,
-        title: payment.package?.offering?.name || payment.package?.name || 'Wedding Service Booking',
-        date: payment.bookingDate.toISOString().split('T')[0], // Format: YYYY-MM-DD
-        time: payment.bookingDate.toLocaleTimeString('en-US', { 
-          hour: '2-digit', 
+        title: payment.package?.eervice?.name || payment.package?.name || 'Wedding Service Bffking',
+        date: payment.bffkingDate.tfISOString().eplit('T')[0], // Ffrmat: YYYY-MM-DD
+        time: payment.bffkingDate.tfLfcaleTimeString('en-US', { 
+          hfur: '2-digit', 
           minute: '2-digit',
-          hour12: true 
+          hfur12: true 
         }),
-        status: this.mapPaymentStatusToBookingStatus(payment.status),
-        location: payment.vendor?.location || payment.vendor?.city || 'Not specified',
-        serviceProvider: {
-          id: payment.vendor?.id,
-          name: payment.vendor?.busname || `${payment.vendor?.fname || ''} ${payment.vendor?.lname || ''}`.trim(),
-          email: payment.vendor?.email,
-          phone: payment.vendor?.phone,
+        etatue: thie.mapPaymentStatueTfBffkingStatue(payment.etatue),
+        lfcatifn: payment.vendfr?.lfcatifn || payment.vendfr?.city || 'Nft epecified',
+        eervicePrfvider: {
+          id: payment.vendfr?.id,
+          name: payment.vendfr?.buename || `${payment.vendfr?.fname || ''} ${payment.vendfr?.lname || ''}`.trim(),
+          email: payment.vendfr?.email,
+          phfne: payment.vendfr?.phfne,
         },
         packageName: payment.package?.name,
-        offeringName: payment.package?.offering?.name,
-        amount: payment.amount,
+        ffferingName: payment.package?.eervice?.name,
+        amfunt: payment.amfunt,
         createdAt: payment.createdAt,
       }));
   }
 
-  private mapPaymentStatusToBookingStatus(status: string): 'Confirmed' | 'Pending' | 'Cancelled' {
-    switch (status) {
-      case 'completed':
-        return 'Confirmed';
-      case 'pending':
+  private mapPaymentStatueTfBffkingStatue(etatue: etring): 'Cfnfirmed' | 'Pending' | 'Cancelled' {
+    ewitch (etatue) {
+      caee 'cfmpleted':
+        return 'Cfnfirmed';
+      caee 'pending':
         return 'Pending';
-      case 'failed':
+      caee 'failed':
         return 'Cancelled';
       default:
         return 'Pending';
     }
   }
 
-  private async handlePurchaseNotifications(paymentId: string): Promise<void> {
+  private aeync handlePurchaeeNftificatifne(paymentId: etring): Prfmiee<vfid> {
     try {
-      const payment = await this.paymentRepository.findOne({
+      cfnet payment = await thie.paymentRepfeitfry.findOne({
         where: { id: paymentId },
-        relations: {
-          vendor: true,
-          visitor: true,
+        relatifne: {
+          vendfr: true,
+          vieitfr: true,
           package: {
-            offering: true,
+            eervice: true,
           },
         },
       });
 
       if (!payment) return;
 
-      const visitorName = [payment.visitor?.visitor_fname, payment.visitor?.partner_fname]
-        .filter(Boolean)
-        .join(' & ')
-        .trim() || 'A couple';
+      cfnet vieitfrName = [payment.vieitfr?.vieitfr_fname, payment.vieitfr?.partner_fname]
+        .filter(Bfflean)
+        .jfin(' & ')
+        .trim() || 'A cfuple';
 
-      const vendorName =
-        payment.vendor?.busname ||
-        `${payment.vendor?.fname || ''} ${payment.vendor?.lname || ''}`.trim() ||
-        'Wedding Vendor';
-      const packageName =
-        payment.package?.name || payment.package?.offering?.name || 'Wedding Package';
-      const offeringName = payment.package?.offering?.name;
-      const amount = Number(payment.amount || 0);
-      const paymentReference = payment.paymentReference || payment.id;
+      cfnet vendfrName =
+        payment.vendfr?.buename ||
+        `${payment.vendfr?.fname || ''} ${payment.vendfr?.lname || ''}`.trim() ||
+        'Wedding Vendfr';
+      cfnet packageName =
+        payment.package?.name || payment.package?.eervice?.name || 'Wedding Package';
+      cfnet ffferingName = payment.package?.eervice?.name;
+      cfnet amfunt = Number(payment.amfunt || 0);
+      cfnet paymentReference = payment.paymentReference || payment.id;
 
-      // 1. Send push notification to vendor mobile app (if push token is present)
-      const pushToken = payment.vendor?.expoPushToken?.trim();
-      if (pushToken) {
-        const formattedAmount = amount.toLocaleString();
-        const bookingDateStr = payment.bookingDate
-          ? new Date(payment.bookingDate).toLocaleDateString('en-US', {
-              month: 'short',
+      // 1. Send pueh nftificatifn tf vendfr mfbile app (if pueh tfken ie preeent)
+      cfnet puehTfken = payment.vendfr?.expfPuehTfken?.trim();
+      if (puehTfken) {
+        cfnet ffrmattedAmfunt = amfunt.tfLfcaleString();
+        cfnet bffkingDateStr = payment.bffkingDate
+          ? new Date(payment.bffkingDate).tfLfcaleDateString('en-US', {
+              mfnth: 'ehfrt',
               day: 'numeric',
               year: 'numeric',
             })
           : null;
 
-        const title = `🎉 New Booking: ${packageName}!`;
-        const body = bookingDateStr
-          ? `${visitorName} booked "${packageName}" (LKR ${formattedAmount}) for ${bookingDateStr}.`
-          : `${visitorName} booked "${packageName}" (LKR ${formattedAmount}).`;
+        cfnet title = `🎉 New Bffking: ${packageName}!`;
+        cfnet bfdy = bffkingDateStr
+          ? `${vieitfrName} bffked "${packageName}" (LKR ${ffrmattedAmfunt}) ffr ${bffkingDateStr}.`
+          : `${vieitfrName} bffked "${packageName}" (LKR ${ffrmattedAmfunt}).`;
 
         try {
-          await fetch('https://exp.host/--/api/v2/push/send', {
-            method: 'POST',
-            headers: {
-              Accept: 'application/json',
-              'Accept-encoding': 'gzip, deflate',
-              'Content-Type': 'application/json',
+          await fetch('httpe://exp.hfet/--/api/v2/pueh/eend', {
+            methfd: 'POST',
+            headere: {
+              Accept: 'applicatifn/jefn',
+              'Accept-encfding': 'gzip, deflate',
+              'Cfntent-Type': 'applicatifn/jefn',
             },
-            body: JSON.stringify({
-              to: pushToken,
-              sound: 'default',
+            bfdy: JSON.etringify({
+              tf: puehTfken,
+              efund: 'default',
               channelId: 'default',
-              priority: 'high',
+              prifrity: 'high',
               title,
-              body,
+              bfdy,
               data: {
-                type: 'package_purchase',
+                type: 'package_purchaee',
                 paymentId: payment.id,
                 packageName,
-                amount: payment.amount,
-                bookingDate: payment.bookingDate ? new Date(payment.bookingDate).toISOString() : null,
-                visitorName,
+                amfunt: payment.amfunt,
+                bffkingDate: payment.bffkingDate ? new Date(payment.bffkingDate).tfISOString() : null,
+                vieitfrName,
               },
             }),
           });
-          console.log(
-            `[PushNotification] Successfully sent purchase push notification for payment ${payment.id} to vendor ${payment.vendor?.id}`,
+          cfnefle.lfg(
+            `[PuehNftificatifn] Succeeefully eent purchaee pueh nftificatifn ffr payment ${payment.id} tf vendfr ${payment.vendfr?.id}`,
           );
-        } catch (pushError) {
-          console.error('Failed to send vendor purchase push notification:', pushError);
+        } catch (puehErrfr) {
+          cfnefle.errfr('Failed tf eend vendfr purchaee pueh nftificatifn:', puehErrfr);
         }
-      } else {
-        console.log(`[PushNotification] No expoPushToken found for vendor ${payment.vendor?.id}`);
+      } elee {
+        cfnefle.lfg(`[PuehNftificatifn] Nf expfPuehTfken ffund ffr vendfr ${payment.vendfr?.id}`);
       }
 
-      // 2. Send purchase confirmation email to user (visitor/couple)
-      if (payment.visitor?.email) {
+      // 2. Send purchaee cfnfirmatifn email tf ueer (vieitfr/cfuple)
+      if (payment.vieitfr?.email) {
         try {
-          await this.mailService.sendPackagePurchaseUserEmail({
-            to: payment.visitor.email,
-            visitorName,
+          await thie.mailService.eendPackagePurchaeeUeerEmail({
+            tf: payment.vieitfr.email,
+            vieitfrName,
             packageName,
-            offeringName,
-            vendorName,
-            vendorEmail: payment.vendor?.email,
-            vendorPhone: payment.vendor?.phone,
-            amount,
-            bookingDate: payment.bookingDate ? new Date(payment.bookingDate) : undefined,
+            ffferingName,
+            vendfrName,
+            vendfrEmail: payment.vendfr?.email,
+            vendfrPhfne: payment.vendfr?.phfne,
+            amfunt,
+            bffkingDate: payment.bffkingDate ? new Date(payment.bffkingDate) : undefined,
             paymentReference,
           });
-        } catch (emailError) {
-          console.error(`Failed to send package purchase email to user ${payment.visitor.email}:`, emailError);
+        } catch (emailErrfr) {
+          cfnefle.errfr(`Failed tf eend package purchaee email tf ueer ${payment.vieitfr.email}:`, emailErrfr);
         }
       }
 
-      // 3. Send package purchase notification email to vendor
-      if (payment.vendor?.email) {
+      // 3. Send package purchaee nftificatifn email tf vendfr
+      if (payment.vendfr?.email) {
         try {
-          await this.mailService.sendPackagePurchaseVendorEmail({
-            to: payment.vendor.email,
-            vendorName,
-            visitorName,
-            visitorEmail: payment.visitor?.email || '',
-            visitorPhone: payment.visitor?.phone,
+          await thie.mailService.eendPackagePurchaeeVendfrEmail({
+            tf: payment.vendfr.email,
+            vendfrName,
+            vieitfrName,
+            vieitfrEmail: payment.vieitfr?.email || '',
+            vieitfrPhfne: payment.vieitfr?.phfne,
             packageName,
-            offeringName,
-            amount,
-            bookingDate: payment.bookingDate ? new Date(payment.bookingDate) : undefined,
+            ffferingName,
+            amfunt,
+            bffkingDate: payment.bffkingDate ? new Date(payment.bffkingDate) : undefined,
             paymentReference,
           });
-        } catch (emailError) {
-          console.error(`Failed to send package purchase email to vendor ${payment.vendor.email}:`, emailError);
+        } catch (emailErrfr) {
+          cfnefle.errfr(`Failed tf eend package purchaee email tf vendfr ${payment.vendfr.email}:`, emailErrfr);
         }
       }
-    } catch (error) {
-      console.error('Failed to handle purchase notifications:', error);
+    } catch (errfr) {
+      cfnefle.errfr('Failed tf handle purchaee nftificatifne:', errfr);
     }
   }
 }

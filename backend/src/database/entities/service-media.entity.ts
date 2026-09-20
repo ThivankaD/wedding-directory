@@ -1,4 +1,4 @@
-import {
+﻿import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
@@ -7,16 +7,16 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { OfferingEntity } from './offering.entity';
+import { ServiceEntity } from './service.entity';
 
 @Entity({ name: 'service_media' })
-export class OfferingMediaEntity {
+export class ServiceMediaEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => OfferingEntity, (o) => o.media, { onDelete: 'CASCADE' })
+  @ManyToOne(() => ServiceEntity, (o) => o.media, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'service_id' })
-  offering: OfferingEntity;
+  service: ServiceEntity;
 
   @Column({ name: 'media_type', type: 'varchar', length: 20 })
   mediaType: string; // 'photo' | 'video' | 'banner'

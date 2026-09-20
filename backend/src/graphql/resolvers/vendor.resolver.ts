@@ -60,10 +60,10 @@ export class VendorResolver {
   }
 
   @Query(() => [VendorModel])
-  async findVendorsByOffering(
-    @Args('offering_id') offeringId: string,
+  async findVendorsByService(
+    @Args('service_id') serviceId: string,
   ): Promise<VendorEntity[]> {
-    return this.vendorService.findVendorsByOffering(offeringId);
+    return this.vendorService.findVendorsByService(serviceId);
   }
 
   @Mutation(() => Boolean)

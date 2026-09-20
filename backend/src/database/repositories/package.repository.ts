@@ -1,6 +1,6 @@
-import { DataSource } from "typeorm";
+﻿import { DataSource } from "typeorm";
 import { PackageEntity } from "../entities/package.entity";
-import { OfferingEntity } from '../entities/offering.entity';
+import { ServiceEntity } from '../entities/service.entity';
 import { PackageFeatureEntity } from '../entities/package-feature.entity';
 
 export const PackageRepository = (dataSource: DataSource) =>
@@ -8,15 +8,15 @@ export const PackageRepository = (dataSource: DataSource) =>
 
     async createPackage(
       input: Partial<PackageEntity>,
-      offeringId: string
+      serviceId: string
     ): Promise<PackageEntity> {
-      const offering = await dataSource.getRepository(OfferingEntity).findOne({ where: { id: offeringId } });
+      const service = await dataSource.getRepository(ServiceEntity).findOne({ where: { id: serviceId } });
 
-      if (!offering) {
-        throw new Error("No offering found");
+      if (!service) {
+        throw new Error("No service found");
       }
 
-      const _package = this.create({ ...input, offering });
+      const _package = this.create({ ...input, service });
       const savedPackage = await this.save(_package);
 
       if (Array.isArray(input.features)) {
@@ -37,7 +37,7 @@ export const PackageRepository = (dataSource: DataSource) =>
 
       const result = await this.findOne({
         where: { id: savedPackage.id },
-        relations: ['offering', 'packageFeatures'],
+        relations: ['service', 'packageFeatures'],
       });
       if (result && result.packageFeatures) {
         result.features = result.packageFeatures.map(f => f.text);
@@ -80,7 +80,7 @@ export const PackageRepository = (dataSource: DataSource) =>
 
       const result = await this.findOne({
         where: { id },
-        relations: ['offering', 'packageFeatures'],
+        relations: ['service', 'packageFeatures'],
       });
       if (result && result.packageFeatures) {
         result.features = result.packageFeatures.map(f => f.text);
@@ -99,10 +99,10 @@ export const PackageRepository = (dataSource: DataSource) =>
         return _package;
     },
 
-    async findPackageByOffering(offeringId: string): Promise<PackageEntity[]> {
+    async findPackageByService(serviceId: string): Promise<PackageEntity[]> {
         const packages = await this.find({
-          where: { offering: { id: offeringId } },
-          relations: ['offering', 'packageFeatures'],
+          where: { service: { id: serviceId } },
+          relations: ['service', 'packageFeatures'],
           order: {
             createdAt: 'ASC',
           },

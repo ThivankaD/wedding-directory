@@ -1,17 +1,17 @@
-import { HttpService } from '@nestjs/axios';
+﻿import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { firstValueFrom } from 'rxjs';
-import { OfferingEntity } from 'src/database/entities/offering.entity';
+import { ServiceEntity } from 'src/database/entities/service.entity';
 import { PackageEntity } from 'src/database/entities/package.entity';
 import { ReviewEntity } from 'src/database/entities/review.entity';
 import { Repository } from 'typeorm';
 import { RecommendationRequestDto } from './dto/recommendation-request.dto';
 
 type RankedVendor = {
-  offeringId: string;
-  offeringName: string;
+  serviceId: string;
+  serviceName: string;
   category: string;
   vendorName: string;
   city: string;
@@ -39,8 +39,8 @@ export class RecommendationService {
   private readonly logger = new Logger(RecommendationService.name);
 
   constructor(
-    @InjectRepository(OfferingEntity)
-    private readonly offeringRepository: Repository<OfferingEntity>,
+    @InjectRepository(ServiceEntity)
+    private readonly serviceRepository: Repository<ServiceEntity>,
     @InjectRepository(ReviewEntity)
     private readonly reviewRepository: Repository<ReviewEntity>,
     private readonly httpService: HttpService,
@@ -49,10 +49,10 @@ export class RecommendationService {
 
   async recommendForVisitor(input: RecommendationRequestDto) {
     const normalized = this.normalizeInput(input);
-    const offerings = await this.findCandidateOfferings(normalized);
+    const services = await this.findCandidateServices(normalized);
     const aiEnabled = Boolean(this.configService.get<string>('GROQ_API_KEY'));
 
-    if (offerings.length === 0) {
+    if (services.length === 0) {
       return {
         source: 'rules',
         ai: {
@@ -65,12 +65,12 @@ export class RecommendationService {
     }
 
     const ratingMap = await this.getAverageRatings(
-      offerings.map((offering) => offering.id),
+      services.map((service) => service.id),
     );
 
-    const deterministicRanked = offerings
-      .map((offering) =>
-        this.toRankedVendor(offering, ratingMap.get(offering.id) || 0, normalized),
+    const deterministicRanked = services
+      .map((service) =>
+        this.toRankedVendor(service, ratingMap.get(service.id) || 0, normalized),
       )
       .sort((left, right) => right.deterministicScore - left.deterministicScore)
       .slice(0, 20);
@@ -107,16 +107,16 @@ export class RecommendationService {
     };
   }
 
-  private async findCandidateOfferings(input: {
+  private async findCandidateServices(input: {
     location: string;
     categories: string[];
     budget: number | null;
   }) {
-    const query = this.offeringRepository
-      .createQueryBuilder('offering')
-      .leftJoinAndSelect('offering.vendor', 'vendor')
-      .leftJoinAndSelect('offering.packages', 'pkg')
-      .where('offering.visible = :visible', { visible: true });
+    const query = this.serviceRepository
+      .createQueryBuilder('service')
+      .leftJoinAndSelect('service.vendor', 'vendor')
+      .leftJoinAndSelect('service.packages', 'pkg')
+      .where('service.visible = :visible', { visible: true });
 
     if (input.location) {
       query.andWhere(
@@ -127,62 +127,62 @@ export class RecommendationService {
       );
     }
 
-    const offerings = await query.getMany();
+    const services = await query.getMany();
 
-    const offeringsAfterCategoryFilter =
+    const servicesAfterCategoryFilter =
       input.categories.length > 0
-        ? offerings.filter((offering) =>
-            this.matchesCategoryPreference(offering.category || '', input.categories),
+        ? services.filter((service) =>
+            this.matchesCategoryPreference(service.category || '', input.categories),
           )
-        : offerings;
+        : services;
 
     if (!input.budget) {
-      return offeringsAfterCategoryFilter;
+      return servicesAfterCategoryFilter;
     }
 
-    return offeringsAfterCategoryFilter.filter((offering) => {
-      const minPackagePrice = this.getMinVisiblePackagePrice(offering.packages || []);
+    return servicesAfterCategoryFilter.filter((service) => {
+      const minPackagePrice = this.getMinVisiblePackagePrice(service.packages || []);
       return minPackagePrice === null || minPackagePrice <= input.budget * 1.3;
     });
   }
 
-  private async getAverageRatings(offeringIds: string[]) {
-    if (offeringIds.length === 0) {
+  private async getAverageRatings(serviceIds: string[]) {
+    if (serviceIds.length === 0) {
       return new Map<string, number>();
     }
 
     const rows = await this.reviewRepository
       .createQueryBuilder('review')
-      .select('review.offering_id', 'offeringId')
+      .select('review.service_id', 'serviceId')
       .addSelect('AVG(review.rating)', 'avgRating')
-      .where('review.offering_id IN (:...offeringIds)', { offeringIds })
-      .groupBy('review.offering_id')
-      .getRawMany<{ offeringId: string; avgRating: string }>();
+      .where('review.service_id IN (:...serviceIds)', { serviceIds })
+      .groupBy('review.service_id')
+      .getRawMany<{ serviceId: string; avgRating: string }>();
 
     const ratingMap = new Map<string, number>();
     for (const row of rows) {
-      ratingMap.set(row.offeringId, Number(row.avgRating));
+      ratingMap.set(row.serviceId, Number(row.avgRating));
     }
 
     return ratingMap;
   }
 
   private toRankedVendor(
-    offering: OfferingEntity,
+    service: ServiceEntity,
     rating: number,
     input: { location: string; budget: number | null; categories: string[]; notes: string },
   ): RankedVendor {
-    const minPackagePrice = this.getMinVisiblePackagePrice(offering.packages || []);
-    const lowerCategory = (offering.category || '').toLowerCase();
-    const city = offering.vendor?.city || '';
-    const location = offering.vendor?.location || '';
+    const minPackagePrice = this.getMinVisiblePackagePrice(service.packages || []);
+    const lowerCategory = (service.category || '').toLowerCase();
+    const city = service.vendor?.city || '';
+    const location = service.vendor?.location || '';
 
     let score = 0;
     const reasons: string[] = [];
 
     if (input.categories.length === 0 || this.matchesCategoryPreference(lowerCategory, input.categories)) {
       score += 35;
-      reasons.push(`matches ${offering.category} category`);
+      reasons.push(`matches ${service.category} category`);
     }
 
     const cityMatch = input.location && city.toLowerCase().includes(input.location);
@@ -214,16 +214,16 @@ export class RecommendationService {
       reasons.push(`${rating.toFixed(1)}★ average rating`);
     }
 
-    if (input.notes && this.matchesNotes(input.notes, offering)) {
+    if (input.notes && this.matchesNotes(input.notes, service)) {
       score += 8;
       reasons.push('matches your style preferences');
     }
 
     return {
-      offeringId: offering.id,
-      offeringName: offering.name,
-      category: offering.category,
-      vendorName: offering.vendor?.busname || 'Unknown Vendor',
+      serviceId: service.id,
+      serviceName: service.name,
+      category: service.category,
+      vendorName: service.vendor?.busname || 'Unknown Vendor',
       city,
       location,
       rating: Number(rating.toFixed(2)),
@@ -233,8 +233,8 @@ export class RecommendationService {
     };
   }
 
-  private matchesNotes(notes: string, offering: OfferingEntity) {
-    const haystack = `${offering.name} ${offering.description || ''} ${offering.category}`.toLowerCase();
+  private matchesNotes(notes: string, service: ServiceEntity) {
+    const haystack = `${service.name} ${service.description || ''} ${service.category}`.toLowerCase();
     const keywords = notes
       .toLowerCase()
       .split(/[\s,]+/)
@@ -298,15 +298,15 @@ export class RecommendationService {
     } catch {}
 
     // Fetch recent review comments for candidates so the model can summarize sentiment
-    const offeringIds = deterministicRanked.map((d) => d.offeringId);
-    let commentsRows: Array<{ offeringId: string; comment: string | null }> = [];
-    if (offeringIds.length > 0) {
+    const serviceIds = deterministicRanked.map((d) => d.serviceId);
+    let commentsRows: Array<{ serviceId: string; comment: string | null }> = [];
+    if (serviceIds.length > 0) {
       try {
         commentsRows = await this.reviewRepository
           .createQueryBuilder('review')
-          .select('review.offering_id', 'offeringId')
+          .select('review.service_id', 'serviceId')
           .addSelect('review.comment', 'comment')
-          .where('review.offering_id IN (:...offeringIds)', { offeringIds })
+          .where('review.service_id IN (:...serviceIds)', { serviceIds })
           .orderBy('review.created_at', 'DESC')
           .getRawMany();
       } catch (e) {
@@ -317,15 +317,15 @@ export class RecommendationService {
 
     const commentsMap = new Map<string, string[]>();
     for (const r of commentsRows) {
-      if (!r || !r.offeringId) continue;
-      const list = commentsMap.get(r.offeringId) || [];
+      if (!r || !r.serviceId) continue;
+      const list = commentsMap.get(r.serviceId) || [];
       if (typeof r.comment === 'string' && r.comment.trim()) list.push(r.comment.trim());
-      commentsMap.set(r.offeringId, list);
+      commentsMap.set(r.serviceId, list);
     }
 
     const enrichedCandidates = deterministicRanked.map((item) => ({
       ...item,
-      reviews: commentsMap.get(item.offeringId) || [],
+      reviews: commentsMap.get(item.serviceId) || [],
     }));
 
     const prompt = this.buildRankingPrompt(enrichedCandidates, input);
@@ -398,10 +398,10 @@ export class RecommendationService {
         return { ranked: null, reason: 'invalid_groq_response' };
       }
 
-      const rankMap = new Map(deterministicRanked.map((item) => [item.offeringId, item]));
+      const rankMap = new Map(deterministicRanked.map((item) => [item.serviceId, item]));
 
       // Debug: log candidate IDs and compare with parsed ids
-      const candidateIds = deterministicRanked.map((d) => d.offeringId);
+      const candidateIds = deterministicRanked.map((d) => d.serviceId);
       this.logger.debug(`Groq candidates count: ${candidateIds.length}`, { candidateIds: candidateIds.slice(0, 50) });
       this.logger.debug(`Groq parsed ranked_ids: ${parsed.ranked_ids.slice(0, 50)}`);
 
@@ -416,10 +416,10 @@ export class RecommendationService {
         .map((id) => rankMap.get(id)!)
         .map((item) => ({
           ...item,
-          reason: parsed.reasons?.[item.offeringId] || item.reason,
+          reason: parsed.reasons?.[item.serviceId] || item.reason,
           aiReview:
-            (parsed.short_review && parsed.short_review[item.offeringId]) ||
-            parsed.reasons?.[item.offeringId] ||
+            (parsed.short_review && parsed.short_review[item.serviceId]) ||
+            parsed.reasons?.[item.serviceId] ||
             item.reason,
         }));
 
@@ -429,7 +429,7 @@ export class RecommendationService {
       }
 
       const remaining = deterministicRanked.filter(
-        (item) => !ranked.some((rankedItem) => rankedItem.offeringId === item.offeringId),
+        (item) => !ranked.some((rankedItem) => rankedItem.serviceId === item.serviceId),
       );
 
       return {
@@ -518,9 +518,9 @@ export class RecommendationService {
       limit: number;
     },
   ) {
-    return `You are ranking wedding vendor offerings.
+    return `You are ranking wedding vendor services.
   Return ONLY valid JSON (no markdown), following this schema:
-  {"ranked_ids":["offeringId1","offeringId2"],"reasons":{"offeringId1":"short reason","offeringId2":"short reason"},"short_review":{"offeringId1":"one-line summary","offeringId2":"one-line summary"}}
+  {"ranked_ids":["serviceId1","serviceId2"],"reasons":{"serviceId1":"short reason","serviceId2":"short reason"},"short_review":{"serviceId1":"one-line summary","serviceId2":"one-line summary"}}
 
   User preferences:
   - location: ${input.location || 'not specified'}
@@ -542,7 +542,7 @@ export class RecommendationService {
   - Do NOT copy any review text verbatim; always paraphrase and avoid repeating exact reviewer words or punctuation.
   - If no reviews exist for a candidate, summarize from attributes (category, rating, price, location, and how well it matches preferences).
   - 'short_review' must be concise and factual; avoid invented details and do not include markdown.
-  - ranked_ids must contain only provided offeringId values.`;
+  - ranked_ids must contain only provided serviceId values.`;
   }
 
   private ensureFastestPolicy(modelId: string) {

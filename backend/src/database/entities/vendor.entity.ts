@@ -1,4 +1,4 @@
-import {
+﻿import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
-import { OfferingEntity } from './offering.entity';
+import { ServiceEntity } from './service.entity';
 import { PaymentEntity } from './payment.entity';
 import { ObjectType, Field, ID } from '@nestjs/graphql';
 
@@ -59,11 +59,11 @@ export class VendorEntity {
   @UpdateDateColumn({ name: 'updated_at', type: 'timestamp', nullable: false })
   updatedAt: Date;
 
-  @OneToMany(() => OfferingEntity, (o) => o.vendor, {
+  @OneToMany(() => ServiceEntity, (o) => o.vendor, {
     cascade: true,
     onDelete: 'CASCADE',
   })
-  offering: OfferingEntity[];
+  service: ServiceEntity[];
 
   @OneToMany(() => PaymentEntity, payment => payment.vendor)
   payments: PaymentEntity[];

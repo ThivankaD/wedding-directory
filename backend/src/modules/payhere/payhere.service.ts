@@ -8,7 +8,7 @@ interface CreatePayHerePaymentInput {
   packageId: string;
   visitorId: string;
   vendorId: string;
-  offeringId: string;
+  serviceId: string;
   bookingDate?: string;
   customer?: {
     firstName?: string;
@@ -50,7 +50,7 @@ export class PayHereService {
       input.visitorId,
       input.vendorId,
       input.packageId,
-      input.offeringId,
+      input.serviceId,
       Number(amount),
       orderId,
       input.bookingDate ? new Date(input.bookingDate) : undefined,
@@ -63,7 +63,7 @@ export class PayHereService {
         sandbox: this.configService.get<string>('PAYHERE_SANDBOX') !== 'false',
         merchant_id: merchantId,
         return_url: `${frontendUrl}/success`,
-        cancel_url: `${frontendUrl}/services/${input.offeringId}?payment_canceled=true`,
+        cancel_url: `${frontendUrl}/services/${input.serviceId}?payment_canceled=true`,
         notify_url: this.configService.get<string>('PAYHERE_NOTIFY_URL') || `${backendUrl}/api/payhere/notify`,
         order_id: orderId,
         items: 'Advance Payment',
@@ -141,8 +141,8 @@ export class PayHereService {
       bookingDate: payment.bookingDate,
       vendorName,
       packageName: payment.package?.name || 'Wedding Package',
-      offeringName: payment.package?.offering?.name,
-      offeringId: payment.package?.offering?.id,
+      serviceName: payment.package?.service?.name,
+      serviceId: payment.package?.service?.id,
       createdAt: payment.createdAt,
     };
   }

@@ -1,5 +1,5 @@
-import { ObjectType, Field } from '@nestjs/graphql';
-import { OfferingModel } from './offering.model';
+﻿import { ObjectType, Field } from '@nestjs/graphql';
+import { ServiceModel } from './service.model';
 import { VisitorModel } from './visitor.model';
 
 @ObjectType()
@@ -10,8 +10,8 @@ export class MyVendorsModel {
   @Field(() => VisitorModel)
   visitor: VisitorModel;
 
-  @Field(() => OfferingModel)
-  offering: OfferingModel;
+  @Field(() => ServiceModel)
+  service: ServiceModel;
 
   @Field()
   createdAt: Date;

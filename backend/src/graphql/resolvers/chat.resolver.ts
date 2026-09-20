@@ -1,4 +1,4 @@
-import { Resolver, Query, Args, Mutation } from "@nestjs/graphql";
+﻿import { Resolver, Query, Args, Mutation } from "@nestjs/graphql";
 import { ChatService } from "../../modules/chat/chat.service";
 import { ChatType } from "../../database/types/chatTypes";
 import { CreateChatInput } from "../inputs/createChat.input";
@@ -18,8 +18,8 @@ export class ChatResolver {
   }
 
   @Query(() => [ChatType])
-  async getOfferingChats(@Args("offeringId") offeringId: string) {
-    return this.chatService.getOfferingChats(offeringId);
+  async getServiceChats(@Args("serviceId") serviceId: string) {
+    return this.chatService.getServiceChats(serviceId);
   }
 
   @Query(() => [ChatType])
@@ -34,16 +34,16 @@ export class ChatResolver {
   @Query(() => ChatType)
   async getChat(
     @Args("visitorId") visitorId: string,
-    @Args("offeringId") offeringId: string
+    @Args("serviceId") serviceId: string
   ) {
-    return this.chatService.findOrCreateChat(offeringId, visitorId);
+    return this.chatService.findOrCreateChat(serviceId, visitorId);
   }
 
   
   @Mutation(() => ChatType)
   async createChat(@Args('createChatInput') createChatInput: CreateChatInput) {
     return this.chatService.findOrCreateChat(
-      createChatInput.offeringId,
+      createChatInput.serviceId,
       createChatInput.visitorId
     );
   }

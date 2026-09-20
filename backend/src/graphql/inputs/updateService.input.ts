@@ -1,7 +1,7 @@
-import { InputType, Field } from '@nestjs/graphql';
+﻿import { InputType, Field } from '@nestjs/graphql';
 
 @InputType()
-export class UpdateOfferingInput {
+export class UpdateServiceInput {
 
     @Field({ nullable: true })
     category?: string;

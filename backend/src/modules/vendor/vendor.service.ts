@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+﻿import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { VendorEntity } from 'src/database/entities/vendor.entity';
 import { DataSource } from 'typeorm';
 import { VendorRepository } from '../../database/repositories/vendor.repository';
@@ -196,8 +196,8 @@ export class VendorService {
     return await this.vendorRepository.save(vendor);
   }
 
-  async findVendorsByOffering(offeringId: string): Promise<VendorEntity[]> {
-    return this.vendorRepository.findVendorsByOffering(offeringId);
+  async findVendorsByService(serviceId: string): Promise<VendorEntity[]> {
+    return this.vendorRepository.findVendorsByService(serviceId);
   }
 
   async registerPushToken(vendorId: string, pushToken: string): Promise<void> {

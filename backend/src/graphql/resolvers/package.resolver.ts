@@ -1,4 +1,4 @@
-import { Args, Mutation, Resolver } from "@nestjs/graphql/dist";
+﻿import { Args, Mutation, Resolver } from "@nestjs/graphql/dist";
 import { PackageService } from "../../modules/package/package.service";
 import { PackageModel } from "../models/package.model";
 import { CreatePackageInput } from "../inputs/createPackage.input";
@@ -18,15 +18,15 @@ export class PackageResolver {
   ) {}
 
   @Query(() => [PackageModel])
-  async findPackagesByOffering(@Args('offeringId') offeringId: string): Promise<PackageEntity[]> {
-    return this.packageService.findPackageByOffering(offeringId);
+  async findPackagesByService(@Args('serviceId') serviceId: string): Promise<PackageEntity[]> {
+    return this.packageService.findPackageByService(serviceId);
   }
 
   @Mutation(() => PackageModel)
   async createPackage(
     @Args('input') input: CreatePackageInput,
-    @Args('offeringId') offeringId: string): Promise<PackageEntity> {
-    return this.packageService.createPackage(input, offeringId);
+    @Args('serviceId') serviceId: string): Promise<PackageEntity> {
+    return this.packageService.createPackage(input, serviceId);
   }
 
   @Mutation(() => PackageModel)

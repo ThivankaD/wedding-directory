@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+﻿import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { ConfigModule } from '@nestjs/config';
@@ -7,7 +7,7 @@ import { join } from 'path';
 import { VendorModule } from './modules/vendor/vendor.module';
 import { VisitorModule } from './modules/visitor/visitor.module';
 import { AuthModule } from './modules/auth/auth.module';
-import { OfferingModule } from './modules/offering/offering.module';
+import { ServiceModule } from './modules/service/service.module';
 import { UploadModule } from './modules/upload/upload.module';
 import { GuestListModule } from './modules/guestlist/guestlist.module';
 import { BudgetToolModule } from './modules/budget/budget_tool.module';
@@ -57,7 +57,7 @@ import { PackageApprovalModule } from './modules/package-approval/package-approv
 
     VendorModule,
     VisitorModule,
-    OfferingModule,
+    ServiceModule,
     GuestListModule,
     UploadModule,
     BudgetToolModule,

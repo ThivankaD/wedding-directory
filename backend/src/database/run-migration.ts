@@ -1,4 +1,4 @@
-import * as dotenv from 'dotenv';
+﻿import * as dotenv from 'dotenv';
 import { join } from 'path';
 import { DataSource } from 'typeorm';
 import { CreatePackageViewTable1707489026321 } from './migrations/1707489026321-CreatePackageViewTable';
@@ -56,9 +56,9 @@ async function runMigration() {
     }
 
     const hasImageUrls = await queryRunner.hasColumn('review', 'image_urls');
-    const hasMentionedOffering = await queryRunner.hasColumn('review', 'mentioned_offering_id');
+    const hasMentionedService = await queryRunner.hasColumn('review', 'mentioned_service_id');
 
-    if (!hasImageUrls || !hasMentionedOffering) {
+    if (!hasImageUrls || !hasMentionedService) {
       const migration = new AddReviewImagesAndMentions1762000000000();
       console.log(`Running migration: ${migration.name}`);
       await migration.up(queryRunner);

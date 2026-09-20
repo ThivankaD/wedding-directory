@@ -1,4 +1,4 @@
-import { OfferingEntity } from "../entities/offering.entity";
+﻿import { ServiceEntity } from "../entities/service.entity";
 import { ReviewEntity } from "../entities/review.entity";
 import { Repository } from "typeorm";
 import { VisitorEntity } from "../entities/visitor.entity";
@@ -6,7 +6,7 @@ import { VisitorEntity } from "../entities/visitor.entity";
 export type ReviewRepositoryType = Repository<ReviewEntity> & {
   createReview(
     createReviewInput: Partial<ReviewEntity>,
-    offering: OfferingEntity,
+    service: ServiceEntity,
     visitor: VisitorEntity,
   ): Promise<ReviewEntity>;
 
@@ -14,15 +14,15 @@ export type ReviewRepositoryType = Repository<ReviewEntity> & {
 
   findReviewById(id: string): Promise<ReviewEntity | null>;
 
-  findReviewsByOffering(id: string): Promise<ReviewEntity[]>;
+  findReviewsByService(id: string): Promise<ReviewEntity[]>;
 
-  findReviewsByOfferingPaginated(
+  findReviewsByServicePaginated(
     id: string,
     page: number,
     limit: number,
   ): Promise<[ReviewEntity[], number]>;
 
-  getOfferingReviewStats(id: string): Promise<{
+  getServiceReviewStats(id: string): Promise<{
     averageRating: number;
     totalReviews: number;
   }>;

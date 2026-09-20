@@ -1,10 +1,10 @@
-import { ObjectType, Field } from '@nestjs/graphql';
+﻿import { ObjectType, Field } from '@nestjs/graphql';
 import { VendorModel } from './vendor.model';
 import { ReviewModel } from './review.model';  // Add this import
-import { OfferingMediaModel } from './offering-media.model';
+import { ServiceMediaModel } from './service-media.model';
 
 @ObjectType()
-export class OfferingModel {
+export class ServiceModel {
   @Field()
   id: string;
 
@@ -35,8 +35,8 @@ export class OfferingModel {
   @Field(() => [String], { nullable: true })
   video_showcase: string[];
 
-  @Field(() => [OfferingMediaModel], { nullable: true })
-  media?: OfferingMediaModel[];
+  @Field(() => [ServiceMediaModel], { nullable: true })
+  media?: ServiceMediaModel[];
 
   @Field({ nullable: true })
   experience: string;

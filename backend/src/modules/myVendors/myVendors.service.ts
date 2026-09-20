@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+﻿import { Injectable } from '@nestjs/common';
 import { MyVendorsRepository } from '../../database/repositories/myVendors.repository';
 import { MyVendorsRepositoryType } from '../../database/types/myVendorsTypes';
 import { DataSource } from 'typeorm';
@@ -22,15 +22,15 @@ export class MyVendorsService {
     return this.myVendorsRepository.findAllMyVendors(visitorId);
   }
 
-  async findMyVendorById(visitorId: string, offeringId: string) {
-    return this.myVendorsRepository.findMyVendorById(visitorId, offeringId);
+  async findMyVendorById(visitorId: string, serviceId: string) {
+    return this.myVendorsRepository.findMyVendorById(visitorId, serviceId);
   }
 
-  async addToMyVendors(visitorId: string, offeringId: string) {
-    return this.myVendorsRepository.addToMyVendors(visitorId, offeringId);
+  async addToMyVendors(visitorId: string, serviceId: string) {
+    return this.myVendorsRepository.addToMyVendors(visitorId, serviceId);
   }
 
-  async removeFromMyVendors(visitorId: string, offeringId: string) {
-    return this.myVendorsRepository.removeFromMyVendors(visitorId, offeringId);
+  async removeFromMyVendors(visitorId: string, serviceId: string) {
+    return this.myVendorsRepository.removeFromMyVendors(visitorId, serviceId);
   }
 }

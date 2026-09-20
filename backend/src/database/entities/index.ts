@@ -1,9 +1,9 @@
-import { BudgetItemEntity } from './budget_item.entity';
+﻿import { BudgetItemEntity } from './budget_item.entity';
 import { BudgetToolEntity } from './budget_tool.entity';
 import { ChecklistEntity } from './checklist.entity';
 import { GuestListEntity } from './guestlist.entity';
 import { MyVendorsEntity } from './myVendors.entity';
-import { OfferingEntity } from './offering.entity';
+import { ServiceEntity } from './service.entity';
 import { PackageEntity } from './package.entity';
 import { PaymentEntity } from './payment.entity';
 import { ReviewEntity } from './review.entity';
@@ -12,7 +12,7 @@ import { VisitorEntity } from './visitor.entity';
 
 import { PasswordResetOtpEntity } from './password_reset_otp.entity';
 import { PackageApprovalRequestEntity } from './package-approval-request.entity';
-import { OfferingMediaEntity } from './offering-media.entity';
+import { ServiceMediaEntity } from './service-media.entity';
 import { PackageFeatureEntity } from './package-feature.entity';
 import { PackageViewEntity } from './package-view.entity';
 
@@ -25,8 +25,8 @@ export function getEntities() {
     ChecklistEntity,
     GuestListEntity,
     MyVendorsEntity,
-    OfferingEntity,
-    OfferingMediaEntity,
+    ServiceEntity,
+    ServiceMediaEntity,
     PackageEntity,
     PackageFeatureEntity,
     PackageViewEntity,

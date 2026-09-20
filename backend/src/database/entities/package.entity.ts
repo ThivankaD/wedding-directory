@@ -1,5 +1,5 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { OfferingEntity } from "./offering.entity";
+﻿import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { ServiceEntity } from "./service.entity";
 import { PaymentEntity } from './payment.entity';
 import { PackageApprovalRequestEntity } from './package-approval-request.entity';
 import { PackageFeatureEntity } from './package-feature.entity';
@@ -44,9 +44,9 @@ export class PackageEntity {
     @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
     updatedAt: Date;
 
-    @ManyToOne(() => OfferingEntity, o => o.packages, { onDelete: 'CASCADE' })
+    @ManyToOne(() => ServiceEntity, o => o.packages, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'service_id' })
-    offering: OfferingEntity;
+    service: ServiceEntity;
 
 
     @OneToMany(() => PaymentEntity, payment => payment.package)

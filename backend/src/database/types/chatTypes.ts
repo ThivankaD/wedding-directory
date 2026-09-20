@@ -1,4 +1,4 @@
-import { ObjectType, Field, ID } from '@nestjs/graphql';
+﻿import { ObjectType, Field, ID } from '@nestjs/graphql';
 
 @ObjectType()
 class VisitorType {
@@ -13,7 +13,7 @@ class VendorType {
 }
 
 @ObjectType()
-class OfferingType {
+class ServiceType {
   @Field(() => ID)
   id: string;
 }
@@ -24,7 +24,7 @@ export class ChatType {
   chatId: string;
 
   @Field({nullable: true})
-  offeringId: string;
+  serviceId: string;
 
   @Field()
   vendorId: string;
@@ -38,8 +38,8 @@ export class ChatType {
   @Field(() => VendorType, { nullable: true })
   vendor: VendorType;
   
-  @Field(() => OfferingType, { nullable: true })
-  offering: OfferingType;
+  @Field(() => ServiceType, { nullable: true })
+  service: ServiceType;
 
   @Field(() => [MessageType])
   messages: MessageType[];
