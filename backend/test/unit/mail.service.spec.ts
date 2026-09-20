@@ -1,4 +1,4 @@
-import { Test, TestingModule } from '@nestjs/testing';
+﻿import { Test, TestingModule } from '@nestjs/testing';
 import { MailService } from '../../src/modules/mail/mail.service';
 
 describe('MailService', () => {
@@ -22,7 +22,7 @@ describe('MailService', () => {
         to: 'user@example.com',
         visitorName: 'Kasun & Anuki',
         packageName: 'Gold Wedding Photography',
-        offeringName: 'Photography & Videography',
+        serviceName: 'Photography & Videography',
         vendorName: 'Dream Moments Studio',
         vendorEmail: 'studio@example.com',
         vendorPhone: '+94771234567',
@@ -42,7 +42,7 @@ describe('MailService', () => {
         visitorEmail: 'user@example.com',
         visitorPhone: '+94779876543',
         packageName: 'Gold Wedding Photography',
-        offeringName: 'Photography & Videography',
+        serviceName: 'Photography & Videography',
         amount: 150000,
         bookingDate: new Date('2026-12-15'),
         paymentReference: 'PAY-123456',
@@ -59,7 +59,7 @@ describe('MailService', () => {
         visitorEmail: 'user@example.com',
         visitorPhone: '+94779876543',
         packageName: 'Gold Wedding Photography',
-        offeringName: 'Photography & Videography',
+        serviceName: 'Photography & Videography',
         bookingDate: new Date('2026-12-15'),
         userNote: 'We would love to book your team for our wedding day!',
         requestId: 'req-uuid-123',
@@ -117,7 +117,7 @@ describe('MailService', () => {
         to: 'user@example.com',
         visitorName: 'Kasun & Anuki',
         packageName: 'Gold Wedding Photography',
-        offeringName: 'Photography & Videography',
+        serviceName: 'Photography & Videography',
         vendorName: 'Dream Moments Studio',
         vendorEmail: 'studio@example.com',
         vendorPhone: '+94771234567',
@@ -143,7 +143,7 @@ describe('MailService', () => {
         visitorEmail: 'user@example.com',
         visitorPhone: '+94779876543',
         packageName: 'Gold Wedding Photography',
-        offeringName: 'Photography & Videography',
+        serviceName: 'Photography & Videography',
         amount: 150000,
         bookingDate: new Date('2026-12-15'),
         paymentReference: 'PAY-123456',

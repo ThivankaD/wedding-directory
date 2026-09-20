@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { DataSource } from 'typeorm';
 import { ReviewService } from 'src/modules/review/review.service';
 import { ReviewEntity } from 'src/database/entities/review.entity';
-import { OfferingEntity } from 'src/database/entities/offering.entity';
+import { ServiceEntity } from 'src/database/entities/service.entity';
 import { VisitorEntity } from 'src/database/entities/visitor.entity';
 import { PaymentEntity } from 'src/database/entities/payment.entity';
 import { CreateReviewInput } from 'src/graphql/inputs/createReview.input';
@@ -12,7 +12,7 @@ const mockReviewRepository = {
   createReview: jest.fn(),
   deleteReview: jest.fn(),
   findReviewById: jest.fn(),
-  findReviewsByOffering: jest.fn(),
+  findReviewsByService: jest.fn(),
   findOne: jest.fn(),
 };
 
@@ -54,7 +54,7 @@ describe('ReviewService', () => {
         ReviewService,
         { provide: DataSource, useValue: mockDataSource }, // Provide the mock DataSource
         {
-          provide: 'OfferingEntityRepository', // Provide the mock OfferingRepository
+          provide: 'ServiceEntityRepository', // Provide the mock OfferingRepository
           useValue: mockOfferingRepository,
         },
         {
@@ -80,21 +80,21 @@ describe('ReviewService', () => {
       const createReviewInput: CreateReviewInput = {
         comment: 'Great service!',
         rating: 5,
-        offering_id: 'offering-id',
+        service_id: 'service-id',
         visitor_id: 'visitor-id',
       };
 
-      const offering = { id: 'offering-id' } as OfferingEntity;
+      const serviceEntity = { id: 'service-id' } as ServiceEntity;
       const visitor = { id: 'visitor-id' } as VisitorEntity;
       const review = {
         id: '1',
         ...createReviewInput,
-        offering,
+        service: serviceEntity,
         visitor,
         createdAt: new Date(),
-      } as ReviewEntity;
+      } as unknown as ReviewEntity;
 
-      mockOfferingRepository.findOne.mockResolvedValue(offering);
+      mockOfferingRepository.findOne.mockResolvedValue(serviceEntity);
       mockVisitorRepository.findOne.mockResolvedValue(visitor);
       mockReviewRepository.findOne.mockResolvedValue(null);
       mockPaymentRepository.find.mockResolvedValue([
@@ -110,23 +110,23 @@ describe('ReviewService', () => {
 
       expect(result).toEqual(review);
       expect(mockOfferingRepository.findOne).toHaveBeenCalledWith({
-        where: { id: createReviewInput.offering_id },
+        where: { id: createReviewInput.service_id },
       });
       expect(mockVisitorRepository.findOne).toHaveBeenCalledWith({
         where: { id: createReviewInput.visitor_id },
       });
       expect(mockReviewRepository.createReview).toHaveBeenCalledWith(
         createReviewInput,
-        offering,
+        service,
         visitor,
       );
     });
 
-    it('should throw an error if offering is not found', async () => {
+    it('should throw an error if service is not found', async () => {
       const createReviewInput: CreateReviewInput = {
         comment: 'Great service!',
         rating: 5,
-        offering_id: 'offering-id',
+        service_id: 'service-id',
         visitor_id: 'visitor-id',
       };
 
@@ -141,13 +141,13 @@ describe('ReviewService', () => {
       const createReviewInput: CreateReviewInput = {
         comment: 'Great service!',
         rating: 5,
-        offering_id: 'offering-id',
+        service_id: 'service-id',
         visitor_id: 'visitor-id',
       };
 
-      const offering = { id: 'offering-id' } as OfferingEntity;
+      const serviceEntity = { id: 'service-id' } as ServiceEntity;
 
-      mockOfferingRepository.findOne.mockResolvedValue(offering);
+      mockOfferingRepository.findOne.mockResolvedValue(serviceEntity);
       mockVisitorRepository.findOne.mockResolvedValue(null);
 
       await expect(service.createReview(createReviewInput)).rejects.toThrow(
@@ -183,19 +183,19 @@ describe('ReviewService', () => {
     });
   });
 
-  describe('findReviewsByOffering', () => {
-    it('should return reviews by offering ID', async () => {
-      const offeringId = 'offering-id';
+  describe('findReviewsByService', () => {
+    it('should return reviews by service ID', async () => {
+      const offeringId = 'service-id';
       const reviews = [
-        { id: '1', offering: { id: offeringId } },
+        { id: '1', service: { id: offeringId } },
       ] as ReviewEntity[];
 
-      mockReviewRepository.findReviewsByOffering.mockResolvedValue(reviews);
+      mockReviewRepository.findReviewsByService.mockResolvedValue(reviews);
 
-      const result = await service.findReviewsByOffering(offeringId);
+      const result = await service.findReviewsByService(offeringId);
 
       expect(result).toEqual(reviews);
-      expect(mockReviewRepository.findReviewsByOffering).toHaveBeenCalledWith(
+      expect(mockReviewRepository.findReviewsByService).toHaveBeenCalledWith(
         offeringId,
       );
     });

@@ -102,10 +102,10 @@ export class VisitorService {
       throw new NotFoundException(`Visitor with ID ${visitorId} not found`);
     }
     
-    const oldWeddingDate = visitor.weddingDate;
+    const oldWeddingDate = visitor.weddingDate ? new Date(visitor.weddingDate) : undefined;
 
-    // Update wedding date
-    visitor.weddingDate = weddingDate;
+    // Persist as ISO string (column type is varchar / wedding_date)
+    visitor.weddingDate = weddingDate.toISOString();
     await this.visitorRepository.save(visitor);
     
     // Shift due dates or generate initial checklist tasks
