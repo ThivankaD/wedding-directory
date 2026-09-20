@@ -10,12 +10,14 @@ import { UPDATE_SERVICE_PROFILE, DELETE_OFFERING } from "@/graphql/mutations";
 import toast from "react-hot-toast";
 import { FiInfo, FiChevronDown } from "react-icons/fi";
 import { GeneralFormSkeleton } from "@/components/ui/shimmer";
+import ConfirmModal from "@/components/ui/ConfirmModal";
 
 const EditGeneral: React.FC<EditProfileProps> = () => {
   const params = useParams();
   const { id } = params;
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const { loading, error, data } = useQuery(FIND_SERVICE_BY_ID, {
     variables: { id },
@@ -117,12 +119,12 @@ const EditGeneral: React.FC<EditProfileProps> = () => {
   };
 
   // Handle delete service
-  const handleDeleteService = async () => {
+  const handleOpenDeleteModal = () => {
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDeleteService = async () => {
     if (!id) return;
-    const confirmed = window.confirm(
-      "Are you sure you want to permanently delete this service? This action cannot be undone."
-    );
-    if (!confirmed) return;
 
     setIsDeleting(true);
     try {
@@ -131,6 +133,7 @@ const EditGeneral: React.FC<EditProfileProps> = () => {
       });
       if (data?.deleteOffering) {
         toast.success("Service deleted successfully");
+        setIsDeleteModalOpen(false);
         router.push("/vendor-dashboard");
       } else {
         toast.error("Failed to delete service");
@@ -270,7 +273,7 @@ const EditGeneral: React.FC<EditProfileProps> = () => {
             </div>
             <button
               type="button"
-              onClick={handleDeleteService}
+              onClick={handleOpenDeleteModal}
               disabled={isDeleting}
               className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 active:scale-[0.99] rounded-xl shadow-sm shadow-red-500/20 transition-all disabled:opacity-50 whitespace-nowrap self-start sm:self-auto"
             >
@@ -286,6 +289,19 @@ const EditGeneral: React.FC<EditProfileProps> = () => {
           </div>
         </div>
       </div>
+
+      {/* Delete Service Confirmation Modal */}
+      <ConfirmModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => !isDeleting && setIsDeleteModalOpen(false)}
+        onConfirm={handleConfirmDeleteService}
+        title="Delete Service"
+        message="Are you sure you want to permanently delete this service listing? All associated packages, showcase media, and reviews will be permanently removed. This action cannot be undone."
+        confirmText="Delete Service"
+        cancelText="Cancel"
+        variant="danger"
+        isLoading={isDeleting}
+      />
     </Fragment>
   );
 };

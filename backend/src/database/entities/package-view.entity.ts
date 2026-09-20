@@ -6,7 +6,7 @@ export class PackageViewEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => PackageEntity)
+  @ManyToOne(() => PackageEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'package_id' })
   package: PackageEntity;
 

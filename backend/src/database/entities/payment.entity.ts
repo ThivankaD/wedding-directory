@@ -14,7 +14,7 @@ export class PaymentEntity {
   @ManyToOne(() => VendorEntity, vendor => vendor.payments)
   vendor: VendorEntity;
 
-  @ManyToOne(() => PackageEntity, pkg => pkg.payments)
+  @ManyToOne(() => PackageEntity, pkg => pkg.payments, { nullable: true, onDelete: 'SET NULL' })
   package: PackageEntity;
 
   @Column('decimal', { precision: 10, scale: 2 })
