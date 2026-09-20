@@ -59,7 +59,7 @@ export default function GoogleAuthButton({
           (role === 'vendor'
             ? (response.isNewUser ? '/vendor-onboarding' : '/vendor-dashboard')
             : '/visitor-dashboard');
-        router.push(target);
+        window.location.href = target;
       } else {
         toast.error('Failed to retrieve authentication token.', { id: toastId });
       }

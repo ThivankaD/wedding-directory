@@ -7,7 +7,6 @@ import {
   FiShare2,
   FiImage,
   FiPackage,
-  FiSettings,
   FiLayers,
   FiArrowLeft,
 } from "react-icons/fi";
@@ -43,12 +42,6 @@ const ServicesMenu: React.FC<ServicesMenuProps> = ({
       label: "Packages",
       description: "Package tiers & pricing",
       icon: FiPackage,
-    },
-    {
-      id: "serviceSettings",
-      label: "Settings",
-      description: "Service options & visibility",
-      icon: FiSettings,
     },
   ];
 

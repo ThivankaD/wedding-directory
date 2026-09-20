@@ -6,6 +6,7 @@ import { useQuery } from "@apollo/client";
 import { GET_VISITOR_CHATS, GET_OFFERING_DETAILS } from "@/graphql/queries";
 import { formatDistanceToNow, isValid } from "date-fns";
 import Link from "next/link";
+import Image from "next/image";
 import ActionButton from "../common/ActionButton";
 import EmptyStateDisplay from "../common/EmptyStateDisplay";
 
@@ -68,8 +69,18 @@ const ChatRowItem: React.FC<{ chat: Chat; visitorId: string }> = ({
       className="flex items-center gap-3 pb-2.5 border-b border-orange/10 dark:border-zinc-800 last:border-b-0 last:pb-0 hover:opacity-90 group transition-all"
     >
       {/* Vendor Squircle Avatar */}
-      <div className="w-11 h-11 rounded-xl bg-orange/10 dark:bg-orange/20 text-orange flex items-center justify-center font-bold font-title text-base border border-orange/20 dark:border-orange/30 shadow-xs shrink-0 group-hover:scale-105 transition-transform">
-        {vendorName.charAt(0).toUpperCase()}
+      <div className="w-11 h-11 rounded-xl bg-orange/10 dark:bg-orange/20 text-orange flex items-center justify-center font-bold font-title text-base border border-orange/20 dark:border-orange/30 shadow-xs shrink-0 group-hover:scale-105 transition-transform overflow-hidden relative">
+        {offering?.vendor?.profile_pic_url ? (
+          <Image
+            src={offering.vendor.profile_pic_url}
+            alt={vendorName}
+            fill
+            sizes="44px"
+            className="object-cover"
+          />
+        ) : (
+          vendorName.charAt(0).toUpperCase()
+        )}
       </div>
 
       {/* Conversation Details */}

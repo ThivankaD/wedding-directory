@@ -10,6 +10,7 @@ import { IoSend } from "react-icons/io5";
 import { FaStore } from "react-icons/fa";
 import { useChatSocket } from "@/hooks/useChatSocket";
 import Link from "next/link";
+import Image from "next/image";
 import LoaderJelly from "@/components/shared/Loaders/LoaderJelly";
 
 interface Message {
@@ -26,7 +27,8 @@ interface VisitorChatWindowProps {
 const VisitorChatWindow = ({ chatId }: VisitorChatWindowProps) => {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const isInitialScrollRef = useRef(true);
   const { visitor } = useAuth();
 
   const { connected, sendMessage: sendSocketMessage, joinChat, onNewMessage } =
@@ -90,9 +92,18 @@ const VisitorChatWindow = ({ chatId }: VisitorChatWindowProps) => {
     };
   }, [chatId, connected, onNewMessage, visitor?.id, markChatAsRead]);
 
-  // Scroll to bottom when messages change
+  // Scroll only the message container to bottom without scrolling the whole page window
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (!messagesContainerRef.current) return;
+    const container = messagesContainerRef.current;
+    if (isInitialScrollRef.current) {
+      container.scrollTop = container.scrollHeight;
+      if (messages.length > 0) {
+        isInitialScrollRef.current = false;
+      }
+    } else {
+      container.scrollTo({ top: container.scrollHeight, behavior: "smooth" });
+    }
   }, [messages]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
@@ -140,8 +151,18 @@ const VisitorChatWindow = ({ chatId }: VisitorChatWindowProps) => {
       {/* Top Chat Header */}
       <div className="bg-white dark:bg-darkSurface border-b-2 border-orange/10 dark:border-zinc-800 px-4 sm:px-6 py-4 flex items-center justify-between gap-4 flex-shrink-0">
         <div className="flex items-center gap-3.5 min-w-0">
-          <div className="w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center bg-orange/10 text-orange font-bold text-base sm:text-lg rounded-2xl flex-shrink-0 border border-orange/20 shadow-xs">
-            {vendorDisplayName[0]?.toUpperCase() || <FaStore />}
+          <div className="w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center bg-orange/10 text-orange font-bold text-base sm:text-lg rounded-2xl flex-shrink-0 border border-orange/20 shadow-xs overflow-hidden relative">
+            {vendor?.profile_pic_url ? (
+              <Image
+                src={vendor.profile_pic_url}
+                alt={vendorDisplayName}
+                fill
+                sizes="48px"
+                className="object-cover"
+              />
+            ) : (
+              vendorDisplayName[0]?.toUpperCase() || <FaStore />
+            )}
           </div>
           <div className="min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
@@ -160,11 +181,6 @@ const VisitorChatWindow = ({ chatId }: VisitorChatWindowProps) => {
             </div>
             <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-zinc-400 font-body truncate mt-0.5">
               <span>{vendor?.city ? `${vendor.city} • ` : ""}{offering?.category || "Wedding Service"}</span>
-              <span className="inline-block w-1 h-1 rounded-full bg-gray-300 dark:bg-zinc-600" />
-              <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                Live Chat
-              </span>
             </div>
           </div>
         </div>
@@ -180,7 +196,10 @@ const VisitorChatWindow = ({ chatId }: VisitorChatWindowProps) => {
       </div>
 
       {/* Messages List Area */}
-      <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 bg-gradient-to-b from-[#FFFDFD] to-[#FFF7F4] dark:from-[#141211] dark:to-[#1a1716]">
+      <div
+        ref={messagesContainerRef}
+        className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 bg-gradient-to-b from-[#FFFDFD] to-[#FFF7F4] dark:from-[#141211] dark:to-[#1a1716]"
+      >
         {messages.length === 0 ? (
           <div className="flex-1 h-full flex items-center justify-center p-8 text-center text-gray-400">
             <div className="max-w-xs p-6 bg-white dark:bg-darkSurface rounded-3xl border-2 border-orange/15 dark:border-zinc-800 shadow-xs">
@@ -231,13 +250,25 @@ const VisitorChatWindow = ({ chatId }: VisitorChatWindowProps) => {
               >
                 {/* Small Avatar badge */}
                 <div
-                  className={`w-7 h-7 rounded-xl flex items-center justify-center font-bold text-[11px] flex-shrink-0 mb-0.5 shadow-xs border ${
+                  className={`w-7 h-7 rounded-xl flex items-center justify-center font-bold text-[11px] flex-shrink-0 mb-0.5 shadow-xs border overflow-hidden relative ${
                     isVisitor
                       ? "bg-orange text-white border-orange"
                       : "bg-white dark:bg-darkElevated text-orange border-orange/20 dark:border-zinc-700"
                   }`}
                 >
-                  {isVisitor ? "You" : (vendorDisplayName[0]?.toUpperCase() || "V")}
+                  {isVisitor ? (
+                    "You"
+                  ) : vendor?.profile_pic_url ? (
+                    <Image
+                      src={vendor.profile_pic_url}
+                      alt={vendorDisplayName}
+                      fill
+                      sizes="28px"
+                      className="object-cover"
+                    />
+                  ) : (
+                    vendorDisplayName[0]?.toUpperCase() || "V"
+                  )}
                 </div>
 
                 {/* Message Bubble */}
@@ -269,7 +300,6 @@ const VisitorChatWindow = ({ chatId }: VisitorChatWindowProps) => {
             );
           })
         )}
-        <div ref={messagesEndRef} />
       </div>
 
       {/* Message Input Bar */}

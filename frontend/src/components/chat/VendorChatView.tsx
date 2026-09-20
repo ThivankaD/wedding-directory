@@ -16,7 +16,8 @@ const VendorChatView = () => {
   const { vendor } = useVendorAuth();
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<any[]>([]);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const isInitialScrollRef = useRef(true);
 
   const { connected, sendMessage: sendSocketMessage, joinChat, onNewMessage } =
     useChatSocket(vendor?.id, 'vendor');
@@ -69,9 +70,18 @@ const VendorChatView = () => {
     return () => { unsubscribe?.(); };
   }, [chatId, connected, onNewMessage, vendor?.id]);
 
-  // Scroll to bottom on new messages
+  // Scroll only the message container to bottom without scrolling the whole page window
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (!messagesContainerRef.current) return;
+    const container = messagesContainerRef.current;
+    if (isInitialScrollRef.current) {
+      container.scrollTop = container.scrollHeight;
+      if (messages.length > 0) {
+        isInitialScrollRef.current = false;
+      }
+    } else {
+      container.scrollTo({ top: container.scrollHeight, behavior: "smooth" });
+    }
   }, [messages]);
 
   const handleSendMessage = async () => {
@@ -109,7 +119,7 @@ const VendorChatView = () => {
         </Link>
 
         <div className="bg-white rounded-lg shadow h-[600px] flex flex-col">
-          <div className="flex-1 overflow-y-auto p-4 space-y-3">
+          <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 space-y-3">
             {messages.map((msg: any, index: number) => (
               <div
                 key={index}
@@ -131,7 +141,6 @@ const VendorChatView = () => {
                 </div>
               </div>
             ))}
-            <div ref={messagesEndRef} />
           </div>
 
           <div className="p-4 border-t">

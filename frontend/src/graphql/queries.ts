@@ -484,6 +484,8 @@ export const GET_OFFERING_DETAILS = gql`
       vendor {
         id
         busname
+        city
+        profile_pic_url
       }
     }
   }

@@ -421,3 +421,9 @@ export const RESPOND_PACKAGE_APPROVAL_REQUEST = gql`
     }
   }
 `;
+
+export const DELETE_OFFERING = gql`
+  mutation DeleteOffering($id: String!) {
+    deleteOffering(id: $id)
+  }
+`;
