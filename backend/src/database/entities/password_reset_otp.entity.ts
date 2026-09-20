@@ -17,21 +17,21 @@ export class PasswordResetOtpEntity {
   @Column({ type: 'varchar', length: 150 })
   email: string;
 
-  @Column({ type: 'varchar', length: 20 })
+  @Column({ name: 'user_type', type: 'varchar', length: 20 })
   userType: UserRole;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ name: 'otp_hash', type: 'varchar', length: 255 })
   otpHash: string;
 
-  @Column({ type: 'timestamp' })
+  @Column({ name: 'expires_at', type: 'timestamp' })
   expiresAt: Date;
 
   @Column({ type: 'int', default: 0 })
   attempts: number;
 
-  @Column({ type: 'boolean', default: false })
+  @Column({ name: 'is_used', type: 'boolean', default: false })
   isUsed: boolean;
 
-  @CreateDateColumn({ type: 'timestamp' })
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt: Date;
 }

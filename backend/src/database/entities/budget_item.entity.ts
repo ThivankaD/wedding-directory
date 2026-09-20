@@ -3,6 +3,7 @@ import {
   Column,
   PrimaryGeneratedColumn,
   ManyToOne,
+  JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -13,25 +14,26 @@ export class BudgetItemEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'varchar', length: 100 })
+  @Column({ name: 'item_name', type: 'varchar', length: 100 })
   itemName: string;
 
   @Column({ type: 'varchar', length: 50 })
   category: string;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2 , nullable: true })
+  @Column({ name: 'estimated_cost', type: 'decimal', precision: 10, scale: 2, nullable: true })
   estimatedCost?: number;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 , nullable: true })
+  @Column({ name: 'amount_paid', type: 'decimal', precision: 10, scale: 2, default: 0, nullable: true })
   amountPaid?: number;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ name: 'notes', type: 'text', nullable: true })
   specialNotes?: string;
 
-  @Column({ type: 'boolean', default: false })
+  @Column({ name: 'is_paid_in_full', type: 'boolean', default: false })
   isPaidInFull: boolean;
 
   @ManyToOne(() => BudgetToolEntity, (budgetTool) => budgetTool.budgetItems, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'budget_tool_id' })
   budgetTool: BudgetToolEntity;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp' })

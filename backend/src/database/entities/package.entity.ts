@@ -45,7 +45,7 @@ export class PackageEntity {
     updatedAt: Date;
 
     @ManyToOne(() => OfferingEntity, o => o.packages, { onDelete: 'CASCADE' })
-    @JoinColumn({ name: 'offering_id' })
+    @JoinColumn({ name: 'service_id' })
     offering: OfferingEntity;
 
 

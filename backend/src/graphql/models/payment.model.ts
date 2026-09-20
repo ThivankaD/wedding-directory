@@ -20,8 +20,6 @@ export class PaymentModel {
   @Field(() => Float)
   amount: number;
 
-  @Field({ nullable: true })
-  stripeSessionId?: string;
 
   @Field({ nullable: true })
   paymentReference?: string;

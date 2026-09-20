@@ -25,8 +25,6 @@ const createOffering = (): OfferingEntity => ({
   name: 'Test Offering',
   category: 'Test Category',
   visible: true,
-  bus_phone: '1234567890',
-  bus_email: 'test@example.com',
   description: 'Test Description',
   banner: 'test-banner.jpg',
   video_showcase: [],

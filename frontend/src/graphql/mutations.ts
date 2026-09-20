@@ -81,11 +81,11 @@ export const UPDATE_VENDOR_PROFILE_PIC = gql`
 export const UPDATE_SERVICE_PROFILE = gql`
   mutation UpdateOffering($id: String!, $input: UpdateOfferingInput!) {
     updateOffering(id: $id, input: $input) {
+      id
       category
-      bus_phone
-      bus_email
       description
       pricing
+      visible
     }
   }
 `;

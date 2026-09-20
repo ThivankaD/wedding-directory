@@ -25,10 +25,10 @@ export class VendorEntity {
   @Column({ type: 'varchar', length: 100 })
   password: string;
 
-  @Column({ type: 'varchar', length: 20 })
+  @Column({ name: 'first_name', type: 'varchar', length: 20 })
   fname: string;
 
-  @Column({ type: 'varchar', length: 20 })
+  @Column({ name: 'last_name', type: 'varchar', length: 20 })
   lname: string;
 
   @Column({ type: 'varchar', length: 500 })
@@ -37,7 +37,7 @@ export class VendorEntity {
   @Column({ type: 'varchar', length: 100 })
   city: string;
 
-  @Column({ type: 'varchar', length: 50 })
+  @Column({ name: 'business_name', type: 'varchar', length: 50 })
   busname: string;
 
   @Column({ type: 'varchar', length: 12 })

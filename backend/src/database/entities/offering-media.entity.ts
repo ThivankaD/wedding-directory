@@ -9,13 +9,13 @@ import {
 } from 'typeorm';
 import { OfferingEntity } from './offering.entity';
 
-@Entity({ name: 'offering_media' })
+@Entity({ name: 'service_media' })
 export class OfferingMediaEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @ManyToOne(() => OfferingEntity, (o) => o.media, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'offering_id' })
+  @JoinColumn({ name: 'service_id' })
   offering: OfferingEntity;
 
   @Column({ name: 'media_type', type: 'varchar', length: 20 })
