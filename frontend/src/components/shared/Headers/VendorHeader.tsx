@@ -204,12 +204,22 @@ const VendorHeader = () => {
             {/* Update the message icon section */}
             <Link
               href="/vendor-dashboard/chats"
-              className="relative p-2 rounded-xl hover:bg-orange/10 dark:hover:bg-zinc-800 transition-colors text-gray-700 dark:text-zinc-300 hover:text-orange flex items-center justify-center"
+              className={`relative p-2 rounded-xl transition-all flex items-center justify-center ${
+                pathname.startsWith("/vendor-dashboard/chats")
+                  ? "bg-orange text-white shadow-xs font-bold"
+                  : "text-gray-700 dark:text-zinc-300 hover:text-orange hover:bg-orange/10 dark:hover:bg-zinc-800 font-semibold"
+              }`}
               title="Messages"
             >
               <BiMessageRounded className="w-[26px] h-[26px]" />
               {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center shadow-xs">
+                <span
+                  className={`absolute -top-1 -right-1 text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center shadow-xs ${
+                    pathname.startsWith("/vendor-dashboard/chats")
+                      ? "bg-white text-orange"
+                      : "bg-red-500 text-white"
+                  }`}
+                >
                   {unreadCount > 9 ? "9+" : unreadCount}
                 </span>
               )}

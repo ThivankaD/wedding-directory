@@ -40,6 +40,44 @@
   }
 }
 
+/* Custom sleek scrollbars matching light & dark themes */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.4);
+  border-radius: 9999px;
+  transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(252, 123, 84, 0.7);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(113, 113, 122, 0.45);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(252, 123, 84, 0.8);
+}
+
+/* Firefox standard scrollbar properties */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(156, 163, 175, 0.4) transparent;
+}
+
+.dark * {
+  scrollbar-color: rgba(113, 113, 122, 0.45) transparent;
+}
+
 @media print {
   @page {
     size: A4 portrait;

@@ -56,21 +56,8 @@ export default function MessageList({ messages }: MessageListProps) {
         return (
           <div
             key={index}
-            className={`flex items-end gap-2.5 ${
-              isVendor ? "flex-row-reverse" : "flex-row"
-            }`}
+            className={`flex ${isVendor ? "justify-end" : "justify-start"}`}
           >
-            {/* Small Avatar badge */}
-            <div
-              className={`w-7 h-7 rounded-full flex items-center justify-center font-bold text-[11px] flex-shrink-0 mb-0.5 shadow-xs ${
-                isVendor
-                  ? "bg-orange text-white"
-                  : "bg-gray-200 dark:bg-darkElevated text-gray-700 dark:text-zinc-300"
-              }`}
-            >
-              {isVendor ? "V" : "C"}
-            </div>
-
             {/* Bubble */}
             <div
               className={`max-w-[85%] sm:max-w-[70%] group flex flex-col ${

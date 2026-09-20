@@ -85,7 +85,9 @@ const LeftSideBar: React.FC<LeftSideBarProps> = ({ isCollapsed, onToggleCollapse
       >
         <nav className="p-4 space-y-1">
           {menuItems.map((item) => {
-            const isActive = pathname === item.href;
+            const isActive =
+              pathname === item.href ||
+              (item.label === "Chats" && pathname.startsWith("/visitor-dashboard/chats"));
 
             return (
               <Link
