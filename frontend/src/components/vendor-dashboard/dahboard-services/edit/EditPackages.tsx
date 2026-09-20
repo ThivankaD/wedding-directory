@@ -14,6 +14,7 @@ import Image from "next/image";
 import { CiCirclePlus } from "react-icons/ci";
 import { uploadPackageImage } from "@/api/upload/package/package.upload";
 import { PackagesSkeleton } from "@/components/ui/shimmer";
+import ConfirmModal from "@/components/ui/ConfirmModal";
 import {
   FiPlus,
   FiTrash2,
@@ -77,6 +78,7 @@ const EditPackages: React.FC = () => {
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [packageToDelete, setPackageToDelete] = useState<Package | null>(null);
 
   const [createPackage] = useMutation(CREATE_PACKAGE, {
     refetchQueries: [
@@ -326,8 +328,13 @@ const EditPackages: React.FC = () => {
   };
 
   // Delete
-  const handleDeletePackage = async (packageId: string) => {
-    if (!confirm("Are you sure you want to delete this package?")) return;
+  const handleOpenDeletePackage = (pkg: Package) => {
+    setPackageToDelete(pkg);
+  };
+
+  const handleConfirmDeletePackage = async () => {
+    if (!packageToDelete?.id) return;
+    const packageId = packageToDelete.id;
 
     setDeletingId(packageId);
     try {
@@ -335,9 +342,11 @@ const EditPackages: React.FC = () => {
 
       if (result.data?.deletePackage) {
         toast.success("Package deleted successfully!");
+        setPackages((prev) => prev.filter((p) => p.id !== packageId));
+        setPackageToDelete(null);
         await refetch();
         if (viewMode !== "list") {
-          setViewMode("list");
+          handleBackToList();
         }
       }
     } catch (error: unknown) {
@@ -575,8 +584,8 @@ const EditPackages: React.FC = () => {
                         {pkg.id && (
                           <button
                             type="button"
-                            onClick={() => handleDeletePackage(pkg.id!)}
-                            disabled={isDeleting}
+                            onClick={() => handleOpenDeletePackage(pkg)}
+                            disabled={deletingId === pkg.id}
                             className="p-2.5 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors border border-gray-200 dark:border-zinc-700 hover:border-red-200 dark:hover:border-red-900/40"
                             title="Delete Package"
                           >
@@ -911,9 +920,9 @@ const EditPackages: React.FC = () => {
                 {viewMode === "edit" && formPackage.id ? (
                   <button
                     type="button"
-                    onClick={() => handleDeletePackage(formPackage.id!)}
-                    disabled={isSaving}
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-red-600 hover:text-red-700 bg-red-50 dark:bg-red-950/30 hover:bg-red-100 dark:hover:bg-red-900/40 rounded-xl transition-all"
+                    onClick={() => handleOpenDeletePackage(formPackage)}
+                    disabled={isSaving || deletingId === formPackage.id}
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-red-600 hover:text-red-700 bg-red-50 dark:bg-red-950/30 hover:bg-red-100 dark:hover:bg-red-900/40 rounded-xl transition-all disabled:opacity-50"
                   >
                     <FiTrash2 className="text-base" />
                     <span>Delete Package</span>
@@ -953,6 +962,21 @@ const EditPackages: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Delete Package Confirmation Modal */}
+      <ConfirmModal
+        isOpen={Boolean(packageToDelete)}
+        onClose={() => !deletingId && setPackageToDelete(null)}
+        onConfirm={handleConfirmDeletePackage}
+        title="Delete Package"
+        message={`Are you sure you want to permanently delete ${
+          packageToDelete?.name ? `"${packageToDelete.name}"` : "this package"
+        }? This action cannot be undone.`}
+        confirmText="Delete Package"
+        cancelText="Cancel"
+        variant="danger"
+        isLoading={Boolean(deletingId)}
+      />
     </Fragment>
   );
 };

@@ -43,7 +43,7 @@ export class PackageEntity {
     @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
     updatedAt: Date;
 
-    @ManyToOne(() => OfferingEntity, o => o.packages)
+    @ManyToOne(() => OfferingEntity, o => o.packages, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'offering_id' })
     offering: OfferingEntity;
 
