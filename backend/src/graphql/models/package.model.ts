@@ -1,5 +1,6 @@
 import { ObjectType, Field } from '@nestjs/graphql';
 import { OfferingModel } from './offering.model';
+import { PackageFeatureModel } from './package-feature.model';
 
 @ObjectType()
 export class PackageModel {
@@ -17,6 +18,9 @@ export class PackageModel {
 
   @Field(() => [String])
   features: string[];
+
+  @Field(() => [PackageFeatureModel], { nullable: true })
+  packageFeatures?: PackageFeatureModel[];
 
   @Field(() => Boolean)
   visible: boolean;

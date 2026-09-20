@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { OfferingEntity } from "../../database/entities/offering.entity";
+import { OfferingMediaEntity } from "../../database/entities/offering-media.entity";
 import { CreateOfferingInput } from "../../graphql/inputs/createOffering.input";
 import { DataSource, Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -105,7 +106,9 @@ export class OfferingService {
       offering.photo_showcase = updatedShowcaseImages;
     }
 
-    return await this.offeringRepository.save(offering);
+    const savedOffering = await this.offeringRepository.save(offering);
+    await this.syncOfferingMedia(savedOffering, 'photo', savedOffering.photo_showcase);
+    return savedOffering;
   }
 
   async updateOfferingVideos(
@@ -119,7 +122,9 @@ export class OfferingService {
     const existingVideos = offering.video_showcase || [];
     const updatedVideos = [...existingVideos, ...fileUrls];
     const newOffering = { ...offering, video_showcase: updatedVideos };
-    return await this.offeringRepository.save(newOffering);
+    const savedOffering = await this.offeringRepository.save(newOffering);
+    await this.syncOfferingMedia(savedOffering, 'video', savedOffering.video_showcase);
+    return savedOffering;
   }
 
   async deleteOfferingBanner(id: string): Promise<boolean> {
@@ -158,7 +163,8 @@ export class OfferingService {
       // Remove the image at the specified index
       offering.photo_showcase.splice(index, 1);
 
-      await this.offeringRepository.save(offering);
+      const savedOffering = await this.offeringRepository.save(offering);
+      await this.syncOfferingMedia(savedOffering, 'photo', savedOffering.photo_showcase);
       return true;
     } catch (error) {
       throw new Error(`Failed to delete showcase image: ${error.message}`);
@@ -173,10 +179,40 @@ export class OfferingService {
 
     try {
       offering.video_showcase = null;
-      await this.offeringRepository.save(offering);
+      const savedOffering = await this.offeringRepository.save(offering);
+      await this.syncOfferingMedia(savedOffering, 'video', null);
       return true;
     } catch (error) {
       throw new Error(`Failed to delete video: ${error.message}`);
+    }
+  }
+
+  private async syncOfferingMedia(
+    offering: OfferingEntity,
+    mediaType: 'photo' | 'video',
+    urls: string[] | null
+  ): Promise<void> {
+    try {
+      const mediaRepo = this.dataSource.getRepository(OfferingMediaEntity);
+      await mediaRepo.delete({ offering: { id: offering.id }, mediaType });
+      if (Array.isArray(urls) && urls.length > 0) {
+        const rows = urls
+          .filter((u) => typeof u === 'string' && u.trim().length > 0)
+          .map((url, idx) =>
+            mediaRepo.create({
+              offering,
+              mediaType,
+              url: url.trim(),
+              slotIndex: idx,
+            })
+          );
+        if (rows.length > 0) {
+          await mediaRepo.save(rows);
+        }
+      }
+    } catch (error) {
+      // Non-blocking sync error logging to maintain backwards-compatibility
+      console.error(`Failed to sync offering media (${mediaType}):`, error);
     }
   }
 }

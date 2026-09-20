@@ -12,6 +12,9 @@ import { VisitorEntity } from './visitor.entity';
 
 import { PasswordResetOtpEntity } from './password_reset_otp.entity';
 import { PackageApprovalRequestEntity } from './package-approval-request.entity';
+import { OfferingMediaEntity } from './offering-media.entity';
+import { PackageFeatureEntity } from './package-feature.entity';
+import { PackageViewEntity } from './package-view.entity';
 
 export function getEntities() {
   return [
@@ -23,7 +26,10 @@ export function getEntities() {
     GuestListEntity,
     MyVendorsEntity,
     OfferingEntity,
+    OfferingMediaEntity,
     PackageEntity,
+    PackageFeatureEntity,
+    PackageViewEntity,
     PaymentEntity,
     VendorEntity,
     PasswordResetOtpEntity,
