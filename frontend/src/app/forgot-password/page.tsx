@@ -6,7 +6,7 @@ import Footer from '@/components/shared/Footer';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'react-hot-toast';
-import LoaderJelly from '@/components/shared/Loaders/LoaderJelly';
+import { Skeleton } from '@/components/ui/skeleton';
 import OtpInput from '@/components/auth/OtpInput';
 import {
   requestPasswordResetOtp,
@@ -178,13 +178,6 @@ const ForgotPasswordForm = () => {
 
   return (
     <div className="relative z-10 w-full max-w-[460px] bg-white dark:bg-darkSurface border border-orange/25 dark:border-zinc-700/80 rounded-3xl shadow-xl dark:shadow-[0_8px_30px_rgb(0,0,0,0.5)] p-6 sm:p-8 font-body transition-colors">
-      {/* Loader Overlay */}
-      {isLoading && (
-        <div className="absolute inset-0 bg-white/90 dark:bg-darkSurface/90 backdrop-blur-xs flex items-center justify-center z-30 rounded-3xl">
-          <LoaderJelly />
-        </div>
-      )}
-
       {/* STEP 1: REQUEST OTP */}
       {step === 1 && (
         <>
@@ -254,9 +247,13 @@ const ForgotPasswordForm = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full h-12 rounded-xl text-white font-title text-base sm:text-lg font-bold bg-orange hover:bg-orange/90 active:scale-[0.99] shadow-md hover:shadow-orange/20 transition-all cursor-pointer flex items-center justify-center disabled:opacity-50"
+                className={`w-full h-12 rounded-xl font-title text-base sm:text-lg font-bold transition-all flex items-center justify-center ${
+                  isLoading
+                    ? "bg-zinc-400 dark:bg-zinc-700 text-zinc-200 dark:text-zinc-400 cursor-not-allowed shadow-none"
+                    : "bg-orange hover:bg-orange/90 active:scale-[0.99] text-white shadow-md hover:shadow-orange/20 cursor-pointer"
+                }`}
               >
-                Send Verification Code
+                {isLoading ? "Processing..." : "Send Verification Code"}
               </button>
             </div>
 
@@ -304,9 +301,13 @@ const ForgotPasswordForm = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full h-12 rounded-xl text-white font-title text-base sm:text-lg font-bold bg-orange hover:bg-orange/90 active:scale-[0.99] shadow-md hover:shadow-orange/20 transition-all cursor-pointer flex items-center justify-center disabled:opacity-50"
+                className={`w-full h-12 rounded-xl font-title text-base sm:text-lg font-bold transition-all flex items-center justify-center ${
+                  isLoading
+                    ? "bg-zinc-400 dark:bg-zinc-700 text-zinc-200 dark:text-zinc-400 cursor-not-allowed shadow-none"
+                    : "bg-orange hover:bg-orange/90 active:scale-[0.99] text-white shadow-md hover:shadow-orange/20 cursor-pointer"
+                }`}
               >
-                Verify Code
+                {isLoading ? "Processing..." : "Verify Code"}
               </button>
             </div>
 
@@ -424,9 +425,13 @@ const ForgotPasswordForm = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full h-12 rounded-xl text-white font-title text-base sm:text-lg font-bold bg-orange hover:bg-orange/90 active:scale-[0.99] shadow-md hover:shadow-orange/20 transition-all cursor-pointer flex items-center justify-center disabled:opacity-50"
+                className={`w-full h-12 rounded-xl font-title text-base sm:text-lg font-bold transition-all flex items-center justify-center ${
+                  isLoading
+                    ? "bg-zinc-400 dark:bg-zinc-700 text-zinc-200 dark:text-zinc-400 cursor-not-allowed shadow-none"
+                    : "bg-orange hover:bg-orange/90 active:scale-[0.99] text-white shadow-md hover:shadow-orange/20 cursor-pointer"
+                }`}
               >
-                Reset Password
+                {isLoading ? "Processing..." : "Reset Password"}
               </button>
             </div>
           </form>
@@ -477,8 +482,16 @@ const ForgotPasswordPage = () => {
         {/* Card Form with Suspense boundary for useSearchParams */}
         <Suspense
           fallback={
-            <div className="relative z-10 w-full max-w-[460px] bg-white dark:bg-darkSurface border border-orange/25 dark:border-zinc-700/80 rounded-3xl p-8 shadow-xl flex items-center justify-center min-h-[300px]">
-              <LoaderJelly />
+            <div className="relative z-10 w-full max-w-[460px] bg-white dark:bg-darkSurface border border-orange/25 dark:border-zinc-700/80 rounded-3xl p-8 shadow-xl space-y-6 animate-fade-in">
+              <div className="space-y-2 text-center">
+                <Skeleton className="h-8 w-48 mx-auto" />
+                <Skeleton className="h-4 w-64 mx-auto" />
+              </div>
+              <Skeleton className="h-10 w-full rounded-xl" />
+              <div className="space-y-4 pt-2">
+                <Skeleton className="h-12 w-full rounded-xl" />
+                <Skeleton className="h-12 w-full rounded-xl" />
+              </div>
             </div>
           }
         >

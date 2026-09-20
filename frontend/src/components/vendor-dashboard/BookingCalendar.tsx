@@ -6,6 +6,7 @@ import { GET_VENDOR_PAYMENTS } from '@/graphql/queries';
 import { useVendorAuth } from '@/contexts/VendorAuthContext';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import { formatCoupleName } from '@/utils/formatCoupleName';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface Payment {
   id: string;
@@ -114,10 +115,31 @@ const BookingCalendar: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 p-8 flex items-center justify-center min-h-[360px]">
-        <div className="flex flex-col items-center gap-2 text-gray-500 dark:text-zinc-400 text-sm">
-          <div className="w-6 h-6 border-2 border-orange border-t-transparent rounded-full animate-spin"></div>
-          <span>Loading bookings...</span>
+      <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 p-6 sm:p-7 flex flex-col h-full space-y-6 animate-fade-in">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-4 border-b border-gray-100 dark:border-zinc-800">
+          <div className="space-y-1.5">
+            <Skeleton className="h-6 w-44 rounded-lg" />
+            <Skeleton className="h-3.5 w-64 rounded" />
+          </div>
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-8 w-28 rounded-xl" />
+            <div className="flex gap-1">
+              <Skeleton className="w-8 h-8 rounded-lg" />
+              <Skeleton className="w-8 h-8 rounded-lg" />
+            </div>
+          </div>
+        </div>
+        <div className="space-y-3">
+          <div className="grid grid-cols-7 gap-2">
+            {[1, 2, 3, 4, 5, 6, 7].map((i) => (
+              <Skeleton key={i} className="h-5 w-full rounded" />
+            ))}
+          </div>
+          <div className="grid grid-cols-7 gap-2">
+            {Array.from({ length: 35 }).map((_, i) => (
+              <Skeleton key={i} className="h-16 sm:h-20 w-full rounded-xl" />
+            ))}
+          </div>
         </div>
       </div>
     );

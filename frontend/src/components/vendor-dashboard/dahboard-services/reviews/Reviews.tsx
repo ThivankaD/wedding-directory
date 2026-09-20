@@ -3,7 +3,7 @@ import { FaRegStar, FaStar } from "react-icons/fa";
 import { FaRegStarHalfStroke } from "react-icons/fa6";
 import { useQuery } from "@apollo/client";
 import { FIND_REVIEW_PAGE_BY_SERVICE } from "@/graphql/queries";
-import LoaderHelix from '@/components/shared/Loaders/LoaderHelix';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface ReviewsProps {
     serviceId?: string;
@@ -26,7 +26,31 @@ const Reviews: React.FC<ReviewsProps> = ({ serviceId }) => {
         skip: !serviceId,
     });
 
-    if (reviewsLoading) return <LoaderHelix />;
+    if (reviewsLoading) {
+        return (
+            <div className='font-body animate-fade-in'>
+                <div className='rounded-2xl border border-gray-100 dark:border-zinc-800 bg-white dark:bg-darkSurface p-6 shadow-sm'>
+                    <div className='grid grid-cols-1 md:grid-cols-12 gap-6 items-center'>
+                        <div className='md:col-span-5 flex flex-col items-center md:items-start text-center md:text-left border-b md:border-b-0 md:border-r border-gray-100 dark:border-zinc-800 pb-5 md:pb-0 md:pr-6 space-y-3 w-full'>
+                            <Skeleton className='h-3 w-24' />
+                            <Skeleton className='h-12 w-28' />
+                            <Skeleton className='h-4 w-32' />
+                            <Skeleton className='h-3 w-40' />
+                        </div>
+                        <div className='md:col-span-7 space-y-3 w-full'>
+                            {[5, 4, 3, 2, 1].map((star) => (
+                                <div key={star} className='flex items-center gap-3'>
+                                    <Skeleton className='w-7 h-4' />
+                                    <Skeleton className='h-2.5 flex-1 rounded-full' />
+                                    <Skeleton className='w-8 h-4' />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
     if (reviewsError) return <div>Error fetching reviews</div>;
 
     const reviewPage = rdata?.findReviewsByOfferingPaginated;

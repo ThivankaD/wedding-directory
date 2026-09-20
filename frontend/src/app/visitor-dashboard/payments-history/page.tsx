@@ -3,7 +3,8 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from "@/contexts/VisitorAuthContext";
-import LoaderHelix from "@/components/shared/Loaders/LoaderHelix";
+import { TableSkeleton } from "@/components/ui/shimmer";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useQuery } from '@apollo/client';
 import { GET_VISITOR_PAYMENTS } from '@/graphql/queries';
 import BottomNavigationBar from '@/components/visitor-dashboard/BottomNavigationBar';
@@ -106,9 +107,41 @@ const PaymentsHistoryPage = () => {
 
   if (loading && !data) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center p-8 space-y-4">
-        <LoaderHelix />
-        <p className="text-sm font-semibold text-gray-600 font-body">Loading your payments history...</p>
+      <div className="w-full space-y-6 animate-fade-in">
+        {/* Hero Card Skeleton */}
+        <div className="bg-white dark:bg-darkSurface rounded-3xl border-2 border-orange/20 dark:border-zinc-800 shadow-sm p-6 sm:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div className="space-y-3">
+            <Skeleton className="h-4 w-36" />
+            <div className="flex items-center gap-3">
+              <Skeleton className="w-12 h-12 rounded-2xl" />
+              <div className="space-y-2">
+                <Skeleton className="h-8 w-48" />
+                <Skeleton className="h-4 w-64" />
+              </div>
+            </div>
+          </div>
+          <div className="flex gap-3">
+            <Skeleton className="h-10 w-28 rounded-xl" />
+            <Skeleton className="h-10 w-32 rounded-xl" />
+          </div>
+        </div>
+
+        {/* Stats Grid Skeleton */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="bg-white dark:bg-darkSurface p-5 rounded-3xl border-2 border-orange/20 dark:border-zinc-800 shadow-sm space-y-3">
+              <div className="flex items-center justify-between">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="w-10 h-10 rounded-xl" />
+              </div>
+              <Skeleton className="h-7 w-28" />
+              <Skeleton className="h-3 w-32" />
+            </div>
+          ))}
+        </div>
+
+        {/* Table Card Skeleton */}
+        <TableSkeleton rows={6} />
       </div>
     );
   }

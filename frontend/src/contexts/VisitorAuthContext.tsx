@@ -23,7 +23,8 @@ interface Visitor {
 interface AuthContextProps {
   visitor: Visitor | null;
   accessToken: string | null;
-  isAuthenticated: boolean; // Add isAuthenticated
+  isAuthenticated: boolean;
+  isInitialized: boolean;
   login: (token: string) => void;
   logout: () => void;
 }
@@ -41,6 +42,7 @@ export const useAuth = (): AuthContextProps => {
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [visitor, setVisitor] = useState<Visitor | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
   const router = useRouter();
 
   const logout = () => {
@@ -105,11 +107,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         logout();
       }
     }
+    setIsInitialized(true);
   }, []);
 
   return (
     <AuthContext.Provider
-      value={{ visitor, accessToken, isAuthenticated, login, logout }}
+      value={{ visitor, accessToken, isAuthenticated, isInitialized, login, logout }}
     >
       {children}
     </AuthContext.Provider>

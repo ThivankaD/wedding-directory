@@ -9,6 +9,7 @@ import { useParams, useRouter } from "next/navigation";
 import { UPDATE_SERVICE_PROFILE, DELETE_OFFERING } from "@/graphql/mutations";
 import toast from "react-hot-toast";
 import { FiInfo, FiChevronDown } from "react-icons/fi";
+import { GeneralFormSkeleton } from "@/components/ui/shimmer";
 
 const EditGeneral: React.FC<EditProfileProps> = () => {
   const params = useParams();
@@ -144,14 +145,7 @@ const EditGeneral: React.FC<EditProfileProps> = () => {
   };
 
   if (loading) {
-    return (
-      <div className="bg-white dark:bg-darkSurface rounded-2xl p-8 shadow-sm border border-gray-100 dark:border-zinc-800 flex items-center justify-center min-h-[250px]">
-        <div className="flex items-center gap-3 text-gray-500 dark:text-zinc-400">
-          <div className="w-5 h-5 border-2 border-orange border-t-transparent rounded-full animate-spin"></div>
-          <span>Loading general information...</span>
-        </div>
-      </div>
-    );
+    return <GeneralFormSkeleton />;
   }
 
   if (error) {

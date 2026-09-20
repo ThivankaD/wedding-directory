@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import BlogCard from "./BlogCard";
 import Pagination from "./Pagination";
 import { fetchBlogPosts } from "@/api/blog/blog.api";
-import LoaderHelix from "@/components/shared/Loaders/LoaderHelix";
+import { Skeleton } from "@/components/ui/skeleton";
 import { BlogPost } from "@/types/blogTypes";
 
 const BlogList: React.FC = () => {
@@ -43,8 +43,22 @@ const BlogList: React.FC = () => {
 
   if (loading && posts.length === 0) {
     return (
-      <div className="py-20 flex justify-center">
-        <LoaderHelix />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
+        {[1, 2, 3, 4, 5, 6].map((i) => (
+          <div
+            key={i}
+            className="bg-white dark:bg-darkSurface rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-zinc-800 space-y-4 p-4"
+          >
+            <Skeleton className="w-full h-48 rounded-xl" />
+            <Skeleton className="h-6 w-3/4 rounded-lg" />
+            <Skeleton className="h-4 w-full rounded" />
+            <Skeleton className="h-4 w-2/3 rounded" />
+            <div className="flex items-center justify-between pt-2">
+              <Skeleton className="h-4 w-24 rounded" />
+              <Skeleton className="h-4 w-20 rounded" />
+            </div>
+          </div>
+        ))}
       </div>
     );
   }

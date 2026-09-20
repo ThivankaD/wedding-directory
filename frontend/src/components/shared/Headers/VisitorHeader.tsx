@@ -376,14 +376,11 @@ const VisitorHeader = () => {
               type="button"
               onClick={toggleTheme}
               className="p-2 rounded-xl text-gray-700 dark:text-zinc-300 hover:text-orange hover:bg-orange/10 dark:hover:bg-zinc-800 transition-colors flex items-center justify-center cursor-pointer"
-              title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
+              title="Toggle Theme"
               aria-label="Toggle Theme"
             >
-              {theme === "dark" ? (
-                <FiSun className="w-[24px] h-[24px] text-amber-400 hover:rotate-45 transition-transform" />
-              ) : (
-                <FiMoon className="w-[24px] h-[24px] text-gray-700 dark:text-zinc-300 hover:text-orange transition-transform" />
-              )}
+              <FiSun className="hidden dark:block w-[24px] h-[24px] text-amber-400 hover:rotate-45 transition-transform" />
+              <FiMoon className="block dark:hidden w-[24px] h-[24px] text-gray-700 dark:text-zinc-300 hover:text-orange transition-transform" />
             </button>
 
             {/* Profile dropdown */}

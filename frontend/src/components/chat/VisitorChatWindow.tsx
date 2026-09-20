@@ -11,7 +11,7 @@ import { FaStore } from "react-icons/fa";
 import { useChatSocket } from "@/hooks/useChatSocket";
 import Link from "next/link";
 import Image from "next/image";
-import LoaderJelly from "@/components/shared/Loaders/LoaderJelly";
+import { ChatWindowSkeleton } from "@/components/ui/shimmer";
 
 interface Message {
   content: string;
@@ -133,12 +133,7 @@ const VisitorChatWindow = ({ chatId }: VisitorChatWindowProps) => {
   };
 
   if (loading && messages.length === 0) {
-    return (
-      <div className="h-[550px] flex flex-col items-center justify-center gap-3">
-        <LoaderJelly />
-        <p className="text-xs font-medium text-gray-400">Loading conversation...</p>
-      </div>
-    );
+    return <ChatWindowSkeleton />;
   }
 
   const vendorDisplayName =

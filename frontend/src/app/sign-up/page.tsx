@@ -9,7 +9,6 @@ import { useRouter } from "next/navigation";
 import { toast } from 'react-hot-toast';
 import { useVendorAuth } from '@/contexts/VendorAuthContext';
 import GoogleAuthButton from '@/components/auth/GoogleAuthButton';
-import LoaderJelly from "@/components/shared/Loaders/LoaderJelly";
 import {
   requestSignupOtp,
   verifySignupOtp,
@@ -179,13 +178,6 @@ const Signup: React.FC = () => {
         <div className="absolute bottom-10 right-10 w-[300px] h-[250px] bg-orange/10 dark:bg-orange/5 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 w-full max-w-[460px] bg-white dark:bg-darkSurface border border-orange/25 dark:border-zinc-700/80 rounded-3xl shadow-xl dark:shadow-[0_8px_30px_rgb(0,0,0,0.5)] p-6 sm:p-8 font-body transition-colors">
-          {/* Loader Overlay */}
-          {isLoading && (
-            <div className="absolute inset-0 bg-white/90 dark:bg-darkSurface/90 backdrop-blur-xs flex items-center justify-center z-30 rounded-3xl">
-              <LoaderJelly />
-            </div>
-          )}
-
           {/* STEP 1: ENTER DETAILS */}
           {step === 1 && (
             <>
@@ -279,9 +271,13 @@ const Signup: React.FC = () => {
                   <button
                     type="submit"
                     disabled={isLoading || !termsAccepted}
-                    className="w-full h-12 rounded-xl text-white font-title text-lg font-bold bg-orange hover:bg-orange/90 active:scale-[0.99] shadow-md hover:shadow-orange/20 transition-all cursor-pointer flex items-center justify-center disabled:opacity-50"
+                    className={`w-full h-12 rounded-xl font-title text-base sm:text-lg font-bold transition-all flex items-center justify-center ${
+                      isLoading || !termsAccepted
+                        ? "bg-zinc-400 dark:bg-zinc-700 text-zinc-200 dark:text-zinc-400 cursor-not-allowed shadow-none"
+                        : "bg-orange hover:bg-orange/90 active:scale-[0.99] text-white shadow-md hover:shadow-orange/20 cursor-pointer"
+                    }`}
                   >
-                    Continue with Email
+                    {isLoading ? "Processing..." : "Continue with Email"}
                   </button>
                 </div>
 
@@ -347,9 +343,13 @@ const Signup: React.FC = () => {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full h-12 rounded-xl text-white font-title text-base sm:text-lg font-bold bg-orange hover:bg-orange/90 active:scale-[0.99] shadow-md hover:shadow-orange/20 transition-all cursor-pointer flex items-center justify-center disabled:opacity-50"
+                    className={`w-full h-12 rounded-xl font-title text-base sm:text-lg font-bold transition-all flex items-center justify-center ${
+                      isLoading
+                        ? "bg-zinc-400 dark:bg-zinc-700 text-zinc-200 dark:text-zinc-400 cursor-not-allowed shadow-none"
+                        : "bg-orange hover:bg-orange/90 active:scale-[0.99] text-white shadow-md hover:shadow-orange/20 cursor-pointer"
+                    }`}
                   >
-                    Verify & Continue
+                    {isLoading ? "Processing..." : "Verify & Continue"}
                   </button>
                 </div>
 

@@ -10,6 +10,7 @@ import { GET_VENDOR_BY_ID } from "@/graphql/queries";
 import { UPDATE_VENDOR } from "@/graphql/mutations";
 import toast from "react-hot-toast";
 import VendorProfilePicture from "./VendorProfilePicture";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const EditProfile: React.FC = () => {
   const { vendor } = useVendorAuth();
@@ -75,11 +76,29 @@ const EditProfile: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="bg-white dark:bg-darkSurface rounded-2xl p-8 shadow-sm border border-gray-100 dark:border-zinc-800 flex items-center justify-center min-h-[300px]">
-        <div className="flex items-center gap-3 text-gray-500 dark:text-zinc-400">
-          <div className="w-5 h-5 border-2 border-orange border-t-transparent rounded-full animate-spin"></div>
-          <span>Loading profile information...</span>
+      <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 p-6 sm:p-8 space-y-6 animate-fade-in">
+        <div className="pb-6 border-b border-gray-100 dark:border-zinc-800 space-y-2">
+          <Skeleton className="h-7 w-44 rounded-lg" />
+          <Skeleton className="h-4 w-64 rounded" />
         </div>
+        <div className="flex items-center gap-6">
+          <Skeleton className="w-24 h-24 rounded-full" />
+          <div className="space-y-2">
+            <Skeleton className="h-9 w-32 rounded-xl" />
+            <Skeleton className="h-3 w-40 rounded" />
+          </div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-24 rounded" />
+            <Skeleton className="h-11 w-full rounded-xl" />
+          </div>
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-24 rounded" />
+            <Skeleton className="h-11 w-full rounded-xl" />
+          </div>
+        </div>
+        <Skeleton className="h-11 w-36 rounded-xl mt-4" />
       </div>
     );
   }

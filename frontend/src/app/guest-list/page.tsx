@@ -9,7 +9,7 @@ import AddNewGuest from "@/components/guest-list/addnewguest";
 import EditGuest, { Guest } from "@/components/guest-list/editguest";
 import VCardImportModal from "@/components/guest-list/VCardImportModal";
 import Breadcrumbs from "@/components/Breadcrumbs";
-import LoaderHelix from "@/components/shared/Loaders/LoaderHelix";
+import { TableSkeleton } from "@/components/ui/shimmer";
 import toast from "react-hot-toast";
 import {
   FiUsers,
@@ -102,9 +102,8 @@ const GuestListPage = () => {
 
   if (visitorLoading || guestlistsLoading) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center p-8 space-y-4">
-        <LoaderHelix />
-        <p className="text-sm font-semibold text-gray-600 font-body">Loading your guest list...</p>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <TableSkeleton rows={7} cols={5} />
       </div>
     );
   }

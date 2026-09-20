@@ -11,7 +11,7 @@ import VisitorCoupleBanner from "@/components/visitor-dashboard/VisitorCoupleBan
 import VisitorBookingCalendar from "@/components/visitor-dashboard/VisitorBookingCalendar";
 import DashboardWidgets from "@/components/visitor-dashboard/DashBoardWidgets";
 import BottomNavigationBar from "@/components/visitor-dashboard/BottomNavigationBar";
-import LoaderHelix from "@/components/shared/Loaders/LoaderHelix";
+import { VisitorDashboardSkeleton } from "@/components/ui/shimmer";
 import { StaticImageData } from "next/image";
 import {
   GET_VISITOR_BY_ID,
@@ -60,7 +60,7 @@ const VisitorDashboardContent: React.FC = () => {
     }
   };
 
-  const { visitor } = useAuth();
+  const { visitor, isInitialized } = useAuth();
   const [profilePic, setProfilePic] = useState<string | StaticImageData>(
     "/images/visitorProfilePic.webp"
   );
@@ -139,16 +139,8 @@ const VisitorDashboardContent: React.FC = () => {
   const checklistProgress =
     totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-lightYellow dark:bg-darkBg flex flex-col">
-      <VisitorHeader />
-        <div className="flex-grow flex items-center justify-center p-8">
-          <LoaderHelix />
-        </div>
-        <Footer />
-      </div>
-    );
+  if (!isInitialized || !visitor?.id || loading) {
+    return <VisitorDashboardSkeleton />;
   }
 
   if (error) {
@@ -273,13 +265,7 @@ const VisitorDashboardContent: React.FC = () => {
 
 const VisitorDashboard: React.FC = () => {
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen bg-lightYellow dark:bg-darkBg flex flex-col items-center justify-center p-8">
-          <LoaderHelix />
-        </div>
-      }
-    >
+    <Suspense fallback={<VisitorDashboardSkeleton />}>
       <VisitorDashboardContent />
     </Suspense>
   );
