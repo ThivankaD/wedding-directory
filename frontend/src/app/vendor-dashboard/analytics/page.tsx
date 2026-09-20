@@ -6,7 +6,7 @@ import Footer from "@/components/shared/Footer";
 import { useVendorAuth } from "@/contexts/VendorAuthContext";
 import { useQuery } from "@apollo/client";
 import { GET_VENDOR_BY_ID, GET_VENDOR_ANALYTICS, GET_VENDOR_PAYMENTS, GET_VENDOR_MESSAGES } from "@/graphql/queries";
-import LoaderJelly from "@/components/shared/Loaders/LoaderJelly";
+import { Skeleton } from "@/components/ui/skeleton";
 import { 
   FiTrendingUp, 
   FiEye, 
@@ -57,10 +57,35 @@ const VendorAnalytics: React.FC = () => {
 
   if (vendorLoading || analyticsLoading || paymentsLoading || chatsLoading) {
     return (
-      <div className="min-h-screen bg-lightYellow dark:bg-darkBg transition-colors duration-200">
+      <div className="min-h-screen bg-lightYellow dark:bg-darkBg transition-colors duration-200 font-body">
         <VendorHeader />
-        <div className="container mx-auto px-4 py-8">
-          <LoaderJelly />
+        <div className="container mx-auto px-4 py-8 space-y-8 max-w-7xl">
+          <div className="space-y-2">
+            <Skeleton className="h-8 w-48 rounded-lg" />
+            <Skeleton className="h-4 w-72 rounded" />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[1, 2, 3, 4].map((i) => (
+              <div
+                key={i}
+                className="bg-white dark:bg-darkSurface rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-zinc-800 space-y-3"
+              >
+                <Skeleton className="h-4 w-28 rounded" />
+                <Skeleton className="h-8 w-24 rounded-lg" />
+                <Skeleton className="h-3 w-36 rounded" />
+              </div>
+            ))}
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="bg-white dark:bg-darkSurface rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-zinc-800 space-y-4">
+              <Skeleton className="h-6 w-40 rounded-lg" />
+              <Skeleton className="h-64 w-full rounded-xl" />
+            </div>
+            <div className="bg-white dark:bg-darkSurface rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-zinc-800 space-y-4">
+              <Skeleton className="h-6 w-40 rounded-lg" />
+              <Skeleton className="h-64 w-full rounded-xl" />
+            </div>
+          </div>
         </div>
         <Footer />
       </div>

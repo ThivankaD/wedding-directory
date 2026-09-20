@@ -7,7 +7,7 @@ import { useQuery } from "@apollo/client";
 import Header from "@/components/shared/Headers/Header";
 import Footer from "@/components/shared/Footer";
 import Link from "next/link";
-import LoaderQuantum from "@/components/shared/Loaders/LoaderQuantum";
+import { Skeleton } from "@/components/ui/skeleton";
 import { FaArrowLeft } from "react-icons/fa";
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 import { FaPlay, FaVideo } from "react-icons/fa";
@@ -91,7 +91,27 @@ const PortfolioPage: React.FC = () => {
 
   const closeLightbox = () => setSelectedMedia(null);
 
-  if (loading) return <LoaderQuantum />;
+  if (loading) {
+    return (
+      <div className="bg-lightYellow dark:bg-darkBg text-gray-900 dark:text-zinc-100 transition-colors duration-200 min-h-screen font-body flex flex-col">
+        <Header />
+        <div className="w-11/12 md:w-10/12 lg:w-3/4 xl:w-2/3 mx-auto py-6 px-4 flex-grow space-y-6">
+          <Skeleton className="h-5 w-44 rounded-lg" />
+          <Skeleton className="h-8 w-60 rounded-xl" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {[260, 200, 240, 210, 280, 220].map((h, i) => (
+              <Skeleton
+                key={i}
+                className="w-full rounded-2xl"
+                style={{ height: `${h}px` }}
+              />
+            ))}
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
   if (error) return <p>Error: {error.message}</p>;
 
   return (

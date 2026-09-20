@@ -9,7 +9,6 @@ import { useRouter } from 'next/navigation';
 import { loginVisitor as loginApi } from '@/api/auth/visitor.auth.api';
 import { useAuth } from "@/contexts/VisitorAuthContext";
 import { toast } from 'react-hot-toast';
-import LoaderJelly from "@/components/shared/Loaders/LoaderJelly";
 import { SignupFormErrors, SignupFormState, VisitorLoginProps } from "@/types/auth/visitorAuthTypes";
 
 const VisitorLogin: React.FC<VisitorLoginProps> = ({ isVisible, onClose }) => {
@@ -120,7 +119,10 @@ const VisitorLogin: React.FC<VisitorLoginProps> = ({ isVisible, onClose }) => {
       onClick={handleClose}
     >
       {isLoading ? (
-        <LoaderJelly />
+        <div className="bg-white dark:bg-darkSurface w-full max-w-[450px] rounded-3xl p-8 flex flex-col items-center justify-center gap-3 shadow-xl">
+          <div className="w-9 h-9 border-3 border-orange/30 border-t-orange rounded-full animate-spin" />
+          <p className="text-xs font-semibold text-gray-600 dark:text-zinc-300">Signing in...</p>
+        </div>
       ) : (
         <div className="bg-white mt-6 w-full max-w-[450px] rounded-md p-4 sm:p-8 font-body">
           <h1 className="text-2xl sm:text-4xl font-bold text-center font-title">

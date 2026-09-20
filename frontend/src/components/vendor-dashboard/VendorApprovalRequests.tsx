@@ -21,6 +21,7 @@ import {
   X,
 } from "lucide-react";
 import { formatCoupleName } from "@/utils/formatCoupleName";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ApprovalRequest {
   id: string;
@@ -128,10 +129,37 @@ const VendorApprovalRequests: React.FC = () => {
 
   if (loading && !data) {
     return (
-      <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 p-8 flex items-center justify-center min-h-[360px]">
-        <div className="flex flex-col items-center gap-2 text-gray-500 dark:text-zinc-400 text-sm">
-          <div className="w-6 h-6 border-2 border-orange border-t-transparent rounded-full animate-spin"></div>
-          <span>Loading approval requests...</span>
+      <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 p-6 sm:p-7 flex flex-col h-full space-y-6 animate-fade-in">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-gray-100 dark:border-zinc-800">
+          <div className="space-y-1.5">
+            <Skeleton className="h-6 w-48 rounded-lg" />
+            <Skeleton className="h-3.5 w-64 rounded" />
+          </div>
+          <Skeleton className="h-9 w-48 rounded-xl" />
+        </div>
+        <div className="space-y-4">
+          {[1, 2, 3].map((i) => (
+            <div
+              key={i}
+              className="p-5 rounded-2xl border border-gray-100 dark:border-zinc-800 space-y-3"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Skeleton className="w-10 h-10 rounded-full" />
+                  <div className="space-y-1">
+                    <Skeleton className="h-4 w-36 rounded" />
+                    <Skeleton className="h-3 w-28 rounded" />
+                  </div>
+                </div>
+                <Skeleton className="h-6 w-20 rounded-full" />
+              </div>
+              <Skeleton className="h-4 w-3/4 rounded" />
+              <div className="flex gap-2 pt-1">
+                <Skeleton className="h-8 w-24 rounded-lg" />
+                <Skeleton className="h-8 w-24 rounded-lg" />
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     );

@@ -10,6 +10,7 @@ import { FiShare2 } from "react-icons/fi";
 import { GoGlobe } from "react-icons/go";
 import { SlSocialFacebook, SlSocialInstagram } from "react-icons/sl";
 import { FaXTwitter, FaTiktok } from "react-icons/fa6";
+import { SocialLinksSkeleton } from "@/components/ui/shimmer";
 
 interface SocialFormState {
   website: string;
@@ -97,14 +98,7 @@ const EditSocialLinks: React.FC = () => {
   };
 
   if (loading) {
-    return (
-      <div className="bg-white dark:bg-darkSurface rounded-2xl p-8 shadow-sm border border-gray-100 dark:border-zinc-800 flex items-center justify-center min-h-[300px]">
-        <div className="flex items-center gap-3 text-gray-500 dark:text-zinc-400">
-          <div className="w-5 h-5 border-2 border-orange border-t-transparent rounded-full animate-spin"></div>
-          <span>Loading social links...</span>
-        </div>
-      </div>
-    );
+    return <SocialLinksSkeleton />;
   }
 
   if (error) {

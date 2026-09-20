@@ -9,7 +9,7 @@ import { FIND_SERVICES } from "@/graphql/queries";
 import { useLazyQuery } from "@apollo/client";
 import FilterSearchBar from "@/components/vendor-search/FilterSearchBar";
 import { Offering } from "@/types/offeringTypes";
-import LoaderJelly from "@/components/shared/Loaders/LoaderJelly";
+import { OfferingGridSkeleton } from "@/components/ui/shimmer";
 import Chatbot from "@/components/ai/chatbot";
 import { IoClose } from "react-icons/io5";
 
@@ -271,11 +271,11 @@ const VendorSearchContent: React.FC = () => {
           <div className="w-full">
             {/* Data Loading/Error/Result State */}
             {loading ? (
-              <div className="py-16 flex flex-col items-center justify-center">
-                <LoaderJelly />
-                <p className="text-xs font-semibold text-gray-500 dark:text-zinc-400 font-body mt-3">
-                  Finding wedding vendors...
-                </p>
+              <div>
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="h-7 w-48 rounded-lg bg-gray-200/80 dark:bg-darkElevated animate-pulse" />
+                </div>
+                <OfferingGridSkeleton count={8} />
               </div>
             ) : error ? (
               <div className="bg-white dark:bg-darkSurface rounded-3xl border-2 border-rose-200 dark:border-rose-900/50 p-8 text-center my-6 max-w-md mx-auto">
@@ -351,8 +351,8 @@ const VendorSearch: React.FC = () => {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-lightYellow dark:bg-darkBg flex flex-col items-center justify-center p-8">
-          <LoaderJelly />
+        <div className="min-h-screen bg-lightYellow dark:bg-darkBg p-8 max-w-7xl mx-auto pt-24">
+          <OfferingGridSkeleton count={8} />
         </div>
       }
     >

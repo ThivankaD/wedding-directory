@@ -5,7 +5,7 @@ import { GET_VENDOR_MESSAGES } from "@/graphql/queries";
 import ChatList from "../../../components/chat/VendorChatList";
 import { useVendorAuth } from "../../../contexts/VendorAuthContext";
 import Link from "next/link";
-import LoaderJelly from "@/components/shared/Loaders/LoaderJelly";
+import { ChatListSkeleton } from "@/components/ui/shimmer";
 
 export default function ChatsPage() {
   const { vendor } = useVendorAuth();
@@ -18,11 +18,15 @@ export default function ChatsPage() {
 
   if (loading) {
     return (
-      <div className="flex-grow flex items-center justify-center p-12">
-        <div className="flex flex-col items-center gap-3">
-          <LoaderJelly />
-          <p className="text-sm font-medium text-gray-500 dark:text-zinc-400">Loading conversations...</p>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 max-w-4xl space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="space-y-2">
+            <div className="h-8 w-56 bg-gray-200/80 dark:bg-darkElevated/90 rounded-xl animate-pulse" />
+            <div className="h-4 w-80 bg-gray-200/80 dark:bg-darkElevated/90 rounded-xl animate-pulse" />
+          </div>
+          <div className="h-10 w-36 bg-gray-200/80 dark:bg-darkElevated/90 rounded-xl animate-pulse" />
         </div>
+        <ChatListSkeleton count={5} />
       </div>
     );
   }

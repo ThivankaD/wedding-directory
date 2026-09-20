@@ -10,7 +10,7 @@ import { MARK_CHAT_AS_READ } from "@/graphql/mutations";
 import { IoLocationSharp } from "react-icons/io5";
 import { FiMessageSquare, FiSearch, FiChevronRight, FiShoppingBag, FiArrowRight } from "react-icons/fi";
 import { useAuth } from "@/contexts/VisitorAuthContext";
-import LoaderHelix from "@/components/shared/Loaders/LoaderHelix";
+import { ChatListSkeleton } from "@/components/ui/shimmer";
 
 interface Message {
   content: string;
@@ -158,12 +158,7 @@ const VisitorChatList = ({ visitorId }: VisitorChatListProps) => {
   });
 
   if (loading) {
-    return (
-      <div className="p-12 flex flex-col items-center justify-center gap-3">
-        <LoaderHelix />
-        <p className="text-xs font-semibold text-gray-500 font-body">Loading conversations...</p>
-      </div>
-    );
+    return <ChatListSkeleton count={5} />;
   }
 
   const chats: Chat[] = data?.getVisitorChats || [];

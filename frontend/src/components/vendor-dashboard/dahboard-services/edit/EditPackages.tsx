@@ -13,6 +13,7 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { CiCirclePlus } from "react-icons/ci";
 import { uploadPackageImage } from "@/api/upload/package/package.upload";
+import { PackagesSkeleton } from "@/components/ui/shimmer";
 import {
   FiPlus,
   FiTrash2,
@@ -349,14 +350,7 @@ const EditPackages: React.FC = () => {
   };
 
   if (loading) {
-    return (
-      <div className="bg-white dark:bg-darkSurface rounded-2xl p-8 shadow-sm border border-gray-100 dark:border-zinc-800 flex items-center justify-center min-h-[300px]">
-        <div className="flex items-center gap-3 text-gray-500 dark:text-zinc-400">
-          <div className="w-5 h-5 border-2 border-orange border-t-transparent rounded-full animate-spin"></div>
-          <span>Loading packages...</span>
-        </div>
-      </div>
-    );
+    return <PackagesSkeleton />;
   }
 
   if (error) {

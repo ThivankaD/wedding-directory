@@ -8,7 +8,7 @@ import AmountPaid from '@/components/visitor-dashboard/budgeter/AmountPaid';
 import BudgetItemsPanel from '@/components/visitor-dashboard/budgeter/BudgetItemsPanel';
 import CreateBudgetTool from '@/components/visitor-dashboard/budgeter/CreateBudgetTool';
 import { BudgetItemData } from '@/types/budgeterTypes';
-import LoaderHelix from '@/components/shared/Loaders/LoaderHelix';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface Package {
   pricing?: number;
@@ -32,8 +32,57 @@ const BudgeterPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center p-8">
-        <LoaderHelix />
+      <div className="w-full space-y-6 animate-fade-in">
+        {/* Header Skeleton */}
+        <div className="bg-white dark:bg-darkSurface p-6 sm:p-8 rounded-3xl border-2 border-orange/20 dark:border-zinc-800 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="space-y-2">
+            <Skeleton className="h-8 w-48" />
+            <Skeleton className="h-4 w-72" />
+          </div>
+          <div className="flex gap-3">
+            <Skeleton className="h-10 w-32 rounded-xl" />
+            <Skeleton className="h-10 w-36 rounded-xl" />
+          </div>
+        </div>
+
+        {/* 2 Stat Cards Skeleton */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+          <div className="bg-white dark:bg-darkSurface p-6 rounded-3xl border-2 border-orange/20 dark:border-zinc-800 shadow-sm space-y-4">
+            <Skeleton className="h-5 w-32" />
+            <Skeleton className="h-9 w-44" />
+            <Skeleton className="h-3 w-full rounded-full" />
+          </div>
+          <div className="bg-white dark:bg-darkSurface p-6 rounded-3xl border-2 border-orange/20 dark:border-zinc-800 shadow-sm space-y-4">
+            <Skeleton className="h-5 w-32" />
+            <Skeleton className="h-9 w-44" />
+            <Skeleton className="h-3 w-full rounded-full" />
+          </div>
+        </div>
+
+        {/* Budget Items Panel Skeleton */}
+        <div className="bg-white dark:bg-darkSurface p-6 rounded-3xl border-2 border-orange/20 dark:border-zinc-800 shadow-sm space-y-4">
+          <div className="flex items-center justify-between">
+            <Skeleton className="h-6 w-36" />
+            <Skeleton className="h-9 w-28 rounded-xl" />
+          </div>
+          <div className="space-y-3 pt-2">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="flex items-center justify-between p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-100 dark:border-zinc-800">
+                <div className="flex items-center gap-3">
+                  <Skeleton className="w-10 h-10 rounded-xl" />
+                  <div className="space-y-1.5">
+                    <Skeleton className="h-4 w-36" />
+                    <Skeleton className="h-3 w-24" />
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <Skeleton className="h-5 w-24" />
+                  <Skeleton className="h-8 w-16 rounded-lg" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }

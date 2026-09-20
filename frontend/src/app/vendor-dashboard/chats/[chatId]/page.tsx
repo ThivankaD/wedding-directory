@@ -13,7 +13,7 @@ import Link from "next/link";
 import { useVendorAuth } from "@/contexts/VendorAuthContext";
 import { useChatSocket } from "@/hooks/useChatSocket";
 
-import LoaderJelly from "@/components/shared/Loaders/LoaderJelly";
+import { ChatWindowSkeleton } from "@/components/ui/shimmer";
 
 export default function ChatPage() {
   const { chatId } = useParams();
@@ -81,11 +81,8 @@ export default function ChatPage() {
 
   if (chatLoading || visitorLoading)
     return (
-      <div className="flex-grow flex items-center justify-center p-12">
-        <div className="flex flex-col items-center gap-3">
-          <LoaderJelly />
-          <p className="text-sm font-medium text-gray-500 dark:text-zinc-400">Loading conversation...</p>
-        </div>
+      <div className="container mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 max-w-4xl flex-grow flex flex-col">
+        <ChatWindowSkeleton />
       </div>
     );
 

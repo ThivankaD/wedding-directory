@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import LoaderHelix from "@/components/shared/Loaders/LoaderHelix";
+import { Skeleton } from "@/components/ui/skeleton";
 import { FIND_VENDOR_BY_SERVICE } from "@/graphql/queries";
 import { useQuery } from "@apollo/client";
 import axios from "axios";
@@ -42,7 +42,7 @@ const LeafletMap = dynamic(
           });
         }, []);
 
-        if (!icon) return <div className="h-[400px] w-full bg-gray-100 animate-pulse rounded-2xl" />;
+        if (!icon) return <Skeleton className="h-[400px] w-full rounded-2xl" />;
 
         return (
           <MapContainer
@@ -69,7 +69,7 @@ const LeafletMap = dynamic(
     }),
   {
     ssr: false,
-    loading: () => <LoaderHelix />,
+    loading: () => <Skeleton className="h-[400px] w-full rounded-2xl" />,
   }
 );
 
@@ -158,8 +158,18 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({ serviceId }) =>
 
   if (vendorLoading || isFetchingCoordinates) {
     return (
-      <div className="h-[400px] flex items-center justify-center bg-gray-50 dark:bg-darkElevated rounded-2xl border border-gray-100 dark:border-zinc-800">
-        <LoaderHelix />
+      <div className="flex flex-col gap-3 animate-fade-in">
+        <Skeleton className="w-full h-[400px] rounded-2xl" />
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 bg-white dark:bg-darkSurface rounded-xl border border-gray-200 dark:border-zinc-800">
+          <div className="flex items-center gap-2.5">
+            <Skeleton className="w-8 h-8 rounded-lg" />
+            <div className="space-y-1.5">
+              <Skeleton className="h-4 w-32" />
+              <Skeleton className="h-3 w-48" />
+            </div>
+          </div>
+          <Skeleton className="h-8 w-28 rounded-lg" />
+        </div>
       </div>
     );
   }

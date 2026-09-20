@@ -176,7 +176,42 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var path = window.location.pathname;
+                  var isDashboard = path === '/' ||
+                    path.indexOf('/visitor-') === 0 ||
+                    path.indexOf('/vendor-') === 0 ||
+                    path.indexOf('/guest-list') === 0 ||
+                    path.indexOf('/services') === 0 ||
+                    path.indexOf('/login') === 0 ||
+                    path.indexOf('/sign-up') === 0 ||
+                    path.indexOf('/forgot-password') === 0 ||
+                    path.indexOf('/blog') === 0 ||
+                    path.indexOf('/about') === 0 ||
+                    path.indexOf('/contact') === 0 ||
+                    path.indexOf('/help') === 0 ||
+                    path.indexOf('/privacy-policy') === 0 ||
+                    path.indexOf('/terms-of-use') === 0 ||
+                    path.indexOf('/profile') === 0;
+
+                  var theme = localStorage.getItem('sayido_dashboard_theme');
+                  if (isDashboard && theme === 'dark') {
+                    document.documentElement.classList.add('dark');
+                  } else {
+                    document.documentElement.classList.remove('dark');
+                  }
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
+      </head>
       <body
         className={`${montserratFont.variable} ${merriweatherFont.variable} ${montezFont.variable} ${outfitFont.variable} ${marckScriptFont.variable}`}
       >

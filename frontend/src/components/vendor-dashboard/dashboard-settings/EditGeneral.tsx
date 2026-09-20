@@ -8,10 +8,11 @@ import { GeneralData } from "@/types/vendorTypes";
 import { useVendorAuth } from "@/contexts/VendorAuthContext";
 import { useMutation, useQuery } from "@apollo/client";
 import { GET_VENDOR_BY_ID } from "@/graphql/queries";
-import CityInput from "@/components/vendor-signup/CityInput";
 import { UPDATE_VENDOR } from "@/graphql/mutations";
+import CityInput from "@/components/vendor-signup/CityInput";
 import LocationInput from "@/components/vendor-signup/LocationInput";
 import VendorProfilePicture from "./VendorProfilePicture";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const EditGeneral: React.FC = () => {
   const { vendor } = useVendorAuth();
@@ -92,10 +93,25 @@ const EditGeneral: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="bg-white dark:bg-darkSurface rounded-2xl p-8 shadow-sm border border-gray-100 dark:border-zinc-800 flex items-center justify-center min-h-[300px]">
-        <div className="flex items-center gap-3 text-gray-500 dark:text-zinc-400">
-          <div className="w-5 h-5 border-2 border-orange border-t-transparent rounded-full animate-spin"></div>
-          <span>Loading information...</span>
+      <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 p-6 sm:p-8 space-y-6 animate-fade-in">
+        <div className="pb-6 border-b border-gray-100 dark:border-zinc-800 space-y-2">
+          <Skeleton className="h-7 w-48 rounded-lg" />
+          <Skeleton className="h-4 w-72 rounded" />
+        </div>
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-28 rounded" />
+            <Skeleton className="h-11 w-full rounded-xl" />
+          </div>
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-28 rounded" />
+            <Skeleton className="h-11 w-full rounded-xl" />
+          </div>
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-28 rounded" />
+            <Skeleton className="h-24 w-full rounded-xl" />
+          </div>
+          <Skeleton className="h-11 w-36 rounded-xl mt-4" />
         </div>
       </div>
     );

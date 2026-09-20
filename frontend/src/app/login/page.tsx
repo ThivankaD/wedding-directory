@@ -9,7 +9,6 @@ import { loginVendor as loginVendorAPI } from "@/api/auth/vendor.auth.api";
 import { useVendorAuth } from "@/contexts/VendorAuthContext";
 import { toast } from 'react-hot-toast';
 import GoogleAuthButton from "@/components/auth/GoogleAuthButton";
-import LoaderJelly from "@/components/shared/Loaders/LoaderJelly";
 
 const VendorLoginPage = () => {
   const [email, setEmail] = useState("");
@@ -71,20 +70,11 @@ const VendorLoginPage = () => {
     }
   };
 
-  if (vendor) {
-    return (
-      <div className="min-h-screen bg-lightYellow dark:bg-darkBg text-gray-900 dark:text-zinc-100 flex flex-col justify-between transition-colors duration-200">
-        <Header />
-        <main className="flex-1 flex flex-col justify-center items-center gap-3">
-          <LoaderJelly />
-          <p className="text-sm text-gray-600 dark:text-zinc-400 font-body font-medium">
-            Redirecting to your dashboard...
-          </p>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
+  useEffect(() => {
+    if (vendor && !isLoading) {
+      router.replace('/vendor-dashboard');
+    }
+  }, [vendor, isLoading, router]);
 
   return (
     <div className="min-h-screen bg-lightYellow dark:bg-darkBg text-gray-900 dark:text-zinc-100 flex flex-col justify-between transition-colors duration-200">
@@ -99,112 +89,107 @@ const VendorLoginPage = () => {
 
         {/* Vendor Login Card */}
         <div className="relative z-10 w-full max-w-[460px] bg-white dark:bg-darkSurface border border-orange/25 dark:border-zinc-700/80 rounded-3xl shadow-xl dark:shadow-[0_8px_30px_rgb(0,0,0,0.5)] p-6 sm:p-8 font-body transition-colors">
-          {/* Loader Overlay */}
-          {isLoading && (
-            <div className="absolute inset-0 bg-white/90 dark:bg-darkSurface/90 backdrop-blur-xs flex items-center justify-center z-30 rounded-3xl">
-              <LoaderJelly />
+          <h1 className="text-3xl sm:text-4xl font-bold text-center font-title text-gray-900 dark:text-zinc-100">
+            Vendor Login
+          </h1>
+          <p className="text-sm text-gray-600 dark:text-zinc-400 text-center mt-2">
+            Welcome back! Access your wedding business portal.
+          </p>
+
+          <form onSubmit={handleSubmit} className="mt-6">
+            <div className="grid grid-cols-1 w-full items-center gap-y-4">
+              <div>
+                <label
+                  htmlFor="email"
+                  className="block text-xs font-semibold text-gray-700 dark:text-zinc-300 mb-1.5"
+                >
+                  Email Address
+                </label>
+                <input
+                  className="w-full h-12 px-4 rounded-xl text-base bg-white dark:bg-darkElevated border-2 border-gray-200 dark:border-zinc-700/80 text-gray-900 dark:text-zinc-100 placeholder:text-gray-400 dark:placeholder:text-zinc-500 outline-none focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 focus:border-orange dark:focus:border-orange transition-colors disabled:opacity-60"
+                  type="email"
+                  id="email"
+                  placeholder="vendor@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={isLoading}
+                  required
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="password"
+                  className="block text-xs font-semibold text-gray-700 dark:text-zinc-300 mb-1.5"
+                >
+                  Password
+                </label>
+                <input
+                  className="w-full h-12 px-4 rounded-xl text-base bg-white dark:bg-darkElevated border-2 border-gray-200 dark:border-zinc-700/80 text-gray-900 dark:text-zinc-100 placeholder:text-gray-400 dark:placeholder:text-zinc-500 outline-none focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 focus:border-orange dark:focus:border-orange transition-colors disabled:opacity-60"
+                  type="password"
+                  id="password"
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  disabled={isLoading}
+                  required
+                />
+              </div>
             </div>
-          )}
 
-          {!isLoading && (
-            <>
-              <h1 className="text-3xl sm:text-4xl font-bold text-center font-title text-gray-900 dark:text-zinc-100">
-                Vendor Login
-              </h1>
-              <p className="text-sm text-gray-600 dark:text-zinc-400 text-center mt-2">
-                Welcome back! Access your wedding business portal.
+            {error && <p className="text-red-500 text-sm text-center mt-3">{error}</p>}
+
+            <div className="mt-6 flex flex-col w-full">
+              <button
+                type="submit"
+                disabled={isLoading}
+                className={`w-full h-12 rounded-xl font-title text-base font-bold transition-all flex items-center justify-center ${
+                  isLoading
+                    ? "bg-zinc-400 dark:bg-zinc-700 text-zinc-200 dark:text-zinc-400 cursor-not-allowed shadow-none"
+                    : "bg-orange hover:bg-orange/90 active:scale-[0.99] text-white shadow-md hover:shadow-orange/20 cursor-pointer"
+                }`}
+              >
+                {isLoading ? "Processing..." : "Log In"}
+              </button>
+            </div>
+
+            <div className="text-center mt-3">
+              <Link
+                href="/forgot-password?role=vendor"
+                className="text-sm text-gray-600 dark:text-zinc-400 hover:text-orange dark:hover:text-orange hover:underline transition-colors"
+              >
+                Forget your password?
+              </Link>
+            </div>
+
+            <div className="flex items-center my-4">
+              <div className="flex-grow border-t border-gray-200 dark:border-zinc-800"></div>
+              <span className="flex-shrink mx-3 text-gray-400 dark:text-zinc-500 text-xs uppercase font-medium">or</span>
+              <div className="flex-grow border-t border-gray-200 dark:border-zinc-800"></div>
+            </div>
+
+            <GoogleAuthButton role="vendor" text="signin_with" />
+
+            <hr className="border-t border-gray-200 dark:border-zinc-800 my-4" />
+
+            <div className="text-center mt-3">
+              <p className="text-sm text-gray-600 dark:text-zinc-400 leading-none">
+                Don&apos;t have an account?{" "}
+                <Link href="/vendor-signup" className="text-orange font-semibold hover:underline">
+                  Register Here
+                </Link>
               </p>
+            </div>
 
-              <form onSubmit={handleSubmit} className="mt-6">
-                <div className="grid grid-cols-1 w-full items-center gap-y-4">
-                  <div>
-                    <label
-                      htmlFor="email"
-                      className="block text-xs font-semibold text-gray-700 dark:text-zinc-300 mb-1.5"
-                    >
-                      Email Address
-                    </label>
-                    <input
-                      className="w-full h-12 px-4 rounded-xl text-base bg-white dark:bg-darkElevated border-2 border-gray-200 dark:border-zinc-700/80 text-gray-900 dark:text-zinc-100 placeholder:text-gray-400 dark:placeholder:text-zinc-500 outline-none focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 focus:border-orange dark:focus:border-orange transition-colors"
-                      type="email"
-                      id="email"
-                      placeholder="vendor@example.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="password"
-                      className="block text-xs font-semibold text-gray-700 dark:text-zinc-300 mb-1.5"
-                    >
-                      Password
-                    </label>
-                    <input
-                      className="w-full h-12 px-4 rounded-xl text-base bg-white dark:bg-darkElevated border-2 border-gray-200 dark:border-zinc-700/80 text-gray-900 dark:text-zinc-100 placeholder:text-gray-400 dark:placeholder:text-zinc-500 outline-none focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 focus:border-orange dark:focus:border-orange transition-colors"
-                      type="password"
-                      id="password"
-                      placeholder="Enter your password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                    />
-                  </div>
-                </div>
-
-                {error && <p className="text-red-500 text-sm text-center mt-3">{error}</p>}
-
-                <div className="mt-6 flex flex-col w-full">
-                  <button
-                    type="submit"
-                    disabled={isLoading}
-                    className="w-full h-12 rounded-xl text-white font-title text-lg font-bold bg-orange hover:bg-orange/90 active:scale-[0.99] shadow-md hover:shadow-orange/20 transition-all cursor-pointer flex items-center justify-center disabled:opacity-50"
-                  >
-                    Log In
-                  </button>
-                </div>
-
-                <div className="text-center mt-3">
-                  <Link
-                    href="/forgot-password?role=vendor"
-                    className="text-sm text-gray-600 dark:text-zinc-400 hover:text-orange dark:hover:text-orange hover:underline transition-colors"
-                  >
-                    Forget your password?
-                  </Link>
-                </div>
-
-                <div className="flex items-center my-4">
-                  <div className="flex-grow border-t border-gray-200 dark:border-zinc-800"></div>
-                  <span className="flex-shrink mx-3 text-gray-400 dark:text-zinc-500 text-xs uppercase font-medium">or</span>
-                  <div className="flex-grow border-t border-gray-200 dark:border-zinc-800"></div>
-                </div>
-
-                <GoogleAuthButton role="vendor" text="signin_with" />
-
-                <hr className="border-t border-gray-200 dark:border-zinc-800 my-4" />
-
-                <div className="text-center mt-3">
-                  <p className="text-sm text-gray-600 dark:text-zinc-400 leading-none">
-                    Don&apos;t have an account?{" "}
-                    <Link href="/vendor-signup" className="text-orange font-semibold hover:underline">
-                      Register Here
-                    </Link>
-                  </p>
-                </div>
-
-                <div className="text-center mt-2.5">
-                  <p className="text-sm font-semibold text-gray-700 dark:text-zinc-300 leading-none">
-                    Planning a wedding?{" "}
-                    <Link href="/visitor-login" className="text-orange font-bold hover:underline">
-                      User Login
-                    </Link>
-                  </p>
-                </div>
-              </form>
-            </>
-          )}
+            <div className="text-center mt-2.5">
+              <p className="text-sm font-semibold text-gray-700 dark:text-zinc-300 leading-none">
+                Planning a wedding?{" "}
+                <Link href="/visitor-login" className="text-orange font-bold hover:underline">
+                  User Login
+                </Link>
+              </p>
+            </div>
+          </form>
         </div>
       </main>
 

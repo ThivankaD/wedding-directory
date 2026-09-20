@@ -31,7 +31,9 @@ const VisitorHeader = () => {
       name: "Dashboard",
       href: "/visitor-dashboard",
       isActive: (path: string) =>
-        path.startsWith("/visitor-dashboard") && !path.startsWith("/visitor-dashboard/help"),
+        path.startsWith("/visitor-dashboard") &&
+        !path.startsWith("/visitor-dashboard/help") &&
+        !path.startsWith("/visitor-dashboard/chats"),
     },
     {
       name: "Vendors",
@@ -225,12 +227,22 @@ const VisitorHeader = () => {
             {/* Chat icon with unread badge */}
             <Link
               href={`/visitor-dashboard/chats/${visitor?.id}`}
-              className="relative p-2 rounded-xl hover:bg-orange/10 dark:hover:bg-zinc-800 transition-colors text-gray-700 dark:text-zinc-300 hover:text-orange flex items-center justify-center"
+              className={`relative p-2 rounded-xl transition-all flex items-center justify-center ${
+                pathname.startsWith("/visitor-dashboard/chats")
+                  ? "bg-orange text-white shadow-xs font-bold"
+                  : "text-gray-700 dark:text-zinc-300 hover:text-orange hover:bg-orange/10 dark:hover:bg-zinc-800 font-semibold"
+              }`}
               title="Messages"
             >
               <BiMessageRounded className="w-[26px] h-[26px]" />
               {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center shadow-xs">
+                <span
+                  className={`absolute -top-1 -right-1 text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center shadow-xs ${
+                    pathname.startsWith("/visitor-dashboard/chats")
+                      ? "bg-white text-orange"
+                      : "bg-red-500 text-white"
+                  }`}
+                >
                   {unreadCount > 9 ? "9+" : unreadCount}
                 </span>
               )}
@@ -376,14 +388,11 @@ const VisitorHeader = () => {
               type="button"
               onClick={toggleTheme}
               className="p-2 rounded-xl text-gray-700 dark:text-zinc-300 hover:text-orange hover:bg-orange/10 dark:hover:bg-zinc-800 transition-colors flex items-center justify-center cursor-pointer"
-              title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
+              title="Toggle Theme"
               aria-label="Toggle Theme"
             >
-              {theme === "dark" ? (
-                <FiSun className="w-[24px] h-[24px] text-amber-400 hover:rotate-45 transition-transform" />
-              ) : (
-                <FiMoon className="w-[24px] h-[24px] text-gray-700 dark:text-zinc-300 hover:text-orange transition-transform" />
-              )}
+              <FiSun className="hidden dark:block w-[24px] h-[24px] text-amber-400 hover:rotate-45 transition-transform" />
+              <FiMoon className="block dark:hidden w-[24px] h-[24px] text-gray-700 dark:text-zinc-300 hover:text-orange transition-transform" />
             </button>
 
             {/* Profile dropdown */}

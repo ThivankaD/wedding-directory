@@ -11,7 +11,7 @@ import { FaStore } from "react-icons/fa";
 import { useChatSocket } from "@/hooks/useChatSocket";
 import Link from "next/link";
 import Image from "next/image";
-import LoaderJelly from "@/components/shared/Loaders/LoaderJelly";
+import { ChatWindowSkeleton } from "@/components/ui/shimmer";
 
 interface Message {
   content: string;
@@ -133,12 +133,7 @@ const VisitorChatWindow = ({ chatId }: VisitorChatWindowProps) => {
   };
 
   if (loading && messages.length === 0) {
-    return (
-      <div className="h-[550px] flex flex-col items-center justify-center gap-3">
-        <LoaderJelly />
-        <p className="text-xs font-medium text-gray-400">Loading conversation...</p>
-      </div>
-    );
+    return <ChatWindowSkeleton />;
   }
 
   const vendorDisplayName =
@@ -244,33 +239,8 @@ const VisitorChatWindow = ({ chatId }: VisitorChatWindowProps) => {
             return (
               <div
                 key={index}
-                className={`flex items-end gap-2.5 ${
-                  isVisitor ? "flex-row-reverse" : "flex-row"
-                }`}
+                className={`flex ${isVisitor ? "justify-end" : "justify-start"}`}
               >
-                {/* Small Avatar badge */}
-                <div
-                  className={`w-7 h-7 rounded-xl flex items-center justify-center font-bold text-[11px] flex-shrink-0 mb-0.5 shadow-xs border overflow-hidden relative ${
-                    isVisitor
-                      ? "bg-orange text-white border-orange"
-                      : "bg-white dark:bg-darkElevated text-orange border-orange/20 dark:border-zinc-700"
-                  }`}
-                >
-                  {isVisitor ? (
-                    "You"
-                  ) : vendor?.profile_pic_url ? (
-                    <Image
-                      src={vendor.profile_pic_url}
-                      alt={vendorDisplayName}
-                      fill
-                      sizes="28px"
-                      className="object-cover"
-                    />
-                  ) : (
-                    vendorDisplayName[0]?.toUpperCase() || "V"
-                  )}
-                </div>
-
                 {/* Message Bubble */}
                 <div
                   className={`max-w-[85%] sm:max-w-[70%] group flex flex-col ${

@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 import { useParams } from "next/navigation";
 import { useQuery, useMutation } from "@apollo/client";
 import { FIND_PORTFOLIO_BY_ID, DELETE_SHOWCASE_IMAGE, DELETE_BANNER_IMAGE, DELETE_SHOWCASE_VIDEO } from "@/graphql/queries";
+import { MediaSkeleton } from "@/components/ui/shimmer";
 
 const EditPortfolio: React.FC = () => {
   const params = useParams();
@@ -64,7 +65,7 @@ const EditPortfolio: React.FC = () => {
     }
   }, [portfolio]);
 
-  if (loading) return <p className="p-4">Loading Photos & Media...</p>;
+  if (loading) return <MediaSkeleton />;
   if (error) return <p className="p-4 text-red-500">Error: {error.message}</p>;
 
   // Handle Banner File Selection & Auto-upload

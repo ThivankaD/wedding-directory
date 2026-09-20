@@ -11,7 +11,7 @@ import { useVendorAuth } from "@/contexts/VendorAuthContext";
 import { useQuery } from "@apollo/client";
 import { MdAdd } from "react-icons/md";
 import Footer from "@/components/shared/Footer";
-import LoaderJelly from "@/components/shared/Loaders/LoaderJelly";
+import { VendorDashboardSkeleton } from "@/components/ui/shimmer";
 import { Service } from "@/types/serviceTypes";
 import { FiEdit, FiCalendar, FiShield } from "react-icons/fi";
 import BookingCalendar from "@/components/vendor-dashboard/BookingCalendar";
@@ -19,7 +19,7 @@ import VendorApprovalRequests from "@/components/vendor-dashboard/VendorApproval
 
 const VendorDashBoardContent: React.FC = () => {
   const router = useRouter();
-  const { vendor } = useVendorAuth();
+  const { vendor, isInitialized } = useVendorAuth();
   const searchParams = useSearchParams();
   const tabParam = searchParams.get("tab");
   const [services, setServices] = useState<Service[]>([]);
@@ -73,19 +73,8 @@ const VendorDashBoardContent: React.FC = () => {
     }
   }, [servicesData]);
 
-  if (vendorLoading || servicesLoading)
-    return (
-      <div className="min-h-screen bg-lightYellow dark:bg-darkBg flex flex-col">
-        <VendorHeader />
-        <div className="flex-grow flex items-center justify-center p-8">
-          <div className="flex flex-col items-center gap-3">
-            <LoaderJelly />
-            <p className="text-sm font-medium text-gray-500 dark:text-zinc-400">Loading your vendor dashboard...</p>
-          </div>
-        </div>
-        <Footer />
-      </div>
-    );
+  if (!isInitialized || !vendor?.id || vendorLoading || servicesLoading)
+    return <VendorDashboardSkeleton />;
 
   if (vendorError || servicesError)
     return (
@@ -248,13 +237,7 @@ const VendorDashBoardContent: React.FC = () => {
 
 const VendorDashboardPage: React.FC = () => {
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen bg-lightYellow dark:bg-darkBg flex flex-col items-center justify-center">
-          <LoaderJelly />
-        </div>
-      }
-    >
+    <Suspense fallback={<VendorDashboardSkeleton />}>
       <VendorDashBoardContent />
     </Suspense>
   );

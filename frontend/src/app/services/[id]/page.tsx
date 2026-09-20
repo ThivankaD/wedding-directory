@@ -20,7 +20,7 @@ import { FiEdit, FiPlus, FiMessageCircle, FiMapPin, FiArrowLeft, FiCalendar } fr
 import Reviews from "@/components/vendor-dashboard/dahboard-services/reviews/Reviews";
 import { useVendorAuth } from "@/contexts/VendorAuthContext";
 import Link from "next/link";
-import LoaderQuantum from "@/components/shared/Loaders/LoaderQuantum";
+import { ServiceDetailSkeleton } from "@/components/ui/shimmer";
 import Comments from "@/components/vendor-dashboard/dahboard-services/reviews/Comments";
 import WriteReview from "@/components/vendor-dashboard/dahboard-services/reviews/WriteReview";
 import { useAuth } from "@/contexts/VisitorAuthContext";
@@ -246,7 +246,7 @@ const Service: React.FC = () => {
     }
   }, [myVendorData]);
 
-  if (loading || myVendorLoading) return <LoaderQuantum />;
+  if (loading || myVendorLoading) return <ServiceDetailSkeleton />;
   if (queryError) return <p>Error: {queryError.message}</p>;
 
   const offering = data?.findOfferingById;

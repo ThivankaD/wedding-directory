@@ -24,6 +24,7 @@ interface AuthContextProps {
   vendor: Vendor | null;
   accessToken: string | null;
   isAuthenticated: boolean;
+  isInitialized: boolean;
   login: (token: string) => void;
   logout: () => void;
 }
@@ -41,6 +42,7 @@ export const useVendorAuth = (): AuthContextProps => {
 export const VendorAuthProvider = ({ children }: { children: ReactNode }) => {
   const [vendor, setVendor] = useState<Vendor | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
   const router = useRouter();
 
   const logout = () => {
@@ -105,11 +107,12 @@ export const VendorAuthProvider = ({ children }: { children: ReactNode }) => {
         logout();
       }
     }
+    setIsInitialized(true);
   }, []);
 
   return (
     <AuthContext.Provider
-      value={{ vendor, accessToken, isAuthenticated, login, logout }}
+      value={{ vendor, accessToken, isAuthenticated, isInitialized, login, logout }}
     >
       {children}
     </AuthContext.Provider>
