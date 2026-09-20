@@ -1,4 +1,4 @@
-﻿import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { ServiceEntity } from "../../database/entities/service.entity";
 import { ServiceMediaEntity } from "../../database/entities/service-media.entity";
 import { CreateServiceInput } from "../../graphql/inputs/createService.input";
@@ -84,8 +84,16 @@ export class ServiceService {
     if (!service) {
       throw new Error("Service not found");
     }
-    const existingShowcaseImages = [...(service.photo_showcase || [])];
 
+    // Read current photos directly from service_media (source of truth)
+    const mediaRepo = this.dataSource.getRepository(ServiceMediaEntity);
+    const existingPhotoRows = await mediaRepo.find({
+      where: { service: { id }, mediaType: 'photo' },
+      order: { slotIndex: 'ASC' },
+    });
+    const existingShowcaseImages = existingPhotoRows.map(r => r.url);
+
+    let updatedShowcaseImages: string[];
     if (
       typeof slotIndex === "number" &&
       slotIndex >= 0 &&
@@ -97,18 +105,15 @@ export class ServiceService {
       } else {
         existingShowcaseImages.push(fileUrls[0]);
       }
-      service.photo_showcase = existingShowcaseImages.slice(0, 5);
+      updatedShowcaseImages = existingShowcaseImages.slice(0, 5);
     } else {
-      const updatedShowcaseImages = [
-        ...existingShowcaseImages,
-        ...fileUrls,
-      ].slice(0, 5);
-      service.photo_showcase = updatedShowcaseImages;
+      updatedShowcaseImages = [...existingShowcaseImages, ...fileUrls].slice(0, 5);
     }
 
-    const savedService = await this.serviceRepository.save(service);
-    await this.syncServiceMedia(savedService, 'photo', savedService.photo_showcase);
-    return savedService;
+    await this.syncServiceMedia(service, 'photo', updatedShowcaseImages);
+    // Populate virtual property for the returned entity
+    service.photo_showcase = updatedShowcaseImages;
+    return service;
   }
 
   async updateServiceVideos(
@@ -119,12 +124,19 @@ export class ServiceService {
     if (!service) {
       throw new Error("Service not found");
     }
-    const existingVideos = service.video_showcase || [];
-    const updatedVideos = [...existingVideos, ...fileUrls];
-    const newService = { ...service, video_showcase: updatedVideos };
-    const savedService = await this.serviceRepository.save(newService);
-    await this.syncServiceMedia(savedService, 'video', savedService.video_showcase);
-    return savedService;
+
+    // Read current videos directly from service_media (source of truth)
+    const mediaRepo = this.dataSource.getRepository(ServiceMediaEntity);
+    const existingVideoRows = await mediaRepo.find({
+      where: { service: { id }, mediaType: 'video' },
+      order: { slotIndex: 'ASC' },
+    });
+    const updatedVideos = [...existingVideoRows.map(r => r.url), ...fileUrls];
+
+    await this.syncServiceMedia(service, 'video', updatedVideos);
+    // Populate virtual property for the returned entity
+    service.video_showcase = updatedVideos;
+    return service;
   }
 
   async deleteServiceBanner(id: string): Promise<boolean> {
@@ -152,19 +164,23 @@ export class ServiceService {
     }
 
     try {
-      if (!service.photo_showcase || !Array.isArray(service.photo_showcase)) {
+      // Read from service_media (source of truth)
+      const mediaRepo = this.dataSource.getRepository(ServiceMediaEntity);
+      const existingPhotoRows = await mediaRepo.find({
+        where: { service: { id }, mediaType: 'photo' },
+        order: { slotIndex: 'ASC' },
+      });
+      const photos = existingPhotoRows.map(r => r.url);
+
+      if (photos.length === 0) {
         throw new Error("No showcase images found");
       }
-
-      if (index < 0 || index >= service.photo_showcase.length) {
+      if (index < 0 || index >= photos.length) {
         throw new Error("Invalid image index");
       }
 
-      // Remove the image at the specified index
-      service.photo_showcase.splice(index, 1);
-
-      const savedService = await this.serviceRepository.save(service);
-      await this.syncServiceMedia(savedService, 'photo', savedService.photo_showcase);
+      photos.splice(index, 1);
+      await this.syncServiceMedia(service, 'photo', photos);
       return true;
     } catch (error) {
       throw new Error(`Failed to delete showcase image: ${error.message}`);
@@ -178,9 +194,7 @@ export class ServiceService {
     }
 
     try {
-      service.video_showcase = null;
-      const savedService = await this.serviceRepository.save(service);
-      await this.syncServiceMedia(savedService, 'video', null);
+      await this.syncServiceMedia(service, 'video', null);
       return true;
     } catch (error) {
       throw new Error(`Failed to delete video: ${error.message}`);

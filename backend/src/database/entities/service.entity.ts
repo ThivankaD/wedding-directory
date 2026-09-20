@@ -1,4 +1,4 @@
-﻿import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { VendorEntity } from './vendor.entity';
 import { ReviewEntity } from './review.entity';
 import { MyVendorsEntity } from './myVendors.entity';
@@ -25,11 +25,10 @@ export class ServiceEntity {
     @Column({ type: 'varchar', length: 300, nullable: true  })
     banner: string;
 
-    @Column('text', { array: true, nullable: true })
-    video_showcase: string[];
-
-    @Column('text', { array: true, nullable: true })
-    photo_showcase: string[];
+    // Virtual properties — populated at read-time from service_media child rows.
+    // Not persisted as columns; source of truth is the service_media table.
+    video_showcase?: string[];
+    photo_showcase?: string[];
 
     @Column({ type: 'varchar', length: 100, nullable: true })
     website : string;

@@ -1,4 +1,4 @@
-import { Test, TestingModule } from '@nestjs/testing';
+﻿import { Test, TestingModule } from '@nestjs/testing';
 import { VendorService } from 'src/modules/vendor/vendor.service';
 import { VendorEntity } from 'src/database/entities/vendor.entity';
 import { DataSource } from 'typeorm';
@@ -33,7 +33,7 @@ const createVendor = (): VendorEntity => ({
   profile_pic_url: '',
   createdAt: undefined,
   updatedAt: undefined,
-  offering: [],
+  service: [],
   payments: [],
 });
 

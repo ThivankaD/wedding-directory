@@ -85,5 +85,7 @@ export class VisitorEntity {
   @OneToMany(() => PaymentEntity, (payment) => payment.visitor)
   payments: PaymentEntity[];
 
-  weddingDate: Date;
+  // Alias for wed_date — persisted as the wedding_date column
+  @Column({ name: 'wedding_date', type: 'varchar', nullable: true })
+  weddingDate: string;
 }

@@ -1,4 +1,4 @@
-﻿import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { ServiceEntity } from "./service.entity";
 import { PaymentEntity } from './payment.entity';
 import { PackageApprovalRequestEntity } from './package-approval-request.entity';
@@ -23,8 +23,9 @@ export class PackageEntity {
     })
     pricing: number;
 
-    @Column({ type: 'varchar', array: true, nullable: true})
-    features: string[];
+    // Virtual property — populated at read-time from packageFeatures child rows.
+    // Not persisted; source of truth is the package_feature table.
+    features?: string[];
 
     @Column({ type: 'boolean', default: false })
     visible: boolean;

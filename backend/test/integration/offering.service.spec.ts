@@ -1,20 +1,20 @@
-import { Test, TestingModule } from '@nestjs/testing';
+﻿import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HttpModule, HttpService } from '@nestjs/axios';
-import { OfferingService } from 'src/modules/offering/offering.service';
+import { ServiceService } from 'src/modules/service/service.service';
 import { VendorService } from 'src/modules/vendor/vendor.service';
-import { OfferingEntity } from 'src/database/entities/offering.entity';
+import { ServiceEntity } from 'src/database/entities/service.entity';
 import { VendorEntity } from 'src/database/entities/vendor.entity';
-import { CreateOfferingInput } from 'src/graphql/inputs/createOffering.input';
+import { CreateServiceInput } from 'src/graphql/inputs/createService.input';
 import { getEntities } from '../../src/database/entities/index';
 import { of } from 'rxjs';
-import { UpdateOfferingInput } from 'src/graphql/inputs/updateOffering.input';
+import { UpdateServiceInput } from 'src/graphql/inputs/updateService.input';
 
-describe('OfferingService Integration Tests', () => {
+describe('ServiceService Integration Tests', () => {
   let app: INestApplication;
-  let offeringService: OfferingService;
+  let offeringService: ServiceService;
   let vendorService: VendorService;
   let httpService: HttpService;
   let testOfferingId: string;
@@ -37,15 +37,15 @@ describe('OfferingService Integration Tests', () => {
             synchronize: true,
           }),
         }),
-        TypeOrmModule.forFeature([OfferingEntity, VendorEntity]),
+        TypeOrmModule.forFeature([ServiceEntity, VendorEntity]),
       ],
-      providers: [OfferingService, VendorService],
+      providers: [ServiceService, VendorService],
     }).compile();
 
     app = moduleFixture.createNestApplication();
     await app.init();
 
-    offeringService = moduleFixture.get<OfferingService>(OfferingService);
+    offeringService = moduleFixture.get<ServiceService>(ServiceService);
     vendorService = moduleFixture.get<VendorService>(VendorService);
     httpService = moduleFixture.get<HttpService>(HttpService);
 
@@ -59,9 +59,9 @@ describe('OfferingService Integration Tests', () => {
   afterAll(async () => {
     if (testOfferingId) {
       try {
-        await offeringService.deleteOffering(testOfferingId);
+        await offeringService.deleteService(testOfferingId);
       } catch (e) {
-        console.log('Error cleaning up test offering:', e);
+        console.log('Error cleaning up test service:', e);
       }
     }
     if (testVendorId) {
@@ -93,54 +93,54 @@ describe('OfferingService Integration Tests', () => {
   });
 
   describe('Create Offering', () => {
-    it('should create a new offering in the database', async () => {
-      const createOfferingInput: CreateOfferingInput = {
+    it('should create a new service in the database', async () => {
+      const createServiceInput: CreateServiceInput = {
         vendor_id: testVendorId,
         name: 'Test Offering',
         category: 'Test Category',
       };
 
-      const result = await offeringService.createOffering(createOfferingInput);
+      const result = await offeringService.createService(createServiceInput);
       testOfferingId = result.id;
 
       expect(result).toBeDefined();
-      expect(result.name).toBe(createOfferingInput.name);
-      expect(result.category).toBe(createOfferingInput.category);
+      expect(result.name).toBe(createServiceInput.name);
+      expect(result.category).toBe(createServiceInput.category);
       expect(result.vendor.id).toBe(testVendorId);
     });
   });
 
   describe('Find Offerings', () => {
-    it('should find an offering by ID', async () => {
+    it('should find an service by ID', async () => {
       expect(testOfferingId).toBeDefined();
 
-      const offering = await offeringService.findOfferingById(testOfferingId);
-      expect(offering).toBeDefined();
-      expect(offering.id).toBe(testOfferingId);
+      const service = await offeringService.findServiceById(testOfferingId);
+      expect(service).toBeDefined();
+      expect(service.id).toBe(testOfferingId);
     });
 
     it('should find offerings by vendor', async () => {
       expect(testVendorId).toBeDefined();
 
       const offerings =
-        await offeringService.findOfferingsByVendor(testVendorId);
+        await offeringService.findServicesByVendor(testVendorId);
       expect(Array.isArray(offerings)).toBe(true);
       expect(offerings.length).toBeGreaterThan(0);
       expect(offerings[0].vendor.id).toBe(testVendorId);
     });
 
-    it('should return null when finding non-existent offering', async () => {
+    it('should return null when finding non-existent service', async () => {
       const nonExistentId = '00000000-0000-0000-0000-000000000000';
-      const offering = await offeringService.findOfferingById(nonExistentId);
-      expect(offering).toBeNull();
+      const service = await offeringService.findServiceById(nonExistentId);
+      expect(service).toBeNull();
     });
   });
 
   describe('Update Offering', () => {
-    it('should update offering information', async () => {
+    it('should update service information', async () => {
       expect(testOfferingId).toBeDefined();
 
-      const updateOfferingInput: UpdateOfferingInput = {
+      const updateServiceInput: UpdateServiceInput = {
         description: 'Updated description for testing',
         website: 'https://updated-test.com',
         visible: true,
@@ -155,22 +155,22 @@ describe('OfferingService Integration Tests', () => {
         ],
       };
 
-      const updatedOffering = await offeringService.updateOffering(
+      const updatedOffering = await offeringService.updateService(
         testOfferingId,
-        updateOfferingInput,
+        updateServiceInput,
       );
 
       expect(updatedOffering).toBeDefined();
-      expect(updatedOffering.description).toBe(updateOfferingInput.description);
-      expect(updatedOffering.website).toBe(updateOfferingInput.website);
-      expect(updatedOffering.visible).toBe(updateOfferingInput.visible);
+      expect(updatedOffering.description).toBe(updateServiceInput.description);
+      expect(updatedOffering.website).toBe(updateServiceInput.website);
+      expect(updatedOffering.visible).toBe(updateServiceInput.visible);
     });
 
-    it('should update offering banner', async () => {
+    it('should update service banner', async () => {
       expect(testOfferingId).toBeDefined();
 
       const bannerUrl = 'https://example.com/banners/test.jpg';
-      const updatedOffering = await offeringService.updateOfferingBanner(
+      const updatedOffering = await offeringService.updateServiceBanner(
         testOfferingId,
         bannerUrl,
       );
@@ -181,24 +181,24 @@ describe('OfferingService Integration Tests', () => {
   });
 
   describe('Delete Offering', () => {
-    it('should delete an offering from the database', async () => {
-      // Create a separate offering for deletion test
-      const createOfferingInput: CreateOfferingInput = {
+    it('should delete an service from the database', async () => {
+      // Create a separate service for deletion test
+      const createServiceInput: CreateServiceInput = {
         vendor_id: testVendorId,
         name: 'Delete Test Offering',
         category: 'Test Category',
       };
 
-      const offering =
-        await offeringService.createOffering(createOfferingInput);
-      expect(offering).toBeDefined();
+      const service =
+        await offeringService.createService(createServiceInput);
+      expect(service).toBeDefined();
 
-      // Delete the offering
-      const deleteResult = await offeringService.deleteOffering(offering.id);
+      // Delete the service
+      const deleteResult = await offeringService.deleteService(service.id);
       expect(deleteResult).toBe(true);
 
       // Verify it was deleted
-      const findResult = await offeringService.findOfferingById(offering.id);
+      const findResult = await offeringService.findServiceById(service.id);
       expect(findResult).toBeNull();
     });
   });
