@@ -56,7 +56,7 @@ const MOCK_ARTICLES = [
     Content: "This year, we are seeing a massive shift away from heavy ballgowns towards sleek, minimalist silhouettes with dramatic accessories. Think pearl-encrusted veils, detachable statement sleeves, and subtle pastel hues replacing traditional stark white. Here is our roundup of the hottest bridal trends straight from the runway...",
     Author: "Emma Laurent",
     publishedAt: "2026-04-18T09:15:00.000Z",
-    CoverImage: { url: "https://images.unsplash.com/photo-1594552072238-185d96a575a7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" }
+    CoverImage: { url: "https://images.unsplash.com/photo-1546804784-896d0dca3805?auto=format&fit=crop&w=1000&q=80" }
   },
   {
     id: "4",
