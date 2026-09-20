@@ -38,8 +38,23 @@ export const OfferingRepository = (dataSource: DataSource): OfferingRepositoryTy
     },
 
     async findOfferingById(id: string): Promise<OfferingEntity> {
-      return this.findOne({ 
-        relations: ['vendor'], where: { id } });
+      const offering = await this.findOne({ 
+        relations: ['vendor', 'media'], 
+        where: { id } 
+      });
+      if (offering && offering.media && offering.media.length > 0) {
+        const photos = offering.media
+          .filter(m => m.mediaType === 'photo')
+          .sort((a, b) => a.slotIndex - b.slotIndex)
+          .map(m => m.url);
+        const videos = offering.media
+          .filter(m => m.mediaType === 'video')
+          .sort((a, b) => a.slotIndex - b.slotIndex)
+          .map(m => m.url);
+        if (photos.length > 0) offering.photo_showcase = photos;
+        if (videos.length > 0) offering.video_showcase = videos;
+      }
+      return offering;
     },
 
     async findOfferingsByFilters(category?: string, city?: string): Promise<OfferingEntity[]> {

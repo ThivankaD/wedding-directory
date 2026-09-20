@@ -4,6 +4,7 @@ import { OfferingService } from './offering.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { VendorEntity } from '../../database/entities/vendor.entity';
 import { OfferingEntity } from '../../database/entities/offering.entity';
+import { OfferingMediaEntity } from '../../database/entities/offering-media.entity';
 import { ReviewModule } from '../review/review.module';
 
 @Module({
@@ -11,6 +12,7 @@ import { ReviewModule } from '../review/review.module';
     TypeOrmModule.forFeature([
       OfferingEntity, 
       VendorEntity,
+      OfferingMediaEntity,
     ]),
     ReviewModule,
   ],

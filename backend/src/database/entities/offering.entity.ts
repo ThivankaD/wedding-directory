@@ -3,6 +3,7 @@ import { VendorEntity } from './vendor.entity';
 import { ReviewEntity } from './review.entity';
 import { MyVendorsEntity } from './myVendors.entity';
 import { PackageEntity } from './package.entity';
+import { OfferingMediaEntity } from './offering-media.entity';
 
 @Entity({ name: 'offering' })
 export class OfferingEntity {
@@ -71,4 +72,7 @@ export class OfferingEntity {
     @OneToMany(() => PackageEntity, p => p.offering, {cascade: true})
     @JoinColumn({ name: 'package_id' })
     packages: PackageEntity[];
+
+    @OneToMany(() => OfferingMediaEntity, (m) => m.offering, { cascade: true })
+    media?: OfferingMediaEntity[];
 }

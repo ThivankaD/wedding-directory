@@ -2,6 +2,7 @@ import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, Pri
 import { OfferingEntity } from "./offering.entity";
 import { PaymentEntity } from './payment.entity';
 import { PackageApprovalRequestEntity } from './package-approval-request.entity';
+import { PackageFeatureEntity } from './package-feature.entity';
 
 @Entity({ name: 'package' })
 export class PackageEntity {
@@ -53,4 +54,7 @@ export class PackageEntity {
 
     @OneToMany(() => PackageApprovalRequestEntity, req => req.package)
     approvalRequests: PackageApprovalRequestEntity[];
+
+    @OneToMany(() => PackageFeatureEntity, (f) => f.package, { cascade: true })
+    packageFeatures?: PackageFeatureEntity[];
 }
