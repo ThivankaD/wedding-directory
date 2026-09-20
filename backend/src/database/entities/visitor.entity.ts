@@ -28,26 +28,26 @@ export class VisitorEntity {
   password: string;
 
   @Field()
-  @Column({ type: "varchar", length: 50, nullable: true })
+  @Column({ name: "first_name", type: "varchar", length: 50, nullable: true })
   visitor_fname?: string;
 
   @Field()
-  @Column({ type: "varchar", length: 50, nullable: true })
+  @Column({ name: "last_name", type: "varchar", length: 50, nullable: true })
   visitor_lname?: string;
 
-  @Column({ type: "varchar", length: 50, nullable: true })
+  @Column({ name: "partner_first_name", type: "varchar", length: 50, nullable: true })
   partner_fname?: string;
 
-  @Column({ type: "varchar", length: 50, nullable: true })
+  @Column({ name: "partner_last_name", type: "varchar", length: 50, nullable: true })
   partner_lname?: string;
 
-  @Column({ type: "varchar", nullable: true })
+  @Column({ name: "engagement_date", type: "varchar", nullable: true })
   engaged_date?: string;
 
-  @Column({ type: "varchar", nullable: true })
+  @Column({ name: "wedding_date", type: "varchar", nullable: true })
   wed_date?: string;
 
-  @Column({ type: "varchar", length: 50, nullable: true })
+  @Column({ name: "wedding_venue", type: "varchar", length: 50, nullable: true })
   wed_venue?: string;
 
   @Column({ type: "varchar", length: 200, nullable: true })

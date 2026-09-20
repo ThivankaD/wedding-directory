@@ -5,7 +5,7 @@ import { MyVendorsEntity } from './myVendors.entity';
 import { PackageEntity } from './package.entity';
 import { OfferingMediaEntity } from './offering-media.entity';
 
-@Entity({ name: 'offering' })
+@Entity({ name: 'service' })
 export class OfferingEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string;
@@ -18,12 +18,6 @@ export class OfferingEntity {
 
     @Column({ type: 'boolean', default: true })
     visible: boolean;
-
-    @Column({ type: 'varchar', length: 10, nullable: true })
-    bus_phone: string;
-
-    @Column({ type: 'varchar', length: 50, nullable: true })
-    bus_email: string;
 
     @Column({ type: 'varchar', length: 1000, nullable: true })
     description: string;

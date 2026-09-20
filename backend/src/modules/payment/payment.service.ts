@@ -101,7 +101,6 @@ export class PaymentService {
       vendor,
       package: package_,
       amount: Number(amount.toFixed(2)),
-      stripeSessionId: gateway === 'stripe' ? paymentReference : undefined,
       paymentReference,
       gateway,
       gatewayPaymentId,
@@ -143,47 +142,8 @@ export class PaymentService {
       .map(p => p.bookingDate);
   }
 
-  async updatePaymentStatus(stripeSessionId: string, status: 'completed' | 'failed') {
-    // If status is completed, ensure vendor is added to myVendors
-    if (status === 'completed') {
-      const payment = await this.paymentRepository.findOne({
-        where: { stripeSessionId },
-        relations: {
-          visitor: true,
-          package: {
-            offering: true
-          }
-        }
-      });
-
-      if (payment && payment.package?.offering) {
-        // Check if already in myVendors
-        const existingMyVendor = await this.myVendorsRepository.findOne({
-          where: {
-            visitor: { id: payment.visitor.id },
-            offering: { id: payment.package.offering.id }
-          }
-        });
-
-        // Add to myVendors if not already added
-        if (!existingMyVendor) {
-          const myVendor = this.myVendorsRepository.create({
-            visitor: payment.visitor,
-            offering: payment.package.offering
-          });
-          await this.myVendorsRepository.save(myVendor);
-        }
-      }
-
-      if (payment) {
-        void this.handlePurchaseNotifications(payment.id);
-      }
-    }
-
-    return this.paymentRepository.update(
-      { stripeSessionId },
-      { status }
-    );
+  async updatePaymentStatus(paymentReference: string, status: 'completed' | 'failed') {
+    return this.updatePaymentStatusByReference(paymentReference, status);
   }
 
   async updatePaymentStatusByReference(

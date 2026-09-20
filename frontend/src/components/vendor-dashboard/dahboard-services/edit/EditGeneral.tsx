@@ -42,8 +42,8 @@ const EditGeneral: React.FC<EditProfileProps> = () => {
       const service = data.findOfferingById;
       setProfile({
         category: service.category || "",
-        businessPhone: service.bus_phone || "",
-        businessEmail: service.bus_email || "",
+        businessPhone: "",
+        businessEmail: "",
         description: service.description || "",
         showCategoryDropdown: false,
       });
@@ -59,8 +59,6 @@ const EditGeneral: React.FC<EditProfileProps> = () => {
         id,
         input: {
           category: profile.category,
-          bus_phone: profile.businessPhone,
-          bus_email: profile.businessEmail,
           description: profile.description,
           visible: serviceVisibility,
         },

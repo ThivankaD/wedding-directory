@@ -24,7 +24,7 @@ export class ReviewEntity {
   image_urls?: string[];
 
   @ManyToOne(() => OfferingEntity, (offering) => offering.review, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'offering_id' })
+  @JoinColumn({ name: 'service_id' })
   offering: OfferingEntity;
   
   @ManyToOne(() => VisitorEntity, { onDelete: 'SET NULL' })
@@ -32,7 +32,7 @@ export class ReviewEntity {
   visitor: VisitorEntity;
 
   @ManyToOne(() => OfferingEntity, { nullable: true, onDelete: 'SET NULL' })
-  @JoinColumn({ name: 'mentioned_offering_id' })
+  @JoinColumn({ name: 'mentioned_service_id' })
   mentionedOffering?: OfferingEntity;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp' })

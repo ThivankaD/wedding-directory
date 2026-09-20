@@ -16,11 +16,11 @@ export class BudgetToolEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true })
+  @Column({ name: 'total_budget', type: 'decimal', precision: 15, scale: 2, nullable: true })
   totalBudget?: number;
 
   @OneToOne(() => VisitorEntity, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'visitorId' })
+  @JoinColumn({ name: 'visitor_id' })
   visitor: VisitorEntity;
 
   @OneToMany(() => BudgetItemEntity, (item) => item.budgetTool, { cascade: true })

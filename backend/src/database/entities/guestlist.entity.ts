@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { VisitorEntity } from './visitor.entity';
 
-@Entity({ name: 'guestlist' })
+@Entity({ name: 'guest_list' })
 export class GuestListEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

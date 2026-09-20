@@ -99,4 +99,24 @@ export class OfferingResolver {
     const fullOffering = await this.offeringService.findOfferingById(offering.id);
     return fullOffering.vendor;
   }
+
+  @ResolveField(() => String, { nullable: true })
+  async bus_phone(@Parent() offering: OfferingEntity) {
+    if (offering.vendor?.phone) return offering.vendor.phone;
+    if (offering.id) {
+      const fullOffering = await this.offeringService.findOfferingById(offering.id);
+      return fullOffering?.vendor?.phone || null;
+    }
+    return null;
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  async bus_email(@Parent() offering: OfferingEntity) {
+    if (offering.vendor?.email) return offering.vendor.email;
+    if (offering.id) {
+      const fullOffering = await this.offeringService.findOfferingById(offering.id);
+      return fullOffering?.vendor?.email || null;
+    }
+    return null;
+  }
 }
