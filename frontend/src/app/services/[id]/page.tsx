@@ -16,7 +16,7 @@ import {
 } from "@/graphql/queries";
 import { useMutation, useQuery } from "@apollo/client";
 import SocialIcons from "@/components/vendor-dashboard/dahboard-services/socialIcons";
-import { FiEdit, FiMessageCircle, FiMapPin, FiArrowLeft, FiCalendar } from "react-icons/fi";
+import { FiEdit, FiPlus, FiMessageCircle, FiMapPin, FiArrowLeft, FiCalendar } from "react-icons/fi";
 import Reviews from "@/components/vendor-dashboard/dahboard-services/reviews/Reviews";
 import { useVendorAuth } from "@/contexts/VendorAuthContext";
 import Link from "next/link";
@@ -505,10 +505,10 @@ const Service: React.FC = () => {
                     <div className="mb-6 flex items-center justify-between flex-wrap gap-3">
                       <h2 className="text-2xl font-bold font-title text-gray-900 dark:text-zinc-100">Packages</h2>
                       {isVendorsOffering && (
-                        <Link href={`/services/edit/${offering?.id}`}>
+                        <Link href={`/services/edit/${offering?.id}?section=packages&action=add`}>
                           <button className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-orange hover:bg-orange/90 active:scale-[0.99] rounded-xl shadow-sm shadow-orange/20 transition-all">
-                            <FiEdit className="text-sm" />
-                            <span>Edit Packages</span>
+                            <FiPlus className="text-sm" />
+                            <span>Add Package</span>
                           </button>
                         </Link>
                       )}
@@ -592,7 +592,7 @@ const Service: React.FC = () => {
                                       return (
                                         <div className="w-full flex flex-col items-center gap-1.5">
                                           <Link
-                                            href={`/services/edit/${offering?.id}`}
+                                            href={`/services/edit/${offering?.id}?section=packages&action=edit&packageId=${pkg.id}`}
                                             className="w-full py-2.5 px-4 rounded-xl font-semibold text-sm text-white bg-orange hover:bg-orange/90 active:scale-[0.99] shadow-sm shadow-orange/20 transition-all flex items-center justify-center gap-2"
                                           >
                                             <FiEdit className="text-base" />

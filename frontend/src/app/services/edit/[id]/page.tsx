@@ -1,44 +1,50 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import VendorHeader from "@/components/shared/Headers/VendorHeader";
 import EditGeneral from "@/components/vendor-dashboard/dahboard-services/edit/EditGeneral";
 import EditSocialLinks from "@/components/vendor-dashboard/dahboard-services/edit/EditSocialLinks";
 import EditPortfolio from "@/components/vendor-dashboard/dahboard-services/edit/EditPortfolio";
-import EditServiceSettings from "@/components/vendor-dashboard/dahboard-services/edit/EditServiceSettings";
 import EditPackages from "@/components/vendor-dashboard/dahboard-services/edit/EditPackages";
 import ServicesMenu from "@/components/vendor-dashboard/dahboard-services/ServicesMenu";
-import VendorBanner from "@/components/vendor-dashboard/VendorBanner";
 import Footer from "@/components/shared/Footer";
 import { useQuery } from "@apollo/client";
 import { GET_VENDOR_BY_ID } from "@/graphql/queries";
 import { useVendorAuth } from "@/contexts/VendorAuthContext";
 
-const EditService = () => {
+const EditServiceContent = () => {
   const { vendor } = useVendorAuth();
+  const searchParams = useSearchParams();
 
-  const {data: vendorData} = useQuery(GET_VENDOR_BY_ID, {
+  const { data: vendorData } = useQuery(GET_VENDOR_BY_ID, {
     variables: { id: vendor?.id },
     skip: !vendor?.id,
   });
 
   const vendorInfo = vendorData?.findVendorById;
-  const [activeSection, setActiveSection] = useState("publicProfile");
+  const sectionParam = searchParams.get("section") || searchParams.get("tab");
+  const [activeSection, setActiveSection] = useState(sectionParam || "publicProfile");
+
+  useEffect(() => {
+    const section = searchParams.get("section") || searchParams.get("tab");
+    if (section) {
+      setActiveSection(section);
+    }
+  }, [searchParams]);
 
   const renderSection = () => {
     switch (activeSection) {
       case "publicProfile":
-        return <EditGeneral/>;
+        return <EditGeneral />;
       case "socialContact":
         return <EditSocialLinks />;
       case "portfolio":
         return <EditPortfolio />;
-      case "serviceSettings":
-        return <EditServiceSettings />;
       case "packages":
         return <EditPackages />;
       default:
-        return <EditGeneral/>;
+        return <EditGeneral />;
     }
   };
 
@@ -71,6 +77,20 @@ const EditService = () => {
       </div>
       <Footer />
     </div>
+  );
+};
+
+const EditService = () => {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-lightYellow dark:bg-darkBg flex items-center justify-center text-orange">
+          Loading...
+        </div>
+      }
+    >
+      <EditServiceContent />
+    </Suspense>
   );
 };
 
