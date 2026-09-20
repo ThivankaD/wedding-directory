@@ -23,14 +23,14 @@ const CategoryInput: React.FC<BusinessCategoryProps> = ({ onCategoryChange }) =>
         <SelectValue placeholder="Business Category" />
       </SelectTrigger>
       <SelectContent 
-        className="w-full rounded-md border border-gray-300 dark:border-zinc-700 bg-white dark:bg-darkSurface shadow-lg"
+        className="w-full rounded-md border border-gray-300 dark:border-zinc-700 bg-white dark:bg-darkSurface shadow-lg p-1.5"
         position="popper"
       >
         {categories.map((category, index) => (
           <SelectItem 
             key={index} 
             value={category} 
-            className="p-2 hover:bg-gray-100 dark:hover:bg-darkElevated dark:focus:bg-darkElevated text-gray-800 dark:text-zinc-200 font-body"
+            className="hover:bg-gray-100 dark:hover:bg-darkElevated dark:focus:bg-darkElevated text-gray-800 dark:text-zinc-200 font-body"
           >
             {category}
           </SelectItem>

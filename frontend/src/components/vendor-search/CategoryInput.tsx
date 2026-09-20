@@ -22,10 +22,10 @@ const CategoryInput: React.FC<CategoryProps> = ({ onCategoryChange, value }) => 
       >
         <SelectValue placeholder="Select Service" />
       </SelectTrigger>
-      <SelectContent className="w-full bg-white dark:bg-darkElevated rounded-xl shadow-xl border border-orange/15 dark:border-zinc-700 max-h-60 overflow-y-auto z-50">
+      <SelectContent className="w-full bg-white dark:bg-darkElevated rounded-xl shadow-xl border border-orange/15 dark:border-zinc-700 max-h-60 overflow-y-auto z-50 p-1.5">
         <SelectItem
           value="ALL"
-          className="p-2 text-gray-500 dark:text-zinc-400 italic font-body hover:bg-orange/10 dark:hover:bg-orange/20 hover:text-orange rounded-lg cursor-pointer transition duration-150 ease-in-out"
+          className="text-gray-500 dark:text-zinc-400 italic font-body rounded-lg cursor-pointer transition duration-150 ease-in-out"
         >
           All Services
         </SelectItem>
@@ -33,7 +33,7 @@ const CategoryInput: React.FC<CategoryProps> = ({ onCategoryChange, value }) => 
           <SelectItem
             key={index}
             value={category}
-            className="p-2 text-gray-800 dark:text-zinc-200 font-body hover:bg-orange/10 dark:hover:bg-orange/20 hover:text-orange rounded-lg cursor-pointer transition duration-150 ease-in-out"
+            className="text-gray-800 dark:text-zinc-200 font-body rounded-lg cursor-pointer transition duration-150 ease-in-out"
           >
             {category}
           </SelectItem>
