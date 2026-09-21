@@ -86,7 +86,7 @@ const AddNewService: React.FC = () => {
         awaitRefetchQueries: true,
       });
 
-      const newId = response.data?.createOffering?.id;
+      const newId = response.data?.createService?.id || response.data?.createOffering?.id;
       if (newId) {
         setCreatedOfferingId(newId);
         setCreatedServiceName(formData.name.trim());

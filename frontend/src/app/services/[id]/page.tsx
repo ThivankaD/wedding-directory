@@ -71,7 +71,7 @@ const Service: React.FC = () => {
   const queryError = useQuery(FIND_SERVICE_BY_ID, { variables: { id } }).error;
 
   const { data: packagesData, refetch: refetchPackages } = useQuery(FIND_PACKAGES_BY_OFFERING, {
-    variables: { offeringId: id },
+    variables: { serviceId: id, offeringId: id },
     fetchPolicy: "network-only",
   });
 
@@ -82,10 +82,12 @@ const Service: React.FC = () => {
     fetchPolicy: "network-only",
   });
 
+  const currentVendorId = (data?.findServiceById || data?.findOfferingById)?.vendor?.id;
+
   // Get vendor's booked dates for the calendar - MUST be at top level with all hooks
   const { data: bookedDatesData, refetch: refetchBookedDates } = useQuery(GET_VENDOR_BOOKED_DATES, {
-    variables: { vendorId: data?.findOfferingById?.vendor?.id },
-    skip: !data?.findOfferingById?.vendor?.id,
+    variables: { vendorId: currentVendorId },
+    skip: !currentVendorId,
     fetchPolicy: "network-only",
   });
 
@@ -95,6 +97,7 @@ const Service: React.FC = () => {
     {
       variables: {
         visitorId: visitor?.id,
+        serviceId: id,
         offeringId: id,
       },
       skip: !visitor,
@@ -135,19 +138,20 @@ const Service: React.FC = () => {
 
   // Track package views when packages are loaded
   useEffect(() => {
-    if (packagesData?.findPackagesByOffering && !vendor && clientIp) {
+    const packagesList = packagesData?.findPackagesByService || packagesData?.findPackagesByOffering;
+    if (packagesList && !vendor && clientIp) {
       // Only track views for non-vendor visitors and when IP is available
       const sessionId = ensureSessionId();
       
       console.log('Tracking package views:', {
-        packagesCount: packagesData.findPackagesByOffering.length,
+        packagesCount: packagesList.length,
         visitorId: visitor?.id,
         sessionId,
         ipAddress: clientIp,
       });
       
       // Track each package view (fire and forget)
-      packagesData.findPackagesByOffering.forEach((pkg: Package) => {
+      packagesList.forEach((pkg: Package) => {
         console.log('Tracking view for package:', pkg.id);
         trackPackageView({
           variables: {
@@ -249,8 +253,8 @@ const Service: React.FC = () => {
   if (loading || myVendorLoading) return <ServiceDetailSkeleton />;
   if (queryError) return <p>Error: {queryError.message}</p>;
 
-  const offering = data?.findOfferingById;
-  const isVendorsOffering = offering?.vendor.id === vendor?.id;
+  const offering = data?.findServiceById || data?.findOfferingById;
+  const isVendorsOffering = offering?.vendor?.id === vendor?.id;
 
   const handleHeartClick = async () => {
     if (!visitor) {
@@ -268,6 +272,7 @@ const Service: React.FC = () => {
         const { data } = await removeFromMyVendors({
           variables: {
             visitorId: visitor.id,
+            serviceId: id,
             offeringId: id,
           },
         });
@@ -282,6 +287,7 @@ const Service: React.FC = () => {
         const { data } = await addToMyVendors({
           variables: {
             visitorId: visitor.id,
+            serviceId: id,
             offeringId: id,
           },
         });
@@ -323,7 +329,7 @@ const Service: React.FC = () => {
         return;
       }
 
-      const pkgName = packagesData?.findPackagesByOffering?.find(
+      const pkgName = (packagesData?.findPackagesByService || packagesData?.findPackagesByOffering)?.find(
         (p: any) => p.id === packageId
       )?.name;
 
@@ -339,6 +345,7 @@ const Service: React.FC = () => {
           packageId,
           visitorId: visitor.id,
           vendorId: offering.vendor.id,
+          serviceId: offering.id,
           offeringId: offering.id,
           bookingDate: bookingDate ? bookingDate.toISOString() : undefined,
           customer: {
@@ -498,7 +505,7 @@ const Service: React.FC = () => {
               <hr className="border-t border-gray-100 dark:border-zinc-800 my-6" />
 
               {/* Packages Section */}
-              {packagesData?.findPackagesByOffering.some(
+              {(packagesData?.findPackagesByService || packagesData?.findPackagesByOffering)?.some(
                 (pkg: Package) => pkg.visible
               ) && (
                   <>
@@ -514,7 +521,7 @@ const Service: React.FC = () => {
                       )}
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                      {packagesData?.findPackagesByOffering
+                      {(packagesData?.findPackagesByService || packagesData?.findPackagesByOffering)
                         .filter((pkg: Package) => pkg.visible)
                         .map((pkg: Package) => (
                           <div

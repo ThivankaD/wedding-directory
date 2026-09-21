@@ -8,6 +8,8 @@ export interface OfferingProps {
     buttonText: string
 }
 
+export type ServiceProps = OfferingProps;
+
 export interface FilterSearchBarProps {
     handleSearch: (city: string, category: string) => void;
     onCityChange: (city: string) => void;
@@ -45,3 +47,5 @@ export interface Offering {
         phone: string;
     };
 }
+
+export type Service = Offering;

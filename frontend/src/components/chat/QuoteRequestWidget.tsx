@@ -49,7 +49,7 @@ const QuoteRequestWidget = ({ vendorId,offeringId }: QuoteRequestWidgetProps) =>
       const chatResponse = await createChat({
         variables: {
           visitorId: visitor.id,
-          offeringId: offeringId,
+          serviceId: offeringId,
         },
       });
 

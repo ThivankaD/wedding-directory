@@ -29,7 +29,8 @@ const MyVendors = () => {
   // Count of categories that have at least 1 saved vendor
   const categoriesWithVendorsCount = categories.filter((category) =>
     allVendors.some(
-      (vendor: { offering: { category: string } }) => vendor.offering?.category === category
+      (vendor: { service?: { category: string }; offering?: { category: string } }) =>
+        (vendor.service || vendor.offering)?.category === category
     )
   ).length;
 
@@ -38,7 +39,8 @@ const MyVendors = () => {
     // Filter mode
     if (filterMode === 'saved') {
       const hasOfferings = allVendors.some(
-        (vendor: { offering: { category: string } }) => vendor.offering?.category === category
+        (vendor: { service?: { category: string }; offering?: { category: string } }) =>
+          (vendor.service || vendor.offering)?.category === category
       );
       if (!hasOfferings) return false;
     }
@@ -49,16 +51,25 @@ const MyVendors = () => {
       const categoryMatches = category.toLowerCase().includes(query);
       const vendorMatches = allVendors.some(
         (vendor: {
-          offering: {
+          service?: {
             category: string;
             name?: string;
             vendor?: { busname?: string; city?: string };
           };
-        }) =>
-          vendor.offering?.category === category &&
-          (vendor.offering?.name?.toLowerCase().includes(query) ||
-            vendor.offering?.vendor?.busname?.toLowerCase().includes(query) ||
-            vendor.offering?.vendor?.city?.toLowerCase().includes(query))
+          offering?: {
+            category: string;
+            name?: string;
+            vendor?: { busname?: string; city?: string };
+          };
+        }) => {
+          const svc = vendor.service || vendor.offering;
+          return (
+            svc?.category === category &&
+            (svc?.name?.toLowerCase().includes(query) ||
+              svc?.vendor?.busname?.toLowerCase().includes(query) ||
+              svc?.vendor?.city?.toLowerCase().includes(query))
+          );
+        }
       );
       return categoryMatches || vendorMatches;
     }
@@ -238,7 +249,8 @@ const MyVendors = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
               {filteredCategories.map((category) => {
                 const count = allVendors.filter(
-                  (v: { offering: { category: string } }) => v.offering?.category === category
+                  (v: { service?: { category: string }; offering?: { category: string } }) =>
+                    (v.service || v.offering)?.category === category
                 ).length;
                 return (
                   <CategoryCard

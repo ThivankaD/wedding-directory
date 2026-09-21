@@ -48,7 +48,7 @@ const ChatModal: React.FC<ChatModalProps> = ({
 
   // Get or create chat
   const { data: chatData, loading: chatLoading } = useQuery(GET_CHAT, {
-    variables: { visitorId, offeringId },
+    variables: { visitorId, serviceId: offeringId },
     skip: !isOpen,
     fetchPolicy: "network-only", // Always fetch fresh, never use cache
     onCompleted: (data) => {

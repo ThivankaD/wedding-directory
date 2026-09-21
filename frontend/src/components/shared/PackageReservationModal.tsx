@@ -69,7 +69,7 @@ const PackageReservationModal: React.FC<PackageReservationModalProps> = ({
       if (note.trim() && visitorId && offeringId) {
         try {
           const { data } = await getChat({
-            variables: { visitorId, offeringId },
+            variables: { visitorId, serviceId: offeringId },
           });
           const chatId = data?.getChat?.chatId;
 

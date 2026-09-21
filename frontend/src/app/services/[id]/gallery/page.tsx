@@ -31,7 +31,7 @@ const PortfolioPage: React.FC = () => {
     variables: { id },
   });
 
-  const offering = data?.findOfferingById;
+  const offering = data?.findServiceById || data?.findOfferingById;
 
   const allMedia = useMemo(() => [
     ...(offering?.banner ? [{ type: "image", url: offering.banner }] : []),

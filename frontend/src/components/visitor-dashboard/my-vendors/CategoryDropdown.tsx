@@ -169,18 +169,21 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
   );
 };
 
+export interface ServiceVendorData {
+  id: string;
+  name: string;
+  category: string;
+  banner: string;
+  vendor: {
+    busname: string;
+    city: string;
+  };
+}
+
 export interface OfferingVendorItem {
   id: string;
-  offering: {
-    id: string;
-    name: string;
-    category: string;
-    banner: string;
-    vendor: {
-      busname: string;
-      city: string;
-    };
-  };
+  service?: ServiceVendorData;
+  offering?: ServiceVendorData;
 }
 
 export interface CategoryModalProps {
@@ -219,7 +222,7 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({
 
   const IconComponent = getCategoryIcon(category);
   const offeringsInCategory = vendors.filter(
-    (myVendor) => myVendor.offering?.category === category
+    (myVendor) => (myVendor.service || myVendor.offering)?.category === category
   );
   const hasOfferings = offeringsInCategory.length > 0;
 
@@ -281,16 +284,19 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({
             </div>
           ) : hasOfferings ? (
             <div className="space-y-3">
-              {offeringsInCategory.map((myVendor) => (
-                <VendorCard
-                  key={myVendor.offering.id}
-                  name={myVendor.offering.name}
-                  vendor={myVendor.offering.vendor?.busname || 'Vendor name not available'}
-                  city={myVendor.offering.vendor?.city || 'Location not available'}
-                  banner={myVendor.offering.banner || '/images/bride.webp'}
-                  link={`/services/${myVendor.offering.id}`}
-                />
-              ))}
+              {offeringsInCategory.map((myVendor) => {
+                const svc = myVendor.service || myVendor.offering!;
+                return (
+                  <VendorCard
+                    key={svc.id}
+                    name={svc.name}
+                    vendor={svc.vendor?.busname || 'Vendor name not available'}
+                    city={svc.vendor?.city || 'Location not available'}
+                    banner={svc.banner || '/images/bride.webp'}
+                    link={`/services/${svc.id}`}
+                  />
+                );
+              })}
             </div>
           ) : (
             <div className="text-center py-10 px-4 bg-white dark:bg-darkElevated/30 rounded-2xl border border-dashed border-orange/25 dark:border-zinc-800 my-2">

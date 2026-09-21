@@ -3,16 +3,17 @@ import request from "@/utils/request";
 export const uploadOfferingBanner = async (file: File, offeringId: string) => {
   const formData = new FormData();
   formData.append("file", file);
+  formData.append("serviceId", offeringId);
   formData.append("offeringId", offeringId);
 
   try {
-    const response = await request.post("/upload/offering-banner", formData, {
+    const response = await request.post("/upload/service-banner", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
     });
 
-    return response.data.fileUrl; // Assuming the response contains the uploaded file URL
+    return response.data.fileUrl;
   } catch (error) {
     if (error instanceof Error) {
       //console.error("Error uploading banner image:", error.message);
@@ -22,3 +23,5 @@ export const uploadOfferingBanner = async (file: File, offeringId: string) => {
     throw error;
   }
 };
+
+export const uploadServiceBanner = uploadOfferingBanner;

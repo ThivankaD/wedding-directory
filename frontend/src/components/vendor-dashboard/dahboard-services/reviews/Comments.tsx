@@ -17,6 +17,13 @@ interface Review {
   comment: string;
   image_urls?: string[];
   createdAt: string;
+  mentionedService?: {
+    id: string;
+    vendor?: {
+      busname?: string;
+    };
+    name?: string;
+  };
   mentionedOffering?: {
     id: string;
     vendor?: {
@@ -39,12 +46,12 @@ const Comments: React.FC<CommentsProps> = ({ serviceId }) => {
   }, [serviceId]);
 
   const { data: rdata, loading: reviewsLoading, error: reviewsError } = useQuery(FIND_REVIEW_PAGE_BY_SERVICE, {
-    variables: { offering_id: serviceId, page, limit: REVIEWS_PER_PAGE },
+    variables: { service_id: serviceId, page, limit: REVIEWS_PER_PAGE },
     skip: !serviceId,
   });
 
   useEffect(() => {
-    const reviewPage = rdata?.findReviewsByOfferingPaginated;
+    const reviewPage = rdata?.findReviewsByServicePaginated;
     const totalPages = reviewPage?.totalPages ?? 1;
     if (page > totalPages) {
       setPage(totalPages);
@@ -78,7 +85,7 @@ const Comments: React.FC<CommentsProps> = ({ serviceId }) => {
   }
   if (reviewsError) return null;
 
-  const reviewPage = rdata?.findReviewsByOfferingPaginated;
+  const reviewPage = rdata?.findReviewsByServicePaginated;
   const reviewData = reviewPage?.reviews || [];
   const totalReviews = reviewPage?.totalReviews ?? 0;
   const totalPages = reviewPage?.totalPages ?? 1;
@@ -156,17 +163,20 @@ const Comments: React.FC<CommentsProps> = ({ serviceId }) => {
               )}
 
               {/* Mentioned offering/vendor tag */}
-              {review.mentionedOffering?.id && (
-                <div className="mt-3 inline-flex items-center gap-1.5 text-xs bg-orange/10 text-orange px-2.5 py-1 rounded-full font-medium">
-                  <span>Tagged vendor:</span>
-                  <Link
-                    href={`/services/${review.mentionedOffering.id}`}
-                    className="hover:underline font-bold"
-                  >
-                    @{review.mentionedOffering.vendor?.busname || review.mentionedOffering.name || "Vendor"}
-                  </Link>
-                </div>
-              )}
+              {((review.mentionedService || review.mentionedOffering)?.id) && (() => {
+                const mentioned = review.mentionedService || review.mentionedOffering!;
+                return (
+                  <div className="mt-3 inline-flex items-center gap-1.5 text-xs bg-orange/10 text-orange px-2.5 py-1 rounded-full font-medium">
+                    <span>Tagged vendor:</span>
+                    <Link
+                      href={`/services/${mentioned.id}`}
+                      className="hover:underline font-bold"
+                    >
+                      @{mentioned.vendor?.busname || mentioned.name || "Vendor"}
+                    </Link>
+                  </div>
+                );
+              })()}
 
               {/* Photo gallery (up to 3 photos) */}
               {review.image_urls && review.image_urls.length > 0 && (

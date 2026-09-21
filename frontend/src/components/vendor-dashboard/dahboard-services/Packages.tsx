@@ -28,7 +28,7 @@ const Packages = () => {
   const offeringId = params.id as string;
 
   const { loading, error, data } = useQuery(FIND_PACKAGES_BY_OFFERING, {
-    variables: { offeringId },
+    variables: { serviceId: offeringId, offeringId },
   });
 
   const PackageDetails: React.FC<PackageDetailsProps> = ({ name, description, pricing, features, image }) => (
@@ -60,14 +60,16 @@ const Packages = () => {
     </div>
   );
 
+  const packagesList = data?.findPackagesByService || data?.findPackagesByOffering || [];
+
   if (loading) return <div className="p-4 text-gray-500 dark:text-zinc-400 text-sm">Loading packages...</div>;
   if (error) return <div className="p-4 text-red-500 text-sm">Error loading packages: {error.message}</div>;
-  if (!data?.findPackagesByOffering?.length) return <div className="p-4 text-gray-500 dark:text-zinc-400 text-sm">No packages available</div>;
+  if (!packagesList.length) return <div className="p-4 text-gray-500 dark:text-zinc-400 text-sm">No packages available</div>;
 
   return (
     <div className="w-full max-w-7xl p-4">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {data.findPackagesByOffering.map((pkg: Package) => (
+        {packagesList.map((pkg: Package) => (
           <PackageDetails 
             key={pkg.id} 
             name={pkg.name}
