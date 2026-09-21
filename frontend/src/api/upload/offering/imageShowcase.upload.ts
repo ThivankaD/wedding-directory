@@ -1,9 +1,9 @@
 import request from "@/utils/request";
 
 /**
- * Upload multiple images (5 or less) for an offering showcase
+ * Upload multiple images (5 or less) for a service showcase
  * @param {File[]} files - Array of image files to upload (max 5 files).
- * @param {string} offeringId - The ID of the offering.
+ * @param {string} offeringId - The ID of the service.
  * @returns {Promise<string[]>} - Array of uploaded file URLs.
  */
 export const uploadOfferingImageShowcase = async (
@@ -18,23 +18,26 @@ export const uploadOfferingImageShowcase = async (
   const formData = new FormData();
 
   files.forEach((file) => {
-    formData.append("files", file); // Match the backend's FilesInterceptor name
+    formData.append("files", file);
   });
 
-  formData.append("offeringId", offeringId); // Match the backend's @Body parameter name
+  formData.append("serviceId", offeringId);
+  formData.append("offeringId", offeringId);
   if (typeof index === "number") {
     formData.append("index", index.toString());
   }
 
   try {
-    const response = await request.post("/upload/offering-showcase", formData, {
+    const response = await request.post("/upload/service-showcase", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
     });
 
-    return response.data.uploadedUrls; // Match the backend's response structure
+    return response.data.uploadedUrls;
   } catch (error) {
     throw error;
   }
 };
+
+export const uploadServiceImageShowcase = uploadOfferingImageShowcase;

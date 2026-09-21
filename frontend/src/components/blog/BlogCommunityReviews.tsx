@@ -23,12 +23,26 @@ interface ReviewItem {
   id: string;
   rating: number;
   comment?: string;
-  image_urls?: string[];
+  image_urls?: string[]
   createdAt: string;
   visitor?: {
     visitor_fname?: string;
   };
+  service?: {
+    id: string;
+    name?: string;
+    vendor?: {
+      busname?: string;
+    };
+  };
   offering?: {
+    id: string;
+    name?: string;
+    vendor?: {
+      busname?: string;
+    };
+  };
+  mentionedService?: {
     id: string;
     name?: string;
     vendor?: {
@@ -84,7 +98,7 @@ const BlogCommunityReviews: React.FC = () => {
   };
 
   const offerings: OfferingOption[] = useMemo(
-    () => (offeringsData?.findOfferings || []).filter((offering: any) => offering?.visible),
+    () => (offeringsData?.findServices || offeringsData?.findOfferings || []).filter((offering: any) => offering?.visible),
     [offeringsData],
   );
 
@@ -100,7 +114,7 @@ const BlogCommunityReviews: React.FC = () => {
       }
       
       if (filterVendorName.trim() !== "") {
-        const vendorName = review.offering?.vendor?.busname || "";
+        const vendorName = (review.service || review.offering)?.vendor?.busname || "";
         if (!vendorName.toLowerCase().includes(filterVendorName.toLowerCase())) {
           return false;
         }
@@ -156,9 +170,9 @@ const BlogCommunityReviews: React.FC = () => {
             rating,
             comment,
             image_urls: uploadedImageUrls,
-            offering_id: selectedOfferingId,
+            service_id: selectedOfferingId,
             visitor_id: visitor.id,
-            mentioned_offering_id: mentionVendor ? selectedOfferingId : null,
+            mentioned_service_id: mentionVendor ? selectedOfferingId : null,
           },
         },
       });

@@ -22,7 +22,7 @@ const EditPortfolio: React.FC = () => {
     skip: !id,
   });
 
-  const portfolio = data?.findOfferingById;
+  const portfolio = data?.findServiceById || data?.findOfferingById;
 
   // States for banner upload
   const [bannerFile, setBannerFile] = useState<File | null>(null);

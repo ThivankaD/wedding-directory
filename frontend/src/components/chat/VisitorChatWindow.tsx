@@ -47,14 +47,14 @@ const VisitorChatWindow = ({ chatId }: VisitorChatWindowProps) => {
     },
   });
 
-  const offeringId = data?.getChatHistory?.offeringId;
+  const offeringId = data?.getChatHistory?.serviceId || data?.getChatHistory?.offeringId;
 
   const { data: offeringData } = useQuery(GET_OFFERING_DETAILS, {
     variables: { id: offeringId },
     skip: !offeringId,
   });
 
-  const offering = offeringData?.findOfferingById;
+  const offering = offeringData?.findServiceById || offeringData?.findOfferingById;
   const vendor = offering?.vendor;
 
   // Join chat room via WebSocket when connected

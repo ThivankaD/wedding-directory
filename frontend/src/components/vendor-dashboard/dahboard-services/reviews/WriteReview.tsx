@@ -30,7 +30,7 @@ const WriteReview: React.FC<WriteReviewProps> = ({ serviceId, vendorName }) => {
         CHECK_REVIEW_ELIGIBILITY,
         {
             variables: {
-                offering_id: serviceId || "",
+                service_id: serviceId || "",
                 visitor_id: visitor?.id || "",
             },
             skip: !serviceId || !visitor?.id,
@@ -44,13 +44,13 @@ const WriteReview: React.FC<WriteReviewProps> = ({ serviceId, vendorName }) => {
         refetchQueries: [
             {
                 query: FIND_REVIEW_PAGE_BY_SERVICE,
-                variables: { offering_id: serviceId, page: 1, limit: 5 },
+                variables: { service_id: serviceId, page: 1, limit: 5 },
             },
             ...(serviceId && visitor?.id
                 ? [
                       {
                           query: CHECK_REVIEW_ELIGIBILITY,
-                          variables: { offering_id: serviceId, visitor_id: visitor.id },
+                          variables: { service_id: serviceId, visitor_id: visitor.id },
                       },
                   ]
                 : []),
@@ -118,8 +118,8 @@ const WriteReview: React.FC<WriteReviewProps> = ({ serviceId, vendorName }) => {
                         rating,
                         comment,
                         image_urls: uploadedImageUrls,
-                        mentioned_offering_id: mentionVendor ? serviceId : null,
-                        offering_id: serviceId,
+                        mentioned_service_id: mentionVendor ? serviceId : null,
+                        service_id: serviceId,
                         visitor_id: visitor?.id,
                     },
                 },

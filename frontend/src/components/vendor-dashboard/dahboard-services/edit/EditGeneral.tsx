@@ -38,8 +38,8 @@ const EditGeneral: React.FC<EditProfileProps> = () => {
 
   // Update state with fetched data
   useEffect(() => {
-    if (data?.findOfferingById) {
-      const service = data.findOfferingById;
+    const service = data?.findServiceById || data?.findOfferingById;
+    if (service) {
       setProfile({
         category: service.category || "",
         businessPhone: "",
@@ -129,7 +129,7 @@ const EditGeneral: React.FC<EditProfileProps> = () => {
       const { data } = await deleteOffering({
         variables: { id: id as string },
       });
-      if (data?.deleteOffering) {
+      if (data?.deleteService ?? data?.deleteOffering) {
         toast.success("Service deleted successfully");
         setIsDeleteModalOpen(false);
         router.push("/vendor-dashboard");

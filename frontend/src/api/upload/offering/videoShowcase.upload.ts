@@ -1,9 +1,9 @@
 import request from "@/utils/request";
 
 /**
- * Upload multiple videos for an offering video showcase
+ * Upload multiple videos for a service video showcase
  * @param {File[]} files - Array of video files to upload.
- * @param {string} offeringId - The ID of the offering.
+ * @param {string} offeringId - The ID of the service.
  * @returns {Promise<string[]>} - Array of uploaded video URLs.
  */
 export const uploadOfferingVideoShowcase = async (files: File[], offeringId: string): Promise<string[]> => {
@@ -13,21 +13,21 @@ export const uploadOfferingVideoShowcase = async (files: File[], offeringId: str
 
   const formData = new FormData();
 
-  // Append each video file to the FormData object
   files.forEach((file) => {
-    formData.append("files", file); // Notice 'files' to match the backend's expected field name
+    formData.append("files", file);
   });
 
+  formData.append("serviceId", offeringId);
   formData.append("offeringId", offeringId);
 
   try {
-    const response = await request.post("/upload/offering-videos", formData, {
+    const response = await request.post("/upload/service-videos", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
     });
 
-    return response.data.uploadedUrls; // Assuming the response contains an array of uploaded video URLs
+    return response.data.uploadedUrls;
   } catch (error) {
     if (error instanceof Error) {
       //console.error("Error uploading videos:", error.message);
@@ -37,3 +37,5 @@ export const uploadOfferingVideoShowcase = async (files: File[], offeringId: str
     throw error;
   }
 };
+
+export const uploadServiceVideoShowcase = uploadOfferingVideoShowcase;

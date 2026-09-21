@@ -92,11 +92,11 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({ serviceId }) =>
   const [isFetchingCoordinates, setIsFetchingCoordinates] = useState(false);
 
   const { data: vdata, loading: vendorLoading, error: vendorError } = useQuery(FIND_VENDOR_BY_SERVICE, {
-    variables: { offering_id: serviceId },
+    variables: { service_id: serviceId },
     skip: !serviceId,
   });
 
-  const vendorData = vdata?.findVendorsByOffering || [];
+  const vendorData = vdata?.findVendorsByService || vdata?.findVendorsByOffering || [];
   const vendor = vendorData.length > 0 ? vendorData[0] : null;
   const vendorLocation = vendor?.location || vendor?.city || null;
   const businessName = vendor?.busname;

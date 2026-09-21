@@ -83,7 +83,11 @@ export interface PaymentData {
   package: {
     name: string;
     pricing: number;
-    offering: {
+    service?: {
+      name: string;
+      category: string;
+    };
+    offering?: {
       name: string;
       category: string;
     };

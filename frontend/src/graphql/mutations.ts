@@ -40,8 +40,8 @@ export const UPDATE_VISITOR = gql`
 `;
 
 export const CREATE_SERVICE = gql`
-  mutation CreateOffering($input: CreateOfferingInput!) {
-    createOffering(input: $input) {
+  mutation CreateService($input: CreateServiceInput!) {
+    createService(input: $input) {
       id
       name
       category
@@ -79,8 +79,8 @@ export const UPDATE_VENDOR_PROFILE_PIC = gql`
 `;
 
 export const UPDATE_SERVICE_PROFILE = gql`
-  mutation UpdateOffering($id: String!, $input: UpdateOfferingInput!) {
-    updateOffering(id: $id, input: $input) {
+  mutation UpdateService($id: String!, $input: UpdateServiceInput!) {
+    updateService(id: $id, input: $input) {
       id
       category
       description
@@ -91,8 +91,8 @@ export const UPDATE_SERVICE_PROFILE = gql`
 `;
 
 export const UPDATE_SERVICE_SOCIALS = gql`
-  mutation UpdateOffering($id: String!, $input: UpdateOfferingInput!) {
-    updateOffering(id: $id, input: $input) {
+  mutation UpdateService($id: String!, $input: UpdateServiceInput!) {
+    updateService(id: $id, input: $input) {
       id
       website
       facebook
@@ -223,10 +223,10 @@ export const DELETE_BUDGET_ITEM = gql`
 `;
 
 export const ADD_TO_MY_VENDORS = gql`
-  mutation AddToMyVendors($visitorId: String!, $offeringId: String!) {
-    addToMyVendors(visitorId: $visitorId, offeringId: $offeringId) {
+  mutation AddToMyVendors($visitorId: String!, $serviceId: String!) {
+    addToMyVendors(visitorId: $visitorId, serviceId: $serviceId) {
       id
-      offering {
+      service {
         id
         name
       }
@@ -235,24 +235,25 @@ export const ADD_TO_MY_VENDORS = gql`
 `;
 
 export const REMOVE_FROM_MY_VENDORS = gql`
-  mutation RemoveFromMyVendors($visitorId: String!, $offeringId: String!) {
-    removeFromMyVendors(visitorId: $visitorId, offeringId: $offeringId) {
+  mutation RemoveFromMyVendors($visitorId: String!, $serviceId: String!) {
+    removeFromMyVendors(visitorId: $visitorId, serviceId: $serviceId) {
       id
-      offering {
+      service {
         id
         name
       }
     }
   }
 `;
+
 export const CREATE_CHAT = gql`
-  mutation CreateChat($visitorId: String!, $offeringId: String!) {
+  mutation CreateChat($visitorId: String!, $serviceId: String!) {
     createChat(
-      createChatInput: { visitorId: $visitorId, offeringId: $offeringId }
+      createChatInput: { visitorId: $visitorId, serviceId: $serviceId }
     ) {
       chatId
       visitorId
-      offeringId
+      serviceId
       vendorId
       visitor {
         id
@@ -260,7 +261,7 @@ export const CREATE_CHAT = gql`
       vendor {
         id
       }
-      offering {
+      service {
         id
       }
     }
@@ -298,8 +299,8 @@ export const MARK_CHAT_AS_READ = gql`
 `;
 
 export const CREATE_PACKAGE = gql`
-  mutation CreatePackage($input: CreatePackageInput!, $offeringId: String!) {
-    createPackage(input: $input, offeringId: $offeringId) {
+  mutation CreatePackage($input: CreatePackageInput!, $serviceId: String!) {
+    createPackage(input: $input, serviceId: $serviceId) {
       id
       name
       description
@@ -342,10 +343,10 @@ export const CREATE_REVIEW = gql`
       comment
       rating
       image_urls
-      offering {
+      service {
         id
       }
-      mentionedOffering {
+      mentionedService {
         id
         name
         vendor {
@@ -422,8 +423,9 @@ export const RESPOND_PACKAGE_APPROVAL_REQUEST = gql`
   }
 `;
 
-export const DELETE_OFFERING = gql`
-  mutation DeleteOffering($id: String!) {
-    deleteOffering(id: $id)
+export const DELETE_SERVICE = gql`
+  mutation DeleteService($id: String!) {
+    deleteService(id: $id)
   }
 `;
+export const DELETE_OFFERING = DELETE_SERVICE;

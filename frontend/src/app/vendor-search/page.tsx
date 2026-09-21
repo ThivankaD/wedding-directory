@@ -142,7 +142,7 @@ const VendorSearchContent: React.FC = () => {
   };
 
   // Filter offerings by visibility, category/city in-memory fallback, and keyword query
-  const visibleOfferings = (data?.findOfferings || []).filter(
+  const visibleOfferings = (data?.findServices || data?.findOfferings || []).filter(
     (offering: Offering) => {
       if (!offering.visible) return false;
 

@@ -22,8 +22,8 @@ export const AUTOCOMPLETE_QUERY = gql`
 `;
 
 export const FIND_SERVICES = gql`
-    query GetFilteredOfferings($filter: OfferingFilterInput) {
-        findOfferings(filter: $filter) {
+    query GetFilteredServices($filter: ServiceFilterInput) {
+        findServices(filter: $filter) {
             id
             name
             category
@@ -46,8 +46,8 @@ export const FIND_SERVICES = gql`
 `;
 
 export const FIND_SERVICE_BY_ID = gql`
-  query FindOfferingById($id: String!) {
-    findOfferingById(id: $id) {
+  query FindServiceById($id: String!) {
+    findServiceById(id: $id) {
       id
       name
       category
@@ -74,8 +74,8 @@ export const FIND_SERVICE_BY_ID = gql`
 `;
 
 export const FIND_PORTFOLIO_BY_ID = gql`
-  query FindOfferingById($id: String!) {
-    findOfferingById(id: $id) {
+  query FindPortfolioById($id: String!) {
+    findServiceById(id: $id) {
       id
       banner
       photo_showcase
@@ -86,25 +86,25 @@ export const FIND_PORTFOLIO_BY_ID = gql`
 
 export const DELETE_SHOWCASE_IMAGE = gql`
   mutation DeletePhotoShowcase($id: String!, $index: Int!) {
-    deleteOfferingShowcaseImage(id: $id, index: $index)
+    deleteServiceShowcaseImage(id: $id, index: $index)
   }
 `;
 
 export const DELETE_BANNER_IMAGE = gql`
   mutation DeleteBannerImage($id: String!) {
-    deleteOfferingBanner(id: $id)
+    deleteServiceBanner(id: $id)
   }
 `;
 
 export const DELETE_SHOWCASE_VIDEO = gql`
   mutation DeleteVideoShowcase($id: String!) {  
-    deleteOfferingVideo(id: $id)
+    deleteServiceVideo(id: $id)
   }
 `;
 
 export const FIND_SERVICES_BY_VENDOR = gql`
-  query FindOfferingsByVendor($id: String!) {
-    findOfferingsByVendor(id: $id) {
+  query FindServicesByVendor($id: String!) {
+    findServicesByVendor(id: $id) {
       id
       name
       category
@@ -197,7 +197,7 @@ export const GET_BUDGET_TOOL = gql`
       package {
         name
         pricing
-        offering {
+        service {
           name
           category
         }
@@ -238,10 +238,10 @@ export const GET_VISITOR_CHECKLISTS = gql`
 `;
 
 export const FIND_ALL_MY_VENDORS_BY_CATEGORY = gql`
-  query FindAllMyVendorsByCategory($visitorId: String!, $category: [String!]) {
+  query FindAllMyVendorsByCategory($visitorId: String!, $category: String!) {
     findAllMyVendorsByCategory(visitorId: $visitorId, category: $category) {
       id
-      offering {
+      service {
         id
         name
         category
@@ -259,7 +259,7 @@ export const FIND_ALL_MY_VENDORS = gql`
   query FindAllMyVendors($visitorId: String!) {
     findAllMyVendors(visitorId: $visitorId) {
       id
-      offering {
+      service {
         id
         name
         category
@@ -274,10 +274,10 @@ export const FIND_ALL_MY_VENDORS = gql`
 `;
 
 export const FIND_MY_VENDOR_BY_ID = gql`
-  query FindMyVendorById($visitorId: String!, $offeringId: String!) {
-    findMyVendorById(visitorId: $visitorId, offeringId: $offeringId) {
+  query FindMyVendorById($visitorId: String!, $serviceId: String!) {
+    findMyVendorById(visitorId: $visitorId, serviceId: $serviceId) {
       id
-      offering {
+      service {
         id
         name
       }
@@ -285,9 +285,9 @@ export const FIND_MY_VENDOR_BY_ID = gql`
   }
 `;
 
-export const FIND_PACKAGES_BY_OFFERING = gql`
-  query FindPackagesByOffering($offeringId: String!) {
-    findPackagesByOffering(offeringId: $offeringId) {
+export const FIND_PACKAGES_BY_SERVICE = gql`
+  query FindPackagesByService($serviceId: String!) {
+    findPackagesByService(serviceId: $serviceId) {
       id
       name
       description
@@ -301,19 +301,20 @@ export const FIND_PACKAGES_BY_OFFERING = gql`
     }
   }
 `;
+export const FIND_PACKAGES_BY_OFFERING = FIND_PACKAGES_BY_SERVICE;
 
 export const FIND_REVIEW_BY_SERVICE = gql`
-  query FindReviewsByOffering($offering_id: String!) {
-    findReviewsByOffering(offering_id: $offering_id) {
+  query FindReviewsByService($service_id: String!) {
+    findReviewsByService(service_id: $service_id) {
       id
       comment
       rating
       image_urls
       createdAt
-      offering {
+      service {
         id
       }
-      mentionedOffering {
+      mentionedService {
         id
         name
         vendor {
@@ -328,8 +329,8 @@ export const FIND_REVIEW_BY_SERVICE = gql`
 `;
 
 export const FIND_REVIEW_PAGE_BY_SERVICE = gql`
-  query FindReviewsByOfferingPaginated($offering_id: String!, $page: Int, $limit: Int) {
-    findReviewsByOfferingPaginated(offering_id: $offering_id, page: $page, limit: $limit) {
+  query FindReviewsByServicePaginated($service_id: String!, $page: Int, $limit: Int) {
+    findReviewsByServicePaginated(service_id: $service_id, page: $page, limit: $limit) {
       averageRating
       totalReviews
       currentPage
@@ -341,10 +342,10 @@ export const FIND_REVIEW_PAGE_BY_SERVICE = gql`
         rating
         image_urls
         createdAt
-        offering {
+        service {
           id
         }
-        mentionedOffering {
+        mentionedService {
           id
           name
           vendor {
@@ -368,14 +369,14 @@ export const FIND_ALL_REVIEWS = gql`
       rating
       image_urls
       createdAt
-      offering {
+      service {
         id
         name
         vendor {
           busname
         }
       }
-      mentionedOffering {
+      mentionedService {
         id
         name
         vendor {
@@ -390,11 +391,11 @@ export const FIND_ALL_REVIEWS = gql`
 `;
 
 export const GET_CHAT = gql`
-  query GetChat($visitorId: String!, $offeringId: String!) {
-    getChat(visitorId: $visitorId, offeringId: $offeringId) {
+  query GetChat($visitorId: String!, $serviceId: String!) {
+    getChat(visitorId: $visitorId, serviceId: $serviceId) {
       chatId
       visitorId
-      offeringId
+      serviceId
       vendorId
       visitor {
         id
@@ -402,7 +403,7 @@ export const GET_CHAT = gql`
       vendor {
         id
       }
-      offering {
+      service {
         id
       }
       messages {
@@ -420,7 +421,7 @@ export const GET_CHAT_HISTORY = gql`
   query GetChatHistory($chatId: String!) {
     getChatHistory(chatId: $chatId) {
       chatId
-      offeringId
+      serviceId
       vendorId
       visitorId
       messages {
@@ -437,7 +438,7 @@ export const GET_VISITOR_CHATS = gql`
   query GetVisitorChats($visitorId: String!) {
     getVisitorChats(visitorId: $visitorId) {
       chatId
-      offeringId
+      serviceId
       vendorId
       messages {
         content
@@ -464,7 +465,7 @@ export const GET_VENDOR_MESSAGES = gql`
     getVendorChats(vendorId: $vendorId) {
       chatId
       visitorId
-      offeringId
+      serviceId
       messages {
         content
         senderId
@@ -475,9 +476,9 @@ export const GET_VENDOR_MESSAGES = gql`
   }
 `;
 
-export const GET_OFFERING_DETAILS = gql`
-  query GetOfferingDetails($id: String!) {
-    findOfferingById(id: $id) {
+export const GET_SERVICE_DETAILS = gql`
+  query GetServiceDetails($id: String!) {
+    findServiceById(id: $id) {
       id
       name
       category
@@ -490,6 +491,7 @@ export const GET_OFFERING_DETAILS = gql`
     }
   }
 `;
+export const GET_OFFERING_DETAILS = GET_SERVICE_DETAILS;
 
 export const GET_VENDOR_CHAT = gql`
   query GetChatHistory($chatId: String!) {
@@ -533,14 +535,14 @@ export const GET_VENDOR_OFFERING_DETAILS = gql`
     }
   }
 `;
+
 export const FIND_VENDOR_BY_SERVICE = gql`
-  query FindVendorsByOffering($offering_id: String!) {
-    findVendorsByOffering(offering_id: $offering_id) {
+  query FindVendorsByService($service_id: String!) {
+    findVendorsByService(service_id: $service_id) {
       location
     }
   }
 `;
-
 
 export const GET_VENDOR_PAYMENTS = gql`
   query GetVendorPayments($vendorId: String!) {
@@ -564,7 +566,7 @@ export const GET_VENDOR_PAYMENTS = gql`
       package {
         id
         name
-        offering {
+        service {
           id
           name
         }
@@ -594,7 +596,7 @@ export const GET_VISITOR_PAYMENTS = gql`
       package {
         id
         name
-        offering {
+        service {
           id
           name
           category
@@ -656,7 +658,7 @@ export const GET_VISITOR_BOOKINGS = gql`
         phone
       }
       packageName
-      offeringName
+      serviceName
       amount
       createdAt
     }
@@ -690,7 +692,7 @@ export const GET_VENDOR_APPROVAL_REQUESTS = gql`
         id
         name
         pricing
-        offering {
+        service {
           id
           name
         }
@@ -717,7 +719,7 @@ export const GET_VISITOR_APPROVAL_REQUESTS = gql`
         id
         name
         pricing
-        offering {
+        service {
           id
           name
           vendor {
@@ -750,8 +752,8 @@ export const GET_PACKAGE_APPROVAL_REQUEST_STATUS = gql`
 `;
 
 export const CHECK_REVIEW_ELIGIBILITY = gql`
-  query CheckReviewEligibility($offering_id: String!, $visitor_id: String) {
-    checkReviewEligibility(offering_id: $offering_id, visitor_id: $visitor_id) {
+  query CheckReviewEligibility($service_id: String!, $visitor_id: String) {
+    checkReviewEligibility(service_id: $service_id, visitor_id: $visitor_id) {
       canReview
       reason
       message
@@ -759,4 +761,3 @@ export const CHECK_REVIEW_ELIGIBILITY = gql`
     }
   }
 `;
-

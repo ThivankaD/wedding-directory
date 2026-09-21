@@ -4,15 +4,18 @@ import Image from "next/image";
 import ActionButton from "../common/ActionButton";
 import EmptyStateDisplay from "../common/EmptyStateDisplay";
 
+interface ServiceOrOffering {
+  name?: string;
+  banner?: string;
+  vendor?: {
+    busname?: string;
+  };
+}
+
 interface Vendor {
   id: string;
-  offering: {
-    name?: string;
-    banner?: string;
-    vendor?: {
-      busname?: string;
-    };
-  };
+  service?: ServiceOrOffering;
+  offering?: ServiceOrOffering;
 }
 
 interface VendorWidgetProps {
@@ -43,38 +46,41 @@ const VendorWidget: React.FC<VendorWidgetProps> = ({ vendors, visitorId }) => {
           </p>
           {vendors && vendors.length > 0 ? (
             <div className="space-y-2.5">
-              {vendors.slice(0, 2).map((vendor) => (
+            {vendors.slice(0, 2).map((vendor) => {
+              const svc = vendor.service || vendor.offering;
+              return (
                 <div
                   key={vendor.id}
                   className="flex items-center gap-3 pb-2.5 border-b border-orange/10 dark:border-zinc-800 last:border-b-0 last:pb-0 group"
                 >
                   <div className="w-11 h-11 rounded-xl overflow-hidden bg-orange/10 dark:bg-orange/20 shrink-0 border border-orange/20 shadow-xs flex items-center justify-center">
-                    {vendor.offering?.banner ? (
+                    {svc?.banner ? (
                       <Image
-                        src={vendor.offering.banner}
-                        alt={vendor.offering?.name || "Vendor"}
+                        src={svc.banner}
+                        alt={svc?.name || "Vendor"}
                         width={50}
                         height={50}
                         className="h-full w-full object-cover transition-transform group-hover:scale-105"
                       />
                     ) : (
                       <div className="h-full w-full flex items-center justify-center text-orange font-bold font-title text-sm">
-                        {vendor.offering?.name
-                          ? vendor.offering.name.charAt(0)
+                        {svc?.name
+                          ? svc.name.charAt(0)
                           : "?"}
                       </div>
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-title font-bold truncate text-gray-900 dark:text-zinc-200 text-sm group-hover:text-orange transition-colors">
-                      {vendor.offering?.name || "Unnamed Vendor"}
+                      {svc?.name || "Unnamed Vendor"}
                     </p>
                     <p className="text-xs text-gray-500 dark:text-zinc-400 font-body truncate mt-0.5">
-                      {vendor.offering?.vendor?.busname || "No business name"}
+                      {svc?.vendor?.busname || "No business name"}
                     </p>
                   </div>
                 </div>
-              ))}
+              );
+            })}
             </div>
           ) : (
             <EmptyStateDisplay

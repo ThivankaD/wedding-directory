@@ -68,8 +68,9 @@ const VendorDashBoardContent: React.FC = () => {
 
   // Update services state when servicesData changes
   useEffect(() => {
-    if (servicesData?.findOfferingsByVendor) {
-      setServices(servicesData.findOfferingsByVendor);
+    const list = servicesData?.findServicesByVendor || servicesData?.findOfferingsByVendor;
+    if (list) {
+      setServices(list);
     }
   }, [servicesData]);
 

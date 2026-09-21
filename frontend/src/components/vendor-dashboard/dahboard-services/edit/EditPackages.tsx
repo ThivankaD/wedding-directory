@@ -65,7 +65,7 @@ const EditPackages: React.FC = () => {
   const { loading, error, data, refetch } = useQuery(
     FIND_PACKAGES_BY_OFFERING,
     {
-      variables: { offeringId },
+      variables: { serviceId: offeringId, offeringId },
       fetchPolicy: "network-only",
     }
   );
@@ -82,23 +82,23 @@ const EditPackages: React.FC = () => {
 
   const [createPackage] = useMutation(CREATE_PACKAGE, {
     refetchQueries: [
-      { query: FIND_PACKAGES_BY_OFFERING, variables: { offeringId } },
+      { query: FIND_PACKAGES_BY_OFFERING, variables: { serviceId: offeringId, offeringId } },
     ],
   });
   const [updatePackage] = useMutation(UPDATE_PACKAGE, {
     refetchQueries: [
-      { query: FIND_PACKAGES_BY_OFFERING, variables: { offeringId } },
+      { query: FIND_PACKAGES_BY_OFFERING, variables: { serviceId: offeringId, offeringId } },
     ],
   });
   const [deletePackage] = useMutation(DELETE_PACKAGE, {
     refetchQueries: [
-      { query: FIND_PACKAGES_BY_OFFERING, variables: { offeringId } },
+      { query: FIND_PACKAGES_BY_OFFERING, variables: { serviceId: offeringId, offeringId } },
     ],
   });
 
   useEffect(() => {
-    if (data?.findPackagesByOffering) {
-      const fetched: Package[] = data.findPackagesByOffering;
+    const fetched: Package[] | undefined = data?.findPackagesByService || data?.findPackagesByOffering;
+    if (fetched) {
       setPackages(fetched);
 
       const action = searchParams.get("action");
@@ -280,6 +280,7 @@ const EditPackages: React.FC = () => {
               requiresApproval: Boolean(formPackage.requiresApproval),
               image: formPackage.image || null,
             },
+            serviceId: offeringId,
             offeringId,
           },
         });

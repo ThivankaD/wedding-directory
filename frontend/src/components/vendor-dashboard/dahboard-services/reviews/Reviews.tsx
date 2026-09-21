@@ -22,7 +22,7 @@ interface ReviewItem {
   
 const Reviews: React.FC<ReviewsProps> = ({ serviceId }) => {
     const { data: rdata, loading: reviewsLoading, error: reviewsError } = useQuery(FIND_REVIEW_PAGE_BY_SERVICE, {
-        variables: { offering_id: serviceId, page: 1, limit: 5 },
+        variables: { service_id: serviceId, page: 1, limit: 5 },
         skip: !serviceId,
     });
 
@@ -53,7 +53,7 @@ const Reviews: React.FC<ReviewsProps> = ({ serviceId }) => {
     }
     if (reviewsError) return <div>Error fetching reviews</div>;
 
-    const reviewPage = rdata?.findReviewsByOfferingPaginated;
+    const reviewPage = rdata?.findReviewsByServicePaginated;
     const latestReviews: ReviewItem[] = reviewPage?.reviews ?? [];
     const totalReviews = reviewPage?.totalReviews ?? 0;
     const avgRating = reviewPage?.averageRating ?? 0;

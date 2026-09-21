@@ -30,7 +30,7 @@ const EditSocialLinks: React.FC = () => {
     fetchPolicy: "network-only",
   });
 
-  const serviceData = data?.findOfferingById;
+  const serviceData = data?.findServiceById || data?.findOfferingById;
 
   const [form, setForm] = useState<SocialFormState>({
     website: "",
