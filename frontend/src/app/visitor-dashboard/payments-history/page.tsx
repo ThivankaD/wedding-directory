@@ -623,15 +623,15 @@ const PaymentsHistoryPage = () => {
                 <span>Print</span>
               </button>
 
-              {selectedReceipt.paymentReference && (
+              {selectedReceipt.paymentReference ? (
                 <Link
-                  href={`/success?order_id=${selectedReceipt.paymentReference}`}
+                  href={`/${selectedReceipt.status?.toLowerCase() === "pending" ? "payment-pending" : "success"}?order_id=${selectedReceipt.paymentReference}`}
                   className="flex-1 inline-flex items-center justify-center gap-1.5 bg-orange hover:bg-orange/90 text-white py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all text-center shadow-xs cursor-pointer"
                 >
                   <span>View Details</span>
                   <FiExternalLink size={14} />
                 </Link>
-              )}
+              ) : null}
             </div>
           </div>
         </div>

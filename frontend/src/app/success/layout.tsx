@@ -2,19 +2,15 @@ import React, { Fragment } from "react";
 import Header from "@/components/shared/Headers/Header";
 import Footer from "@/components/shared/Footer";
 
-
 const SuccessLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <Fragment>
-      {/* Container for the header */}
-      <div className="container mx-auto px-4 print:hidden">
+      <div className="w-full print:hidden">
         <Header />
       </div>
 
-      {/* Main content with background color */}
-      <div className="bg-lightYellow min-h-screen print:bg-white print:min-h-0 print:p-0">
-        <div className="max-w-6xl mx-auto px-4 print:max-w-full print:p-0 print:m-0">
-          {/* Content injected dynamically */}
+      <div className="bg-lightYellow dark:bg-darkBg min-h-[calc(100vh-5rem)] print:bg-white print:min-h-0 print:p-0">
+        <div className="w-full max-w-6xl mx-auto px-3 py-6 sm:px-6 sm:py-10 lg:px-8 print:max-w-full print:p-0 print:m-0">
           {children}
         </div>
       </div>

@@ -100,6 +100,11 @@ const Service: React.FC = () => {
   );
 
   const currentVendorId = data?.findServiceById?.vendor?.id;
+  const dashboardHref = vendor
+    ? "/vendor-dashboard"
+    : visitor
+      ? "/visitor-dashboard"
+      : "/";
 
   // Get vendor's booked dates for the calendar - MUST be at top level with all hooks
   const { data: bookedDatesData, refetch: refetchBookedDates } = useQuery(
@@ -420,11 +425,11 @@ const Service: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 w-full flex-grow">
         <div className="mb-4 pt-2">
           <Link
-            href={isVendorsOffering ? "/vendor-dashboard" : "/"}
+            href={dashboardHref}
             className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-zinc-400 hover:text-orange dark:hover:text-orange transition-colors group"
           >
             <FiArrowLeft className="text-base group-hover:-translate-x-0.5 transition-transform" />
-            <span>{isVendorsOffering ? "Back to Dashboard" : "Back"}</span>
+            <span>{vendor || visitor ? "Back to Dashboard" : "Back"}</span>
           </Link>
         </div>
 

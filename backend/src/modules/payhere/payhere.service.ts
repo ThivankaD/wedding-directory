@@ -71,7 +71,7 @@ export class PayHereService {
         sandbox: this.configService.get<string>('PAYHERE_SANDBOX') !== 'false',
         merchant_id: merchantId,
         return_url: `${frontendUrl}/success`,
-        cancel_url: `${frontendUrl}/services/${serviceId}?payment_canceled=true`,
+        cancel_url: `${frontendUrl}/payment-failed?order_id=${encodeURIComponent(orderId)}&service_id=${encodeURIComponent(serviceId)}`,
         notify_url:
           this.configService.get<string>('PAYHERE_NOTIFY_URL') ||
           `${backendUrl}/api/payhere/notify`,

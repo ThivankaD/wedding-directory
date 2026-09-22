@@ -12,10 +12,14 @@ import { FaArrowLeft } from "react-icons/fa";
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 import { FaPlay, FaVideo } from "react-icons/fa";
 import Image from "next/image";
+import { useAuth } from "@/contexts/VisitorAuthContext";
+import { useVendorAuth } from "@/contexts/VendorAuthContext";
 
 const PortfolioPage: React.FC = () => {
   const params = useParams();
   const { id } = params;
+  const { visitor } = useAuth();
+  const { vendor } = useVendorAuth();
   const [selectedMedia, setSelectedMedia] = useState<{
     type: "image" | "video";
     url: string;
@@ -125,10 +129,19 @@ const PortfolioPage: React.FC = () => {
       <Header />
       <div className="w-11/12 md:w-10/12 lg:w-3/4 xl:w-2/3 mx-auto py-6 px-4 flex-grow">
         <Link
-          href={`/services/${id}`}
+          href={
+            vendor
+              ? "/vendor-dashboard"
+              : visitor
+                ? "/visitor-dashboard"
+                : `/services/${id}`
+          }
           className="flex items-center mb-6 text-gray-700 dark:text-zinc-300 hover:text-orange dark:hover:text-orange"
         >
-          <FaArrowLeft className="mr-2" /> Back to {offering?.name}
+          <FaArrowLeft className="mr-2" />
+          {vendor || visitor
+            ? "Back to Dashboard"
+            : `Back to ${offering?.name}`}
         </Link>
 
         <h1 className="text-3xl font-bold mb-6 text-gray-900 dark:text-zinc-100">
