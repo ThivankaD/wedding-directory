@@ -8,7 +8,8 @@ interface CreatePayHerePaymentInput {
   packageId: string;
   visitorId: string;
   vendorId: string;
-  serviceId: string;
+  serviceId?: string;
+  offeringId?: string;
   bookingDate?: string;
   customer?: {
     firstName?: string;
@@ -38,11 +39,18 @@ export class PayHereService {
   ) {}
 
   async createPayment(origin: string, input: CreatePayHerePaymentInput) {
+    const serviceId = input.serviceId || input.offeringId;
+    if (!serviceId) {
+      throw new BadRequestException('Service ID is required');
+    }
+
     const merchantId = this.getRequiredConfig('PAYHERE_MERCHANT_ID');
     const merchantSecret = this.getRequiredConfig('PAYHERE_MERCHANT_SECRET');
     const backendUrl = this.configService.get<string>('BACKEND_URL') || origin;
-    const frontendUrl = this.configService.get<string>('FRONTEND_URL') || origin;
-    const currency = this.configService.get<string>('PAYHERE_CURRENCY') || 'LKR';
+    const frontendUrl =
+      this.configService.get<string>('FRONTEND_URL') || origin;
+    const currency =
+      this.configService.get<string>('PAYHERE_CURRENCY') || 'LKR';
     const orderId = `PAY-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
     const amount = Number(input.amount).toFixed(2);
 
@@ -50,7 +58,7 @@ export class PayHereService {
       input.visitorId,
       input.vendorId,
       input.packageId,
-      input.serviceId,
+      serviceId,
       Number(amount),
       orderId,
       input.bookingDate ? new Date(input.bookingDate) : undefined,
@@ -63,8 +71,10 @@ export class PayHereService {
         sandbox: this.configService.get<string>('PAYHERE_SANDBOX') !== 'false',
         merchant_id: merchantId,
         return_url: `${frontendUrl}/success`,
-        cancel_url: `${frontendUrl}/services/${input.serviceId}?payment_canceled=true`,
-        notify_url: this.configService.get<string>('PAYHERE_NOTIFY_URL') || `${backendUrl}/api/payhere/notify`,
+        cancel_url: `${frontendUrl}/services/${serviceId}?payment_canceled=true`,
+        notify_url:
+          this.configService.get<string>('PAYHERE_NOTIFY_URL') ||
+          `${backendUrl}/api/payhere/notify`,
         order_id: orderId,
         items: 'Advance Payment',
         currency,
@@ -78,7 +88,13 @@ export class PayHereService {
         country: 'Sri Lanka',
         custom_1: input.visitorId,
         custom_2: input.packageId,
-        hash: this.createCheckoutHash(merchantId, orderId, amount, currency, merchantSecret),
+        hash: this.createCheckoutHash(
+          merchantId,
+          orderId,
+          amount,
+          currency,
+          merchantSecret,
+        ),
       },
     };
   }
@@ -114,7 +130,10 @@ export class PayHereService {
   }
 
   async getPaymentStatus(rawOrderId: string) {
-    const orderId = typeof rawOrderId === 'string' ? rawOrderId.split(',')[0].trim() : String(rawOrderId || '').trim();
+    const orderId =
+      typeof rawOrderId === 'string'
+        ? rawOrderId.split(',')[0].trim()
+        : String(rawOrderId || '').trim();
 
     if (!orderId) {
       throw new BadRequestException('Order ID is required');
@@ -148,7 +167,10 @@ export class PayHereService {
   }
 
   async cancelPayment(rawOrderId: string) {
-    const orderId = typeof rawOrderId === 'string' ? rawOrderId.split(',')[0].trim() : String(rawOrderId || '').trim();
+    const orderId =
+      typeof rawOrderId === 'string'
+        ? rawOrderId.split(',')[0].trim()
+        : String(rawOrderId || '').trim();
     if (!orderId) {
       return { success: false, message: 'Order ID is required' };
     }
@@ -169,7 +191,9 @@ export class PayHereService {
     currency: string,
     merchantSecret: string,
   ) {
-    return this.md5(`${merchantId}${orderId}${amount}${currency}${this.md5(merchantSecret)}`);
+    return this.md5(
+      `${merchantId}${orderId}${amount}${currency}${this.md5(merchantSecret)}`,
+    );
   }
 
   private createNotifyHash(
@@ -180,7 +204,9 @@ export class PayHereService {
     statusCode: string,
     merchantSecret: string,
   ) {
-    return this.md5(`${merchantId}${orderId}${amount}${currency}${statusCode}${this.md5(merchantSecret)}`);
+    return this.md5(
+      `${merchantId}${orderId}${amount}${currency}${statusCode}${this.md5(merchantSecret)}`,
+    );
   }
 
   private md5(value: string) {

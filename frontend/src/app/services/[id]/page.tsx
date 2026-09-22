@@ -381,6 +381,7 @@ const Service: React.FC = () => {
           visitorId: visitor.id,
           vendorId: offering.vendor.id,
           serviceId: offering.id,
+          offeringId: offering.id,
           bookingDate: bookingDate ? bookingDate.toISOString() : undefined,
           customer: {
             email: visitor.email,
