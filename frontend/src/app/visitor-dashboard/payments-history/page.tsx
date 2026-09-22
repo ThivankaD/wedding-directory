@@ -6,8 +6,6 @@ import { useAuth } from "@/contexts/VisitorAuthContext";
 import { TableSkeleton } from "@/components/ui/shimmer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQuery } from "@apollo/client";
-import request from "@/utils/request";
-import toast from "react-hot-toast";
 import { GET_VISITOR_PAYMENTS } from "@/graphql/queries";
 import BottomNavigationBar from "@/components/visitor-dashboard/BottomNavigationBar";
 import Breadcrumbs from "@/components/Breadcrumbs";
@@ -53,21 +51,13 @@ interface Payment {
   };
 }
 
-interface PayHerePaymentResponse {
-  actionUrl: string;
-  payment: Record<string, string | boolean>;
-}
-
 const PaymentsHistoryPage = () => {
   const { visitor } = useAuth();
   const [selectedReceipt, setSelectedReceipt] = useState<Payment | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
-  const [retryingPaymentId, setRetryingPaymentId] = useState<string | null>(
-    null,
-  );
 
-  const { data, loading, error, refetch } = useQuery(GET_VISITOR_PAYMENTS, {
+  const { data, loading, error } = useQuery(GET_VISITOR_PAYMENTS, {
     variables: { visitorId: visitor?.id },
     skip: !visitor?.id,
     fetchPolicy: "cache-and-network",
@@ -121,43 +111,6 @@ const PaymentsHistoryPage = () => {
       } else {
         window.print();
       }
-    }
-  };
-
-  const handleRetryPayment = async (payment: Payment) => {
-    if (!visitor?.id || !payment.paymentReference || retryingPaymentId) return;
-
-    setRetryingPaymentId(payment.id);
-    try {
-      const { data: checkout } = await request.post<PayHerePaymentResponse>(
-        "/api/payhere/retry-payment",
-        {
-          orderId: payment.paymentReference,
-          visitorId: visitor.id,
-        },
-      );
-
-      const form = document.createElement("form");
-      form.method = "POST";
-      form.action = checkout.actionUrl;
-
-      Object.entries(checkout.payment).forEach(([key, value]) => {
-        const input = document.createElement("input");
-        input.type = "hidden";
-        input.name = key;
-        input.value = String(value);
-        form.appendChild(input);
-      });
-
-      document.body.appendChild(form);
-      form.submit();
-    } catch (retryError: any) {
-      await refetch();
-      toast.error(
-        retryError?.response?.data?.message ||
-          "This payment can no longer be resumed. Please start a new booking.",
-      );
-      setRetryingPaymentId(null);
     }
   };
 
@@ -525,28 +478,13 @@ const PaymentsHistoryPage = () => {
 
                         {/* Action: Receipt */}
                         <td className="py-3.5 px-4 text-right">
-                          {payment.status?.toLowerCase() === "pending" ? (
-                            <button
-                              onClick={() => handleRetryPayment(payment)}
-                              disabled={retryingPaymentId === payment.id}
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-white bg-orange hover:bg-orange/90 rounded-xl transition-all cursor-pointer shadow-2xs disabled:cursor-wait disabled:opacity-60"
-                            >
-                              <FiCreditCard size={13} />
-                              <span>
-                                {retryingPaymentId === payment.id
-                                  ? "Opening..."
-                                  : "Pay Now"}
-                              </span>
-                            </button>
-                          ) : (
-                            <button
-                              onClick={() => setSelectedReceipt(payment)}
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-orange hover:bg-orange hover:text-white bg-orange/10 rounded-xl transition-all cursor-pointer shadow-2xs"
-                            >
-                              <FiFileText size={13} />
-                              <span>Receipt</span>
-                            </button>
-                          )}
+                          <button
+                            onClick={() => setSelectedReceipt(payment)}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-orange hover:bg-orange hover:text-white bg-orange/10 rounded-xl transition-all cursor-pointer shadow-2xs"
+                          >
+                            <FiFileText size={13} />
+                            <span>Receipt</span>
+                          </button>
                         </td>
                       </tr>
                     );
@@ -685,22 +623,9 @@ const PaymentsHistoryPage = () => {
                 <span>Print</span>
               </button>
 
-              {selectedReceipt.status?.toLowerCase() === "pending" ? (
-                <button
-                  onClick={() => handleRetryPayment(selectedReceipt)}
-                  disabled={retryingPaymentId === selectedReceipt.id}
-                  className="flex-1 inline-flex items-center justify-center gap-1.5 bg-orange hover:bg-orange/90 text-white py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all text-center shadow-xs cursor-pointer disabled:cursor-wait disabled:opacity-60"
-                >
-                  <FiCreditCard size={14} />
-                  <span>
-                    {retryingPaymentId === selectedReceipt.id
-                      ? "Opening..."
-                      : "Pay Now"}
-                  </span>
-                </button>
-              ) : selectedReceipt.paymentReference ? (
+              {selectedReceipt.paymentReference ? (
                 <Link
-                  href={`/success?order_id=${selectedReceipt.paymentReference}`}
+                  href={`/${selectedReceipt.status?.toLowerCase() === "pending" ? "payment-pending" : "success"}?order_id=${selectedReceipt.paymentReference}`}
                   className="flex-1 inline-flex items-center justify-center gap-1.5 bg-orange hover:bg-orange/90 text-white py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all text-center shadow-xs cursor-pointer"
                 >
                   <span>View Details</span>

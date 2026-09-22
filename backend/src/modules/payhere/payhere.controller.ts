@@ -19,11 +19,6 @@ export class PayHereController {
     return this.payHereService.createPayment(origin, body);
   }
 
-  @Post('retry-payment')
-  async retryPayment(@Headers('origin') origin: string, @Body() body: any) {
-    return this.payHereService.retryPayment(origin, body);
-  }
-
   @Post('notify')
   @HttpCode(HttpStatus.OK)
   async notify(@Body() body: any) {

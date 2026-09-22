@@ -15,6 +15,8 @@ import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class PaymentService {
+  private static readonly PENDING_PAYMENT_TIMEOUT_MS = 30 * 60 * 1000;
+
   constructor(
     @InjectRepository(PaymentEntity)
     private paymentRepository: Repository<PaymentEntity>,
@@ -215,6 +217,7 @@ export class PaymentService {
   }
 
   async findByPaymentReference(paymentReference: string) {
+    await this.expireStalePendingPayments();
     return this.paymentRepository.findOne({
       where: { paymentReference },
       relations: {
@@ -227,17 +230,18 @@ export class PaymentService {
     });
   }
 
-  async findPendingPaymentForRetry(
-    paymentReference: string,
-    visitorId: string,
-  ) {
-    const payment = await this.findByPaymentReference(paymentReference);
+  private async expireStalePendingPayments() {
+    const cutoff = new Date(
+      Date.now() - PaymentService.PENDING_PAYMENT_TIMEOUT_MS,
+    );
 
-    if (!payment || payment.visitor?.id !== visitorId) {
-      return null;
-    }
-
-    return payment.status === 'pending' ? payment : null;
+    await this.paymentRepository
+      .createQueryBuilder()
+      .update(PaymentEntity)
+      .set({ status: 'failed' })
+      .where('status = :status', { status: 'pending' })
+      .andWhere('created_at < :cutoff', { cutoff })
+      .execute();
   }
 
   // Update payment status by payment ID (for manual testing)
@@ -291,6 +295,7 @@ export class PaymentService {
   }
 
   async findByVisitorId(visitorId: string) {
+    await this.expireStalePendingPayments();
     return this.paymentRepository.find({
       where: { visitor: { id: visitorId } },
       relations: {

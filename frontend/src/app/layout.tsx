@@ -196,6 +196,7 @@ export default function RootLayout({
                     path.indexOf('/terms-of-use') === 0 ||
                     path.indexOf('/success') === 0 ||
                     path.indexOf('/payment-failed') === 0 ||
+                    path.indexOf('/payment-pending') === 0 ||
                     path.indexOf('/profile') === 0;
 
                   var theme = localStorage.getItem('sayido_dashboard_theme');

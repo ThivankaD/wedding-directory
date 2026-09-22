@@ -21,11 +21,6 @@ interface CreatePayHerePaymentInput {
   };
 }
 
-interface RetryPayHerePaymentInput {
-  orderId: string;
-  visitorId: string;
-}
-
 interface PayHereNotifyInput {
   merchant_id: string;
   order_id: string;
@@ -102,42 +97,6 @@ export class PayHereService {
         ),
       },
     };
-  }
-
-  async retryPayment(origin: string, input: RetryPayHerePaymentInput) {
-    if (!input.orderId || !input.visitorId) {
-      throw new BadRequestException(
-        'Payment reference and visitor ID are required',
-      );
-    }
-
-    const existingPayment =
-      await this.paymentService.findPendingPaymentForRetry(
-        input.orderId,
-        input.visitorId,
-      );
-
-    if (!existingPayment?.package?.service || !existingPayment.vendor) {
-      throw new BadRequestException(
-        'This payment is no longer available to retry',
-      );
-    }
-
-    return this.createPayment(origin, {
-      amount: Number(existingPayment.amount),
-      packageId: existingPayment.package.id,
-      visitorId: existingPayment.visitor.id,
-      vendorId: existingPayment.vendor.id,
-      serviceId: existingPayment.package.service.id,
-      bookingDate: existingPayment.bookingDate?.toISOString(),
-      customer: {
-        firstName: existingPayment.visitor.visitor_fname,
-        lastName: existingPayment.visitor.visitor_lname,
-        email: existingPayment.visitor.email,
-        phone: existingPayment.visitor.phone,
-        city: existingPayment.vendor.city,
-      },
-    });
   }
 
   async handleNotification(input: PayHereNotifyInput) {

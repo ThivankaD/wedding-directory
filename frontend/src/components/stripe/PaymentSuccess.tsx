@@ -508,7 +508,7 @@ export default function PaymentSuccess({
 
               {/* Actions for Pending State */}
               {isPending && (
-                <div className="space-y-3 pt-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                   <button
                     onClick={() => {
                       setPollCount(0);
@@ -520,7 +520,7 @@ export default function PaymentSuccess({
                   </button>
                   <Link
                     href="/visitor-dashboard"
-                    className="block w-full border border-gray-300 dark:border-zinc-700 text-gray-700 dark:text-zinc-300 py-3.5 px-4 rounded-xl hover:bg-gray-50 dark:hover:bg-darkElevated transition-all font-medium text-sm text-center"
+                    className="w-full border border-gray-300 dark:border-zinc-700 text-gray-700 dark:text-zinc-300 py-3.5 px-4 rounded-xl hover:bg-gray-50 dark:hover:bg-darkElevated transition-all font-medium text-sm flex items-center justify-center text-center"
                   >
                     Go to Dashboard
                   </Link>
