@@ -43,6 +43,8 @@ export const isDashboardRoute = (pathname: string | null): boolean => {
     pathname.startsWith("/help") ||
     pathname.startsWith("/privacy-policy") ||
     pathname.startsWith("/terms-of-use") ||
+    pathname.startsWith("/success") ||
+    pathname.startsWith("/payment-failed") ||
     pathname.startsWith("/profile")
   );
 };

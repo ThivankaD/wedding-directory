@@ -227,6 +227,19 @@ export class PaymentService {
     });
   }
 
+  async findPendingPaymentForRetry(
+    paymentReference: string,
+    visitorId: string,
+  ) {
+    const payment = await this.findByPaymentReference(paymentReference);
+
+    if (!payment || payment.visitor?.id !== visitorId) {
+      return null;
+    }
+
+    return payment.status === 'pending' ? payment : null;
+  }
+
   // Update payment status by payment ID (for manual testing)
   async updatePaymentStatusById(
     paymentId: string,

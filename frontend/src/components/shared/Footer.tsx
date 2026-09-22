@@ -18,11 +18,11 @@ const Footer: React.FC = () => {
   const homeHref = visitor
     ? "/visitor-dashboard"
     : vendor
-    ? "/vendor-dashboard"
-    : "/";
+      ? "/vendor-dashboard"
+      : "/";
 
   return (
-    <footer className="w-full border-t border-orange/15 dark:border-zinc-800/80 bg-transparent font-body mt-auto">
+    <footer className="w-full border-t border-orange/15 dark:border-zinc-800/80 bg-lightYellow dark:bg-darkBg font-body mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12 w-full">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10 mb-10">
           {/* Brand & Brief Tagline */}
@@ -41,9 +41,11 @@ const Footer: React.FC = () => {
               </Link>
             )}
             <p className="text-gray-600 dark:text-zinc-400 text-sm leading-relaxed max-w-sm mb-4">
-              Sri Lanka&apos;s premier wedding directory and planning companion, connecting couples with verified vendors to craft unforgettable celebrations.
+              Sri Lanka&apos;s premier wedding directory and planning companion,
+              connecting couples with verified vendors to craft unforgettable
+              celebrations.
             </p>
-            <div className="inline-flex items-center gap-1.5 text-xs text-gray-500 dark:text-zinc-400 font-medium bg-orange/10 border border-orange/20 px-3 py-1 rounded-full text-orange">
+            <div className="inline-flex items-center gap-1.5 text-xs text-orange font-medium bg-orange/10 border border-orange/20 px-3 py-1 rounded-full">
               <FiHeart size={12} />
               <span>Made with love for weddings</span>
             </div>
@@ -56,27 +58,42 @@ const Footer: React.FC = () => {
             </h4>
             <ul className="space-y-2 text-sm text-gray-600 dark:text-zinc-400">
               <li>
-                <Link href={homeHref} className="hover:text-orange dark:hover:text-orange transition-colors">
+                <Link
+                  href={homeHref}
+                  className="hover:text-orange dark:hover:text-orange transition-colors"
+                >
                   Home
                 </Link>
               </li>
               <li>
-                <Link href="/vendor-search" className="hover:text-orange dark:hover:text-orange transition-colors">
+                <Link
+                  href="/vendor-search"
+                  className="hover:text-orange dark:hover:text-orange transition-colors"
+                >
                   Find Vendors
                 </Link>
               </li>
               <li>
-                <Link href="/visitor-dashboard" className="hover:text-orange dark:hover:text-orange transition-colors">
+                <Link
+                  href="/visitor-dashboard"
+                  className="hover:text-orange dark:hover:text-orange transition-colors"
+                >
                   Planning Tools
                 </Link>
               </li>
               <li>
-                <Link href="/blog" className="hover:text-orange dark:hover:text-orange transition-colors">
+                <Link
+                  href="/blog"
+                  className="hover:text-orange dark:hover:text-orange transition-colors"
+                >
                   Wedding Blog
                 </Link>
               </li>
               <li>
-                <Link href="/help" className="hover:text-orange dark:hover:text-orange transition-colors">
+                <Link
+                  href="/help"
+                  className="hover:text-orange dark:hover:text-orange transition-colors"
+                >
                   Help & FAQ
                 </Link>
               </li>
@@ -90,22 +107,34 @@ const Footer: React.FC = () => {
             </h4>
             <ul className="space-y-2 text-sm text-gray-600 dark:text-zinc-400">
               <li>
-                <Link href="/about" className="hover:text-orange dark:hover:text-orange transition-colors">
+                <Link
+                  href="/about"
+                  className="hover:text-orange dark:hover:text-orange transition-colors"
+                >
                   About Us
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="hover:text-orange dark:hover:text-orange transition-colors">
+                <Link
+                  href="/contact"
+                  className="hover:text-orange dark:hover:text-orange transition-colors"
+                >
                   Contact
                 </Link>
               </li>
               <li>
-                <Link href="/privacy-policy" className="hover:text-orange dark:hover:text-orange transition-colors">
+                <Link
+                  href="/privacy-policy"
+                  className="hover:text-orange dark:hover:text-orange transition-colors"
+                >
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/terms-of-use" className="hover:text-orange dark:hover:text-orange transition-colors">
+                <Link
+                  href="/terms-of-use"
+                  className="hover:text-orange dark:hover:text-orange transition-colors"
+                >
                   Terms of Use
                 </Link>
               </li>
@@ -122,7 +151,8 @@ const Footer: React.FC = () => {
                 Grow your wedding business
               </h4>
               <p className="text-xs text-gray-600 dark:text-zinc-400 leading-relaxed mb-4">
-                Showcase your packages, receive verified couple inquiries, and manage bookings effortlessly.
+                Showcase your packages, receive verified couple inquiries, and
+                manage bookings effortlessly.
               </p>
               <Link
                 href="/vendor-signup"
@@ -146,7 +176,7 @@ const Footer: React.FC = () => {
               href="https://facebook.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-8 h-8 rounded-full bg-white dark:bg-darkElevated border border-orange/20 dark:border-zinc-700 text-gray-600 dark:text-zinc-300 hover:text-white dark:hover:text-white hover:bg-orange dark:hover:bg-orange hover:border-orange dark:hover:border-orange flex items-center justify-center transition-all shadow-2xs"
+              className="w-8 h-8 rounded-full bg-white/80 dark:bg-darkElevated border border-orange/20 dark:border-zinc-700 text-gray-600 dark:text-zinc-300 hover:text-white dark:hover:text-white hover:bg-orange dark:hover:bg-orange hover:border-orange dark:hover:border-orange flex items-center justify-center transition-all shadow-2xs"
               aria-label="Facebook"
             >
               <FaFacebook size={14} />
@@ -155,7 +185,7 @@ const Footer: React.FC = () => {
               href="https://twitter.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-8 h-8 rounded-full bg-white dark:bg-darkElevated border border-orange/20 dark:border-zinc-700 text-gray-600 dark:text-zinc-300 hover:text-white dark:hover:text-white hover:bg-orange dark:hover:bg-orange hover:border-orange dark:hover:border-orange flex items-center justify-center transition-all shadow-2xs"
+              className="w-8 h-8 rounded-full bg-white/80 dark:bg-darkElevated border border-orange/20 dark:border-zinc-700 text-gray-600 dark:text-zinc-300 hover:text-white dark:hover:text-white hover:bg-orange dark:hover:bg-orange hover:border-orange dark:hover:border-orange flex items-center justify-center transition-all shadow-2xs"
               aria-label="Twitter / X"
             >
               <FaXTwitter size={13} />
@@ -164,7 +194,7 @@ const Footer: React.FC = () => {
               href="https://instagram.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-8 h-8 rounded-full bg-white dark:bg-darkElevated border border-orange/20 dark:border-zinc-700 text-gray-600 dark:text-zinc-300 hover:text-white dark:hover:text-white hover:bg-orange dark:hover:bg-orange hover:border-orange dark:hover:border-orange flex items-center justify-center transition-all shadow-2xs"
+              className="w-8 h-8 rounded-full bg-white/80 dark:bg-darkElevated border border-orange/20 dark:border-zinc-700 text-gray-600 dark:text-zinc-300 hover:text-white dark:hover:text-white hover:bg-orange dark:hover:bg-orange hover:border-orange dark:hover:border-orange flex items-center justify-center transition-all shadow-2xs"
               aria-label="Instagram"
             >
               <AiFillInstagram size={15} />
@@ -173,7 +203,7 @@ const Footer: React.FC = () => {
               href="https://pinterest.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-8 h-8 rounded-full bg-white dark:bg-darkElevated border border-orange/20 dark:border-zinc-700 text-gray-600 dark:text-zinc-300 hover:text-white dark:hover:text-white hover:bg-orange dark:hover:bg-orange hover:border-orange dark:hover:border-orange flex items-center justify-center transition-all shadow-2xs"
+              className="w-8 h-8 rounded-full bg-white/80 dark:bg-darkElevated border border-orange/20 dark:border-zinc-700 text-gray-600 dark:text-zinc-300 hover:text-white dark:hover:text-white hover:bg-orange dark:hover:bg-orange hover:border-orange dark:hover:border-orange flex items-center justify-center transition-all shadow-2xs"
               aria-label="Pinterest"
             >
               <FaPinterest size={14} />

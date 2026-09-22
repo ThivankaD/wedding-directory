@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Headers, HttpCode, HttpStatus, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Headers,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { PayHereService } from './payhere.service';
 
 @Controller('api/payhere')
@@ -8,6 +17,11 @@ export class PayHereController {
   @Post('create-payment')
   async createPayment(@Headers('origin') origin: string, @Body() body: any) {
     return this.payHereService.createPayment(origin, body);
+  }
+
+  @Post('retry-payment')
+  async retryPayment(@Headers('origin') origin: string, @Body() body: any) {
+    return this.payHereService.retryPayment(origin, body);
   }
 
   @Post('notify')
