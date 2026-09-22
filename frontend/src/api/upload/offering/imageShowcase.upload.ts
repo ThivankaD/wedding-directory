@@ -9,7 +9,7 @@ import request from "@/utils/request";
 export const uploadOfferingImageShowcase = async (
   files: File[],
   offeringId: string,
-  index?: number
+  index?: number,
 ): Promise<string[]> => {
   if (files.length > 5) {
     throw new Error("You can upload a maximum of 5 images.");
@@ -22,7 +22,6 @@ export const uploadOfferingImageShowcase = async (
   });
 
   formData.append("serviceId", offeringId);
-  formData.append("offeringId", offeringId);
   if (typeof index === "number") {
     formData.append("index", index.toString());
   }

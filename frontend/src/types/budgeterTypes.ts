@@ -87,10 +87,6 @@ export interface PaymentData {
       name: string;
       category: string;
     };
-    offering?: {
-      name: string;
-      category: string;
-    };
   };
 }
 

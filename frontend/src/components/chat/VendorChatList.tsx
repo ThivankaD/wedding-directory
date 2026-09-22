@@ -23,7 +23,7 @@ interface Message {
 interface Chat {
   chatId: string;
   visitorId: string;
-  offeringId: string;
+  serviceId: string;
   messages: Message[];
 }
 
@@ -65,7 +65,11 @@ const ChatRow = ({ chat }: { chat: Chat }) => {
       onClick={() => {
         if (vendor?.id) {
           markChatAsRead({
-            variables: { chatId: chat.chatId, userId: vendor.id, userType: "vendor" },
+            variables: {
+              chatId: chat.chatId,
+              userId: vendor.id,
+              userType: "vendor",
+            },
           }).catch(console.error);
         }
       }}
@@ -80,29 +84,40 @@ const ChatRow = ({ chat }: { chat: Chat }) => {
           </span>
           {previewMessage && (
             <span className="text-[11px] text-gray-400 dark:text-zinc-500 font-body flex-shrink-0">
-              {formatDistanceToNow(new Date(previewMessage.timestamp), { addSuffix: true })}
+              {formatDistanceToNow(new Date(previewMessage.timestamp), {
+                addSuffix: true,
+              })}
             </span>
           )}
         </div>
         <p className="text-xs text-gray-600 dark:text-zinc-300 mt-0.5 truncate font-body">
           {previewMessage?.content || "No messages yet"}
         </p>
-        <p className="text-[11px] text-gray-400 dark:text-zinc-500 mt-0.5 font-body truncate">{visitor.email}</p>
+        <p className="text-[11px] text-gray-400 dark:text-zinc-500 mt-0.5 font-body truncate">
+          {visitor.email}
+        </p>
       </div>
     </Link>
   );
 };
 
 // Collapsible group for one offering
-const OfferingGroup = ({ offeringId, chats }: { offeringId: string; chats: Chat[] }) => {
+const OfferingGroup = ({
+  serviceId,
+  chats,
+}: {
+  serviceId: string;
+  chats: Chat[];
+}) => {
   const [open, setOpen] = useState(true);
 
   const { data: offeringData } = useQuery(GET_OFFERING_DETAILS, {
-    variables: { id: offeringId },
-    skip: !offeringId,
+    variables: { id: serviceId },
+    skip: !serviceId,
   });
 
-  const offeringName = offeringData?.findOfferingById?.name || "Service Inquiries";
+  const offeringName =
+    offeringData?.findServiceById?.name || "Service Inquiries";
 
   return (
     <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 overflow-hidden transition-all">
@@ -115,9 +130,12 @@ const OfferingGroup = ({ offeringId, chats }: { offeringId: string; chats: Chat[
             <FiMessageSquare size={16} />
           </div>
           <div className="text-left">
-            <span className="font-title font-bold text-gray-900 dark:text-zinc-100 text-base">{offeringName}</span>
+            <span className="font-title font-bold text-gray-900 dark:text-zinc-100 text-base">
+              {offeringName}
+            </span>
             <span className="ml-2 px-2.5 py-0.5 text-xs bg-orange/10 text-orange font-semibold rounded-full font-body">
-              {chats.length} {chats.length === 1 ? "conversation" : "conversations"}
+              {chats.length}{" "}
+              {chats.length === 1 ? "conversation" : "conversations"}
             </span>
           </div>
         </div>
@@ -145,17 +163,20 @@ export default function ChatList({ chats }: ChatListProps) {
         <div className="w-14 h-14 rounded-2xl bg-orange/10 text-orange flex items-center justify-center mx-auto mb-3">
           <FaInbox size={26} />
         </div>
-        <h3 className="font-title font-bold text-lg text-gray-900 dark:text-zinc-100 mb-1">No conversations yet</h3>
+        <h3 className="font-title font-bold text-lg text-gray-900 dark:text-zinc-100 mb-1">
+          No conversations yet
+        </h3>
         <p className="text-sm text-gray-500 dark:text-zinc-400 max-w-sm mx-auto">
-          When couples reach out or submit an inquiry on your service pages, your conversations will appear here.
+          When couples reach out or submit an inquiry on your service pages,
+          your conversations will appear here.
         </p>
       </div>
     );
   }
 
-  // Group chats by offeringId
+  // Group chats by serviceId
   const grouped = chats.reduce<Record<string, Chat[]>>((acc, chat) => {
-    const key = chat.offeringId || "general";
+    const key = chat.serviceId || "general";
     if (!acc[key]) acc[key] = [];
     acc[key].push(chat);
     return acc;
@@ -163,11 +184,13 @@ export default function ChatList({ chats }: ChatListProps) {
 
   return (
     <div className="space-y-4">
-      {Object.entries(grouped).map(([offeringId, groupChats]) => (
-        <OfferingGroup key={offeringId} offeringId={offeringId} chats={groupChats} />
+      {Object.entries(grouped).map(([serviceId, groupChats]) => (
+        <OfferingGroup
+          key={serviceId}
+          serviceId={serviceId}
+          chats={groupChats}
+        />
       ))}
     </div>
   );
 }
-
-

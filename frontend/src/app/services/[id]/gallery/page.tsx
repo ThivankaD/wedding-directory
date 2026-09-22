@@ -24,41 +24,47 @@ const PortfolioPage: React.FC = () => {
 
   // Track loaded images to show a loading state
   const [loadedImages, setLoadedImages] = useState<{ [key: string]: boolean }>(
-    {}
+    {},
   );
 
   const { loading, error, data } = useQuery(FIND_SERVICE_BY_ID, {
     variables: { id },
   });
 
-  const offering = data?.findServiceById || data?.findOfferingById;
+  const offering = data?.findServiceById;
 
-  const allMedia = useMemo(() => [
-    ...(offering?.banner ? [{ type: "image", url: offering.banner }] : []),
-    ...(offering?.photo_showcase?.map((url: string) => ({
-      type: "image",
-      url,
-    })) || []),
-    ...(offering?.video_showcase?.map((url: string) => ({
-      type: "video",
-      url,
-    })) || []),
-  ], [offering]);
+  const allMedia = useMemo(
+    () => [
+      ...(offering?.banner ? [{ type: "image", url: offering.banner }] : []),
+      ...(offering?.photo_showcase?.map((url: string) => ({
+        type: "image",
+        url,
+      })) || []),
+      ...(offering?.video_showcase?.map((url: string) => ({
+        type: "video",
+        url,
+      })) || []),
+    ],
+    [offering],
+  );
 
-  const navigateMedia = useCallback((direction: "prev" | "next") => {
-    if (!selectedMedia) return;
+  const navigateMedia = useCallback(
+    (direction: "prev" | "next") => {
+      if (!selectedMedia) return;
 
-    const newIndex =
-      direction === "next"
-        ? (selectedMedia.index + 1) % allMedia.length
-        : (selectedMedia.index - 1 + allMedia.length) % allMedia.length;
+      const newIndex =
+        direction === "next"
+          ? (selectedMedia.index + 1) % allMedia.length
+          : (selectedMedia.index - 1 + allMedia.length) % allMedia.length;
 
-    setSelectedMedia({
-      type: allMedia[newIndex].type,
-      url: allMedia[newIndex].url,
-      index: newIndex,
-    });
-  }, [selectedMedia, allMedia]);
+      setSelectedMedia({
+        type: allMedia[newIndex].type,
+        url: allMedia[newIndex].url,
+        index: newIndex,
+      });
+    },
+    [selectedMedia, allMedia],
+  );
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -125,7 +131,9 @@ const PortfolioPage: React.FC = () => {
           <FaArrowLeft className="mr-2" /> Back to {offering?.name}
         </Link>
 
-        <h1 className="text-3xl font-bold mb-6 text-gray-900 dark:text-zinc-100">{offering?.name} - Gallery</h1>
+        <h1 className="text-3xl font-bold mb-6 text-gray-900 dark:text-zinc-100">
+          {offering?.name} - Gallery
+        </h1>
 
         {/* Masonry Grid Layout */}
         <ResponsiveMasonry columnsCountBreakPoints={{ 350: 1, 600: 2 }}>
@@ -225,7 +233,7 @@ const PortfolioPage: React.FC = () => {
                 src={selectedMedia.url}
                 alt={`${offering?.name} - Gallery`}
                 className="w-full h-full object-contain"
-                
+
                 width={1000}
                 height={1000}
               />

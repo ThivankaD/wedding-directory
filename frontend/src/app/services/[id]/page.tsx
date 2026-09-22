@@ -16,7 +16,14 @@ import {
 } from "@/graphql/queries";
 import { useMutation, useQuery } from "@apollo/client";
 import SocialIcons from "@/components/vendor-dashboard/dahboard-services/socialIcons";
-import { FiEdit, FiPlus, FiMessageCircle, FiMapPin, FiArrowLeft, FiCalendar } from "react-icons/fi";
+import {
+  FiEdit,
+  FiPlus,
+  FiMessageCircle,
+  FiMapPin,
+  FiArrowLeft,
+  FiCalendar,
+} from "react-icons/fi";
 import Reviews from "@/components/vendor-dashboard/dahboard-services/reviews/Reviews";
 import { useVendorAuth } from "@/contexts/VendorAuthContext";
 import Link from "next/link";
@@ -24,7 +31,11 @@ import { ServiceDetailSkeleton } from "@/components/ui/shimmer";
 import Comments from "@/components/vendor-dashboard/dahboard-services/reviews/Comments";
 import WriteReview from "@/components/vendor-dashboard/dahboard-services/reviews/WriteReview";
 import { useAuth } from "@/contexts/VisitorAuthContext";
-import { ADD_TO_MY_VENDORS, REMOVE_FROM_MY_VENDORS, TRACK_PACKAGE_VIEW } from "@/graphql/mutations";
+import {
+  ADD_TO_MY_VENDORS,
+  REMOVE_FROM_MY_VENDORS,
+  TRACK_PACKAGE_VIEW,
+} from "@/graphql/mutations";
 import toast from "react-hot-toast";
 import { FaHeart } from "react-icons/fa";
 import QuoteRequestWidget from "@/components/chat/QuoteRequestWidget";
@@ -70,26 +81,35 @@ const Service: React.FC = () => {
 
   const queryError = useQuery(FIND_SERVICE_BY_ID, { variables: { id } }).error;
 
-  const { data: packagesData, refetch: refetchPackages } = useQuery(FIND_PACKAGES_BY_OFFERING, {
-    variables: { serviceId: id, offeringId: id },
-    fetchPolicy: "network-only",
-  });
+  const { data: packagesData, refetch: refetchPackages } = useQuery(
+    FIND_PACKAGES_BY_OFFERING,
+    {
+      variables: { serviceId: id },
+      fetchPolicy: "network-only",
+    },
+  );
 
   // Get visitor's payments to check booked packages
-  const { data: paymentsData, refetch: refetchVisitorPayments } = useQuery(GET_VISITOR_PAYMENTS, {
-    variables: { visitorId: visitor?.id },
-    skip: !visitor?.id,
-    fetchPolicy: "network-only",
-  });
+  const { data: paymentsData, refetch: refetchVisitorPayments } = useQuery(
+    GET_VISITOR_PAYMENTS,
+    {
+      variables: { visitorId: visitor?.id },
+      skip: !visitor?.id,
+      fetchPolicy: "network-only",
+    },
+  );
 
-  const currentVendorId = (data?.findServiceById || data?.findOfferingById)?.vendor?.id;
+  const currentVendorId = data?.findServiceById?.vendor?.id;
 
   // Get vendor's booked dates for the calendar - MUST be at top level with all hooks
-  const { data: bookedDatesData, refetch: refetchBookedDates } = useQuery(GET_VENDOR_BOOKED_DATES, {
-    variables: { vendorId: currentVendorId },
-    skip: !currentVendorId,
-    fetchPolicy: "network-only",
-  });
+  const { data: bookedDatesData, refetch: refetchBookedDates } = useQuery(
+    GET_VENDOR_BOOKED_DATES,
+    {
+      variables: { vendorId: currentVendorId },
+      skip: !currentVendorId,
+      fetchPolicy: "network-only",
+    },
+  );
 
   // Check if offering is in visitor's my vendors
   const { loading: myVendorLoading, data: myVendorData } = useQuery(
@@ -98,10 +118,9 @@ const Service: React.FC = () => {
       variables: {
         visitorId: visitor?.id,
         serviceId: id,
-        offeringId: id,
       },
       skip: !visitor,
-    }
+    },
   );
 
   const [isInMyVendors, setIsInMyVendors] = useState(false);
@@ -112,14 +131,12 @@ const Service: React.FC = () => {
   const [selectedPackage, setSelectedPackage] = useState<Package | null>(null);
   const [approvalPackage, setApprovalPackage] = useState<Package | null>(null);
 
-  const { data: visitorApprovalsData, refetch: refetchVisitorApprovals } = useQuery(
-    GET_VISITOR_APPROVAL_REQUESTS,
-    {
+  const { data: visitorApprovalsData, refetch: refetchVisitorApprovals } =
+    useQuery(GET_VISITOR_APPROVAL_REQUESTS, {
       variables: { visitorId: visitor?.id },
       skip: !visitor?.id,
       fetchPolicy: "cache-and-network",
-    }
-  );
+    });
 
   const [clientIp, setClientIp] = useState<string | null>(null);
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -130,29 +147,29 @@ const Service: React.FC = () => {
 
   // Fetch client IP address on mount
   useEffect(() => {
-    fetch('/api/client-ip')
-      .then(res => res.json())
-      .then(data => setClientIp(data.ip))
+    fetch("/api/client-ip")
+      .then((res) => res.json())
+      .then((data) => setClientIp(data.ip))
       .catch(() => setClientIp(null));
   }, []);
 
   // Track package views when packages are loaded
   useEffect(() => {
-    const packagesList = packagesData?.findPackagesByService || packagesData?.findPackagesByOffering;
+    const packagesList = packagesData?.findPackagesByService;
     if (packagesList && !vendor && clientIp) {
       // Only track views for non-vendor visitors and when IP is available
       const sessionId = ensureSessionId();
-      
-      console.log('Tracking package views:', {
+
+      console.log("Tracking package views:", {
         packagesCount: packagesList.length,
         visitorId: visitor?.id,
         sessionId,
         ipAddress: clientIp,
       });
-      
+
       // Track each package view (fire and forget)
       packagesList.forEach((pkg: Package) => {
-        console.log('Tracking view for package:', pkg.id);
+        console.log("Tracking view for package:", pkg.id);
         trackPackageView({
           variables: {
             packageId: pkg.id,
@@ -162,7 +179,11 @@ const Service: React.FC = () => {
           },
         })
           .then((result) => {
-            console.log('Successfully tracked view for package:', pkg.id, result);
+            console.log(
+              "Successfully tracked view for package:",
+              pkg.id,
+              result,
+            );
           })
           .catch((err) => {
             console.error("Failed to track package view:", pkg.id, err);
@@ -179,12 +200,17 @@ const Service: React.FC = () => {
     const orderId = searchParams.get("order_id");
 
     if (isCanceled === "true") {
-      toast("Payment was canceled. You can select another package or try again.", {
-        icon: "ℹ️",
-      });
+      toast(
+        "Payment was canceled. You can select another package or try again.",
+        {
+          icon: "ℹ️",
+        },
+      );
 
       if (orderId) {
-        request.post("/api/payhere/cancel", { order_id: orderId }).catch(console.error);
+        request
+          .post("/api/payhere/cancel", { order_id: orderId })
+          .catch(console.error);
       }
 
       refetchVisitorPayments?.();
@@ -194,20 +220,25 @@ const Service: React.FC = () => {
       const url = new URL(window.location.href);
       url.searchParams.delete("payment_canceled");
       url.searchParams.delete("order_id");
-      window.history.replaceState({}, "", url.pathname + (url.search ? url.search : ""));
+      window.history.replaceState(
+        {},
+        "",
+        url.pathname + (url.search ? url.search : ""),
+      );
     }
   }, [refetchVisitorPayments, refetchBookedDates, refetchPackages]);
 
   // Check if a package is already booked by the visitor (only completed payments count)
   const isPackageBooked = (packageId: string) => {
-    if (!paymentsData?.visitorPayments) return { booked: false, expired: false, bookingDate: null };
-    
+    if (!paymentsData?.visitorPayments)
+      return { booked: false, expired: false, bookingDate: null };
+
     const payment = paymentsData.visitorPayments.find(
-      (p: any) => p.package?.id === packageId && p.status === 'completed'
+      (p: any) => p.package?.id === packageId && p.status === "completed",
     );
-    
+
     if (!payment) return { booked: false, expired: false, bookingDate: null };
-    
+
     // If there's a booking date, check if it has passed
     if (payment.bookingDate) {
       const bookingDate = new Date(payment.bookingDate);
@@ -215,7 +246,7 @@ const Service: React.FC = () => {
       const expired = bookingDate < now;
       return { booked: true, expired, bookingDate };
     }
-    
+
     // If no booking date (standard package), it's booked and never expires
     return { booked: true, expired: false, bookingDate: null };
   };
@@ -236,7 +267,9 @@ const Service: React.FC = () => {
     // Check if this package is already booked and not expired
     const bookingStatus = isPackageBooked(pkg.id);
     if (bookingStatus.booked && !bookingStatus.expired) {
-      toast.error("You have already booked this package. You cannot book it again until your booking expires.");
+      toast.error(
+        "You have already booked this package. You cannot book it again until your booking expires.",
+      );
       return;
     }
 
@@ -253,7 +286,7 @@ const Service: React.FC = () => {
   if (loading || myVendorLoading) return <ServiceDetailSkeleton />;
   if (queryError) return <p>Error: {queryError.message}</p>;
 
-  const offering = data?.findServiceById || data?.findOfferingById;
+  const offering = data?.findServiceById;
   const isVendorsOffering = offering?.vendor?.id === vendor?.id;
 
   const handleHeartClick = async () => {
@@ -273,7 +306,6 @@ const Service: React.FC = () => {
           variables: {
             visitorId: visitor.id,
             serviceId: id,
-            offeringId: id,
           },
         });
 
@@ -288,7 +320,6 @@ const Service: React.FC = () => {
           variables: {
             visitorId: visitor.id,
             serviceId: id,
-            offeringId: id,
           },
         });
 
@@ -306,7 +337,7 @@ const Service: React.FC = () => {
             </div>,
             {
               duration: 8000,
-            }
+            },
           );
         } else {
           throw new Error("Failed to add to vendors");
@@ -317,7 +348,11 @@ const Service: React.FC = () => {
     }
   };
 
-  const handlePayAdvance = async (amount: number, packageId: string, bookingDate?: Date) => {
+  const handlePayAdvance = async (
+    amount: number,
+    packageId: string,
+    bookingDate?: Date,
+  ) => {
     try {
       if (!visitor) {
         toast.error("Please login as a user to pay advance");
@@ -329,8 +364,8 @@ const Service: React.FC = () => {
         return;
       }
 
-      const pkgName = (packagesData?.findPackagesByService || packagesData?.findPackagesByOffering)?.find(
-        (p: any) => p.id === packageId
+      const pkgName = packagesData?.findPackagesByService?.find(
+        (p: any) => p.id === packageId,
       )?.name;
 
       setPaymentRedirectInfo({
@@ -346,13 +381,12 @@ const Service: React.FC = () => {
           visitorId: visitor.id,
           vendorId: offering.vendor.id,
           serviceId: offering.id,
-          offeringId: offering.id,
           bookingDate: bookingDate ? bookingDate.toISOString() : undefined,
           customer: {
             email: visitor.email,
             city: offering.vendor.city,
           },
-        }
+        },
       );
 
       const form = document.createElement("form");
@@ -427,7 +461,8 @@ const Service: React.FC = () => {
                   </span>
                 </div>
                 <p className="text-xs text-gray-500 dark:text-zinc-400 font-body mt-0.5">
-                  This is how couples see your service. You can update your service details, media, and pricing packages anytime.
+                  This is how couples see your service. You can update your
+                  service details, media, and pricing packages anytime.
                 </p>
               </div>
             </div>
@@ -458,7 +493,11 @@ const Service: React.FC = () => {
                       <button
                         onClick={handleHeartClick}
                         className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-darkElevated text-gray-400 hover:text-red-500 transition-colors"
-                        title={isInMyVendors ? "Remove from saved" : "Save to favorites"}
+                        title={
+                          isInMyVendors
+                            ? "Remove from saved"
+                            : "Save to favorites"
+                        }
                       >
                         {isInMyVendors ? (
                           <FaHeart className="text-2xl text-red-500 hover:text-red-600 hover:cursor-pointer" />
@@ -470,9 +509,11 @@ const Service: React.FC = () => {
                   </div>
                   <div className="text-gray-500 dark:text-zinc-400 text-sm mt-2 flex items-center gap-1.5">
                     <FiMapPin className="text-gray-400 dark:text-zinc-500 text-sm flex-shrink-0" />
-                    <span>{offering?.vendor.city || "Location not specified"}</span>
+                    <span>
+                      {offering?.vendor.city || "Location not specified"}
+                    </span>
                   </div>
-                  
+
                   {/* Chat Button - Only show for visitors (not vendors viewing their own) */}
                   {!isVendorsOffering && visitor && (
                     <button
@@ -492,329 +533,411 @@ const Service: React.FC = () => {
 
             {/* Details Section */}
             <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 p-6 mb-4 flex flex-col">
-              <h2 className="mb-2 text-xl font-bold font-title text-gray-900 dark:text-zinc-100">About the Vendor</h2>
+              <h2 className="mb-2 text-xl font-bold font-title text-gray-900 dark:text-zinc-100">
+                About the Vendor
+              </h2>
               <div className="text-gray-600 dark:text-zinc-300 font-body leading-relaxed">
                 <p>{offering.vendor.about || "About not available"}</p>
               </div>
               <hr className="border-t border-gray-100 dark:border-zinc-800 my-6" />
 
-              <h2 className="mb-2 text-xl font-bold font-title text-gray-900 dark:text-zinc-100">Details</h2>
+              <h2 className="mb-2 text-xl font-bold font-title text-gray-900 dark:text-zinc-100">
+                Details
+              </h2>
               <div className="text-gray-600 dark:text-zinc-300 font-body leading-relaxed">
                 <p>{offering.description || "Description not available"}</p>
               </div>
               <hr className="border-t border-gray-100 dark:border-zinc-800 my-6" />
 
               {/* Packages Section */}
-              {(packagesData?.findPackagesByService || packagesData?.findPackagesByOffering)?.some(
-                (pkg: Package) => pkg.visible
+              {packagesData?.findPackagesByService?.some(
+                (pkg: Package) => pkg.visible,
               ) && (
-                  <>
-                    <div className="mb-6 flex items-center justify-between flex-wrap gap-3">
-                      <h2 className="text-2xl font-bold font-title text-gray-900 dark:text-zinc-100">Packages</h2>
-                      {isVendorsOffering && (
-                        <Link href={`/services/edit/${offering?.id}?section=packages&action=add`}>
-                          <button className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-orange hover:bg-orange/90 active:scale-[0.99] rounded-xl shadow-sm shadow-orange/20 transition-all">
-                            <FiPlus className="text-sm" />
-                            <span>Add Package</span>
-                          </button>
-                        </Link>
-                      )}
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                      {(packagesData?.findPackagesByService || packagesData?.findPackagesByOffering)
-                        .filter((pkg: Package) => pkg.visible)
-                        .map((pkg: Package) => (
-                          <div
-                            key={pkg.id}
-                            className="bg-white dark:bg-darkElevated rounded-2xl border-2 border-gray-200 dark:border-zinc-700 shadow-sm overflow-hidden transition-all duration-200 hover:shadow-md hover:border-orange dark:hover:border-orange flex flex-col h-full"
-                          >
-                            {pkg.image && (
-                              <div className="relative w-full h-44 overflow-hidden border-b border-gray-200 dark:border-zinc-700">
-                                <Image
-                                  src={pkg.image}
-                                  alt={pkg.name}
-                                  fill
-                                  className="object-cover"
-                                />
-                              </div>
-                            )}
-                            <div className="p-4 text-center bg-gray-50 dark:bg-darkSurface border-b border-gray-200 dark:border-zinc-700">
-                              <h3 className="text-xl font-bold font-title text-gray-900 dark:text-zinc-100">
-                                {pkg.name}
-                              </h3>
-                              <div className="mt-2 flex justify-center">
-                                {pkg.requiresApproval ? (
-                                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
-                                    Requires Approval
-                                  </span>
-                                ) : pkg.requiresReservation ? (
-                                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
-                                    Requires Reservation
-                                  </span>
-                                ) : (
-                                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-                                    Normal Package
-                                  </span>
-                                )}
-                              </div>
+                <>
+                  <div className="mb-6 flex items-center justify-between flex-wrap gap-3">
+                    <h2 className="text-2xl font-bold font-title text-gray-900 dark:text-zinc-100">
+                      Packages
+                    </h2>
+                    {isVendorsOffering && (
+                      <Link
+                        href={`/services/edit/${offering?.id}?section=packages&action=add`}
+                      >
+                        <button className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-orange hover:bg-orange/90 active:scale-[0.99] rounded-xl shadow-sm shadow-orange/20 transition-all">
+                          <FiPlus className="text-sm" />
+                          <span>Add Package</span>
+                        </button>
+                      </Link>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                    {packagesData?.findPackagesByService
+                      .filter((pkg: Package) => pkg.visible)
+                      .map((pkg: Package) => (
+                        <div
+                          key={pkg.id}
+                          className="bg-white dark:bg-darkElevated rounded-2xl border-2 border-gray-200 dark:border-zinc-700 shadow-sm overflow-hidden transition-all duration-200 hover:shadow-md hover:border-orange dark:hover:border-orange flex flex-col h-full"
+                        >
+                          {pkg.image && (
+                            <div className="relative w-full h-44 overflow-hidden border-b border-gray-200 dark:border-zinc-700">
+                              <Image
+                                src={pkg.image}
+                                alt={pkg.name}
+                                fill
+                                className="object-cover"
+                              />
                             </div>
-                            <div className="p-6 flex flex-col flex-grow">
-                              <div className="text-center mb-6">
-                                <div className="text-3xl font-bold font-title text-orange">
-                                  <span className="text-sm align-top text-gray-500 dark:text-zinc-400 font-body font-normal">
-                                    LKR
-                                  </span>{" "}
-                                  {pkg.pricing.toLocaleString()}
-                                </div>
-                                <p className="text-gray-500 dark:text-zinc-400 font-body text-sm mt-2">
-                                  {pkg.description}
-                                </p>
+                          )}
+                          <div className="p-4 text-center bg-gray-50 dark:bg-darkSurface border-b border-gray-200 dark:border-zinc-700">
+                            <h3 className="text-xl font-bold font-title text-gray-900 dark:text-zinc-100">
+                              {pkg.name}
+                            </h3>
+                            <div className="mt-2 flex justify-center">
+                              {pkg.requiresApproval ? (
+                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                                  Requires Approval
+                                </span>
+                              ) : pkg.requiresReservation ? (
+                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+                                  Requires Reservation
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                                  Normal Package
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                          <div className="p-6 flex flex-col flex-grow">
+                            <div className="text-center mb-6">
+                              <div className="text-3xl font-bold font-title text-orange">
+                                <span className="text-sm align-top text-gray-500 dark:text-zinc-400 font-body font-normal">
+                                  LKR
+                                </span>{" "}
+                                {pkg.pricing.toLocaleString()}
                               </div>
-                              <div className="space-y-2.5 mb-6 min-h-[100px]">
-                                {pkg.features.map(
-                                  (feature: string, idx: number) => (
-                                    <div key={idx} className="flex items-start text-sm text-gray-600 dark:text-zinc-300 font-body">
-                                      <svg
-                                        className="w-4 h-4 text-emerald-500 mr-2 mt-0.5 flex-shrink-0"
-                                        fill="currentColor"
-                                        viewBox="0 0 20 20"
+                              <p className="text-gray-500 dark:text-zinc-400 font-body text-sm mt-2">
+                                {pkg.description}
+                              </p>
+                            </div>
+                            <div className="space-y-2.5 mb-6 min-h-[100px]">
+                              {pkg.features.map(
+                                (feature: string, idx: number) => (
+                                  <div
+                                    key={idx}
+                                    className="flex items-start text-sm text-gray-600 dark:text-zinc-300 font-body"
+                                  >
+                                    <svg
+                                      className="w-4 h-4 text-emerald-500 mr-2 mt-0.5 flex-shrink-0"
+                                      fill="currentColor"
+                                      viewBox="0 0 20 20"
+                                    >
+                                      <path
+                                        fillRule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        clipRule="evenodd"
+                                      />
+                                    </svg>
+                                    <span>{feature}</span>
+                                  </div>
+                                ),
+                              )}
+                            </div>
+                            <div className="pt-4 border-t border-gray-100 dark:border-zinc-700 mt-auto">
+                              {(() => {
+                                // 1. Vendor viewing their own packages (cannot book their own services)
+                                if (isVendorsOffering) {
+                                  return (
+                                    <div className="w-full flex flex-col items-center gap-1.5">
+                                      <Link
+                                        href={`/services/edit/${offering?.id}?section=packages&action=edit&packageId=${pkg.id}`}
+                                        className="w-full py-2.5 px-4 rounded-xl font-semibold text-sm text-white bg-orange hover:bg-orange/90 active:scale-[0.99] shadow-sm shadow-orange/20 transition-all flex items-center justify-center gap-2"
                                       >
-                                        <path
-                                          fillRule="evenodd"
-                                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                          clipRule="evenodd"
-                                        />
-                                      </svg>
-                                      <span>
-                                        {feature}
+                                        <FiEdit className="text-base" />
+                                        <span>Edit Package</span>
+                                      </Link>
+                                      <span className="text-[11px] text-gray-400 dark:text-zinc-500 text-center font-body">
+                                        Couple advance: LKR{" "}
+                                        {(pkg.pricing * 0.2).toLocaleString()}{" "}
+                                        (20%)
                                       </span>
                                     </div>
-                                  )
-                                )}
-                              </div>
-                              <div className="pt-4 border-t border-gray-100 dark:border-zinc-700 mt-auto">
-                                  {(() => {
-                                    // 1. Vendor viewing their own packages (cannot book their own services)
-                                    if (isVendorsOffering) {
+                                  );
+                                }
+
+                                // 2. Already booked package by visitor
+                                const bookingStatus = isPackageBooked(pkg.id);
+                                if (
+                                  bookingStatus.booked &&
+                                  !bookingStatus.expired
+                                ) {
+                                  return (
+                                    <div className="w-full flex flex-col items-center gap-1.5">
+                                      <div className="w-full py-2.5 px-4 rounded-xl font-semibold text-sm bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center gap-2">
+                                        <svg
+                                          className="w-4 h-4 text-emerald-600"
+                                          fill="currentColor"
+                                          viewBox="0 0 20 20"
+                                        >
+                                          <path
+                                            fillRule="evenodd"
+                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                            clipRule="evenodd"
+                                          />
+                                        </svg>
+                                        <span>You Booked This Package</span>
+                                      </div>
+                                      {bookingStatus.bookingDate && (
+                                        <span className="text-[11px] text-gray-400 dark:text-zinc-500 text-center font-body">
+                                          Booking Date:{" "}
+                                          {bookingStatus.bookingDate.toLocaleDateString()}
+                                        </span>
+                                      )}
+                                    </div>
+                                  );
+                                }
+
+                                // 3. Approval flow
+                                if (pkg.requiresApproval) {
+                                  const approvalReq = (
+                                    visitorApprovalsData?.getVisitorApprovalRequests ||
+                                    []
+                                  ).find((r: any) => r.package?.id === pkg.id);
+
+                                  if (approvalReq) {
+                                    if (approvalReq.status === "pending") {
                                       return (
                                         <div className="w-full flex flex-col items-center gap-1.5">
-                                          <Link
-                                            href={`/services/edit/${offering?.id}?section=packages&action=edit&packageId=${pkg.id}`}
-                                            className="w-full py-2.5 px-4 rounded-xl font-semibold text-sm text-white bg-orange hover:bg-orange/90 active:scale-[0.99] shadow-sm shadow-orange/20 transition-all flex items-center justify-center gap-2"
-                                          >
-                                            <FiEdit className="text-base" />
-                                            <span>Edit Package</span>
-                                          </Link>
+                                          <div className="w-full py-2.5 px-4 rounded-xl font-semibold text-sm text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800 flex items-center justify-center gap-2">
+                                            <Clock className="w-4 h-4 text-amber-600 animate-pulse" />
+                                            <span>Approval Pending</span>
+                                          </div>
                                           <span className="text-[11px] text-gray-400 dark:text-zinc-500 text-center font-body">
-                                            Couple advance: LKR {(pkg.pricing * 0.2).toLocaleString()} (20%)
+                                            Requested for{" "}
+                                            {format(
+                                              new Date(approvalReq.bookingDate),
+                                              "MMM d, yyyy",
+                                            )}{" "}
+                                            • Awaiting vendor review
                                           </span>
                                         </div>
                                       );
                                     }
 
-                                    // 2. Already booked package by visitor
-                                    const bookingStatus = isPackageBooked(pkg.id);
-                                    if (bookingStatus.booked && !bookingStatus.expired) {
-                                      return (
-                                        <div className="w-full flex flex-col items-center gap-1.5">
-                                          <div className="w-full py-2.5 px-4 rounded-xl font-semibold text-sm bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center gap-2">
-                                            <svg className="w-4 h-4 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
-                                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                            </svg>
-                                            <span>You Booked This Package</span>
-                                          </div>
-                                          {bookingStatus.bookingDate && (
-                                            <span className="text-[11px] text-gray-400 dark:text-zinc-500 text-center font-body">
-                                              Booking Date: {bookingStatus.bookingDate.toLocaleDateString()}
-                                            </span>
-                                          )}
-                                        </div>
-                                      );
-                                    }
-
-                                    // 3. Approval flow
-                                    if (pkg.requiresApproval) {
-                                      const approvalReq = (visitorApprovalsData?.getVisitorApprovalRequests || []).find(
-                                        (r: any) => r.package?.id === pkg.id
-                                      );
-
-                                      if (approvalReq) {
-                                        if (approvalReq.status === "pending") {
-                                          return (
-                                            <div className="w-full flex flex-col items-center gap-1.5">
-                                              <div className="w-full py-2.5 px-4 rounded-xl font-semibold text-sm text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800 flex items-center justify-center gap-2">
-                                                <Clock className="w-4 h-4 text-amber-600 animate-pulse" />
-                                                <span>Approval Pending</span>
-                                              </div>
-                                              <span className="text-[11px] text-gray-400 dark:text-zinc-500 text-center font-body">
-                                                Requested for {format(new Date(approvalReq.bookingDate), "MMM d, yyyy")} • Awaiting vendor review
-                                              </span>
-                                            </div>
-                                          );
-                                        }
-
-                                        if (approvalReq.status === "approved" && !approvalReq.isExpired) {
-                                          return (
-                                            <div className="w-full flex flex-col items-center gap-1.5">
-                                              <button
-                                                onClick={() => {
-                                                  const advanceAmount = pkg.pricing * 0.2;
-                                                  handlePayAdvance(advanceAmount, pkg.id, new Date(approvalReq.bookingDate));
-                                                }}
-                                                className="w-full py-2.5 px-4 rounded-xl font-semibold text-sm text-white bg-orange hover:bg-orange/90 active:scale-[0.99] shadow-sm shadow-orange/20 transition-all flex items-center justify-center gap-2"
-                                              >
-                                                <ShieldCheck className="w-4 h-4" />
-                                                <span>Pay 20% Advance</span>
-                                              </button>
-                                              <span className="text-[11px] text-gray-400 dark:text-zinc-500 text-center font-body">
-                                                Advance: LKR {(pkg.pricing * 0.2).toLocaleString()} • For {format(new Date(approvalReq.bookingDate), "MMM d, yyyy")}
-                                              </span>
-                                              <div className="text-[11px] font-semibold text-amber-600 dark:text-amber-400 flex items-center gap-1">
-                                                <Clock className="w-3.5 h-3.5" />
-                                                <span>Expires in: {formatRemaining(approvalReq.secondsRemaining)}</span>
-                                              </div>
-                                            </div>
-                                          );
-                                        }
-
-                                        if (approvalReq.status === "rejected") {
-                                          return (
-                                            <div className="w-full flex flex-col items-center gap-1.5">
-                                              <div className="w-full p-2.5 rounded-xl bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-900/50 text-xs text-red-700 dark:text-red-300 text-center">
-                                                <span className="font-semibold block">Request Declined</span>
-                                                {approvalReq.vendorMessage && (
-                                                  <span className="text-[11px] text-gray-600 dark:text-zinc-400 block mt-0.5 italic">"{approvalReq.vendorMessage}"</span>
-                                                )}
-                                              </div>
-                                              <button
-                                                onClick={() => {
-                                                  if (!visitor) {
-                                                    toast.error("Please login as a user to request approval");
-                                                    return;
-                                                  }
-                                                  setApprovalPackage(pkg);
-                                                }}
-                                                className="w-full py-2.5 px-4 rounded-xl font-semibold text-sm text-orange bg-orange/10 hover:bg-orange hover:text-white active:scale-[0.99] transition-all flex items-center justify-center gap-2"
-                                              >
-                                                <span>Request with Another Date</span>
-                                              </button>
-                                            </div>
-                                          );
-                                        }
-
-                                        if (approvalReq.status === "expired") {
-                                          return (
-                                            <div className="w-full flex flex-col items-center gap-1.5">
-                                              <div className="w-full p-2 rounded-xl bg-gray-100 dark:bg-darkElevated border border-transparent dark:border-zinc-700 text-xs text-gray-600 dark:text-zinc-400 text-center">
-                                                Previous 24-hour approval expired
-                                              </div>
-                                              <button
-                                                onClick={() => {
-                                                  if (!visitor) {
-                                                    toast.error("Please login as a user to request approval");
-                                                    return;
-                                                  }
-                                                  setApprovalPackage(pkg);
-                                                }}
-                                                className="w-full py-2.5 px-4 rounded-xl font-semibold text-sm text-orange bg-orange/10 hover:bg-orange hover:text-white active:scale-[0.99] transition-all flex items-center justify-center gap-2"
-                                              >
-                                                <span>Request Approval Again</span>
-                                              </button>
-                                            </div>
-                                          );
-                                        }
-                                      }
-
+                                    if (
+                                      approvalReq.status === "approved" &&
+                                      !approvalReq.isExpired
+                                    ) {
                                       return (
                                         <div className="w-full flex flex-col items-center gap-1.5">
                                           <button
                                             onClick={() => {
-                                              if (!visitor) {
-                                                toast.error("Please login as a user to request vendor approval");
-                                                return;
-                                              }
-                                              setApprovalPackage(pkg);
+                                              const advanceAmount =
+                                                pkg.pricing * 0.2;
+                                              handlePayAdvance(
+                                                advanceAmount,
+                                                pkg.id,
+                                                new Date(
+                                                  approvalReq.bookingDate,
+                                                ),
+                                              );
                                             }}
                                             className="w-full py-2.5 px-4 rounded-xl font-semibold text-sm text-white bg-orange hover:bg-orange/90 active:scale-[0.99] shadow-sm shadow-orange/20 transition-all flex items-center justify-center gap-2"
                                           >
                                             <ShieldCheck className="w-4 h-4" />
-                                            <span>Request Vendor Approval</span>
+                                            <span>Pay 20% Advance</span>
                                           </button>
                                           <span className="text-[11px] text-gray-400 dark:text-zinc-500 text-center font-body">
-                                            Couple advance: LKR {(pkg.pricing * 0.2).toLocaleString()} (20%)
+                                            Advance: LKR{" "}
+                                            {(
+                                              pkg.pricing * 0.2
+                                            ).toLocaleString()}{" "}
+                                            • For{" "}
+                                            {format(
+                                              new Date(approvalReq.bookingDate),
+                                              "MMM d, yyyy",
+                                            )}
                                           </span>
+                                          <div className="text-[11px] font-semibold text-amber-600 dark:text-amber-400 flex items-center gap-1">
+                                            <Clock className="w-3.5 h-3.5" />
+                                            <span>
+                                              Expires in:{" "}
+                                              {formatRemaining(
+                                                approvalReq.secondsRemaining,
+                                              )}
+                                            </span>
+                                          </div>
                                         </div>
                                       );
                                     }
 
-                                    // 4. Booking expired
-                                    if (bookingStatus.expired) {
+                                    if (approvalReq.status === "rejected") {
                                       return (
                                         <div className="w-full flex flex-col items-center gap-1.5">
-                                          <div className="text-xs text-amber-600 dark:text-amber-400 text-center font-medium mb-0.5">
-                                            Previous booking expired. You can book again.
+                                          <div className="w-full p-2.5 rounded-xl bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-900/50 text-xs text-red-700 dark:text-red-300 text-center">
+                                            <span className="font-semibold block">
+                                              Request Declined
+                                            </span>
+                                            {approvalReq.vendorMessage && (
+                                              <span className="text-[11px] text-gray-600 dark:text-zinc-400 block mt-0.5 italic">
+                                                "{approvalReq.vendorMessage}"
+                                              </span>
+                                            )}
                                           </div>
                                           <button
                                             onClick={() => {
                                               if (!visitor) {
-                                                toast.error("Please login as a user to pay advance");
+                                                toast.error(
+                                                  "Please login as a user to request approval",
+                                                );
                                                 return;
                                               }
-                                              handleBookingClick(pkg);
+                                              setApprovalPackage(pkg);
                                             }}
-                                            className="w-full py-2.5 px-4 rounded-xl font-semibold text-sm text-white bg-orange hover:bg-orange/90 active:scale-[0.99] shadow-sm shadow-orange/20 transition-all flex items-center justify-center gap-2"
+                                            className="w-full py-2.5 px-4 rounded-xl font-semibold text-sm text-orange bg-orange/10 hover:bg-orange hover:text-white active:scale-[0.99] transition-all flex items-center justify-center gap-2"
                                           >
-                                            <FiCalendar className="text-base" />
-                                            <span>Book Again</span>
+                                            <span>
+                                              Request with Another Date
+                                            </span>
                                           </button>
-                                          <span className="text-[11px] text-gray-400 dark:text-zinc-500 text-center font-body">
-                                            Couple advance: LKR {(pkg.pricing * 0.2).toLocaleString()} (20%)
-                                          </span>
                                         </div>
                                       );
                                     }
 
-                                    // 5. Standard booking
-                                    return (
-                                      <div className="w-full flex flex-col items-center gap-1.5">
-                                        <button
-                                          onClick={() => {
-                                            if (!visitor) {
-                                              toast.error("Please login as a user to pay advance");
-                                              return;
-                                            }
-                                            handleBookingClick(pkg);
-                                          }}
-                                          className="w-full py-2.5 px-4 rounded-xl font-semibold text-sm text-white bg-orange hover:bg-orange/90 active:scale-[0.99] shadow-sm shadow-orange/20 transition-all flex items-center justify-center gap-2"
-                                        >
-                                          <FiCalendar className="text-base" />
-                                          <span>
-                                            {pkg.requiresReservation ? "See Details & Book" : "Select Date & Book"}
-                                          </span>
-                                        </button>
-                                        <span className="text-[11px] text-gray-400 dark:text-zinc-500 text-center font-body">
-                                          Couple advance: LKR {(pkg.pricing * 0.2).toLocaleString()} (20%)
-                                        </span>
+                                    if (approvalReq.status === "expired") {
+                                      return (
+                                        <div className="w-full flex flex-col items-center gap-1.5">
+                                          <div className="w-full p-2 rounded-xl bg-gray-100 dark:bg-darkElevated border border-transparent dark:border-zinc-700 text-xs text-gray-600 dark:text-zinc-400 text-center">
+                                            Previous 24-hour approval expired
+                                          </div>
+                                          <button
+                                            onClick={() => {
+                                              if (!visitor) {
+                                                toast.error(
+                                                  "Please login as a user to request approval",
+                                                );
+                                                return;
+                                              }
+                                              setApprovalPackage(pkg);
+                                            }}
+                                            className="w-full py-2.5 px-4 rounded-xl font-semibold text-sm text-orange bg-orange/10 hover:bg-orange hover:text-white active:scale-[0.99] transition-all flex items-center justify-center gap-2"
+                                          >
+                                            <span>Request Approval Again</span>
+                                          </button>
+                                        </div>
+                                      );
+                                    }
+                                  }
+
+                                  return (
+                                    <div className="w-full flex flex-col items-center gap-1.5">
+                                      <button
+                                        onClick={() => {
+                                          if (!visitor) {
+                                            toast.error(
+                                              "Please login as a user to request vendor approval",
+                                            );
+                                            return;
+                                          }
+                                          setApprovalPackage(pkg);
+                                        }}
+                                        className="w-full py-2.5 px-4 rounded-xl font-semibold text-sm text-white bg-orange hover:bg-orange/90 active:scale-[0.99] shadow-sm shadow-orange/20 transition-all flex items-center justify-center gap-2"
+                                      >
+                                        <ShieldCheck className="w-4 h-4" />
+                                        <span>Request Vendor Approval</span>
+                                      </button>
+                                      <span className="text-[11px] text-gray-400 dark:text-zinc-500 text-center font-body">
+                                        Couple advance: LKR{" "}
+                                        {(pkg.pricing * 0.2).toLocaleString()}{" "}
+                                        (20%)
+                                      </span>
+                                    </div>
+                                  );
+                                }
+
+                                // 4. Booking expired
+                                if (bookingStatus.expired) {
+                                  return (
+                                    <div className="w-full flex flex-col items-center gap-1.5">
+                                      <div className="text-xs text-amber-600 dark:text-amber-400 text-center font-medium mb-0.5">
+                                        Previous booking expired. You can book
+                                        again.
                                       </div>
-                                    );
-                                  })()}
-                              </div>
+                                      <button
+                                        onClick={() => {
+                                          if (!visitor) {
+                                            toast.error(
+                                              "Please login as a user to pay advance",
+                                            );
+                                            return;
+                                          }
+                                          handleBookingClick(pkg);
+                                        }}
+                                        className="w-full py-2.5 px-4 rounded-xl font-semibold text-sm text-white bg-orange hover:bg-orange/90 active:scale-[0.99] shadow-sm shadow-orange/20 transition-all flex items-center justify-center gap-2"
+                                      >
+                                        <FiCalendar className="text-base" />
+                                        <span>Book Again</span>
+                                      </button>
+                                      <span className="text-[11px] text-gray-400 dark:text-zinc-500 text-center font-body">
+                                        Couple advance: LKR{" "}
+                                        {(pkg.pricing * 0.2).toLocaleString()}{" "}
+                                        (20%)
+                                      </span>
+                                    </div>
+                                  );
+                                }
+
+                                // 5. Standard booking
+                                return (
+                                  <div className="w-full flex flex-col items-center gap-1.5">
+                                    <button
+                                      onClick={() => {
+                                        if (!visitor) {
+                                          toast.error(
+                                            "Please login as a user to pay advance",
+                                          );
+                                          return;
+                                        }
+                                        handleBookingClick(pkg);
+                                      }}
+                                      className="w-full py-2.5 px-4 rounded-xl font-semibold text-sm text-white bg-orange hover:bg-orange/90 active:scale-[0.99] shadow-sm shadow-orange/20 transition-all flex items-center justify-center gap-2"
+                                    >
+                                      <FiCalendar className="text-base" />
+                                      <span>
+                                        {pkg.requiresReservation
+                                          ? "See Details & Book"
+                                          : "Select Date & Book"}
+                                      </span>
+                                    </button>
+                                    <span className="text-[11px] text-gray-400 dark:text-zinc-500 text-center font-body">
+                                      Couple advance: LKR{" "}
+                                      {(pkg.pricing * 0.2).toLocaleString()}{" "}
+                                      (20%)
+                                    </span>
+                                  </div>
+                                );
+                              })()}
                             </div>
                           </div>
-                        ))}
-                    </div>
-                    <hr className="border-t border-gray-100 dark:border-zinc-800 my-6" />
-                  </>
-                )}
+                        </div>
+                      ))}
+                  </div>
+                  <hr className="border-t border-gray-100 dark:border-zinc-800 my-6" />
+                </>
+              )}
 
-              <h2 className="mb-3 text-xl font-bold font-title text-gray-900 dark:text-zinc-100">Reviews</h2>
+              <h2 className="mb-3 text-xl font-bold font-title text-gray-900 dark:text-zinc-100">
+                Reviews
+              </h2>
               <div>
                 <Reviews serviceId={offering?.id} />
               </div>
 
               {!isVendorsOffering && visitor ? (
                 <div className="mt-4">
-                  <WriteReview serviceId={offering?.id} vendorName={offering?.vendor?.busname} />
+                  <WriteReview
+                    serviceId={offering?.id}
+                    vendorName={offering?.vendor?.busname}
+                  />
                 </div>
               ) : null}
 
@@ -823,7 +946,9 @@ const Service: React.FC = () => {
               </div>
 
               <hr className="border-t border-gray-100 dark:border-zinc-800 my-6" />
-              <h2 className="mb-3 text-xl font-bold font-title text-gray-900 dark:text-zinc-100">Location</h2>
+              <h2 className="mb-3 text-xl font-bold font-title text-gray-900 dark:text-zinc-100">
+                Location
+              </h2>
               <div>
                 <GoogleMapComponent serviceId={offering?.id} />
               </div>
@@ -850,8 +975,8 @@ const Service: React.FC = () => {
           pkg={{
             ...selectedPackage,
             bookedDates: selectedPackage.requiresReservation
-              ? (bookedDatesData?.getVendorBookedDates || [])
-              : []
+              ? bookedDatesData?.getVendorBookedDates || []
+              : [],
           }}
           onPay={async (date) => {
             const advanceAmount = selectedPackage.pricing * 0.2;

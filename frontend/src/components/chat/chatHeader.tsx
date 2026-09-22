@@ -18,7 +18,7 @@ export default function ChatHeader({ visitor, offeringId }: ChatHeaderProps) {
     skip: !offeringId,
   });
 
-  const offering = offeringData?.findOfferingById;
+  const offering = offeringData?.findServiceById;
   const coupleName = formatCoupleName(visitor, "Wedding Couple");
 
   return (

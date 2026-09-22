@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState } from 'react';
-import Link from 'next/link';
+import React, { useState } from "react";
+import Link from "next/link";
 import { useAuth } from "@/contexts/VisitorAuthContext";
 import { TableSkeleton } from "@/components/ui/shimmer";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useQuery } from '@apollo/client';
-import { GET_VISITOR_PAYMENTS } from '@/graphql/queries';
-import BottomNavigationBar from '@/components/visitor-dashboard/BottomNavigationBar';
+import { useQuery } from "@apollo/client";
+import { GET_VISITOR_PAYMENTS } from "@/graphql/queries";
+import BottomNavigationBar from "@/components/visitor-dashboard/BottomNavigationBar";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import {
   FiCreditCard,
@@ -21,12 +21,12 @@ import {
   FiFileText,
   FiX,
   FiShoppingBag,
-} from 'react-icons/fi';
+} from "react-icons/fi";
 
 interface Payment {
   id: string;
   amount: number;
-  status: 'completed' | 'pending' | 'failed' | string;
+  status: "completed" | "pending" | "failed" | string;
   createdAt: string;
   bookingDate?: string;
   paymentReference?: string;
@@ -42,7 +42,7 @@ interface Payment {
   package?: {
     id?: string;
     name: string;
-    offering?: {
+    service?: {
       id: string;
       name: string;
       category?: string;
@@ -60,45 +60,54 @@ const PaymentsHistoryPage = () => {
   const { data, loading, error } = useQuery(GET_VISITOR_PAYMENTS, {
     variables: { visitorId: visitor?.id },
     skip: !visitor?.id,
-    fetchPolicy: 'cache-and-network',
+    fetchPolicy: "cache-and-network",
   });
 
   const getStatusBadge = (status: string) => {
     switch (status?.toLowerCase()) {
-      case 'completed':
+      case "completed":
         return (
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60">
-            <FiCheckCircle size={12} className="text-emerald-600 dark:text-emerald-400" />
+            <FiCheckCircle
+              size={12}
+              className="text-emerald-600 dark:text-emerald-400"
+            />
             <span>Completed</span>
           </span>
         );
-      case 'pending':
+      case "pending":
         return (
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800/60">
             <FiClock size={12} className="text-amber-600 dark:text-amber-400" />
             <span>Pending</span>
           </span>
         );
-      case 'failed':
+      case "failed":
         return (
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800/60">
-            <FiAlertCircle size={12} className="text-rose-600 dark:text-rose-400" />
+            <FiAlertCircle
+              size={12}
+              className="text-rose-600 dark:text-rose-400"
+            />
             <span>Failed</span>
           </span>
         );
       default:
         return (
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-gray-100 dark:bg-darkElevated text-gray-700 dark:text-zinc-300 border border-gray-200 dark:border-zinc-700">
-            <span>{status || 'Unknown'}</span>
+            <span>{status || "Unknown"}</span>
           </span>
         );
     }
   };
 
   const handlePrint = (paymentReference?: string | null) => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       if (paymentReference) {
-        window.open(`/success?order_id=${encodeURIComponent(paymentReference)}&print=true`, '_blank');
+        window.open(
+          `/success?order_id=${encodeURIComponent(paymentReference)}&print=true`,
+          "_blank",
+        );
       } else {
         window.print();
       }
@@ -129,7 +138,10 @@ const PaymentsHistoryPage = () => {
         {/* Stats Grid Skeleton */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="bg-white dark:bg-darkSurface p-5 rounded-3xl border-2 border-orange/20 dark:border-zinc-800 shadow-sm space-y-3">
+            <div
+              key={i}
+              className="bg-white dark:bg-darkSurface p-5 rounded-3xl border-2 border-orange/20 dark:border-zinc-800 shadow-sm space-y-3"
+            >
               <div className="flex items-center justify-between">
                 <Skeleton className="h-4 w-24" />
                 <Skeleton className="w-10 h-10 rounded-xl" />
@@ -149,7 +161,9 @@ const PaymentsHistoryPage = () => {
   if (error) {
     return (
       <div className="p-8 text-center bg-white rounded-3xl border-2 border-orange/20 max-w-lg mx-auto mt-12">
-        <p className="text-red-500 font-semibold mb-2 font-title text-lg">Error loading payments</p>
+        <p className="text-red-500 font-semibold mb-2 font-title text-lg">
+          Error loading payments
+        </p>
         <p className="text-xs text-gray-500 font-body">{error.message}</p>
       </div>
     );
@@ -159,26 +173,26 @@ const PaymentsHistoryPage = () => {
 
   // Financial and counts calculation
   const completedPayments = payments.filter(
-    (p) => p.status?.toLowerCase() === 'completed'
+    (p) => p.status?.toLowerCase() === "completed",
   );
   const totalPaid = completedPayments.reduce(
     (sum, p) => sum + (Number(p.amount) || 0),
-    0
+    0,
   );
   const pendingCount = payments.filter(
-    (p) => p.status?.toLowerCase() === 'pending'
+    (p) => p.status?.toLowerCase() === "pending",
   ).length;
   const failedCount = payments.filter(
-    (p) => p.status?.toLowerCase() === 'failed'
+    (p) => p.status?.toLowerCase() === "failed",
   ).length;
 
   // Search and status filtering
   const filteredPayments = payments.filter((payment) => {
     const query = searchQuery.toLowerCase().trim();
-    const serviceName = (payment.package?.offering?.name || '').toLowerCase();
-    const vendorName = (payment.vendor?.busname || '').toLowerCase();
-    const packageName = (payment.package?.name || '').toLowerCase();
-    const refId = (payment.paymentReference || payment.id || '').toLowerCase();
+    const serviceName = (payment.package?.service?.name || "").toLowerCase();
+    const vendorName = (payment.vendor?.busname || "").toLowerCase();
+    const packageName = (payment.package?.name || "").toLowerCase();
+    const refId = (payment.paymentReference || payment.id || "").toLowerCase();
 
     const matchesSearch =
       query === "" ||
@@ -188,7 +202,8 @@ const PaymentsHistoryPage = () => {
       refId.includes(query);
 
     const matchesStatus =
-      filterStatus === "" || payment.status?.toLowerCase() === filterStatus.toLowerCase();
+      filterStatus === "" ||
+      payment.status?.toLowerCase() === filterStatus.toLowerCase();
 
     return matchesSearch && matchesStatus;
   });
@@ -201,7 +216,10 @@ const PaymentsHistoryPage = () => {
           <Breadcrumbs
             items={[
               { label: "Dashboard", href: "/visitor-dashboard" },
-              { label: "Payments History", href: "/visitor-dashboard/payments-history" },
+              {
+                label: "Payments History",
+                href: "/visitor-dashboard/payments-history",
+              },
             ]}
           />
           <div className="flex items-center gap-3">
@@ -213,7 +231,8 @@ const PaymentsHistoryPage = () => {
                 Payments History
               </h1>
               <p className="text-xs sm:text-sm text-gray-500 dark:text-zinc-400 font-body">
-                Track all your wedding service payments, invoices, and transaction records.
+                Track all your wedding service payments, invoices, and
+                transaction records.
               </p>
             </div>
           </div>
@@ -226,8 +245,13 @@ const PaymentsHistoryPage = () => {
               Total Amount Paid
             </p>
             <p className="text-2xl sm:text-3xl font-black font-title text-orange">
-              {totalPaid.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{" "}
-              <span className="text-xs font-bold text-gray-500 dark:text-zinc-400">LKR</span>
+              {totalPaid.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}{" "}
+              <span className="text-xs font-bold text-gray-500 dark:text-zinc-400">
+                LKR
+              </span>
             </p>
           </div>
           <div className="h-10 w-px bg-orange/20 dark:bg-zinc-700" />
@@ -256,7 +280,10 @@ const PaymentsHistoryPage = () => {
 
         <div className="bg-white dark:bg-darkSurface rounded-2xl border-2 border-orange/20 dark:border-zinc-800 p-4 sm:p-5 shadow-2xs">
           <div className="flex items-center gap-2 text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider font-body">
-            <FiCheckCircle className="text-emerald-600 dark:text-emerald-400" size={14} />
+            <FiCheckCircle
+              className="text-emerald-600 dark:text-emerald-400"
+              size={14}
+            />
             <span>Completed</span>
           </div>
           <p className="text-2xl sm:text-3xl font-black font-title text-emerald-600 dark:text-emerald-400 mt-2">
@@ -276,7 +303,10 @@ const PaymentsHistoryPage = () => {
 
         <div className="bg-white dark:bg-darkSurface rounded-2xl border-2 border-orange/20 dark:border-zinc-800 p-4 sm:p-5 shadow-2xs">
           <div className="flex items-center gap-2 text-xs font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wider font-body">
-            <FiAlertCircle className="text-rose-600 dark:text-rose-400" size={14} />
+            <FiAlertCircle
+              className="text-rose-600 dark:text-rose-400"
+              size={14}
+            />
             <span>Failed</span>
           </div>
           <p className="text-2xl sm:text-3xl font-black font-title text-rose-600 dark:text-rose-400 mt-2">
@@ -297,7 +327,10 @@ const PaymentsHistoryPage = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <FiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-zinc-500" size={16} />
+            <FiSearch
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-zinc-500"
+              size={16}
+            />
           </div>
 
           <div className="flex items-center gap-2">
@@ -325,7 +358,9 @@ const PaymentsHistoryPage = () => {
             </div>
             <div className="space-y-1">
               <h3 className="text-base sm:text-lg font-bold font-title text-gray-800 dark:text-zinc-200">
-                {payments.length === 0 ? "No payment records found" : "No matching payments found"}
+                {payments.length === 0
+                  ? "No payment records found"
+                  : "No matching payments found"}
               </h3>
               <p className="text-xs sm:text-sm text-gray-500 dark:text-zinc-400 font-body max-w-sm mx-auto">
                 {payments.length === 0
@@ -351,13 +386,16 @@ const PaymentsHistoryPage = () => {
                 </thead>
                 <tbody className="divide-y divide-orange/10 dark:divide-zinc-800 bg-white dark:bg-darkSurface">
                   {filteredPayments.map((payment, idx) => {
-                    const serviceName = payment.package?.offering?.name || 'Wedding Service';
-                    const offeringId = payment.package?.offering?.id;
+                    const serviceName =
+                      payment.package?.service?.name || "Wedding Service";
+                    const serviceId = payment.package?.service?.id;
                     const vendorBusname = payment.vendor?.busname;
-                    const paymentDate = new Date(payment.createdAt).toLocaleDateString(undefined, {
-                      year: 'numeric',
-                      month: 'short',
-                      day: 'numeric',
+                    const paymentDate = new Date(
+                      payment.createdAt,
+                    ).toLocaleDateString(undefined, {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
                     });
 
                     return (
@@ -377,13 +415,16 @@ const PaymentsHistoryPage = () => {
                               <FiShoppingBag size={14} />
                             </div>
                             <div>
-                              {offeringId ? (
+                              {serviceId ? (
                                 <Link
-                                  href={`/services/${offeringId}`}
+                                  href={`/services/${serviceId}`}
                                   className="font-bold text-gray-900 dark:text-zinc-100 hover:text-orange dark:hover:text-orange transition-colors font-title text-sm inline-flex items-center gap-1 group"
                                 >
                                   <span>{serviceName}</span>
-                                  <FiExternalLink size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                                  <FiExternalLink
+                                    size={12}
+                                    className="opacity-0 group-hover:opacity-100 transition-opacity"
+                                  />
                                 </Link>
                               ) : (
                                 <p className="font-bold text-gray-900 dark:text-zinc-100 font-title text-sm">
@@ -402,22 +443,30 @@ const PaymentsHistoryPage = () => {
                         {/* Package */}
                         <td className="py-3.5 px-4">
                           <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-0.5 rounded-full bg-orange/10 text-orange border border-orange/15">
-                            {payment.package?.name || 'Standard'}
+                            {payment.package?.name || "Standard"}
                           </span>
                         </td>
 
                         {/* Amount */}
                         <td className="py-3.5 px-4">
                           <p className="font-bold text-gray-900 dark:text-zinc-100 font-title text-sm">
-                            {Number(payment.amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{" "}
-                            <span className="text-xs font-semibold text-gray-500 dark:text-zinc-400">LKR</span>
+                            {Number(payment.amount).toLocaleString(undefined, {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            })}{" "}
+                            <span className="text-xs font-semibold text-gray-500 dark:text-zinc-400">
+                              LKR
+                            </span>
                           </p>
                         </td>
 
                         {/* Date */}
                         <td className="py-3.5 px-4 text-gray-600 dark:text-zinc-400">
                           <span className="inline-flex items-center gap-1.5 text-xs">
-                            <FiCalendar className="text-orange shrink-0" size={13} />
+                            <FiCalendar
+                              className="text-orange shrink-0"
+                              size={13}
+                            />
                             <span>{paymentDate}</span>
                           </span>
                         </td>
@@ -461,7 +510,9 @@ const PaymentsHistoryPage = () => {
                   <h3 className="font-bold text-gray-900 dark:text-zinc-100 font-title text-lg sm:text-xl">
                     Payment Receipt
                   </h3>
-                  <p className="text-xs text-gray-500 dark:text-zinc-400 font-body">Transaction details and receipt</p>
+                  <p className="text-xs text-gray-500 dark:text-zinc-400 font-body">
+                    Transaction details and receipt
+                  </p>
                 </div>
               </div>
               <button
@@ -475,15 +526,19 @@ const PaymentsHistoryPage = () => {
             {/* Modal Breakdown */}
             <div className="space-y-2.5 text-xs sm:text-sm font-body">
               <div className="flex justify-between py-2 border-b border-orange/10 dark:border-zinc-800">
-                <span className="text-gray-500 dark:text-zinc-400 font-medium">Service</span>
+                <span className="text-gray-500 dark:text-zinc-400 font-medium">
+                  Service
+                </span>
                 <span className="font-bold text-gray-900 dark:text-zinc-100 text-right">
-                  {selectedReceipt.package?.offering?.name || 'Wedding Service'}
+                  {selectedReceipt.package?.service?.name || "Wedding Service"}
                 </span>
               </div>
 
               {selectedReceipt.vendor?.busname && (
                 <div className="flex justify-between py-2 border-b border-orange/10 dark:border-zinc-800">
-                  <span className="text-gray-500 dark:text-zinc-400 font-medium">Vendor</span>
+                  <span className="text-gray-500 dark:text-zinc-400 font-medium">
+                    Vendor
+                  </span>
                   <span className="font-semibold text-gray-800 dark:text-zinc-200 text-right">
                     {selectedReceipt.vendor.busname}
                   </span>
@@ -491,22 +546,33 @@ const PaymentsHistoryPage = () => {
               )}
 
               <div className="flex justify-between py-2 border-b border-orange/10 dark:border-zinc-800">
-                <span className="text-gray-500 dark:text-zinc-400 font-medium">Package</span>
+                <span className="text-gray-500 dark:text-zinc-400 font-medium">
+                  Package
+                </span>
                 <span className="text-gray-800 dark:text-zinc-200 font-semibold text-right">
-                  {selectedReceipt.package?.name || 'Standard'}
+                  {selectedReceipt.package?.name || "Standard"}
                 </span>
               </div>
 
               <div className="flex justify-between py-2 border-b border-orange/10 dark:border-zinc-800">
-                <span className="text-gray-500 dark:text-zinc-400 font-medium">Amount</span>
+                <span className="text-gray-500 dark:text-zinc-400 font-medium">
+                  Amount
+                </span>
                 <span className="font-black text-gray-900 dark:text-zinc-100 font-title text-base text-right">
-                  {Number(selectedReceipt.amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{" "}
-                  <span className="text-xs font-semibold text-gray-500 dark:text-zinc-400">LKR</span>
+                  {Number(selectedReceipt.amount).toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}{" "}
+                  <span className="text-xs font-semibold text-gray-500 dark:text-zinc-400">
+                    LKR
+                  </span>
                 </span>
               </div>
 
               <div className="flex justify-between py-2 border-b border-orange/10 dark:border-zinc-800">
-                <span className="text-gray-500 dark:text-zinc-400 font-medium">Reference</span>
+                <span className="text-gray-500 dark:text-zinc-400 font-medium">
+                  Reference
+                </span>
                 <span className="font-mono text-xs font-semibold text-gray-700 dark:text-zinc-300 text-right break-all">
                   {selectedReceipt.paymentReference || selectedReceipt.id}
                 </span>
@@ -514,7 +580,9 @@ const PaymentsHistoryPage = () => {
 
               {selectedReceipt.gatewayPaymentId && (
                 <div className="flex justify-between py-2 border-b border-orange/10 dark:border-zinc-800">
-                  <span className="text-gray-500 dark:text-zinc-400 font-medium">Gateway Payment ID</span>
+                  <span className="text-gray-500 dark:text-zinc-400 font-medium">
+                    Gateway Payment ID
+                  </span>
                   <span className="font-mono text-xs font-semibold text-gray-700 dark:text-zinc-300 text-right break-all">
                     {selectedReceipt.gatewayPaymentId}
                   </span>
@@ -522,18 +590,25 @@ const PaymentsHistoryPage = () => {
               )}
 
               <div className="flex justify-between py-2 border-b border-orange/10 dark:border-zinc-800">
-                <span className="text-gray-500 dark:text-zinc-400 font-medium">Date</span>
+                <span className="text-gray-500 dark:text-zinc-400 font-medium">
+                  Date
+                </span>
                 <span className="text-gray-800 dark:text-zinc-200 font-semibold text-right">
-                  {new Date(selectedReceipt.createdAt).toLocaleDateString(undefined, {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                  })}
+                  {new Date(selectedReceipt.createdAt).toLocaleDateString(
+                    undefined,
+                    {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    },
+                  )}
                 </span>
               </div>
 
               <div className="flex justify-between items-center py-2">
-                <span className="text-gray-500 dark:text-zinc-400 font-medium">Status</span>
+                <span className="text-gray-500 dark:text-zinc-400 font-medium">
+                  Status
+                </span>
                 <span>{getStatusBadge(selectedReceipt.status)}</span>
               </div>
             </div>

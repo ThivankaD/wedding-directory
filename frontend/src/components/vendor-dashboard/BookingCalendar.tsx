@@ -1,17 +1,17 @@
 "use client";
 
-import React, { useState } from 'react';
-import { useQuery } from '@apollo/client';
-import { GET_VENDOR_PAYMENTS } from '@/graphql/queries';
-import { useVendorAuth } from '@/contexts/VendorAuthContext';
-import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
-import { formatCoupleName } from '@/utils/formatCoupleName';
-import { Skeleton } from '@/components/ui/skeleton';
+import React, { useState } from "react";
+import { useQuery } from "@apollo/client";
+import { GET_VENDOR_PAYMENTS } from "@/graphql/queries";
+import { useVendorAuth } from "@/contexts/VendorAuthContext";
+import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { formatCoupleName } from "@/utils/formatCoupleName";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Payment {
   id: string;
   amount: number;
-  status: 'completed' | 'pending' | 'failed';
+  status: "completed" | "pending" | "failed";
   createdAt: string;
   bookingDate: string | null;
   visitor: {
@@ -25,7 +25,7 @@ interface Payment {
   package: {
     id: string;
     name: string;
-    offering: {
+    service: {
       id: string;
       name: string;
     };
@@ -46,7 +46,7 @@ const BookingCalendar: React.FC = () => {
 
   // Filter ONLY completed payments with booking dates (exclude failed/cancelled attempts)
   const bookingsWithDates = payments.filter(
-    (p) => p.bookingDate && p.status === "completed"
+    (p) => p.bookingDate && p.status === "completed",
   );
 
   // Get bookings for selected date
@@ -81,37 +81,55 @@ const BookingCalendar: React.FC = () => {
     const startingDayOfWeek = firstDay.getDay();
 
     const days: (Date | null)[] = [];
-    
+
     // Add empty cells for days before the first day of the month
     for (let i = 0; i < startingDayOfWeek; i++) {
       days.push(null);
     }
-    
+
     // Add actual days
     for (let day = 1; day <= daysInMonth; day++) {
       days.push(new Date(year, month, day));
     }
-    
+
     return days;
   };
 
   const days = getDaysInMonth(currentMonth);
-  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'];
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
 
   const goToPreviousMonth = () => {
-    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1));
+    setCurrentMonth(
+      new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1),
+    );
   };
 
   const goToNextMonth = () => {
-    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1));
+    setCurrentMonth(
+      new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1),
+    );
   };
 
   const handleDateClick = (date: Date) => {
     setSelectedDate(date);
   };
 
-  const selectedDateBookings = selectedDate ? getBookingsForDate(selectedDate) : [];
+  const selectedDateBookings = selectedDate
+    ? getBookingsForDate(selectedDate)
+    : [];
 
   if (loading) {
     return (
@@ -200,7 +218,7 @@ const BookingCalendar: React.FC = () => {
       {/* Calendar Grid */}
       <div className="grid grid-cols-7 gap-1.5 mb-6">
         {/* Day headers */}
-        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
+        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
           <div
             key={day}
             className="text-center font-semibold text-gray-400 dark:text-zinc-500 py-1.5 text-xs uppercase tracking-wider"
@@ -217,16 +235,21 @@ const BookingCalendar: React.FC = () => {
 
           const status = getDateStatus(date);
           const isToday = date.toDateString() === new Date().toDateString();
-          const isSelected = selectedDate?.toDateString() === date.toDateString();
+          const isSelected =
+            selectedDate?.toDateString() === date.toDateString();
           const dateBookings = getBookingsForDate(date);
 
-          let cellClass = 'bg-white dark:bg-darkElevated hover:bg-orange/5 dark:hover:bg-darkElevated/80 border-gray-200 dark:border-zinc-700 text-gray-800 dark:text-zinc-200';
-          if (status === 'completed') {
-            cellClass = 'bg-emerald-50/80 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-950/60 text-emerald-900 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800/80 font-semibold';
-          } else if (status === 'pending') {
-            cellClass = 'bg-amber-50/80 dark:bg-amber-950/40 hover:bg-amber-100 dark:hover:bg-amber-950/60 text-amber-900 dark:text-amber-300 border-amber-300 dark:border-amber-800/80 font-semibold';
-          } else if (status === 'mixed') {
-            cellClass = 'bg-gradient-to-br from-emerald-50 to-amber-50 hover:opacity-95 text-gray-900 border-emerald-300 font-semibold';
+          let cellClass =
+            "bg-white dark:bg-darkElevated hover:bg-orange/5 dark:hover:bg-darkElevated/80 border-gray-200 dark:border-zinc-700 text-gray-800 dark:text-zinc-200";
+          if (status === "completed") {
+            cellClass =
+              "bg-emerald-50/80 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-950/60 text-emerald-900 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800/80 font-semibold";
+          } else if (status === "pending") {
+            cellClass =
+              "bg-amber-50/80 dark:bg-amber-950/40 hover:bg-amber-100 dark:hover:bg-amber-950/60 text-amber-900 dark:text-amber-300 border-amber-300 dark:border-amber-800/80 font-semibold";
+          } else if (status === "mixed") {
+            cellClass =
+              "bg-gradient-to-br from-emerald-50 to-amber-50 hover:opacity-95 text-gray-900 border-emerald-300 font-semibold";
           }
 
           return (
@@ -234,13 +257,14 @@ const BookingCalendar: React.FC = () => {
               key={index}
               onClick={() => handleDateClick(date)}
               className={`aspect-square p-1 border rounded-xl transition-all flex flex-col items-center justify-center cursor-pointer ${cellClass} ${
-                isToday ? 'border-orange ring-1 ring-orange/30 font-bold' : ''
-              } ${isSelected ? 'ring-2 ring-orange border-orange shadow-sm scale-105' : ''}`}
+                isToday ? "border-orange ring-1 ring-orange/30 font-bold" : ""
+              } ${isSelected ? "ring-2 ring-orange border-orange shadow-sm scale-105" : ""}`}
             >
               <div className="text-xs sm:text-sm">{date.getDate()}</div>
               {hasBooking(date) && (
                 <div className="text-[9px] sm:text-[10px] mt-0.5 leading-tight font-medium opacity-90 truncate max-w-full px-0.5">
-                  {dateBookings.length} {dateBookings.length > 1 ? 'bkgs' : 'bkg'}
+                  {dateBookings.length}{" "}
+                  {dateBookings.length > 1 ? "bkgs" : "bkg"}
                 </div>
               )}
             </button>
@@ -253,10 +277,14 @@ const BookingCalendar: React.FC = () => {
         <div className="border border-gray-100 dark:border-zinc-800 rounded-xl p-4 bg-gray-50/60 dark:bg-darkElevated/40 mb-6 max-h-72 overflow-y-auto">
           <div className="flex items-center justify-between mb-3">
             <h4 className="font-title font-bold text-sm text-gray-900 dark:text-zinc-100">
-              Bookings for {selectedDate.toLocaleDateString(undefined, { dateStyle: 'medium' })}
+              Bookings for{" "}
+              {selectedDate.toLocaleDateString(undefined, {
+                dateStyle: "medium",
+              })}
             </h4>
             <span className="text-xs text-gray-500 dark:text-zinc-400 font-medium">
-              {selectedDateBookings.length} {selectedDateBookings.length === 1 ? 'booking' : 'bookings'}
+              {selectedDateBookings.length}{" "}
+              {selectedDateBookings.length === 1 ? "booking" : "bookings"}
             </span>
           </div>
 
@@ -276,14 +304,23 @@ const BookingCalendar: React.FC = () => {
                     </div>
                     <div className="mt-2 space-y-1 text-xs text-gray-600 dark:text-zinc-300">
                       <div>
-                        <span className="font-medium text-gray-700 dark:text-zinc-300">Service:</span> {booking.package.offering.name}
+                        <span className="font-medium text-gray-700 dark:text-zinc-300">
+                          Service:
+                        </span>{" "}
+                        {booking.package.service.name}
                       </div>
                       <div>
-                        <span className="font-medium text-gray-700 dark:text-zinc-300">Package:</span> {booking.package.name}
+                        <span className="font-medium text-gray-700 dark:text-zinc-300">
+                          Package:
+                        </span>{" "}
+                        {booking.package.name}
                       </div>
                       <div className="flex items-center gap-2 mt-1">
                         <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-orange/10 text-orange font-semibold text-xs">
-                          LKR {booking.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                          LKR{" "}
+                          {booking.amount.toLocaleString(undefined, {
+                            minimumFractionDigits: 2,
+                          })}
                         </span>
                       </div>
                     </div>
@@ -302,8 +339,12 @@ const BookingCalendar: React.FC = () => {
         </h4>
         <div className="bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900/50 rounded-xl p-3.5 flex items-center justify-between">
           <div>
-            <div className="text-xs font-medium text-emerald-700 dark:text-emerald-400">Confirmed Bookings</div>
-            <p className="text-[11px] text-gray-400 dark:text-zinc-500 mt-0.5">Active reservations on your calendar</p>
+            <div className="text-xs font-medium text-emerald-700 dark:text-emerald-400">
+              Confirmed Bookings
+            </div>
+            <p className="text-[11px] text-gray-400 dark:text-zinc-500 mt-0.5">
+              Active reservations on your calendar
+            </p>
           </div>
           <div className="text-2xl font-bold text-emerald-800 dark:text-emerald-300 font-title leading-none">
             {bookingsWithDates.length}
@@ -328,12 +369,19 @@ const BookingCalendar: React.FC = () => {
                     {formatCoupleName(booking.visitor, "Couple")}
                   </div>
                   <div className="text-gray-500 dark:text-zinc-400 truncate text-[11px] mt-0.5">
-                    {booking.package.name} • {new Date(booking.bookingDate!).toLocaleDateString(undefined, { dateStyle: 'medium' })}
+                    {booking.package.name} •{" "}
+                    {new Date(booking.bookingDate!).toLocaleDateString(
+                      undefined,
+                      { dateStyle: "medium" },
+                    )}
                   </div>
                 </div>
                 <div className="text-right flex-shrink-0">
                   <span className="font-semibold text-orange text-xs">
-                    LKR {booking.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                    LKR{" "}
+                    {booking.amount.toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                    })}
                   </span>
                 </div>
               </div>

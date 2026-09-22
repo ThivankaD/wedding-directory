@@ -51,7 +51,7 @@ interface Payment {
   package?: {
     id: string;
     name: string;
-    offering?: {
+    service?: {
       id: string;
       name: string;
     } | null;
@@ -80,7 +80,7 @@ const PaymentsPage = () => {
   // Filter ONLY completed payments (exclude failed and pending attempts)
   const payments: Payment[] = useMemo(() => {
     return (data?.vendorPayments || []).filter(
-      (p: Payment) => p.status === "completed"
+      (p: Payment) => p.status === "completed",
     );
   }, [data]);
 
@@ -116,9 +116,13 @@ const PaymentsPage = () => {
       const customerName = formatCoupleName(payment.visitor, "").toLowerCase();
       const email = (payment.visitor?.email || "").toLowerCase();
       const phone = (payment.visitor?.phone || "").toLowerCase();
-      const serviceName = (payment.package?.offering?.name || "").toLowerCase();
+      const serviceName = (payment.package?.service?.name || "").toLowerCase();
       const packageName = (payment.package?.name || "").toLowerCase();
-      const orderRef = (payment.paymentReference || payment.id || "").toLowerCase();
+      const orderRef = (
+        payment.paymentReference ||
+        payment.id ||
+        ""
+      ).toLowerCase();
 
       return (
         customerName.includes(term) ||
@@ -170,7 +174,10 @@ const PaymentsPage = () => {
     })}`;
   };
 
-  const handleExport = async (format: "pdf" | "excel", filteredOnly = false) => {
+  const handleExport = async (
+    format: "pdf" | "excel",
+    filteredOnly = false,
+  ) => {
     const listToExport = filteredOnly ? filteredPayments : payments;
 
     if (!listToExport || listToExport.length === 0) {
@@ -183,9 +190,10 @@ const PaymentsPage = () => {
     setShowExportMenu(false);
 
     try {
-      const filterLabel = filteredOnly && searchTerm
-        ? `Filtered (Search: "${searchTerm}")`
-        : "Confirmed Payments";
+      const filterLabel =
+        filteredOnly && searchTerm
+          ? `Filtered (Search: "${searchTerm}")`
+          : "Confirmed Payments";
 
       if (format === "pdf") {
         exportPaymentPDF(listToExport, vendorInfo, {
@@ -195,7 +203,7 @@ const PaymentsPage = () => {
         toast.success(
           filteredOnly
             ? `Downloaded PDF statement with ${listToExport.length} filtered records`
-            : `Downloaded official PDF statement with ${listToExport.length} records`
+            : `Downloaded official PDF statement with ${listToExport.length} records`,
         );
       } else {
         exportPaymentExcel(listToExport, vendorInfo, {
@@ -205,7 +213,7 @@ const PaymentsPage = () => {
         toast.success(
           filteredOnly
             ? `Downloaded Excel statement with ${listToExport.length} filtered records`
-            : `Downloaded Excel statement with ${listToExport.length} records`
+            : `Downloaded Excel statement with ${listToExport.length} records`,
         );
       }
     } catch (err) {
@@ -256,7 +264,9 @@ const PaymentsPage = () => {
             <h2 className="text-lg font-title font-bold text-gray-900 dark:text-zinc-100 mb-1">
               Error Loading Payments
             </h2>
-            <p className="text-gray-500 dark:text-zinc-400 text-xs mb-4">{error.message}</p>
+            <p className="text-gray-500 dark:text-zinc-400 text-xs mb-4">
+              {error.message}
+            </p>
             <button
               onClick={() => refetch()}
               className="inline-flex items-center gap-2 bg-orange text-white px-4 py-2 rounded-xl text-xs font-semibold hover:bg-orange/90 transition-colors shadow-sm"
@@ -279,10 +289,13 @@ const PaymentsPage = () => {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="font-title text-3xl font-bold text-gray-900 dark:text-zinc-100">Payment History</h1>
+              <h1 className="font-title text-3xl font-bold text-gray-900 dark:text-zinc-100">
+                Payment History
+              </h1>
             </div>
             <p className="text-gray-500 dark:text-zinc-400 font-body text-sm mt-1">
-              Track your client 20% advance payments, verify transaction statuses, and review total revenue.
+              Track your client 20% advance payments, verify transaction
+              statuses, and review total revenue.
             </p>
           </div>
 
@@ -296,7 +309,9 @@ const PaymentsPage = () => {
                 title="Download financial statement"
               >
                 <FiDownload size={15} className="text-orange" />
-                <span>{isExporting ? "Generating..." : "Export Statement"}</span>
+                <span>
+                  {isExporting ? "Generating..." : "Export Statement"}
+                </span>
                 <FiChevronDown
                   size={14}
                   className={`text-gray-400 dark:text-zinc-500 transition-transform duration-200 ${
@@ -318,7 +333,7 @@ const PaymentsPage = () => {
                       </p>
                       <p className="text-[11px] text-gray-500 dark:text-zinc-400 mt-0.5">
                         {filteredPayments.length !== payments.length
-                           ? `Filtered view: ${filteredPayments.length} of ${payments.length} records`
+                          ? `Filtered view: ${filteredPayments.length} of ${payments.length} records`
                           : `Total records: ${payments.length}`}
                       </p>
                     </div>
@@ -371,7 +386,10 @@ const PaymentsPage = () => {
                           onClick={() => handleExport("pdf", true)}
                           className="w-full flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-darkElevated text-left text-xs text-gray-600 dark:text-zinc-400 hover:text-orange transition-colors"
                         >
-                          <FiFilter size={13} className="text-orange flex-shrink-0" />
+                          <FiFilter
+                            size={13}
+                            className="text-orange flex-shrink-0"
+                          />
                           <span className="truncate">
                             Export filtered PDF ({filteredPayments.length})
                           </span>
@@ -380,7 +398,10 @@ const PaymentsPage = () => {
                           onClick={() => handleExport("excel", true)}
                           className="w-full flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-darkElevated text-left text-xs text-gray-600 dark:text-zinc-400 hover:text-emerald-600 transition-colors"
                         >
-                          <FiFilter size={13} className="text-emerald-600 flex-shrink-0" />
+                          <FiFilter
+                            size={13}
+                            className="text-emerald-600 flex-shrink-0"
+                          />
                           <span className="truncate">
                             Export filtered CSV ({filteredPayments.length})
                           </span>
@@ -421,7 +442,8 @@ const PaymentsPage = () => {
                 {formatLKR(totalRevenue)}
               </h3>
               <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400 mt-1 flex items-center gap-1">
-                <FiCheckCircle size={12} /> {completedCount} confirmed advance {completedCount === 1 ? "payment" : "payments"}
+                <FiCheckCircle size={12} /> {completedCount} confirmed advance{" "}
+                {completedCount === 1 ? "payment" : "payments"}
               </p>
             </div>
             <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center flex-shrink-0">
@@ -474,7 +496,9 @@ const PaymentsPage = () => {
               <h3 className="font-title text-2xl font-bold text-gray-900 dark:text-zinc-100">
                 {formatLKR(avgAdvance)}
               </h3>
-              <p className="text-xs text-gray-400 dark:text-zinc-500 mt-1">Per confirmed booking</p>
+              <p className="text-xs text-gray-400 dark:text-zinc-500 mt-1">
+                Per confirmed booking
+              </p>
             </div>
             <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 flex items-center justify-center flex-shrink-0">
               <FiTrendingUp size={22} />
@@ -493,7 +517,10 @@ const PaymentsPage = () => {
 
           {/* Search Box */}
           <div className="relative w-full md:w-72">
-            <FiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-zinc-500" size={16} />
+            <FiSearch
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-zinc-500"
+              size={16}
+            />
             <input
               type="text"
               placeholder="Search customer, package, reference..."
@@ -531,14 +558,21 @@ const PaymentsPage = () => {
                 </thead>
                 <tbody className="divide-y divide-gray-100 dark:divide-zinc-800 text-sm">
                   {filteredPayments.map((payment) => {
-                    const customerName = formatCoupleName(payment.visitor, "Wedding Couple");
+                    const customerName = formatCoupleName(
+                      payment.visitor,
+                      "Wedding Couple",
+                    );
 
                     return (
-                      <tr key={payment.id} className="hover:bg-orange/5 dark:hover:bg-darkElevated/40 transition-colors">
+                      <tr
+                        key={payment.id}
+                        className="hover:bg-orange/5 dark:hover:bg-darkElevated/40 transition-colors"
+                      >
                         {/* Service & Package */}
                         <td className="py-4 px-6">
                           <div className="font-semibold text-gray-900 dark:text-zinc-100">
-                            {payment.package?.offering?.name || "Wedding Service"}
+                            {payment.package?.service?.name ||
+                              "Wedding Service"}
                           </div>
                           <div className="text-xs text-gray-500 dark:text-zinc-400 mt-0.5">
                             <span className="inline-block bg-gray-100 dark:bg-darkElevated px-2 py-0.5 rounded-md text-gray-700 dark:text-zinc-300 font-medium">
@@ -590,21 +624,28 @@ const PaymentsPage = () => {
                             <div className="flex items-center gap-1.5 text-xs text-gray-700 dark:text-zinc-300 font-medium">
                               <FiCalendar className="text-orange" size={13} />
                               <span>
-                                {new Date(payment.bookingDate).toLocaleDateString(undefined, {
+                                {new Date(
+                                  payment.bookingDate,
+                                ).toLocaleDateString(undefined, {
                                   dateStyle: "medium",
                                 })}
                               </span>
                             </div>
                           ) : (
-                            <span className="text-xs text-gray-400 dark:text-zinc-500 italic">Not scheduled</span>
+                            <span className="text-xs text-gray-400 dark:text-zinc-500 italic">
+                              Not scheduled
+                            </span>
                           )}
                         </td>
 
                         {/* Date Created */}
                         <td className="py-4 px-6 text-xs text-gray-500 dark:text-zinc-400">
-                          {new Date(payment.createdAt).toLocaleDateString(undefined, {
-                            dateStyle: "medium",
-                          })}
+                          {new Date(payment.createdAt).toLocaleDateString(
+                            undefined,
+                            {
+                              dateStyle: "medium",
+                            },
+                          )}
                         </td>
 
                         {/* Status */}
@@ -632,14 +673,17 @@ const PaymentsPage = () => {
             {/* Mobile Card List View */}
             <div className="md:hidden divide-y divide-gray-100 dark:divide-zinc-800">
               {filteredPayments.map((payment) => {
-                const customerName = formatCoupleName(payment.visitor, "Wedding Couple");
+                const customerName = formatCoupleName(
+                  payment.visitor,
+                  "Wedding Couple",
+                );
 
                 return (
                   <div key={payment.id} className="p-4 flex flex-col gap-3">
                     <div className="flex items-start justify-between gap-2">
                       <div>
                         <span className="text-xs font-semibold text-gray-400 dark:text-zinc-500">
-                          {payment.package?.offering?.name || "Wedding Service"}
+                          {payment.package?.service?.name || "Wedding Service"}
                         </span>
                         <h4 className="font-title font-bold text-gray-900 dark:text-zinc-100 text-base">
                           {payment.package?.name || "Package"}
@@ -650,22 +694,33 @@ const PaymentsPage = () => {
 
                     <div className="bg-gray-50/70 dark:bg-darkElevated/60 rounded-xl p-3 text-xs space-y-1">
                       <div className="flex justify-between">
-                        <span className="text-gray-500 dark:text-zinc-400">Customer:</span>
-                        <span className="font-medium text-gray-900 dark:text-zinc-200">{customerName}</span>
+                        <span className="text-gray-500 dark:text-zinc-400">
+                          Customer:
+                        </span>
+                        <span className="font-medium text-gray-900 dark:text-zinc-200">
+                          {customerName}
+                        </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-500 dark:text-zinc-400">Email:</span>
+                        <span className="text-gray-500 dark:text-zinc-400">
+                          Email:
+                        </span>
                         <span className="font-medium text-gray-900 dark:text-zinc-200 truncate max-w-[180px]">
                           {payment.visitor?.email || "N/A"}
                         </span>
                       </div>
                       {payment.bookingDate && (
                         <div className="flex justify-between">
-                          <span className="text-gray-500 dark:text-zinc-400">Event Date:</span>
+                          <span className="text-gray-500 dark:text-zinc-400">
+                            Event Date:
+                          </span>
                           <span className="font-medium text-orange">
-                            {new Date(payment.bookingDate).toLocaleDateString(undefined, {
-                              dateStyle: "medium",
-                            })}
+                            {new Date(payment.bookingDate).toLocaleDateString(
+                              undefined,
+                              {
+                                dateStyle: "medium",
+                              },
+                            )}
                           </span>
                         </div>
                       )}
@@ -673,7 +728,9 @@ const PaymentsPage = () => {
 
                     <div className="flex items-center justify-between pt-1">
                       <div>
-                        <div className="text-[11px] text-gray-400 dark:text-zinc-500">Advance Amount:</div>
+                        <div className="text-[11px] text-gray-400 dark:text-zinc-500">
+                          Advance Amount:
+                        </div>
                         <div className="font-title font-bold text-gray-900 dark:text-zinc-100 text-base">
                           {formatLKR(Number(payment.amount))}
                         </div>
@@ -775,32 +832,46 @@ const PaymentsPage = () => {
               {/* Breakdown Details */}
               <div className="space-y-3 text-xs sm:text-sm text-gray-600 dark:text-zinc-300 mb-6">
                 <div className="flex justify-between py-1.5 border-b border-gray-100 dark:border-zinc-800">
-                  <span className="text-gray-400 dark:text-zinc-500">Service</span>
+                  <span className="text-gray-400 dark:text-zinc-500">
+                    Service
+                  </span>
                   <span className="font-semibold text-gray-800 dark:text-zinc-200 text-right">
-                    {selectedPayment.package?.offering?.name || "Wedding Service"}
+                    {selectedPayment.package?.service?.name ||
+                      "Wedding Service"}
                   </span>
                 </div>
                 <div className="flex justify-between py-1.5 border-b border-gray-100 dark:border-zinc-800">
-                  <span className="text-gray-400 dark:text-zinc-500">Package</span>
+                  <span className="text-gray-400 dark:text-zinc-500">
+                    Package
+                  </span>
                   <span className="font-semibold text-gray-800 dark:text-zinc-200 text-right">
                     {selectedPayment.package?.name || "Selected Package"}
                   </span>
                 </div>
                 <div className="flex justify-between py-1.5 border-b border-gray-100 dark:border-zinc-800">
-                  <span className="text-gray-400 dark:text-zinc-500">Customer Name</span>
+                  <span className="text-gray-400 dark:text-zinc-500">
+                    Customer Name
+                  </span>
                   <span className="font-semibold text-gray-800 dark:text-zinc-200 text-right">
-                    {formatCoupleName(selectedPayment.visitor, "Wedding Couple")}
+                    {formatCoupleName(
+                      selectedPayment.visitor,
+                      "Wedding Couple",
+                    )}
                   </span>
                 </div>
                 <div className="flex justify-between py-1.5 border-b border-gray-100 dark:border-zinc-800">
-                  <span className="text-gray-400 dark:text-zinc-500">Customer Email</span>
+                  <span className="text-gray-400 dark:text-zinc-500">
+                    Customer Email
+                  </span>
                   <span className="font-semibold text-gray-800 dark:text-zinc-200 text-right">
                     {selectedPayment.visitor?.email || "N/A"}
                   </span>
                 </div>
                 {selectedPayment.visitor?.phone && (
                   <div className="flex justify-between py-1.5 border-b border-gray-100 dark:border-zinc-800">
-                    <span className="text-gray-400 dark:text-zinc-500">Customer Phone</span>
+                    <span className="text-gray-400 dark:text-zinc-500">
+                      Customer Phone
+                    </span>
                     <span className="font-semibold text-gray-800 dark:text-zinc-200 text-right">
                       {selectedPayment.visitor.phone}
                     </span>
@@ -808,27 +879,39 @@ const PaymentsPage = () => {
                 )}
                 {selectedPayment.bookingDate && (
                   <div className="flex justify-between py-1.5 border-b border-gray-100 dark:border-zinc-800">
-                    <span className="text-gray-400 dark:text-zinc-500">Event Date</span>
+                    <span className="text-gray-400 dark:text-zinc-500">
+                      Event Date
+                    </span>
                     <span className="font-semibold text-orange text-right">
-                      {new Date(selectedPayment.bookingDate).toLocaleDateString(undefined, {
-                        dateStyle: "full",
-                      })}
+                      {new Date(selectedPayment.bookingDate).toLocaleDateString(
+                        undefined,
+                        {
+                          dateStyle: "full",
+                        },
+                      )}
                     </span>
                   </div>
                 )}
                 <div className="flex justify-between py-1.5 border-b border-gray-100 dark:border-zinc-800">
-                  <span className="text-gray-400 dark:text-zinc-500">Payment Gateway</span>
+                  <span className="text-gray-400 dark:text-zinc-500">
+                    Payment Gateway
+                  </span>
                   <span className="font-semibold text-gray-800 dark:text-zinc-200 uppercase text-right">
                     {selectedPayment.gateway || "PayHere"}
                   </span>
                 </div>
                 <div className="flex justify-between py-1.5">
-                  <span className="text-gray-400 dark:text-zinc-500">Created On</span>
+                  <span className="text-gray-400 dark:text-zinc-500">
+                    Created On
+                  </span>
                   <span className="font-semibold text-gray-800 dark:text-zinc-200 text-right">
-                    {new Date(selectedPayment.createdAt).toLocaleString(undefined, {
-                      dateStyle: "medium",
-                      timeStyle: "short",
-                    })}
+                    {new Date(selectedPayment.createdAt).toLocaleString(
+                      undefined,
+                      {
+                        dateStyle: "medium",
+                        timeStyle: "short",
+                      },
+                    )}
                   </span>
                 </div>
               </div>

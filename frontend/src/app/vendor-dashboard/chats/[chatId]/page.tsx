@@ -21,7 +21,10 @@ export default function ChatPage() {
   const { vendor } = useVendorAuth();
   const [messages, setMessages] = useState<any[]>([]);
 
-  const { connected, joinChat, onNewMessage } = useChatSocket(vendor?.id, 'vendor');
+  const { connected, joinChat, onNewMessage } = useChatSocket(
+    vendor?.id,
+    "vendor",
+  );
   const [markChatAsRead] = useMutation(MARK_CHAT_AS_READ);
 
   const {
@@ -35,7 +38,7 @@ export default function ChatPage() {
       if (data?.getChatHistory?.messages) {
         setMessages(data.getChatHistory.messages);
       }
-    }
+    },
   });
 
   // Join chat room once socket is connected
@@ -50,15 +53,17 @@ export default function ChatPage() {
     {
       variables: { id: chatData?.getChatHistory?.visitorId },
       skip: !chatData?.getChatHistory?.visitorId,
-    }
+    },
   );
 
   // Mark as read as soon as chatId and vendor.id are both available
   useEffect(() => {
     if (!chatIdStr || !vendor?.id) return;
     markChatAsRead({
-      variables: { chatId: chatIdStr, userId: vendor.id, userType: 'vendor' }
-    }).catch((err) => console.error('ChatPage: markChatAsRead error:', err.message));
+      variables: { chatId: chatIdStr, userId: vendor.id, userType: "vendor" },
+    }).catch((err) =>
+      console.error("ChatPage: markChatAsRead error:", err.message),
+    );
   }, [chatIdStr, vendor?.id]);
 
   // Listen for real-time messages and mark as read when they arrive
@@ -70,13 +75,19 @@ export default function ChatPage() {
         setMessages(data.chat.messages || []);
         if (vendor?.id) {
           markChatAsRead({
-            variables: { chatId: chatIdStr, userId: vendor.id, userType: 'vendor' }
+            variables: {
+              chatId: chatIdStr,
+              userId: vendor.id,
+              userType: "vendor",
+            },
           }).catch(console.error);
         }
       }
     });
 
-    return () => { unsubscribe?.(); };
+    return () => {
+      unsubscribe?.();
+    };
   }, [chatIdStr, connected, onNewMessage, vendor?.id]);
 
   if (chatLoading || visitorLoading)
@@ -91,7 +102,9 @@ export default function ChatPage() {
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="p-5 text-red-700 dark:text-red-300 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/40">
           <p className="font-semibold text-sm">Error loading chat</p>
-          <p className="text-xs text-red-600 dark:text-red-400 mt-1">{chatError.message}</p>
+          <p className="text-xs text-red-600 dark:text-red-400 mt-1">
+            {chatError.message}
+          </p>
           <Link
             href="/vendor-dashboard/chats"
             className="inline-flex items-center gap-1.5 text-xs text-orange font-semibold mt-3 hover:underline"
@@ -103,7 +116,7 @@ export default function ChatPage() {
     );
 
   const visitor = visitorData?.findVisitorById;
-  const offeringId = chatData?.getChatHistory?.offeringId;
+  const serviceId = chatData?.getChatHistory?.serviceId;
 
   return (
     <div className="container mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 max-w-4xl flex-grow flex flex-col">
@@ -120,7 +133,7 @@ export default function ChatPage() {
 
       {/* Main Responsive Chat Card Window */}
       <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 overflow-hidden flex flex-col h-[calc(100vh-210px)] min-h-[500px] flex-grow">
-        {visitor && <ChatHeader visitor={visitor} offeringId={offeringId} />}
+        {visitor && <ChatHeader visitor={visitor} offeringId={serviceId} />}
         <MessageList messages={messages} />
         <MessageInput chatId={chatIdStr} onMessageSent={setMessages} />
       </div>

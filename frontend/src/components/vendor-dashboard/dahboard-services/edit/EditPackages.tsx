@@ -65,15 +65,15 @@ const EditPackages: React.FC = () => {
   const { loading, error, data, refetch } = useQuery(
     FIND_PACKAGES_BY_OFFERING,
     {
-      variables: { serviceId: offeringId, offeringId },
+      variables: { serviceId: offeringId },
       fetchPolicy: "network-only",
-    }
+    },
   );
 
   const [packages, setPackages] = useState<Package[]>([]);
   const [viewMode, setViewMode] = useState<ViewMode>("list");
   const [formPackage, setFormPackage] = useState<Package>(
-    createEmptyPackage(offeringId, 0)
+    createEmptyPackage(offeringId, 0),
   );
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -82,22 +82,31 @@ const EditPackages: React.FC = () => {
 
   const [createPackage] = useMutation(CREATE_PACKAGE, {
     refetchQueries: [
-      { query: FIND_PACKAGES_BY_OFFERING, variables: { serviceId: offeringId, offeringId } },
+      {
+        query: FIND_PACKAGES_BY_OFFERING,
+        variables: { serviceId: offeringId },
+      },
     ],
   });
   const [updatePackage] = useMutation(UPDATE_PACKAGE, {
     refetchQueries: [
-      { query: FIND_PACKAGES_BY_OFFERING, variables: { serviceId: offeringId, offeringId } },
+      {
+        query: FIND_PACKAGES_BY_OFFERING,
+        variables: { serviceId: offeringId },
+      },
     ],
   });
   const [deletePackage] = useMutation(DELETE_PACKAGE, {
     refetchQueries: [
-      { query: FIND_PACKAGES_BY_OFFERING, variables: { serviceId: offeringId, offeringId } },
+      {
+        query: FIND_PACKAGES_BY_OFFERING,
+        variables: { serviceId: offeringId },
+      },
     ],
   });
 
   useEffect(() => {
-    const fetched: Package[] | undefined = data?.findPackagesByService || data?.findPackagesByOffering;
+    const fetched: Package[] | undefined = data?.findPackagesByService;
     if (fetched) {
       setPackages(fetched);
 
@@ -146,7 +155,7 @@ const EditPackages: React.FC = () => {
   // Form field change handlers
   const handleFieldChange = (
     field: keyof Package,
-    value: string | number | boolean
+    value: string | number | boolean,
   ) => {
     setFormPackage((prev) => ({
       ...prev,
@@ -222,7 +231,7 @@ const EditPackages: React.FC = () => {
   // Direct visibility toggle from the card
   const handleToggleVisibilityDirectly = async (
     pkg: Package,
-    e: React.MouseEvent
+    e: React.MouseEvent,
   ) => {
     e.stopPropagation();
     if (!pkg.id) return;
@@ -281,7 +290,6 @@ const EditPackages: React.FC = () => {
               image: formPackage.image || null,
             },
             serviceId: offeringId,
-            offeringId,
           },
         });
 
@@ -392,7 +400,8 @@ const EditPackages: React.FC = () => {
                     </h2>
                   </div>
                   <p className="text-gray-500 dark:text-zinc-400 font-body text-sm mt-1">
-                    Configure package tiers, pricing in LKR, and booking requirements for couples.
+                    Configure package tiers, pricing in LKR, and booking
+                    requirements for couples.
                   </p>
                 </div>
                 <button
@@ -416,7 +425,8 @@ const EditPackages: React.FC = () => {
                   No packages added yet
                 </h3>
                 <p className="text-sm text-gray-500 dark:text-zinc-400 max-w-md mx-auto mb-5">
-                  Create customizable service packages with clear LKR pricing and feature inclusions for prospective couples.
+                  Create customizable service packages with clear LKR pricing
+                  and feature inclusions for prospective couples.
                 </p>
                 <button
                   type="button"
@@ -433,7 +443,9 @@ const EditPackages: React.FC = () => {
             {packages.length > 0 && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {packages.map((pkg, index) => {
-                  const validFeatures = (pkg.features || []).filter((f) => f.trim() !== "");
+                  const validFeatures = (pkg.features || []).filter(
+                    (f) => f.trim() !== "",
+                  );
                   const isDeleting = deletingId === pkg.id;
 
                   return (
@@ -463,16 +475,28 @@ const EditPackages: React.FC = () => {
                             <div className="absolute top-3 right-3 z-10">
                               <button
                                 type="button"
-                                onClick={(e) => handleToggleVisibilityDirectly(pkg, e)}
-                                title={pkg.visible ? "Hide Package" : "Make Package Visible"}
+                                onClick={(e) =>
+                                  handleToggleVisibilityDirectly(pkg, e)
+                                }
+                                title={
+                                  pkg.visible
+                                    ? "Hide Package"
+                                    : "Make Package Visible"
+                                }
                                 className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium backdrop-blur-md transition-colors ${
                                   pkg.visible
                                     ? "bg-emerald-500/90 text-white"
                                     : "bg-gray-800/80 text-gray-300"
                                 }`}
                               >
-                                {pkg.visible ? <FiEye className="text-xs" /> : <FiEyeOff className="text-xs" />}
-                                <span>{pkg.visible ? "Visible" : "Hidden"}</span>
+                                {pkg.visible ? (
+                                  <FiEye className="text-xs" />
+                                ) : (
+                                  <FiEyeOff className="text-xs" />
+                                )}
+                                <span>
+                                  {pkg.visible ? "Visible" : "Hidden"}
+                                </span>
                               </button>
                             </div>
                           </div>
@@ -483,15 +507,25 @@ const EditPackages: React.FC = () => {
                             </span>
                             <button
                               type="button"
-                              onClick={(e) => handleToggleVisibilityDirectly(pkg, e)}
-                              title={pkg.visible ? "Hide Package" : "Make Package Visible"}
+                              onClick={(e) =>
+                                handleToggleVisibilityDirectly(pkg, e)
+                              }
+                              title={
+                                pkg.visible
+                                  ? "Hide Package"
+                                  : "Make Package Visible"
+                              }
                               className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border transition-colors ${
                                 pkg.visible
                                   ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800"
                                   : "bg-gray-100 dark:bg-zinc-800 text-gray-500 dark:text-zinc-400 border-gray-200 dark:border-zinc-700"
                               }`}
                             >
-                              {pkg.visible ? <FiEye className="text-xs" /> : <FiEyeOff className="text-xs" />}
+                              {pkg.visible ? (
+                                <FiEye className="text-xs" />
+                              ) : (
+                                <FiEyeOff className="text-xs" />
+                              )}
                               <span>{pkg.visible ? "Visible" : "Hidden"}</span>
                             </button>
                           </div>
@@ -517,7 +551,8 @@ const EditPackages: React.FC = () => {
                             </span>
                             {pkg.pricing > 0 && (
                               <span className="text-xs text-gray-400 dark:text-zinc-500 font-medium">
-                                (20% advance: LKR {(Number(pkg.pricing) * 0.2).toLocaleString()})
+                                (20% advance: LKR{" "}
+                                {(Number(pkg.pricing) * 0.2).toLocaleString()})
                               </span>
                             )}
                           </div>
@@ -536,12 +571,13 @@ const EditPackages: React.FC = () => {
                                 <span>Vendor Approval</span>
                               </span>
                             )}
-                            {!pkg.requiresReservation && !pkg.requiresApproval && (
-                              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-gray-100 dark:bg-zinc-800/80 text-gray-600 dark:text-zinc-400">
-                                <FiPackage className="text-xs shrink-0" />
-                                <span>Standard Booking</span>
-                              </span>
-                            )}
+                            {!pkg.requiresReservation &&
+                              !pkg.requiresApproval && (
+                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-gray-100 dark:bg-zinc-800/80 text-gray-600 dark:text-zinc-400">
+                                  <FiPackage className="text-xs shrink-0" />
+                                  <span>Standard Booking</span>
+                                </span>
+                              )}
                           </div>
 
                           {/* Features Summary */}
@@ -551,15 +587,19 @@ const EditPackages: React.FC = () => {
                                 Inclusions ({validFeatures.length})
                               </span>
                               <ul className="space-y-1.5">
-                                {validFeatures.slice(0, 3).map((feat, fIndex) => (
-                                  <li
-                                    key={fIndex}
-                                    className="flex items-start gap-2 text-xs text-gray-700 dark:text-zinc-300"
-                                  >
-                                    <FiCheck className="text-emerald-500 shrink-0 text-sm mt-0.5" />
-                                    <span className="line-clamp-1">{feat}</span>
-                                  </li>
-                                ))}
+                                {validFeatures
+                                  .slice(0, 3)
+                                  .map((feat, fIndex) => (
+                                    <li
+                                      key={fIndex}
+                                      className="flex items-start gap-2 text-xs text-gray-700 dark:text-zinc-300"
+                                    >
+                                      <FiCheck className="text-emerald-500 shrink-0 text-sm mt-0.5" />
+                                      <span className="line-clamp-1">
+                                        {feat}
+                                      </span>
+                                    </li>
+                                  ))}
                                 {validFeatures.length > 3 && (
                                   <li className="text-[11px] font-medium text-orange pl-5">
                                     +{validFeatures.length - 3} more inclusions
@@ -650,7 +690,9 @@ const EditPackages: React.FC = () => {
                         : "text-gray-400 dark:text-zinc-500"
                     }`}
                   >
-                    {formPackage.visible ? "Visible to Couples" : "Hidden from Couples"}
+                    {formPackage.visible
+                      ? "Visible to Couples"
+                      : "Hidden from Couples"}
                   </span>
                   <Switch
                     checked={formPackage.visible}
@@ -670,7 +712,10 @@ const EditPackages: React.FC = () => {
               {/* Package Image Section */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-2">
-                  Package Image <span className="text-xs font-normal text-gray-400 dark:text-zinc-500">(Optional)</span>
+                  Package Image{" "}
+                  <span className="text-xs font-normal text-gray-400 dark:text-zinc-500">
+                    (Optional)
+                  </span>
                 </label>
                 {formPackage.image ? (
                   <div className="relative w-full sm:w-64 h-40 rounded-xl overflow-hidden border border-gray-200 dark:border-zinc-700 group bg-gray-50 dark:bg-darkElevated">
@@ -778,7 +823,9 @@ const EditPackages: React.FC = () => {
                       type="number"
                       min="0"
                       step="100"
-                      value={formPackage.pricing === 0 ? "" : formPackage.pricing}
+                      value={
+                        formPackage.pricing === 0 ? "" : formPackage.pricing
+                      }
                       onChange={(e) =>
                         handleFieldChange("pricing", e.target.value)
                       }
@@ -797,7 +844,8 @@ const EditPackages: React.FC = () => {
                       <span className="text-gray-500 dark:text-zinc-400 font-medium">
                         (Online advance 20%:{" "}
                         <span className="font-semibold text-gray-800 dark:text-zinc-200">
-                          LKR {(Number(formPackage.pricing) * 0.2).toLocaleString()}
+                          LKR{" "}
+                          {(Number(formPackage.pricing) * 0.2).toLocaleString()}
                         </span>
                         )
                       </span>
@@ -953,7 +1001,9 @@ const EditPackages: React.FC = () => {
                       </>
                     ) : (
                       <span>
-                        {viewMode === "add" ? "Create Package" : "Update Package"}
+                        {viewMode === "add"
+                          ? "Create Package"
+                          : "Update Package"}
                       </span>
                     )}
                   </button>

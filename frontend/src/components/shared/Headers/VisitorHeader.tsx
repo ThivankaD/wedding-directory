@@ -10,7 +10,10 @@ import { useAuth } from "@/contexts/VisitorAuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import SearchBar from "../SearchBar";
 import { useQuery } from "@apollo/client";
-import { GET_VISITOR_BY_ID, GET_VISITOR_APPROVAL_REQUESTS } from "@/graphql/queries";
+import {
+  GET_VISITOR_BY_ID,
+  GET_VISITOR_APPROVAL_REQUESTS,
+} from "@/graphql/queries";
 import { useChatSocket } from "@/hooks/useChatSocket";
 import toast from "react-hot-toast";
 
@@ -19,7 +22,9 @@ const VisitorHeader = () => {
   const pathname = usePathname();
   const { visitor, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
-  const [profilePic, setProfilePic] = useState<string>("/images/visitorPlaceholder.png"); // Default placeholder
+  const [profilePic, setProfilePic] = useState<string>(
+    "/images/visitorPlaceholder.png",
+  ); // Default placeholder
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showNotificationMenu, setShowNotificationMenu] = useState(false);
   const profileMenuRef = useRef<HTMLDivElement>(null);
@@ -38,7 +43,8 @@ const VisitorHeader = () => {
     {
       name: "Vendors",
       href: "/vendor-search",
-      isActive: (path: string) => path.startsWith("/vendor-search") || path.startsWith("/services"),
+      isActive: (path: string) =>
+        path.startsWith("/vendor-search") || path.startsWith("/services"),
     },
     {
       name: "Blog",
@@ -48,7 +54,8 @@ const VisitorHeader = () => {
     {
       name: "Help",
       href: "/visitor-dashboard/help",
-      isActive: (path: string) => path === "/visitor-dashboard/help" || path === "/help",
+      isActive: (path: string) =>
+        path === "/visitor-dashboard/help" || path === "/help",
     },
   ];
 
@@ -79,13 +86,17 @@ const VisitorHeader = () => {
     fetchPolicy: "network-only",
     nextFetchPolicy: "cache-first",
     onError: (err) => {
-      console.warn("Failed to load visitor approval notifications:", err.message);
+      console.warn(
+        "Failed to load visitor approval notifications:",
+        err.message,
+      );
     },
   });
 
   const approvalRequests = approvalData?.getVisitorApprovalRequests || [];
   const activeRequests = approvalRequests.filter(
-    (r: any) => (r.status === "approved" && !r.isExpired) || r.status === "pending"
+    (r: any) =>
+      (r.status === "approved" && !r.isExpired) || r.status === "pending",
   );
   const notificationCount = activeRequests.length;
 
@@ -98,7 +109,7 @@ const VisitorHeader = () => {
   // Real-time toast alert when a booking request is approved
   useEffect(() => {
     const approvedRequests = approvalRequests.filter(
-      (r: any) => r.status === "approved" && !r.isExpired
+      (r: any) => r.status === "approved" && !r.isExpired,
     );
     const approvedCount = approvedRequests.length;
 
@@ -108,8 +119,8 @@ const VisitorHeader = () => {
     ) {
       const latest = approvedRequests[0];
       const vendorName =
-        latest?.package?.offering?.vendor?.busname ||
-        latest?.package?.offering?.name ||
+        latest?.package?.service?.vendor?.busname ||
+        latest?.package?.service?.name ||
         "The vendor";
       const pkgName = latest?.package?.name || "Package";
 
@@ -118,8 +129,8 @@ const VisitorHeader = () => {
           <div
             onClick={() => {
               toast.dismiss(t.id);
-              if (latest?.package?.offering?.id) {
-                router.push(`/services/${latest.package.offering.id}`);
+              if (latest?.package?.service?.id) {
+                router.push(`/services/${latest.package.service.id}`);
               }
             }}
             className={`${
@@ -135,14 +146,18 @@ const VisitorHeader = () => {
                   Booking Request Approved! 🎉
                 </p>
                 <p className="text-xs text-gray-500 mt-0.5">
-                  <span className="font-semibold text-gray-800">{vendorName}</span> approved your request for{" "}
-                  <span className="font-semibold text-gray-800">{pkgName}</span>. Click to complete booking!
+                  <span className="font-semibold text-gray-800">
+                    {vendorName}
+                  </span>{" "}
+                  approved your request for{" "}
+                  <span className="font-semibold text-gray-800">{pkgName}</span>
+                  . Click to complete booking!
                 </p>
               </div>
             </div>
           </div>
         ),
-        { duration: 6000 }
+        { duration: 6000 },
       );
     }
     previousApprovedCountRef.current = approvedCount;
@@ -273,7 +288,9 @@ const VisitorHeader = () => {
                 <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white dark:bg-darkSurface shadow-2xl rounded-2xl py-2 z-50 border border-gray-100 dark:border-zinc-800 animate-in fade-in slide-in-from-top-2 duration-150">
                   <div className="px-4 py-3 border-b border-gray-100 dark:border-zinc-800 flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className="font-title font-bold text-base text-gray-900 dark:text-zinc-100">Notifications</span>
+                      <span className="font-title font-bold text-base text-gray-900 dark:text-zinc-100">
+                        Notifications
+                      </span>
                       {notificationCount > 0 && (
                         <span className="bg-orange/10 text-orange text-xs font-bold px-2 py-0.5 rounded-full">
                           {notificationCount} new
@@ -286,22 +303,30 @@ const VisitorHeader = () => {
                     {sortedRequests.length === 0 ? (
                       <div className="py-10 px-4 text-center">
                         <IoIosNotificationsOutline className="w-12 h-12 text-gray-300 dark:text-zinc-600 mx-auto mb-2.5" />
-                        <p className="text-sm font-semibold text-gray-700 dark:text-zinc-300">No new notifications</p>
-                        <p className="text-xs text-gray-400 dark:text-zinc-500 mt-1">You are all caught up!</p>
+                        <p className="text-sm font-semibold text-gray-700 dark:text-zinc-300">
+                          No new notifications
+                        </p>
+                        <p className="text-xs text-gray-400 dark:text-zinc-500 mt-1">
+                          You are all caught up!
+                        </p>
                       </div>
                     ) : (
                       sortedRequests.map((req: any) => {
                         const vendorName =
-                          req.package?.offering?.vendor?.busname ||
-                          req.package?.offering?.name ||
+                          req.package?.service?.vendor?.busname ||
+                          req.package?.service?.name ||
                           "Vendor";
                         const pkgName = req.package?.name || "Package";
-                        const isApproved = req.status === "approved" && !req.isExpired;
+                        const isApproved =
+                          req.status === "approved" && !req.isExpired;
                         const isRejected = req.status === "rejected";
                         const isPending = req.status === "pending";
-                        const isExpired = req.status === "approved" && req.isExpired;
-                        const offeringId = req.package?.offering?.id;
-                        const targetUrl = offeringId ? `/services/${offeringId}` : "/visitor-dashboard";
+                        const isExpired =
+                          req.status === "approved" && req.isExpired;
+                        const serviceId = req.package?.service?.id;
+                        const targetUrl = serviceId
+                          ? `/services/${serviceId}`
+                          : "/visitor-dashboard";
 
                         return (
                           <Link
@@ -316,10 +341,10 @@ const VisitorHeader = () => {
                                   isApproved
                                     ? "bg-emerald-100 text-emerald-600"
                                     : isRejected
-                                    ? "bg-rose-100 text-rose-600"
-                                    : isExpired
-                                    ? "bg-gray-100 text-gray-500"
-                                    : "bg-orange/10 text-orange"
+                                      ? "bg-rose-100 text-rose-600"
+                                      : isExpired
+                                        ? "bg-gray-100 text-gray-500"
+                                        : "bg-orange/10 text-orange"
                                 }`}
                               >
                                 {vendorName.charAt(0).toUpperCase() || "V"}
@@ -354,10 +379,10 @@ const VisitorHeader = () => {
                                   {isApproved
                                     ? `Approved your request for ${pkgName}!`
                                     : isRejected
-                                    ? `Declined booking request for ${pkgName}`
-                                    : isExpired
-                                    ? `Approval expired for ${pkgName}`
-                                    : `Pending approval for ${pkgName}`}
+                                      ? `Declined booking request for ${pkgName}`
+                                      : isExpired
+                                        ? `Approval expired for ${pkgName}`
+                                        : `Pending approval for ${pkgName}`}
                                 </p>
                                 {req.vendorMessage && (
                                   <p className="text-[11px] text-gray-500 italic mt-0.5 truncate">
@@ -365,11 +390,16 @@ const VisitorHeader = () => {
                                   </p>
                                 )}
                                 <div className="flex items-center gap-1.5 mt-1.5 text-[11px] text-gray-400 font-medium">
-                                  <FiCalendar size={12} className="text-orange" />
+                                  <FiCalendar
+                                    size={12}
+                                    className="text-orange"
+                                  />
                                   <span>{req.bookingDate}</span>
                                   <span className="text-gray-300">•</span>
                                   <span className="text-orange font-semibold">
-                                    {isApproved ? "Book now →" : "View service →"}
+                                    {isApproved
+                                      ? "Book now →"
+                                      : "View service →"}
                                   </span>
                                 </div>
                               </div>

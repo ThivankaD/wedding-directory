@@ -31,8 +31,12 @@ const VisitorChatWindow = ({ chatId }: VisitorChatWindowProps) => {
   const isInitialScrollRef = useRef(true);
   const { visitor } = useAuth();
 
-  const { connected, sendMessage: sendSocketMessage, joinChat, onNewMessage } =
-    useChatSocket(visitor?.id, "visitor");
+  const {
+    connected,
+    sendMessage: sendSocketMessage,
+    joinChat,
+    onNewMessage,
+  } = useChatSocket(visitor?.id, "visitor");
 
   const [markChatAsRead] = useMutation(MARK_CHAT_AS_READ);
 
@@ -47,14 +51,14 @@ const VisitorChatWindow = ({ chatId }: VisitorChatWindowProps) => {
     },
   });
 
-  const offeringId = data?.getChatHistory?.serviceId || data?.getChatHistory?.offeringId;
+  const serviceId = data?.getChatHistory?.serviceId;
 
   const { data: offeringData } = useQuery(GET_OFFERING_DETAILS, {
-    variables: { id: offeringId },
-    skip: !offeringId,
+    variables: { id: serviceId },
+    skip: !serviceId,
   });
 
-  const offering = offeringData?.findServiceById || offeringData?.findOfferingById;
+  const offering = offeringData?.findServiceById;
   const vendor = offering?.vendor;
 
   // Join chat room via WebSocket when connected
@@ -175,7 +179,10 @@ const VisitorChatWindow = ({ chatId }: VisitorChatWindowProps) => {
               )}
             </div>
             <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-zinc-400 font-body truncate mt-0.5">
-              <span>{vendor?.city ? `${vendor.city} • ` : ""}{offering?.category || "Wedding Service"}</span>
+              <span>
+                {vendor?.city ? `${vendor.city} • ` : ""}
+                {offering?.category || "Wedding Service"}
+              </span>
             </div>
           </div>
         </div>
@@ -205,7 +212,8 @@ const VisitorChatWindow = ({ chatId }: VisitorChatWindowProps) => {
                 Start of Conversation
               </p>
               <p className="text-xs text-gray-500 dark:text-zinc-400 font-body">
-                Send a message to discuss dates, packages, and special requirements with {vendorDisplayName}.
+                Send a message to discuss dates, packages, and special
+                requirements with {vendorDisplayName}.
               </p>
             </div>
           </div>
@@ -213,7 +221,8 @@ const VisitorChatWindow = ({ chatId }: VisitorChatWindowProps) => {
           messages.map((msg: Message, index: number) => {
             const isVisitor = msg.senderType === "visitor";
             const isSystemOrPayment =
-              msg.content.includes("Payment Note") || msg.content.startsWith("📦");
+              msg.content.includes("Payment Note") ||
+              msg.content.startsWith("📦");
 
             if (isSystemOrPayment) {
               return (
@@ -221,7 +230,9 @@ const VisitorChatWindow = ({ chatId }: VisitorChatWindowProps) => {
                   <div className="bg-[#FFF8F3] dark:bg-darkElevated border-2 border-orange/25 dark:border-orange/30 rounded-2xl p-4 max-w-[92%] sm:max-w-[75%] text-xs sm:text-sm text-gray-800 dark:text-zinc-200 shadow-xs">
                     <div className="font-semibold flex items-center gap-2 mb-1.5 text-orange">
                       <span className="text-base">📦</span>
-                      <span className="font-title">Booking Payment Notification</span>
+                      <span className="font-title">
+                        Booking Payment Notification
+                      </span>
                     </div>
                     <p className="leading-relaxed font-body whitespace-pre-line text-gray-700 dark:text-zinc-300">
                       {msg.content.replace(/^📦\s*/, "")}
@@ -254,10 +265,14 @@ const VisitorChatWindow = ({ chatId }: VisitorChatWindowProps) => {
                         : "bg-white dark:bg-darkElevated text-gray-800 dark:text-zinc-100 rounded-bl-xs border-2 border-orange/10 dark:border-zinc-700"
                     }`}
                   >
-                    <p className="leading-relaxed whitespace-pre-wrap break-words">{msg.content}</p>
+                    <p className="leading-relaxed whitespace-pre-wrap break-words">
+                      {msg.content}
+                    </p>
                     <span
                       className={`text-[10px] mt-1.5 block ${
-                        isVisitor ? "text-white/80 text-right" : "text-gray-400 dark:text-zinc-400 text-left"
+                        isVisitor
+                          ? "text-white/80 text-right"
+                          : "text-gray-400 dark:text-zinc-400 text-left"
                       }`}
                     >
                       {formatDistanceToNow(new Date(msg.timestamp), {
@@ -298,4 +313,4 @@ const VisitorChatWindow = ({ chatId }: VisitorChatWindowProps) => {
   );
 };
 
-export default VisitorChatWindow;
+export default VisitorChatWindow;
