@@ -128,7 +128,7 @@ const VendorDashBoardContent: React.FC = () => {
           <div className="lg:col-span-4">
             <VendorBanner vendor={vendorInfo} />
           </div>
-          <div className="lg:col-span-8 flex flex-col gap-4">
+          <div className="lg:col-span-8 flex flex-col gap-4 lg:h-[580px]">
             <div className="flex items-center gap-2 bg-white dark:bg-darkSurface p-1.5 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 w-fit self-start">
               <button
                 onClick={() => {
