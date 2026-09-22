@@ -307,13 +307,13 @@ const BookingCalendar: React.FC = () => {
                         <span className="font-medium text-gray-700 dark:text-zinc-300">
                           Service:
                         </span>{" "}
-                        {booking.package.service.name}
+                        {booking.package?.service?.name || "Wedding Service"}
                       </div>
                       <div>
                         <span className="font-medium text-gray-700 dark:text-zinc-300">
                           Package:
                         </span>{" "}
-                        {booking.package.name}
+                        {booking.package?.name || "Package"}
                       </div>
                       <div className="flex items-center gap-2 mt-1">
                         <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-orange/10 text-orange font-semibold text-xs">
@@ -369,7 +369,7 @@ const BookingCalendar: React.FC = () => {
                     {formatCoupleName(booking.visitor, "Couple")}
                   </div>
                   <div className="text-gray-500 dark:text-zinc-400 truncate text-[11px] mt-0.5">
-                    {booking.package.name} •{" "}
+                    {booking.package?.name || "Package"} •{" "}
                     {new Date(booking.bookingDate!).toLocaleDateString(
                       undefined,
                       { dateStyle: "medium" },

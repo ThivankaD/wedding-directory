@@ -24,7 +24,7 @@ const VendorDashBoardContent: React.FC = () => {
   const tabParam = searchParams.get("tab");
   const [services, setServices] = useState<Service[]>([]);
   const [dashboardTab, setDashboardTab] = useState<"calendar" | "approvals">(
-    tabParam === "approvals" ? "approvals" : "calendar"
+    tabParam === "approvals" ? "approvals" : "calendar",
   );
 
   useEffect(() => {
@@ -68,7 +68,8 @@ const VendorDashBoardContent: React.FC = () => {
 
   // Update services state when servicesData changes
   useEffect(() => {
-    const list = servicesData?.findServicesByVendor || servicesData?.findOfferingsByVendor;
+    const list =
+      servicesData?.findServicesByVendor || servicesData?.findOfferingsByVendor;
     if (list) {
       setServices(list);
     }
@@ -83,8 +84,12 @@ const VendorDashBoardContent: React.FC = () => {
         <VendorHeader />
         <div className="flex-grow flex items-center justify-center p-8">
           <div className="bg-white dark:bg-darkSurface rounded-2xl p-8 border border-red-100 dark:border-red-900/40 text-center max-w-md shadow-sm">
-            <p className="text-red-500 font-medium mb-2">Error loading vendor dashboard</p>
-            <p className="text-gray-500 dark:text-zinc-400 text-xs">{vendorError?.message || servicesError?.message}</p>
+            <p className="text-red-500 font-medium mb-2">
+              Error loading vendor dashboard
+            </p>
+            <p className="text-gray-500 dark:text-zinc-400 text-xs">
+              {vendorError?.message || servicesError?.message}
+            </p>
           </div>
         </div>
         <Footer />
@@ -101,9 +106,12 @@ const VendorDashBoardContent: React.FC = () => {
         {/* Top Header Banner */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div>
-            <h1 className="font-title text-3xl font-bold text-gray-900 dark:text-zinc-100">Vendor Dashboard</h1>
+            <h1 className="font-title text-3xl font-bold text-gray-900 dark:text-zinc-100">
+              Vendor Dashboard
+            </h1>
             <p className="text-gray-500 dark:text-zinc-400 font-body text-sm mt-1">
-              Monitor customer bookings, manage your storefront profile, and track your active services.
+              Monitor customer bookings, manage your storefront profile, and
+              track your active services.
             </p>
           </div>
           <Link
@@ -125,7 +133,11 @@ const VendorDashBoardContent: React.FC = () => {
               <button
                 onClick={() => {
                   setDashboardTab("calendar");
-                  window.history.replaceState(null, "", "/vendor-dashboard?tab=calendar");
+                  window.history.replaceState(
+                    null,
+                    "",
+                    "/vendor-dashboard?tab=calendar",
+                  );
                 }}
                 className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   dashboardTab === "calendar"
@@ -139,7 +151,11 @@ const VendorDashBoardContent: React.FC = () => {
               <button
                 onClick={() => {
                   setDashboardTab("approvals");
-                  window.history.replaceState(null, "", "/vendor-dashboard?tab=approvals");
+                  window.history.replaceState(
+                    null,
+                    "",
+                    "/vendor-dashboard?tab=approvals",
+                  );
                 }}
                 className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   dashboardTab === "approvals"
@@ -188,14 +204,15 @@ const VendorDashBoardContent: React.FC = () => {
                 Services by {vendorInfo?.busname || "You"}
               </h2>
               <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-orange/10 text-orange">
-                {services.length} {services.length === 1 ? "Service" : "Services"}
+                {services.length}{" "}
+                {services.length === 1 ? "Service" : "Services"}
               </span>
             </div>
           </div>
 
           {services.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {services.map((service: Service) => (
+              {services.filter(Boolean).map((service: Service) => (
                 <OfferingCard
                   key={service?.id}
                   vendor={service.vendor?.busname || "Unknown"}
@@ -217,7 +234,8 @@ const VendorDashBoardContent: React.FC = () => {
                 No Services Listed Yet
               </h3>
               <p className="text-gray-500 dark:text-zinc-400 text-sm max-w-md mb-6">
-                Create your first service listing to showcase your wedding packages and start receiving bookings from couples.
+                Create your first service listing to showcase your wedding
+                packages and start receiving bookings from couples.
               </p>
               <Link
                 href="/vendor-dashboard/new-service"
