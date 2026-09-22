@@ -172,7 +172,7 @@ const BookingCalendar: React.FC = () => {
   }
 
   return (
-    <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 p-5 sm:p-6 flex flex-col h-full min-h-0 overflow-y-auto">
+    <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 p-5 sm:p-6 flex flex-col h-full min-h-0">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6 pb-4 border-b border-gray-100 dark:border-zinc-800">
         <div>
           <h2 className="font-title text-xl sm:text-2xl font-bold text-gray-900 dark:text-zinc-100">
@@ -256,7 +256,7 @@ const BookingCalendar: React.FC = () => {
             <button
               key={index}
               onClick={() => handleDateClick(date)}
-              className={`aspect-square p-1 border rounded-xl transition-all flex flex-col items-center justify-center cursor-pointer ${cellClass} ${
+              className={`h-14 sm:h-16 p-1 border rounded-xl transition-all flex flex-col items-center justify-center cursor-pointer ${cellClass} ${
                 isToday ? "border-orange ring-1 ring-orange/30 font-bold" : ""
               } ${isSelected ? "ring-2 ring-orange border-orange shadow-sm scale-105" : ""}`}
             >
