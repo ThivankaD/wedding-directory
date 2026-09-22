@@ -40,7 +40,7 @@ export class PaymentService {
     serviceId: string,
     amount: number,
     paymentReference: string,
-    bookingDate?: Date, 
+    bookingDate?: Date,
     gateway = 'payhere',
     gatewayPaymentId?: string,
   ) {
@@ -48,7 +48,9 @@ export class PaymentService {
     if (bookingDate) {
       const hasConflict = await this.checkDateConflict(vendorId, bookingDate);
       if (hasConflict) {
-        throw new Error('This vendor is already booked for the selected date. Please choose a different date.');
+        throw new Error(
+          'This vendor is already booked for the selected date. Please choose a different date.',
+        );
       }
     }
 
@@ -73,7 +75,10 @@ export class PaymentService {
         );
       }
 
-      if (activeApproval.expiresAt && new Date(activeApproval.expiresAt) < new Date()) {
+      if (
+        activeApproval.expiresAt &&
+        new Date(activeApproval.expiresAt) < new Date()
+      ) {
         activeApproval.status = ApprovalRequestStatus.EXPIRED;
         await this.approvalRequestRepository.save(activeApproval);
         throw new Error(
@@ -93,7 +98,7 @@ export class PaymentService {
         package: { id: packageId },
         status: 'pending',
       },
-      { status: 'failed' }
+      { status: 'failed' },
     );
 
     const payment = this.paymentRepository.create({
@@ -105,21 +110,21 @@ export class PaymentService {
       gateway,
       gatewayPaymentId,
       status: 'pending',
-      bookingDate
+      bookingDate,
     });
 
     // Add to myVendors if not already added
     const existingMyVendor = await this.myVendorsRepository.findOne({
       where: {
         visitor: { id: visitorId },
-        service: { id: serviceId }
-      }
+        service: { id: serviceId },
+      },
     });
 
     if (!existingMyVendor && service) {
       const myVendor = this.myVendorsRepository.create({
         visitor,
-        service
+        service,
       });
       await this.myVendorsRepository.save(myVendor);
     }
@@ -129,20 +134,21 @@ export class PaymentService {
 
   async findBookedDatesByPackage(packageId: string): Promise<Date[]> {
     const payments = await this.paymentRepository.find({
-      where: { 
+      where: {
         package: { id: packageId },
-        status: 'completed'
+        status: 'completed',
       },
-      select: ['bookingDate']
+      select: ['bookingDate'],
     });
-    
+
     // Only completed payments lock booked dates
-    return payments
-      .filter(p => p.bookingDate)
-      .map(p => p.bookingDate);
+    return payments.filter((p) => p.bookingDate).map((p) => p.bookingDate);
   }
 
-  async updatePaymentStatus(paymentReference: string, status: 'completed' | 'failed') {
+  async updatePaymentStatus(
+    paymentReference: string,
+    status: 'completed' | 'failed',
+  ) {
     return this.updatePaymentStatusByReference(paymentReference, status);
   }
 
@@ -157,23 +163,23 @@ export class PaymentService {
         relations: {
           visitor: true,
           package: {
-            service: true
-          }
-        }
+            service: true,
+          },
+        },
       });
 
       if (payment && payment.package?.service) {
         const existingMyVendor = await this.myVendorsRepository.findOne({
           where: {
             visitor: { id: payment.visitor.id },
-            service: { id: payment.package.service.id }
-          }
+            service: { id: payment.package.service.id },
+          },
         });
 
         if (!existingMyVendor) {
           const myVendor = this.myVendorsRepository.create({
             visitor: payment.visitor,
-            service: payment.package.service
+            service: payment.package.service,
           });
           await this.myVendorsRepository.save(myVendor);
         }
@@ -204,7 +210,7 @@ export class PaymentService {
       {
         status,
         ...(gatewayPaymentId ? { gatewayPaymentId } : {}),
-      }
+      },
     );
   }
 
@@ -215,22 +221,25 @@ export class PaymentService {
         visitor: true,
         vendor: true,
         package: {
-          service: true
-        }
-      }
+          service: true,
+        },
+      },
     });
   }
 
   // Update payment status by payment ID (for manual testing)
-  async updatePaymentStatusById(paymentId: string, status: 'completed' | 'failed' | 'pending') {
+  async updatePaymentStatusById(
+    paymentId: string,
+    status: 'completed' | 'failed' | 'pending',
+  ) {
     const payment = await this.paymentRepository.findOne({
       where: { id: paymentId },
       relations: {
         visitor: true,
         package: {
-          service: true
-        }
-      }
+          service: true,
+        },
+      },
     });
 
     if (!payment) {
@@ -248,15 +257,15 @@ export class PaymentService {
         const existingMyVendor = await this.myVendorsRepository.findOne({
           where: {
             visitor: { id: payment.visitor.id },
-            service: { id: payment.package.service.id }
-          }
+            service: { id: payment.package.service.id },
+          },
         });
 
         // Add to myVendors if not already added
         if (!existingMyVendor) {
           const myVendor = this.myVendorsRepository.create({
             visitor: payment.visitor,
-            service: payment.package.service
+            service: payment.package.service,
           });
           await this.myVendorsRepository.save(myVendor);
         }
@@ -274,12 +283,12 @@ export class PaymentService {
       relations: {
         vendor: true,
         package: {
-          service: true
-        }
+          service: true,
+        },
       },
       order: {
-        createdAt: 'DESC'
-      }
+        createdAt: 'DESC',
+      },
     });
   }
 
@@ -289,12 +298,12 @@ export class PaymentService {
       relations: {
         visitor: true,
         package: {
-          service: true
+          service: true,
         },
       },
       order: {
-        createdAt: 'DESC'
-      }
+        createdAt: 'DESC',
+      },
     });
   }
 
@@ -306,8 +315,8 @@ export class PaymentService {
         vendor: true,
       },
       order: {
-        createdAt: 'DESC'
-      }
+        createdAt: 'DESC',
+      },
     });
   }
 
@@ -319,9 +328,9 @@ export class PaymentService {
         relations: {
           visitor: true,
           package: {
-            service: true
-          }
-        }
+            service: true,
+          },
+        },
       });
 
       let syncedCount = 0;
@@ -343,8 +352,8 @@ export class PaymentService {
           const existingMyVendor = await this.myVendorsRepository.findOne({
             where: {
               visitor: { id: payment.visitor.id },
-              service: { id: payment.package.service.id }
-            }
+              service: { id: payment.package.service.id },
+            },
           });
 
           if (existingMyVendor) {
@@ -352,7 +361,7 @@ export class PaymentService {
           } else {
             const myVendor = this.myVendorsRepository.create({
               visitor: payment.visitor,
-              service: payment.package.service
+              service: payment.package.service,
             });
             await this.myVendorsRepository.save(myVendor);
             syncedCount++;
@@ -363,12 +372,12 @@ export class PaymentService {
         }
       }
 
-      return { 
-        message: `Synced ${syncedCount} new vendors to myVendors. ${skippedCount} already existed. ${errorCount} errors.`, 
+      return {
+        message: `Synced ${syncedCount} new vendors to myVendors. ${skippedCount} already existed. ${errorCount} errors.`,
         syncedCount,
         skippedCount,
         errorCount,
-        total: completedPayments.length
+        total: completedPayments.length,
       };
     } catch (error) {
       console.error('Fatal error in syncCompletedPaymentsToMyVendors:', error);
@@ -377,10 +386,13 @@ export class PaymentService {
   }
 
   // Cancel a payment (only for pending status)
-  async cancelPayment(paymentId: string, cancelledBy: 'vendor' | 'visitor'): Promise<void> {
+  async cancelPayment(
+    paymentId: string,
+    cancelledBy: 'vendor' | 'visitor',
+  ): Promise<void> {
     const payment = await this.paymentRepository.findOne({
       where: { id: paymentId },
-      relations: ['visitor', 'vendor', 'package']
+      relations: ['visitor', 'vendor', 'package'],
     });
 
     if (!payment) {
@@ -396,7 +408,10 @@ export class PaymentService {
   }
 
   // Check if a vendor has a booking on a specific date
-  async checkDateConflict(vendorId: string, bookingDate: Date): Promise<boolean> {
+  async checkDateConflict(
+    vendorId: string,
+    bookingDate: Date,
+  ): Promise<boolean> {
     // Normalize the date to compare only date part (ignore time)
     const dateOnly = new Date(bookingDate);
     dateOnly.setHours(0, 0, 0, 0);
@@ -407,9 +422,9 @@ export class PaymentService {
     // Find completed payments for this vendor on this date
     const completedBookings = await this.paymentRepository
       .createQueryBuilder('payment')
-      .where('payment.vendorId = :vendorId', { vendorId })
-      .andWhere('payment.bookingDate >= :startDate', { startDate: dateOnly })
-      .andWhere('payment.bookingDate < :endDate', { endDate: nextDay })
+      .where('payment.vendor_id = :vendorId', { vendorId })
+      .andWhere('payment.booking_date >= :startDate', { startDate: dateOnly })
+      .andWhere('payment.booking_date < :endDate', { endDate: nextDay })
       .andWhere('payment.status = :status', { status: 'completed' })
       .getCount();
 
@@ -424,9 +439,9 @@ export class PaymentService {
         visitor: true,
         vendor: true,
         package: {
-          service: true
-        }
-      }
+          service: true,
+        },
+      },
     });
 
     if (!payment) {
@@ -452,37 +467,43 @@ export class PaymentService {
   // Get visitor bookings for calendar
   async getVisitorBookings(visitorId: string): Promise<any[]> {
     const payments = await this.paymentRepository.find({
-      where: { 
+      where: {
         visitor: { id: visitorId },
       },
       relations: {
         vendor: true,
         package: {
-          service: true
-        }
+          service: true,
+        },
       },
       order: {
-        bookingDate: 'ASC'
-      }
+        bookingDate: 'ASC',
+      },
     });
 
     // Transform payments to booking format
     return payments
-      .filter(payment => payment.bookingDate) // Only include payments with dates
-      .map(payment => ({
+      .filter((payment) => payment.bookingDate) // Only include payments with dates
+      .map((payment) => ({
         id: payment.id,
-        title: payment.package?.service?.name || payment.package?.name || 'Wedding Service Booking',
+        title:
+          payment.package?.service?.name ||
+          payment.package?.name ||
+          'Wedding Service Booking',
         date: payment.bookingDate.toISOString().split('T')[0], // Format: YYYY-MM-DD
-        time: payment.bookingDate.toLocaleTimeString('en-US', { 
-          hour: '2-digit', 
+        time: payment.bookingDate.toLocaleTimeString('en-US', {
+          hour: '2-digit',
           minute: '2-digit',
-          hour12: true 
+          hour12: true,
         }),
         status: this.mapPaymentStatusToBookingStatus(payment.status),
-        location: payment.vendor?.location || payment.vendor?.city || 'Not specified',
+        location:
+          payment.vendor?.location || payment.vendor?.city || 'Not specified',
         serviceProvider: {
           id: payment.vendor?.id,
-          name: payment.vendor?.busname || `${payment.vendor?.fname || ''} ${payment.vendor?.lname || ''}`.trim(),
+          name:
+            payment.vendor?.busname ||
+            `${payment.vendor?.fname || ''} ${payment.vendor?.lname || ''}`.trim(),
           email: payment.vendor?.email,
           phone: payment.vendor?.phone,
         },
@@ -493,7 +514,9 @@ export class PaymentService {
       }));
   }
 
-  private mapPaymentStatusToBookingStatus(status: string): 'Confirmed' | 'Pending' | 'Cancelled' {
+  private mapPaymentStatusToBookingStatus(
+    status: string,
+  ): 'Confirmed' | 'Pending' | 'Cancelled' {
     switch (status) {
       case 'completed':
         return 'Confirmed';
@@ -521,17 +544,20 @@ export class PaymentService {
 
       if (!payment) return;
 
-      const visitorName = [payment.visitor?.visitor_fname, payment.visitor?.partner_fname]
-        .filter(Boolean)
-        .join(' & ')
-        .trim() || 'A couple';
+      const visitorName =
+        [payment.visitor?.visitor_fname, payment.visitor?.partner_fname]
+          .filter(Boolean)
+          .join(' & ')
+          .trim() || 'A couple';
 
       const vendorName =
         payment.vendor?.busname ||
         `${payment.vendor?.fname || ''} ${payment.vendor?.lname || ''}`.trim() ||
         'Wedding Vendor';
       const packageName =
-        payment.package?.name || payment.package?.service?.name || 'Wedding Package';
+        payment.package?.name ||
+        payment.package?.service?.name ||
+        'Wedding Package';
       const serviceName = payment.package?.service?.name;
       const amount = Number(payment.amount || 0);
       const paymentReference = payment.paymentReference || payment.id;
@@ -573,7 +599,9 @@ export class PaymentService {
                 paymentId: payment.id,
                 packageName,
                 amount: payment.amount,
-                bookingDate: payment.bookingDate ? new Date(payment.bookingDate).toISOString() : null,
+                bookingDate: payment.bookingDate
+                  ? new Date(payment.bookingDate).toISOString()
+                  : null,
                 visitorName,
               },
             }),
@@ -582,10 +610,15 @@ export class PaymentService {
             `[PushNotification] Successfully sent purchase push notification for payment ${payment.id} to vendor ${payment.vendor?.id}`,
           );
         } catch (pushError) {
-          console.error('Failed to send vendor purchase push notification:', pushError);
+          console.error(
+            'Failed to send vendor purchase push notification:',
+            pushError,
+          );
         }
       } else {
-        console.log(`[PushNotification] No expoPushToken found for vendor ${payment.vendor?.id}`);
+        console.log(
+          `[PushNotification] No expoPushToken found for vendor ${payment.vendor?.id}`,
+        );
       }
 
       // 2. Send purchase confirmation email to user (visitor/couple)
@@ -600,11 +633,16 @@ export class PaymentService {
             vendorEmail: payment.vendor?.email,
             vendorPhone: payment.vendor?.phone,
             amount,
-            bookingDate: payment.bookingDate ? new Date(payment.bookingDate) : undefined,
+            bookingDate: payment.bookingDate
+              ? new Date(payment.bookingDate)
+              : undefined,
             paymentReference,
           });
         } catch (emailError) {
-          console.error(`Failed to send package purchase email to user ${payment.visitor.email}:`, emailError);
+          console.error(
+            `Failed to send package purchase email to user ${payment.visitor.email}:`,
+            emailError,
+          );
         }
       }
 
@@ -620,11 +658,16 @@ export class PaymentService {
             packageName,
             serviceName,
             amount,
-            bookingDate: payment.bookingDate ? new Date(payment.bookingDate) : undefined,
+            bookingDate: payment.bookingDate
+              ? new Date(payment.bookingDate)
+              : undefined,
             paymentReference,
           });
         } catch (emailError) {
-          console.error(`Failed to send package purchase email to vendor ${payment.vendor.email}:`, emailError);
+          console.error(
+            `Failed to send package purchase email to vendor ${payment.vendor.email}:`,
+            emailError,
+          );
         }
       }
     } catch (error) {
