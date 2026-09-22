@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import request from '@/utils/request';
+import { useState } from "react";
+import request from "@/utils/request";
 
 interface CheckoutProps {
   amount: number;
@@ -30,22 +30,26 @@ export default function CheckoutPage({
   const handleCheckout = async () => {
     try {
       setLoading(true);
-      const { data } = await request.post<PayHerePaymentResponse>('/api/payhere/create-payment', {
-        amount,
-        packageId,
-        visitorId,
-        vendorId,
-        offeringId,
-        bookingDate,
-      });
+      const { data } = await request.post<PayHerePaymentResponse>(
+        "/api/payhere/create-payment",
+        {
+          amount,
+          packageId,
+          visitorId,
+          vendorId,
+          serviceId: offeringId,
+          offeringId,
+          bookingDate,
+        },
+      );
 
-      const form = document.createElement('form');
-      form.method = 'POST';
+      const form = document.createElement("form");
+      form.method = "POST";
       form.action = data.actionUrl;
 
       Object.entries(data.payment).forEach(([key, value]) => {
-        const input = document.createElement('input');
-        input.type = 'hidden';
+        const input = document.createElement("input");
+        input.type = "hidden";
         input.name = key;
         input.value = String(value);
         form.appendChild(input);
@@ -54,7 +58,7 @@ export default function CheckoutPage({
       document.body.appendChild(form);
       form.submit();
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
     } finally {
       setLoading(false);
     }
@@ -72,7 +76,7 @@ export default function CheckoutPage({
           <span>Redirecting to PayHere...</span>
         </>
       ) : (
-        'Proceed to Payment'
+        "Proceed to Payment"
       )}
     </button>
   );
