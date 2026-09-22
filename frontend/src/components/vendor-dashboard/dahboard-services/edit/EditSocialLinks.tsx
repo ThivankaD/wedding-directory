@@ -30,7 +30,7 @@ const EditSocialLinks: React.FC = () => {
     fetchPolicy: "network-only",
   });
 
-  const serviceData = data?.findServiceById || data?.findOfferingById;
+  const serviceData = data?.findServiceById;
 
   const [form, setForm] = useState<SocialFormState>({
     website: "",
@@ -64,7 +64,7 @@ const EditSocialLinks: React.FC = () => {
         toast.error("Failed to update social links.");
         console.error("Error updating social links:", err);
       },
-    }
+    },
   );
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -160,7 +160,8 @@ const EditSocialLinks: React.FC = () => {
           </h2>
         </div>
         <p className="text-gray-500 dark:text-zinc-400 font-body text-sm mt-1">
-          Connect your official website and social media profiles so couples can easily discover and follow your storefront.
+          Connect your official website and social media profiles so couples can
+          easily discover and follow your storefront.
         </p>
       </div>
 

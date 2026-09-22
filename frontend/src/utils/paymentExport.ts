@@ -19,7 +19,7 @@ export interface ExportPaymentItem {
   } | null;
   package?: {
     name?: string;
-    offering?: {
+    service?: {
       name?: string;
     } | null;
   } | null;
@@ -55,7 +55,7 @@ export const formatLKRNumber = (val: number): string => {
 export const exportPaymentPDF = (
   payments: ExportPaymentItem[],
   vendor?: ExportVendorInfo | null,
-  options?: ExportOptions
+  options?: ExportOptions,
 ) => {
   const doc = new jsPDF({
     orientation: "portrait",
@@ -74,7 +74,7 @@ export const exportPaymentPDF = (
     day: "numeric",
   });
   const statementId = `STMT-${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, "0")}${String(
-    now.getDate()
+    now.getDate(),
   ).padStart(2, "0")}-${Math.floor(1000 + Math.random() * 9000)}`;
 
   // Calculate totals
@@ -130,7 +130,9 @@ export const exportPaymentPDF = (
   doc.text(`Currency:`, pageWidth - margin - 45, 25);
   doc.setFont("helvetica", "bold");
   doc.setTextColor(31, 41, 55);
-  doc.text("LKR (Sri Lankan Rupee)", pageWidth - margin, 25, { align: "right" });
+  doc.text("LKR (Sri Lankan Rupee)", pageWidth - margin, 25, {
+    align: "right",
+  });
 
   // Divider
   doc.setDrawColor(229, 231, 235); // Gray-200
@@ -162,14 +164,14 @@ export const exportPaymentPDF = (
   doc.text(
     `${ownerName ? `${ownerName} • ` : ""}${vendor?.email || "No email"} • ${vendor?.phone || "No phone"}`,
     margin + 4,
-    boxTop + 18
+    boxTop + 18,
   );
   doc.text(
     `Location: ${vendor?.city || "Sri Lanka"}${
       options?.filterLabel ? ` • Filter: ${options.filterLabel}` : ""
     }`,
     margin + 4,
-    boxTop + 23
+    boxTop + 23,
   );
 
   // --- 4. Summary Financial KPIs (4 Small Cards) ---
@@ -178,10 +180,26 @@ export const exportPaymentPDF = (
   const kpiHeight = 16;
 
   const kpis = [
-    { label: "CONFIRMED REVENUE", value: `LKR ${formatLKRNumber(totalRevenue)}`, color: [16, 185, 129] },
-    { label: "PENDING ADVANCE", value: `LKR ${formatLKRNumber(pendingRevenue)}`, color: [245, 158, 11] },
-    { label: "CONFIRMED BOOKINGS", value: `${completedCount} Transactions`, color: [59, 130, 246] },
-    { label: "TOTAL TRANSACTIONS", value: `${payments.length} Records`, color: [252, 123, 84] },
+    {
+      label: "CONFIRMED REVENUE",
+      value: `LKR ${formatLKRNumber(totalRevenue)}`,
+      color: [16, 185, 129],
+    },
+    {
+      label: "PENDING ADVANCE",
+      value: `LKR ${formatLKRNumber(pendingRevenue)}`,
+      color: [245, 158, 11],
+    },
+    {
+      label: "CONFIRMED BOOKINGS",
+      value: `${completedCount} Transactions`,
+      color: [59, 130, 246],
+    },
+    {
+      label: "TOTAL TRANSACTIONS",
+      value: `${payments.length} Records`,
+      color: [252, 123, 84],
+    },
   ];
 
   kpis.forEach((kpi, idx) => {
@@ -214,7 +232,7 @@ export const exportPaymentPDF = (
   // --- 6. AutoTable: Itemized Ledger ---
   const tableData = payments.map((p, idx) => {
     const customer = formatCoupleName(p.visitor, "Client");
-    const service = p.package?.offering?.name || "Service";
+    const service = p.package?.service?.name || "Service";
     const pkg = p.package?.name || "Package";
     const ref = p.paymentReference || p.id.slice(0, 12).toUpperCase();
     const date = new Date(p.createdAt).toLocaleDateString("en-US", {
@@ -247,7 +265,18 @@ export const exportPaymentPDF = (
   autoTable(doc, {
     startY: 89,
     margin: { left: margin, right: margin, bottom: 18 },
-    head: [["#", "Date", "Reference", "Customer", "Service & Package", "Event Date", "Status", "Advance (LKR)"]],
+    head: [
+      [
+        "#",
+        "Date",
+        "Reference",
+        "Customer",
+        "Service & Package",
+        "Event Date",
+        "Status",
+        "Advance (LKR)",
+      ],
+    ],
     body: tableData,
     theme: "striped",
     headStyles: {
@@ -312,14 +341,18 @@ export const exportPaymentPDF = (
       doc.text(
         "Official computer-generated financial statement issued by Say I Do. All figures in LKR.",
         margin,
-        pageHeight - 7
+        pageHeight - 7,
       );
-      doc.text(`Page ${pageNum}`, pageWidth - margin, pageHeight - 7, { align: "right" });
+      doc.text(`Page ${pageNum}`, pageWidth - margin, pageHeight - 7, {
+        align: "right",
+      });
     },
   });
 
   // Save the PDF
-  const safeBusName = (vendor?.busname || "vendor").toLowerCase().replace(/[^a-z0-9]/g, "_");
+  const safeBusName = (vendor?.busname || "vendor")
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "_");
   const fileName = `sayido_statement_${safeBusName}_${now.toISOString().split("T")[0]}.pdf`;
   doc.save(fileName);
 };
@@ -330,7 +363,7 @@ export const exportPaymentPDF = (
 export const exportPaymentExcel = (
   payments: ExportPaymentItem[],
   vendor?: ExportVendorInfo | null,
-  options?: ExportOptions
+  options?: ExportOptions,
 ) => {
   const now = new Date();
   const statementDate = now.toLocaleDateString("en-US");
@@ -346,7 +379,10 @@ export const exportPaymentExcel = (
   const metadataRows = [
     ["Say I Do - Vendor Payment Statement"],
     ["Business Name", vendor?.busname || "N/A"],
-    ["Owner Name", `${vendor?.fname || ""} ${vendor?.lname || ""}`.trim() || "N/A"],
+    [
+      "Owner Name",
+      `${vendor?.fname || ""} ${vendor?.lname || ""}`.trim() || "N/A",
+    ],
     ["Email", vendor?.email || "N/A"],
     ["Phone", vendor?.phone || "N/A"],
     ["City", vendor?.city || "N/A"],
@@ -378,8 +414,10 @@ export const exportPaymentExcel = (
     const customer = formatCoupleName(p.visitor, "Client");
     const ref = p.paymentReference || p.id;
     const date = new Date(p.createdAt).toLocaleDateString("en-US");
-    const bookingDate = p.bookingDate ? new Date(p.bookingDate).toLocaleDateString("en-US") : "N/A";
-    const service = p.package?.offering?.name || "Wedding Service";
+    const bookingDate = p.bookingDate
+      ? new Date(p.bookingDate).toLocaleDateString("en-US")
+      : "N/A";
+    const service = p.package?.service?.name || "Wedding Service";
     const pkg = p.package?.name || "Standard";
 
     return [
@@ -418,7 +456,9 @@ export const exportPaymentExcel = (
   const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
-  const safeBusName = (vendor?.busname || "vendor").toLowerCase().replace(/[^a-z0-9]/g, "_");
+  const safeBusName = (vendor?.busname || "vendor")
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "_");
   link.href = url;
   link.download = `sayido_payments_${safeBusName}_${now.toISOString().split("T")[0]}.csv`;
   document.body.appendChild(link);

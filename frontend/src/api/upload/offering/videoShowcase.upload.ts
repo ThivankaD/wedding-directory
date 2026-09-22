@@ -6,7 +6,10 @@ import request from "@/utils/request";
  * @param {string} offeringId - The ID of the service.
  * @returns {Promise<string[]>} - Array of uploaded video URLs.
  */
-export const uploadOfferingVideoShowcase = async (files: File[], offeringId: string): Promise<string[]> => {
+export const uploadOfferingVideoShowcase = async (
+  files: File[],
+  offeringId: string,
+): Promise<string[]> => {
   if (files.length === 0) {
     throw new Error("You need to upload at least one video.");
   }
@@ -18,7 +21,6 @@ export const uploadOfferingVideoShowcase = async (files: File[], offeringId: str
   });
 
   formData.append("serviceId", offeringId);
-  formData.append("offeringId", offeringId);
 
   try {
     const response = await request.post("/upload/service-videos", formData, {

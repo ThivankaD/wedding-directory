@@ -38,7 +38,7 @@ const EditGeneral: React.FC<EditProfileProps> = () => {
 
   // Update state with fetched data
   useEffect(() => {
-    const service = data?.findServiceById || data?.findOfferingById;
+    const service = data?.findServiceById;
     if (service) {
       setProfile({
         category: service.category || "",
@@ -70,12 +70,12 @@ const EditGeneral: React.FC<EditProfileProps> = () => {
         toast.error("Error updating");
         console.error("Error updating vendor:", error);
       },
-    }
+    },
   );
 
   // Handle input changes
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     setProfile((prevProfile) => ({
@@ -137,8 +137,7 @@ const EditGeneral: React.FC<EditProfileProps> = () => {
         toast.error("Failed to delete service");
       }
     } catch (err: unknown) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Unknown error";
+      const errorMessage = err instanceof Error ? err.message : "Unknown error";
       toast.error(`Error deleting service: ${errorMessage}`);
     } finally {
       setIsDeleting(false);
@@ -174,7 +173,8 @@ const EditGeneral: React.FC<EditProfileProps> = () => {
                 </h2>
               </div>
               <p className="text-gray-500 dark:text-zinc-400 text-sm mt-1">
-                Configure your service category, description, and visibility on the directory.
+                Configure your service category, description, and visibility on
+                the directory.
               </p>
             </div>
 
@@ -187,7 +187,9 @@ const EditGeneral: React.FC<EditProfileProps> = () => {
                     : "text-gray-400 dark:text-zinc-500"
                 }`}
               >
-                {serviceVisibility ? "Visible to Couples" : "Hidden from Couples"}
+                {serviceVisibility
+                  ? "Visible to Couples"
+                  : "Hidden from Couples"}
               </span>
               <Switch
                 checked={serviceVisibility}
@@ -266,7 +268,8 @@ const EditGeneral: React.FC<EditProfileProps> = () => {
                 Delete Service
               </h3>
               <p className="text-gray-500 dark:text-zinc-400 text-sm mt-1 max-w-xl">
-                Permanently delete this service listing and all associated packages, media, and reviews. This action cannot be undone.
+                Permanently delete this service listing and all associated
+                packages, media, and reviews. This action cannot be undone.
               </p>
             </div>
             <button

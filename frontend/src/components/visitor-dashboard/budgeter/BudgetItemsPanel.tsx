@@ -1,36 +1,41 @@
-import React, { useState } from 'react';
-import { useMutation, useQuery } from '@apollo/client';
-import { GET_BUDGET_ITEMS } from '@/graphql/queries';
-import BudgetItem from '@/components/visitor-dashboard/budgeter/BudgetItem';
-import { Search, Plus } from 'lucide-react';
-import { DELETE_BUDGET_ITEM, UPDATE_BUDGET_ITEM } from '@/graphql/mutations';
-import BudgetItemPopup from '@/components/visitor-dashboard/budgeter/BudgetItemPopup';
-import { toast } from 'react-hot-toast';
-import PaymentItem from './PaymentItem';
+import React, { useState } from "react";
+import { useMutation, useQuery } from "@apollo/client";
+import { GET_BUDGET_ITEMS } from "@/graphql/queries";
+import BudgetItem from "@/components/visitor-dashboard/budgeter/BudgetItem";
+import { Search, Plus } from "lucide-react";
+import { DELETE_BUDGET_ITEM, UPDATE_BUDGET_ITEM } from "@/graphql/mutations";
+import BudgetItemPopup from "@/components/visitor-dashboard/budgeter/BudgetItemPopup";
+import { toast } from "react-hot-toast";
+import PaymentItem from "./PaymentItem";
 
-import { BudgetItemsPanelProps, BudgetItemData, UpdateBudgetItemInput, PaymentData } from '@/types/budgeterTypes';
-import budgetCategories from '@/utils/budgetCategories';
+import {
+  BudgetItemsPanelProps,
+  BudgetItemData,
+  UpdateBudgetItemInput,
+  PaymentData,
+} from "@/types/budgeterTypes";
+import budgetCategories from "@/utils/budgetCategories";
 
 const getValidCategory = (cat?: string | null) => {
-  if (!cat || cat.trim() === '' || cat.toLowerCase() === 'uncategorized') {
-    return budgetCategories[0] || 'Venues';
+  if (!cat || cat.trim() === "" || cat.toLowerCase() === "uncategorized") {
+    return budgetCategories[0] || "Venues";
   }
   return cat;
 };
 
-const BudgetItemsPanel: React.FC<BudgetItemsPanelProps> = ({ 
+const BudgetItemsPanel: React.FC<BudgetItemsPanelProps> = ({
   budgetToolId,
   categoryPayments = {}, // Add default empty object for categoryPayments
-  payments = [] // Add payments with default empty array
+  payments = [], // Add payments with default empty array
 }) => {
-  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
 
   const {
     data: budgetItemsData,
     loading: budgetItemsLoading,
     error: budgetItemsError,
-    refetch: refetchBudgetItems
+    refetch: refetchBudgetItems,
   } = useQuery(GET_BUDGET_ITEMS, {
     variables: { budgetToolId },
     skip: !budgetToolId,
@@ -39,26 +44,31 @@ const BudgetItemsPanel: React.FC<BudgetItemsPanelProps> = ({
   const [updateBudgetItem] = useMutation(UPDATE_BUDGET_ITEM, {
     onCompleted: () => {
       // Refetch to get updated data
-      refetchBudgetItems().then(
-        () => toast.success('Budget item updated successfully'));
+      refetchBudgetItems().then(() =>
+        toast.success("Budget item updated successfully"),
+      );
     },
     onError: (error) => {
-      console.error('Error updating budget item:', error);
-      toast.error('Error updating budget item' );
-    }
+      console.error("Error updating budget item:", error);
+      toast.error("Error updating budget item");
+    },
   });
 
   const [deleteBudgetItem] = useMutation(DELETE_BUDGET_ITEM, {
     onCompleted: () => {
-      refetchBudgetItems().then(
-        () => toast.success('Budget item deleted successfully'));
+      refetchBudgetItems().then(() =>
+        toast.success("Budget item deleted successfully"),
+      );
     },
     onError: (error) => {
-      toast.error('Error deleting budget item: ' + error.message);
-    }
+      toast.error("Error deleting budget item: " + error.message);
+    },
   });
 
-  const handleUpdateBudgetItem = async (itemId: string, data: UpdateBudgetItemInput) => {
+  const handleUpdateBudgetItem = async (
+    itemId: string,
+    data: UpdateBudgetItemInput,
+  ) => {
     try {
       const formattedData = {
         ...data,
@@ -73,20 +83,19 @@ const BudgetItemsPanel: React.FC<BudgetItemsPanelProps> = ({
         },
       });
     } catch (error) {
-      console.error('Error in handleUpdateBudgetItem:', error);
+      console.error("Error in handleUpdateBudgetItem:", error);
     }
   };
-
 
   const handleDeleteBudgetItem = async (itemId: string) => {
     try {
       await deleteBudgetItem({
         variables: {
-          id: itemId
-        }
+          id: itemId,
+        },
       });
     } catch (error) {
-      console.error('Error in handleDeleteBudgetItem:', error);
+      console.error("Error in handleDeleteBudgetItem:", error);
     }
   };
 
@@ -95,7 +104,7 @@ const BudgetItemsPanel: React.FC<BudgetItemsPanelProps> = ({
 
   const budgetItems: BudgetItemData[] = budgetItemsData?.budgetItems || [];
   const totalItems = budgetItems.length;
-  
+
   // Update paidInFullItems calculation to include external payments
   const paidInFullItems = budgetItems.filter((item) => {
     const itemCat = getValidCategory(item.category);
@@ -105,36 +114,42 @@ const BudgetItemsPanel: React.FC<BudgetItemsPanelProps> = ({
   }).length;
 
   const filteredItems = budgetItems.filter((item) =>
-    item.itemName.toLowerCase().includes(searchTerm.toLowerCase())
+    item.itemName.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const renderBudgetItems = () => {
     // Group items by category (normalizing user added items without category into their valid category)
-    const groupedItems = filteredItems.reduce((acc: { [key: string]: BudgetItemData[] }, item) => {
-      const category = getValidCategory(item.category);
-      if (!acc[category]) {
-        acc[category] = [];
-      }
-      acc[category].push(item);
-      return acc;
-    }, {});
-
-    // Group payments by category
-    const groupedPayments = payments.reduce((acc: { [key: string]: PaymentData[] }, payment) => {
-      if (payment.package?.offering?.category) {
-        const category = getValidCategory(payment.package.offering.category);
+    const groupedItems = filteredItems.reduce(
+      (acc: { [key: string]: BudgetItemData[] }, item) => {
+        const category = getValidCategory(item.category);
         if (!acc[category]) {
           acc[category] = [];
         }
-        acc[category].push(payment);
-      }
-      return acc;
-    }, {});
+        acc[category].push(item);
+        return acc;
+      },
+      {},
+    );
+
+    // Group payments by category
+    const groupedPayments = payments.reduce(
+      (acc: { [key: string]: PaymentData[] }, payment) => {
+        if (payment.package?.service?.category) {
+          const category = getValidCategory(payment.package.service.category);
+          if (!acc[category]) {
+            acc[category] = [];
+          }
+          acc[category].push(payment);
+        }
+        return acc;
+      },
+      {},
+    );
 
     // Combine unique categories from both items and payments
     const allCategories = new Set([
       ...Object.keys(groupedItems),
-      ...Object.keys(groupedPayments)
+      ...Object.keys(groupedPayments),
     ]);
 
     // Render items by category
@@ -168,10 +183,7 @@ const BudgetItemsPanel: React.FC<BudgetItemsPanelProps> = ({
 
           {/* Render Related Payments */}
           {groupedPayments[category]?.map((payment) => (
-            <PaymentItem
-              key={`payment-${payment.id}`}
-              payment={payment}
-            />
+            <PaymentItem key={`payment-${payment.id}`} payment={payment} />
           ))}
         </div>
       </div>
@@ -183,8 +195,12 @@ const BudgetItemsPanel: React.FC<BudgetItemsPanelProps> = ({
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-orange/15 dark:border-zinc-800">
         <div>
-          <h2 className="font-title text-2xl sm:text-3xl font-bold text-gray-900 dark:text-zinc-100">Budget Items</h2>
-          <p className="text-xs sm:text-sm text-gray-500 dark:text-zinc-400 font-body">Track, manage, and record expenses for all wedding categories.</p>
+          <h2 className="font-title text-2xl sm:text-3xl font-bold text-gray-900 dark:text-zinc-100">
+            Budget Items
+          </h2>
+          <p className="text-xs sm:text-sm text-gray-500 dark:text-zinc-400 font-body">
+            Track, manage, and record expenses for all wedding categories.
+          </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-2 bg-orange/[0.05] dark:bg-darkElevated border border-orange/15 dark:border-zinc-700 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold text-gray-700 dark:text-zinc-300">
@@ -221,13 +237,14 @@ const BudgetItemsPanel: React.FC<BudgetItemsPanelProps> = ({
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-zinc-500" size={16} />
+        <Search
+          className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-zinc-500"
+          size={16}
+        />
       </div>
 
       {/* Budget Items grouped by category */}
-      <div>
-        {renderBudgetItems()}
-      </div>
+      <div>{renderBudgetItems()}</div>
     </div>
   );
 };

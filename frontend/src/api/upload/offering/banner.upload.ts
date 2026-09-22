@@ -4,7 +4,6 @@ export const uploadOfferingBanner = async (file: File, offeringId: string) => {
   const formData = new FormData();
   formData.append("file", file);
   formData.append("serviceId", offeringId);
-  formData.append("offeringId", offeringId);
 
   try {
     const response = await request.post("/upload/service-banner", formData, {

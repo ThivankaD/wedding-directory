@@ -19,7 +19,7 @@ interface Message {
 
 interface Chat {
   chatId: string;
-  offeringId: string;
+  serviceId: string;
   vendorId: string;
   messages: Message[];
 }
@@ -44,12 +44,12 @@ const ChatRowItem: React.FC<{ chat: Chat; visitorId: string }> = ({
   visitorId,
 }) => {
   const { data: offeringData } = useQuery(GET_OFFERING_DETAILS, {
-    variables: { id: chat.offeringId },
-    skip: !chat.offeringId,
+    variables: { id: chat.serviceId },
+    skip: !chat.serviceId,
   });
 
   const lastMessage = chat.messages?.[chat.messages.length - 1];
-  const offering = offeringData?.findOfferingById;
+  const offering = offeringData?.findServiceById;
   const vendorName =
     offering?.vendor?.busname || offering?.name || "Wedding Vendor";
 

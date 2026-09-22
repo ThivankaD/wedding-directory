@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useState } from "react";
 import { useQuery, useMutation } from "@apollo/client";
@@ -8,7 +8,13 @@ import Image from "next/image";
 import { GET_OFFERING_DETAILS, GET_VISITOR_CHATS } from "@/graphql/queries";
 import { MARK_CHAT_AS_READ } from "@/graphql/mutations";
 import { IoLocationSharp } from "react-icons/io5";
-import { FiMessageSquare, FiSearch, FiChevronRight, FiShoppingBag, FiArrowRight } from "react-icons/fi";
+import {
+  FiMessageSquare,
+  FiSearch,
+  FiChevronRight,
+  FiShoppingBag,
+  FiArrowRight,
+} from "react-icons/fi";
 import { useAuth } from "@/contexts/VisitorAuthContext";
 import { ChatListSkeleton } from "@/components/ui/shimmer";
 
@@ -21,7 +27,7 @@ interface Message {
 
 interface Chat {
   chatId: string;
-  offeringId: string;
+  serviceId: string;
   vendorId: string;
   messages: Message[];
 }
@@ -43,12 +49,12 @@ const ChatItem = ({
   const [markChatAsRead] = useMutation(MARK_CHAT_AS_READ);
 
   const { data: offeringData } = useQuery(GET_OFFERING_DETAILS, {
-    variables: { id: chat.offeringId },
-    skip: !chat.offeringId,
+    variables: { id: chat.serviceId },
+    skip: !chat.serviceId,
   });
 
   const lastMessage = chat.messages[chat.messages.length - 1];
-  const offering = offeringData?.findOfferingById;
+  const offering = offeringData?.findServiceById;
   const vendor = offering?.vendor;
 
   const isPaymentNote =
@@ -64,7 +70,9 @@ const ChatItem = ({
     const q = searchQuery.toLowerCase().trim();
     const matchesName = (offering?.name || "").toLowerCase().includes(q);
     const matchesVendor = (vendor?.busname || "").toLowerCase().includes(q);
-    const matchesMessage = (lastMessage?.content || "").toLowerCase().includes(q);
+    const matchesMessage = (lastMessage?.content || "")
+      .toLowerCase()
+      .includes(q);
     if (!matchesName && !matchesVendor && !matchesMessage) {
       return null;
     }
@@ -77,7 +85,11 @@ const ChatItem = ({
       onClick={() => {
         if (visitor?.id) {
           markChatAsRead({
-            variables: { chatId: chat.chatId, userId: visitor.id, userType: "visitor" },
+            variables: {
+              chatId: chat.chatId,
+              userId: visitor.id,
+              userType: "visitor",
+            },
           }).catch(console.error);
         }
       }}
@@ -125,7 +137,9 @@ const ChatItem = ({
         {/* Row 3: Last message preview */}
         <p
           className={`text-xs mt-1 truncate font-body ${
-            isPaymentNote ? "text-amber-800 dark:text-amber-400 font-semibold" : "text-gray-600 dark:text-zinc-400"
+            isPaymentNote
+              ? "text-amber-800 dark:text-amber-400 font-semibold"
+              : "text-gray-600 dark:text-zinc-400"
           }`}
         >
           {previewText}
@@ -142,7 +156,10 @@ const ChatItem = ({
           </span>
         )}
         <div className="w-8 h-8 rounded-xl bg-orange/5 dark:bg-darkElevated text-orange/60 group-hover:bg-orange group-hover:text-white flex items-center justify-center transition-all shrink-0">
-          <FiChevronRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
+          <FiChevronRight
+            size={16}
+            className="group-hover:translate-x-0.5 transition-transform"
+          />
         </div>
       </div>
     </Link>
@@ -174,7 +191,8 @@ const VisitorChatList = ({ visitorId }: VisitorChatListProps) => {
             No Conversations Yet
           </h3>
           <p className="text-xs sm:text-sm text-gray-500 dark:text-zinc-400 max-w-sm mx-auto">
-            When you contact wedding vendors or book their packages, your direct conversations and quotes will appear here.
+            When you contact wedding vendors or book their packages, your direct
+            conversations and quotes will appear here.
           </p>
         </div>
         <div className="pt-2">
@@ -195,7 +213,10 @@ const VisitorChatList = ({ visitorId }: VisitorChatListProps) => {
       {/* Search Header */}
       <div className="p-4 sm:p-5 border-b-2 border-orange/10 dark:border-zinc-800 bg-white dark:bg-darkSurface">
         <div className="relative w-full">
-          <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-zinc-500" size={16} />
+          <FiSearch
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-zinc-500"
+            size={16}
+          />
           <input
             type="text"
             placeholder="Search conversations by vendor or service..."

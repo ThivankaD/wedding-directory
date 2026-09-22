@@ -9,7 +9,12 @@ import { uploadOfferingVideoShowcase } from "@/api/upload/offering/videoShowcase
 import toast from "react-hot-toast";
 import { useParams } from "next/navigation";
 import { useQuery, useMutation } from "@apollo/client";
-import { FIND_PORTFOLIO_BY_ID, DELETE_SHOWCASE_IMAGE, DELETE_BANNER_IMAGE, DELETE_SHOWCASE_VIDEO } from "@/graphql/queries";
+import {
+  FIND_PORTFOLIO_BY_ID,
+  DELETE_SHOWCASE_IMAGE,
+  DELETE_BANNER_IMAGE,
+  DELETE_SHOWCASE_VIDEO,
+} from "@/graphql/queries";
 import { MediaSkeleton } from "@/components/ui/shimmer";
 
 const EditPortfolio: React.FC = () => {
@@ -17,12 +22,17 @@ const EditPortfolio: React.FC = () => {
   // Ensure id is a string
   const id = Array.isArray(params.id) ? params.id[0] : params.id;
 
-  const { loading, error, data, refetch: refetchPortfolio } = useQuery(FIND_PORTFOLIO_BY_ID, {
+  const {
+    loading,
+    error,
+    data,
+    refetch: refetchPortfolio,
+  } = useQuery(FIND_PORTFOLIO_BY_ID, {
     variables: { id },
     skip: !id,
   });
 
-  const portfolio = data?.findServiceById || data?.findOfferingById;
+  const portfolio = data?.findServiceById;
 
   // States for banner upload
   const [bannerFile, setBannerFile] = useState<File | null>(null);
@@ -30,7 +40,13 @@ const EditPortfolio: React.FC = () => {
   const [isBannerUploading, setIsBannerUploading] = useState(false);
 
   // States for photo showcase upload
-  const [showcasePreviews, setShowcasePreviews] = useState<(string | null)[]>([null, null, null, null, null]);
+  const [showcasePreviews, setShowcasePreviews] = useState<(string | null)[]>([
+    null,
+    null,
+    null,
+    null,
+    null,
+  ]);
   const [uploadingSlot, setUploadingSlot] = useState<number | null>(null);
 
   // States for video upload
@@ -55,7 +71,11 @@ const EditPortfolio: React.FC = () => {
       }
       setShowcasePreviews(initialPreviews);
 
-      if (portfolio.video_showcase && Array.isArray(portfolio.video_showcase) && portfolio.video_showcase.length > 0) {
+      if (
+        portfolio.video_showcase &&
+        Array.isArray(portfolio.video_showcase) &&
+        portfolio.video_showcase.length > 0
+      ) {
         setVideoPreview(portfolio.video_showcase[0]);
       } else if (typeof portfolio.video_showcase === "string") {
         setVideoPreview(portfolio.video_showcase);
@@ -109,27 +129,28 @@ const EditPortfolio: React.FC = () => {
   };
 
   // Handle Showcase Image Selection & Auto-upload for that specific slot
-  const handleShowcaseChange = (index: number) => async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !id) return;
+  const handleShowcaseChange =
+    (index: number) => async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file || !id) return;
 
-    const newPreviews = [...showcasePreviews];
-    newPreviews[index] = URL.createObjectURL(file);
-    setShowcasePreviews(newPreviews);
-    setUploadingSlot(index);
+      const newPreviews = [...showcasePreviews];
+      newPreviews[index] = URL.createObjectURL(file);
+      setShowcasePreviews(newPreviews);
+      setUploadingSlot(index);
 
-    try {
-      await uploadOfferingImageShowcase([file], id, index);
-      await refetchPortfolio();
-      toast.success(`Image ${index + 1} uploaded successfully!`);
-    } catch (err) {
-      console.error(`Failed to upload showcase image ${index + 1}:`, err);
-      toast.error(`Failed to upload image ${index + 1}.`);
-      await refetchPortfolio();
-    } finally {
-      setUploadingSlot(null);
-    }
-  };
+      try {
+        await uploadOfferingImageShowcase([file], id, index);
+        await refetchPortfolio();
+        toast.success(`Image ${index + 1} uploaded successfully!`);
+      } catch (err) {
+        console.error(`Failed to upload showcase image ${index + 1}:`, err);
+        toast.error(`Failed to upload image ${index + 1}.`);
+        await refetchPortfolio();
+      } finally {
+        setUploadingSlot(null);
+      }
+    };
 
   // Handle Video File Selection
   const handleVideoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -227,9 +248,12 @@ const EditPortfolio: React.FC = () => {
       <div className="bg-white dark:bg-darkSurface rounded-2xl p-6 px-8 shadow-lg mb-20 dark:border dark:border-zinc-800">
         <div className="flex justify-between items-center">
           <div>
-            <h2 className="font-title text-[30px] font-bold dark:text-zinc-100">Photos & Media</h2>
+            <h2 className="font-title text-[30px] font-bold dark:text-zinc-100">
+              Photos & Media
+            </h2>
             <p className="text-sm text-gray-500 dark:text-zinc-400 mt-1">
-              Manage your service banner, photo showcase gallery, and promotional video.
+              Manage your service banner, photo showcase gallery, and
+              promotional video.
             </p>
           </div>
         </div>
@@ -239,8 +263,12 @@ const EditPortfolio: React.FC = () => {
         <div className="mb-8">
           <div className="flex justify-between items-center mb-2">
             <div>
-              <label className="font-body text-[16px] font-semibold dark:text-zinc-100">Upload Banner</label>
-              <p className="text-xs text-gray-500 dark:text-zinc-400">Main header image displayed on your service profile (Max 5MB)</p>
+              <label className="font-body text-[16px] font-semibold dark:text-zinc-100">
+                Upload Banner
+              </label>
+              <p className="text-xs text-gray-500 dark:text-zinc-400">
+                Main header image displayed on your service profile (Max 5MB)
+              </p>
             </div>
             <div className="flex gap-2 items-center">
               {bannerPreview && (
@@ -277,7 +305,9 @@ const EditPortfolio: React.FC = () => {
             {isBannerUploading && (
               <div className="absolute inset-0 bg-white/80 dark:bg-darkSurface/80 z-30 flex flex-col items-center justify-center">
                 <span className="animate-spin text-3xl mb-2">⌛</span>
-                <p className="text-sm text-gray-700 dark:text-zinc-300 font-medium">Uploading banner...</p>
+                <p className="text-sm text-gray-700 dark:text-zinc-300 font-medium">
+                  Uploading banner...
+                </p>
               </div>
             )}
             {bannerPreview ? (
@@ -299,8 +329,12 @@ const EditPortfolio: React.FC = () => {
             ) : (
               <div className="flex flex-col items-center justify-center p-6 text-center">
                 <CiCirclePlus size={36} className="text-orange mb-2" />
-                <p className="text-sm font-medium text-gray-700 dark:text-zinc-300">Click or drag image to upload banner</p>
-                <p className="text-xs text-gray-400 dark:text-zinc-500 mt-1">PNG, JPG or WEBP (Max 5MB)</p>
+                <p className="text-sm font-medium text-gray-700 dark:text-zinc-300">
+                  Click or drag image to upload banner
+                </p>
+                <p className="text-xs text-gray-400 dark:text-zinc-500 mt-1">
+                  PNG, JPG or WEBP (Max 5MB)
+                </p>
               </div>
             )}
           </div>
@@ -310,8 +344,12 @@ const EditPortfolio: React.FC = () => {
         <div className="mb-8">
           <div className="flex justify-between items-center mb-2">
             <div>
-              <label className="font-body text-[16px] font-semibold dark:text-zinc-100">Upload Photo Showcase</label>
-              <p className="text-xs text-gray-500 dark:text-zinc-400">Showcase up to 5 photos of your work in the service gallery</p>
+              <label className="font-body text-[16px] font-semibold dark:text-zinc-100">
+                Upload Photo Showcase
+              </label>
+              <p className="text-xs text-gray-500 dark:text-zinc-400">
+                Showcase up to 5 photos of your work in the service gallery
+              </p>
             </div>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mt-3">
@@ -342,7 +380,9 @@ const EditPortfolio: React.FC = () => {
                       {isUploadingThis && (
                         <div className="absolute inset-0 bg-white/80 dark:bg-darkSurface/80 z-20 flex flex-col items-center justify-center">
                           <span className="animate-spin text-2xl mb-1">⌛</span>
-                          <span className="text-[11px] text-gray-600 dark:text-zinc-400 font-medium">Uploading...</span>
+                          <span className="text-[11px] text-gray-600 dark:text-zinc-400 font-medium">
+                            Uploading...
+                          </span>
                         </div>
                       )}
 
@@ -371,9 +411,16 @@ const EditPortfolio: React.FC = () => {
                         </div>
                       ) : (
                         <div className="flex flex-col items-center p-4 text-center pointer-events-none">
-                          <CiCirclePlus size={28} className="text-orange mb-1" />
-                          <span className="text-xs font-medium text-gray-600 dark:text-zinc-400">Photo {index + 1}</span>
-                          <span className="text-[10px] text-gray-400 dark:text-zinc-500 mt-0.5">Click to add</span>
+                          <CiCirclePlus
+                            size={28}
+                            className="text-orange mb-1"
+                          />
+                          <span className="text-xs font-medium text-gray-600 dark:text-zinc-400">
+                            Photo {index + 1}
+                          </span>
+                          <span className="text-[10px] text-gray-400 dark:text-zinc-500 mt-0.5">
+                            Click to add
+                          </span>
                         </div>
                       )}
                     </div>
@@ -387,8 +434,12 @@ const EditPortfolio: React.FC = () => {
         <div className="mb-6">
           <div className="flex justify-between items-center mb-2">
             <div>
-              <label className="font-body text-[16px] font-semibold dark:text-zinc-100">Upload a Video</label>
-              <p className="text-xs text-gray-500 dark:text-zinc-400">Add a video highlight of your service (MP4/WebM, max 50MB)</p>
+              <label className="font-body text-[16px] font-semibold dark:text-zinc-100">
+                Upload a Video
+              </label>
+              <p className="text-xs text-gray-500 dark:text-zinc-400">
+                Add a video highlight of your service (MP4/WebM, max 50MB)
+              </p>
             </div>
             <div className="flex gap-2 items-center">
               {videoPreview && (
@@ -425,20 +476,29 @@ const EditPortfolio: React.FC = () => {
             {isVideoUploading && (
               <div className="absolute inset-0 bg-white/80 dark:bg-darkSurface/80 z-30 flex flex-col items-center justify-center">
                 <span className="animate-spin text-3xl mb-2">⌛</span>
-                <p className="text-sm text-gray-700 dark:text-zinc-300 font-medium">Uploading video...</p>
+                <p className="text-sm text-gray-700 dark:text-zinc-300 font-medium">
+                  Uploading video...
+                </p>
               </div>
             )}
             {videoPreview ? (
               <div className="relative w-full h-full">
-                <video className="object-cover w-full h-full rounded-xl" controls>
+                <video
+                  className="object-cover w-full h-full rounded-xl"
+                  controls
+                >
                   <source src={videoPreview} type="video/mp4" />
                 </video>
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center p-6 text-center">
                 <CiCirclePlus size={36} className="text-orange mb-2" />
-                <p className="text-sm font-medium text-gray-700 dark:text-zinc-300">Click or drag video to upload</p>
-                <p className="text-xs text-gray-400 dark:text-zinc-500 mt-1">MP4 or WebM (Max 50MB)</p>
+                <p className="text-sm font-medium text-gray-700 dark:text-zinc-300">
+                  Click or drag video to upload
+                </p>
+                <p className="text-xs text-gray-400 dark:text-zinc-500 mt-1">
+                  MP4 or WebM (Max 50MB)
+                </p>
               </div>
             )}
           </div>
