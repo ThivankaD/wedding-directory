@@ -172,7 +172,7 @@ const BookingCalendar: React.FC = () => {
   }
 
   return (
-    <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 p-6 sm:p-7 flex flex-col h-full">
+    <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 p-5 sm:p-6 flex flex-col h-full min-h-0 overflow-y-auto">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6 pb-4 border-b border-gray-100 dark:border-zinc-800">
         <div>
           <h2 className="font-title text-xl sm:text-2xl font-bold text-gray-900 dark:text-zinc-100">
@@ -216,7 +216,7 @@ const BookingCalendar: React.FC = () => {
       </div>
 
       {/* Calendar Grid */}
-      <div className="grid grid-cols-7 gap-1.5 mb-6">
+      <div className="grid grid-cols-7 gap-1.5 mb-4">
         {/* Day headers */}
         {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
           <div
