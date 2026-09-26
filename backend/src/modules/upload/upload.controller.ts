@@ -1,4 +1,4 @@
-﻿import {
+import {
   Controller,
   FileTypeValidator,
   MaxFileSizeValidator,
@@ -9,14 +9,17 @@
   Body,
   UseInterceptors,
   BadRequestException,
+  UseGuards,
 } from '@nestjs/common';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { ThrottlerGuard } from '@nestjs/throttler';
 import { UploadService } from './upload.service';
 import { VisitorService } from '../visitor/visitor.service';
 import { ServiceService} from '../service/service.service';
 import { VendorService } from '../vendor/vendor.service';
 
 @Controller('upload')
+@UseGuards(ThrottlerGuard)
 export class UploadController {
   constructor(
     private readonly uploadService: UploadService,
