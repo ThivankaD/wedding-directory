@@ -146,6 +146,8 @@ export default function VendorOnboardingPage() {
           id: vendor.id,
           input: updatePayload,
         },
+        refetchQueries: [{ query: GET_VENDOR_BY_ID, variables: { id: vendor.id } }],
+        awaitRefetchQueries: true,
       });
 
       // Send vendor welcome email and notify admin
@@ -157,7 +159,7 @@ export default function VendorOnboardingPage() {
         style: { background: '#333', color: '#fff' },
       });
 
-      router.push('/vendor-dashboard');
+      window.location.href = '/vendor-dashboard';
     } catch (err: any) {
       console.error('Failed to complete onboarding:', err);
       toast.error(err?.message || 'Failed to save business details. Please try again.');

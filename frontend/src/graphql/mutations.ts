@@ -61,6 +61,7 @@ export const CREATE_SERVICE = gql`
 export const UPDATE_VENDOR = gql`
   mutation UpdateVendor($id: String!, $input: UpdateVendorInput!) {
     updateVendor(id: $id, input: $input) {
+      id
       fname
       lname
       busname
