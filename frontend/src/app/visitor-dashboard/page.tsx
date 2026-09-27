@@ -86,7 +86,7 @@ const VisitorDashboardContent: React.FC = () => {
   const isProfileIncomplete =
     visitorData &&
     (visitorData.isOnboarded === false ||
-      (visitorData.isOnboarded !== true &&
+      (visitorData.isOnboarded == null &&
         (isMissingName ||
           (!visitorData.city &&
             !visitorData.phone &&
