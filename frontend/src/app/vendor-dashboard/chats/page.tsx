@@ -5,8 +5,9 @@ import { GET_VENDOR_MESSAGES } from "@/graphql/queries";
 import ChatList from "@/components/chat/VendorChatList";
 import { useVendorAuth } from "@/contexts/VendorAuthContext";
 import { ChatListSkeleton } from "@/components/ui/shimmer";
-import Breadcrumbs from "@/components/Breadcrumbs";
-import { FiMessageSquare } from "react-icons/fi";
+import Link from "next/link";
+import VendorPageHeader from "@/components/vendor-dashboard/VendorPageHeader";
+import { FiPackage } from "react-icons/fi";
 
 export default function ChatsPage() {
   const { vendor } = useVendorAuth();
@@ -17,32 +18,32 @@ export default function ChatsPage() {
     pollInterval: 5000,
   });
 
+  const chats = data?.getVendorChats || [];
+
   return (
-    <div className="w-full space-y-6">
-      {/* Hero Card */}
-      <div className="bg-white dark:bg-darkSurface rounded-3xl border-2 border-orange/20 dark:border-zinc-800 shadow-sm p-6 sm:p-8">
-        <div className="space-y-3">
-          <Breadcrumbs
-            items={[
-              { label: "Dashboard", href: "/vendor-dashboard" },
-              { label: "Chats", href: "/vendor-dashboard/chats" },
-            ]}
-          />
-          <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-2xl bg-orange/10 flex items-center justify-center text-orange shrink-0 border border-orange/20 shadow-xs">
-              <FiMessageSquare size={24} />
-            </div>
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold font-title text-gray-900 dark:text-zinc-100">
-                My Conversations
-              </h1>
-              <p className="text-xs sm:text-sm text-gray-500 dark:text-zinc-400 font-body">
-                Reply to couples inquiring about your wedding services, send quotes, and discuss bookings in real-time.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div className="w-full">
+      {/* Page Header */}
+      <VendorPageHeader
+        title="My Conversations"
+        subtitle="Reply to couples inquiring about your wedding services, send quotes, and discuss bookings in real-time."
+        badge={
+          chats.length > 0 ? (
+            <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-orange/10 text-orange border border-orange/20">
+              {chats.length} {chats.length === 1 ? "Inquiry" : "Inquiries"}
+            </span>
+          ) : null
+        }
+        actions={
+          <Link
+            href="/vendor-dashboard/services"
+            className="inline-flex items-center gap-2 bg-white dark:bg-darkSurface hover:bg-gray-50 dark:hover:bg-darkElevated text-gray-700 dark:text-zinc-300 font-medium px-4 py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 transition-all text-sm shadow-xs self-start sm:self-auto shrink-0"
+          >
+            <FiPackage size={15} className="text-orange" />
+            <span>My Services</span>
+          </Link>
+        }
+        className="mb-8"
+      />
 
       {/* Loading & Error States or Conversations List */}
       {loading ? (

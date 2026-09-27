@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import VendorHeader from "@/components/shared/Headers/VendorHeader";
 import Footer from "@/components/shared/Footer";
+import VendorPageHeader from "@/components/vendor-dashboard/VendorPageHeader";
 import { useVendorAuth } from "@/contexts/VendorAuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useQuery } from "@apollo/client";
@@ -413,22 +414,37 @@ const VendorAnalytics: React.FC = () => {
       <VendorHeader />
 
       <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full space-y-8">
-        {/* Navigation & Header Banner */}
-        <div className="border-b border-orange/15 dark:border-zinc-800 pb-6">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-orange">
-              <span>Analytics & Insights</span>
+        {/* Page Header */}
+        <VendorPageHeader
+          title="Analytics Overview"
+          subtitle="Real-time performance metrics, client inquiries, bookings, and revenue tracking."
+          badge={
+            vendorInfo?.busname ? (
+              <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-orange/10 text-orange border border-orange/20">
+                {vendorInfo.busname}
+              </span>
+            ) : null
+          }
+          actions={
+            <div className="flex flex-wrap items-center gap-2">
+              <Link
+                href="/vendor-dashboard/services"
+                className="inline-flex items-center gap-2 bg-white dark:bg-darkSurface hover:bg-gray-50 dark:hover:bg-darkElevated text-gray-700 dark:text-zinc-300 font-medium px-4 py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 transition-all text-sm shadow-xs"
+              >
+                <FiPackage size={15} className="text-orange" />
+                <span>My Services</span>
+              </Link>
+              <Link
+                href="/vendor-dashboard/payments"
+                className="inline-flex items-center gap-2 bg-orange hover:bg-orange/90 text-white font-medium px-4 py-2.5 rounded-xl transition-all text-sm shadow-xs"
+              >
+                <FiDollarSign size={15} />
+                <span>Payment History</span>
+              </Link>
             </div>
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold font-title text-gray-900 dark:text-zinc-100">
-                {vendorInfo?.busname || "Analytics Overview"}
-              </h1>
-            </div>
-            <p className="text-xs sm:text-sm text-gray-600 dark:text-zinc-400">
-              Real-time performance metrics, client inquiries, bookings, and revenue tracking.
-            </p>
-          </div>
-        </div>
+          }
+          className="mb-0"
+        />
 
         {/* 6 Key Performance Metric Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
