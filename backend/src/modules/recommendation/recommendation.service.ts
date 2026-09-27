@@ -1,4 +1,4 @@
-﻿import { HttpService } from '@nestjs/axios';
+import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -175,7 +175,7 @@ export class RecommendationService {
     const minPackagePrice = this.getMinVisiblePackagePrice(service.packages || []);
     const lowerCategory = (service.category || '').toLowerCase();
     const city = service.vendor?.city || '';
-    const location = service.vendor?.location || '';
+    const location = service.vendor?.city || '';
 
     let score = 0;
     const reasons: string[] = [];
