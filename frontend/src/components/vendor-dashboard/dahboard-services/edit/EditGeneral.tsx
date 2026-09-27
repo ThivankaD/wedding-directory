@@ -8,9 +8,10 @@ import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { EditProfileProps, ProfileData } from "@/types/serviceTypes";
 import { useMutation, useQuery } from "@apollo/client";
-import { FIND_SERVICE_BY_ID } from "@/graphql/queries";
+import { FIND_SERVICE_BY_ID, FIND_SERVICES_BY_VENDOR } from "@/graphql/queries";
 import { useParams, useRouter } from "next/navigation";
 import { UPDATE_SERVICE_PROFILE, DELETE_OFFERING } from "@/graphql/mutations";
+import { useVendorAuth } from "@/contexts/VendorAuthContext";
 import toast from "react-hot-toast";
 import { FiInfo, FiChevronDown, FiMapPin } from "react-icons/fi";
 import { GeneralFormSkeleton } from "@/components/ui/shimmer";
@@ -20,6 +21,7 @@ const EditGeneral: React.FC<EditProfileProps> = () => {
   const params = useParams();
   const { id } = params;
   const router = useRouter();
+  const { vendor } = useVendorAuth();
   const [isDeleting, setIsDeleting] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isMapOpen, setIsMapOpen] = useState(false);
@@ -174,11 +176,15 @@ const EditGeneral: React.FC<EditProfileProps> = () => {
     try {
       const { data } = await deleteOffering({
         variables: { id: id as string },
+        refetchQueries: vendor?.id
+          ? [{ query: FIND_SERVICES_BY_VENDOR, variables: { id: vendor.id } }]
+          : [],
+        awaitRefetchQueries: true,
       });
       if (data?.deleteService ?? data?.deleteOffering) {
         toast.success("Service deleted successfully");
         setIsDeleteModalOpen(false);
-        router.push("/vendor-dashboard");
+        router.push("/vendor-dashboard/services");
       } else {
         toast.error("Failed to delete service");
       }

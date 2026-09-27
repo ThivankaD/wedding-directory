@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import VendorHeader from "@/components/shared/Headers/VendorHeader";
 import Footer from "@/components/shared/Footer";
+import VendorPageHeader from "@/components/vendor-dashboard/VendorPageHeader";
 import { useVendorAuth } from "@/contexts/VendorAuthContext";
 import { useQuery } from "@apollo/client";
 import { GET_VENDOR_BY_ID, FIND_SERVICES_BY_VENDOR } from "@/graphql/queries";
@@ -41,6 +42,7 @@ const VendorServicesPage: React.FC = () => {
     {
       variables: { id: vendor?.id },
       skip: !vendor?.id,
+      fetchPolicy: "cache-and-network",
     }
   );
 
@@ -76,33 +78,26 @@ const VendorServicesPage: React.FC = () => {
       <VendorHeader />
 
       <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full space-y-8">
-        {/* Top Header & Action */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-orange/15 dark:border-zinc-800 pb-6">
-          <div className="space-y-1">
-            <span className="text-xs font-semibold uppercase tracking-wider text-orange">
-              Listing Management
+        {/* Page Header */}
+        <VendorPageHeader
+          title="My Services"
+          subtitle="Manage your published wedding services, edit packages, and keep your storefront up to date."
+          badge={
+            <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-orange/10 text-orange border border-orange/20">
+              {services.length} {services.length === 1 ? "Listing" : "Listings"}
             </span>
-            <div className="flex items-center gap-3">
-              <h1 className="text-2xl sm:text-3xl font-bold font-title text-gray-900 dark:text-zinc-100">
-                My Services
-              </h1>
-              <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-orange/10 text-orange border border-orange/20">
-                {services.length} {services.length === 1 ? "Listing" : "Listings"}
-              </span>
-            </div>
-            <p className="text-xs sm:text-sm text-gray-600 dark:text-zinc-400">
-              Manage your published wedding services, edit packages, and keep your storefront up to date.
-            </p>
-          </div>
-
-          <Link
-            href="/vendor-dashboard/new-service"
-            className="inline-flex items-center gap-2 bg-orange hover:bg-orange/90 text-white font-medium px-5 py-2.5 rounded-full transition-all text-sm shadow-xs self-start sm:self-auto shrink-0"
-          >
-            <FiPlus size={18} />
-            <span>Add New Service</span>
-          </Link>
-        </div>
+          }
+          actions={
+            <Link
+              href="/vendor-dashboard/new-service"
+              className="inline-flex items-center gap-2 bg-orange hover:bg-orange/90 text-white font-medium px-4 py-2.5 rounded-xl transition-all text-sm shadow-xs self-start sm:self-auto shrink-0"
+            >
+              <FiPlus size={18} />
+              <span>Add New Service</span>
+            </Link>
+          }
+          className="mb-0"
+        />
 
         {/* Search & Category Filter Toolbar */}
         {services.length > 0 && (

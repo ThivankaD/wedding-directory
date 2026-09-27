@@ -14,7 +14,7 @@ export default function ChatDetailPage() {
       <div className="flex items-center justify-between">
         <Link
           href="/vendor-dashboard/chats"
-          className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-darkSurface text-gray-700 dark:text-zinc-300 hover:text-orange dark:hover:text-orange hover:border-orange/40 text-sm font-semibold rounded-2xl border-2 border-orange/15 dark:border-zinc-800 shadow-xs transition-all"
+          className="inline-flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-darkSurface hover:bg-gray-50 dark:hover:bg-darkElevated text-gray-700 dark:text-zinc-300 hover:text-orange dark:hover:text-orange text-sm font-medium rounded-xl border border-gray-200 dark:border-zinc-700 shadow-xs transition-all"
         >
           <FiArrowLeft className="text-base text-orange" />
           <span>Back to Conversations</span>
