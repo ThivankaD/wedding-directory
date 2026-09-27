@@ -62,9 +62,6 @@ export class CompleteVendorSignupDto {
   @SanitizeString({ maxLength: 100, optional: true })
   city?: string;
 
-  @SanitizeString({ maxLength: 200, optional: true })
-  location?: string;
-
   @IsString()
   @IsNotEmpty()
   signupVerificationToken: string;

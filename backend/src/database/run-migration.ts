@@ -5,6 +5,7 @@ import { CreatePackageViewTable1707489026321 } from './migrations/1707489026321-
 import { AddReviewImagesAndMentions1762000000000 } from './migrations/1762000000000-AddReviewImagesAndMentions';
 import { CreateServiceReviewSummaryTable1762000000004 } from './migrations/1762000000004-CreateServiceReviewSummaryTable';
 import { AddSlugToServiceTable1762000000005 } from './migrations/1762000000005-AddSlugToServiceTable';
+import { DropVendorLocationColumn1762000000006 } from './migrations/1762000000006-DropVendorLocationColumn';
 
 dotenv.config({ path: join(__dirname, '..', '..', '.env') });
 
@@ -92,6 +93,15 @@ async function runMigration() {
       await migration.up(queryRunner);
     } else {
       console.log('Skipping AddSlugToServiceTable1762000000005 (already applied).');
+    }
+
+    const hasVendorLocation = await queryRunner.hasColumn('vendor', 'location');
+    if (hasVendorLocation) {
+      const migration = new DropVendorLocationColumn1762000000006();
+      console.log(`Running migration: ${migration.name}`);
+      await migration.up(queryRunner);
+    } else {
+      console.log('Skipping DropVendorLocationColumn1762000000006 (already applied).');
     }
 
     console.log('Migration completed successfully!');

@@ -8,7 +8,6 @@ export interface ProfileData {
 export interface GeneralData {
     businessName: string;
     city: string;
-    location: string;
     about: string;
 }
 

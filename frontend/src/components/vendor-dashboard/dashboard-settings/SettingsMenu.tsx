@@ -7,7 +7,7 @@ const SettingsMenu: React.FC<ServicesMenuProps> = ({ setActiveSection, activeSec
     {
       id: "general",
       label: "General",
-      description: "Business details & location",
+      description: "Business details & city",
       icon: FiBriefcase,
     },
     {

@@ -1,4 +1,4 @@
-﻿import {
+import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
@@ -30,9 +30,6 @@ export class VendorEntity {
 
   @Column({ name: 'last_name', type: 'varchar', length: 20 })
   lname: string;
-
-  @Column({ type: 'varchar', length: 500 })
-  location: string;
 
   @Column({ type: 'varchar', length: 100 })
   city: string;

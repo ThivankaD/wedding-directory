@@ -1,4 +1,4 @@
-﻿import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 import { ServiceModel } from './service.model';
 
 @ObjectType()
@@ -20,9 +20,6 @@ export class VendorModel {
   
   @Field()
   busname: string;
-
-  @Field()
-  location: string;
 
   @Field()
   city: string;

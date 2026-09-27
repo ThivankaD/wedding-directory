@@ -10,7 +10,6 @@ import { useMutation, useQuery } from "@apollo/client";
 import { GET_VENDOR_BY_ID } from "@/graphql/queries";
 import { UPDATE_VENDOR } from "@/graphql/mutations";
 import CityInput from "@/components/vendor-signup/CityInput";
-import LocationInput from "@/components/vendor-signup/LocationInput";
 import VendorProfilePicture from "./VendorProfilePicture";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -26,7 +25,6 @@ const EditGeneral: React.FC = () => {
   const [general, setGeneral] = useState<GeneralData>({
     businessName: vendorData?.busname || "",
     city: vendorData?.city || "",
-    location: vendorData?.location || "",
     about: vendorData?.about || "",
   });
 
@@ -35,7 +33,6 @@ const EditGeneral: React.FC = () => {
       setGeneral({
         businessName: vendorData.busname || "",
         city: vendorData.city || "",
-        location: vendorData.location || "",
         about: vendorData.about || "",
       });
     }
@@ -67,13 +64,6 @@ const EditGeneral: React.FC = () => {
     }));
   };
 
-  const handleLocationChange = (location: string) => {
-    setGeneral((prevGeneral) => ({
-      ...prevGeneral,
-      location,
-    }));
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!vendor?.id) return;
@@ -84,7 +74,6 @@ const EditGeneral: React.FC = () => {
         input: {
           busname: general.businessName,
           city: general.city,
-          location: general.location,
           about: general.about,
         },
       },
@@ -158,28 +147,15 @@ const EditGeneral: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-2">
-              City <span className="text-orange">*</span>
-            </label>
-            <CityInput
-              placeholder={general.city || "Select city"}
-              onCityChange={handleCityChange}
-              className="border border-gray-300 dark:border-zinc-700 rounded-lg h-11 bg-white dark:bg-darkElevated text-gray-900 dark:text-zinc-100 hover:border-gray-400 dark:hover:border-zinc-600 focus-within:border-orange focus-within:ring-2 focus-within:ring-orange/20 transition-all flex items-center text-sm"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-2">
-              Location / Area <span className="text-orange">*</span>
-            </label>
-            <LocationInput
-              placeholder={general.location || "City, Province or Address"}
-              onLocationChange={handleLocationChange}
-              className="border border-gray-300 dark:border-zinc-700 rounded-lg h-11 bg-white dark:bg-darkElevated text-gray-900 dark:text-zinc-100 hover:border-gray-400 dark:hover:border-zinc-600 focus-within:border-orange focus-within:ring-2 focus-within:ring-orange/20 transition-all flex items-center text-sm"
-            />
-          </div>
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-2">
+            City <span className="text-orange">*</span>
+          </label>
+          <CityInput
+            placeholder={general.city || "Select city"}
+            onCityChange={handleCityChange}
+            className="border border-gray-300 dark:border-zinc-700 rounded-lg h-11 bg-white dark:bg-darkElevated text-gray-900 dark:text-zinc-100 hover:border-gray-400 dark:hover:border-zinc-600 focus-within:border-orange focus-within:ring-2 focus-within:ring-orange/20 transition-all flex items-center text-sm"
+          />
         </div>
 
         <div className="flex justify-end pt-4 border-t border-gray-100 dark:border-zinc-800">

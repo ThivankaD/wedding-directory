@@ -172,7 +172,6 @@ export class VendorService {
       busname: `${data.fname || 'Vendor'}'s Services`,
       phone: '',
       city: '',
-      location: '',
       profile_pic_url: data.profile_pic_url,
       password: hashedPassword,
     });

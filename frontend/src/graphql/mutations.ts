@@ -10,7 +10,6 @@ export const CREATE_VENDOR = gql`
       busname
       phone
       city
-      location
     }
   }
 `;
@@ -68,7 +67,6 @@ export const UPDATE_VENDOR = gql`
       about
       phone
       city
-      location
       email
       password
       profile_pic_url

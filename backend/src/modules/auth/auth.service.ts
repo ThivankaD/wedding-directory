@@ -443,7 +443,7 @@ export class AuthService {
         isNewUser = true;
       }
       const isVendorOnboarded =
-        !isNewUser && !!(vendor.city && vendor.phone && vendor.location);
+        !isNewUser && !!(vendor.city && vendor.phone);
 
       const { access_token } = this.loginVendor(vendor);
       return {
@@ -699,7 +699,6 @@ export class AuthService {
       busname: dto.busname || 'My Business',
       phone: dto.phone || '',
       city: dto.city || '',
-      location: dto.location || '',
     });
 
     const { access_token } = this.loginVendor(vendor);
@@ -757,7 +756,6 @@ export class AuthService {
       vendorEmail: vendor.email,
       phone: vendor.phone,
       city: vendor.city,
-      location: vendor.location,
     });
 
     return { success: true };
