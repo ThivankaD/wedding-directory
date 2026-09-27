@@ -79,8 +79,8 @@ const CityInput: React.FC<CityProps> = ({ onCityChange, placeholder, className, 
                   onClick={() => handleCitySelect(district)}
                   className={`px-3 py-2 text-sm rounded-lg cursor-pointer transition-colors ${
                     selectedCity === district
-                      ? "bg-orange/10 text-orange font-semibold"
-                      : "text-gray-800 dark:text-zinc-200 hover:bg-orange/10 hover:text-orange dark:hover:bg-darkSurface"
+                      ? "bg-orange/10 dark:bg-orange/20 text-orange font-semibold"
+                      : "text-gray-800 dark:text-zinc-200 hover:bg-orange/10 hover:text-orange dark:hover:bg-zinc-800 dark:hover:text-orange"
                   }`}
                 >
                   {district}

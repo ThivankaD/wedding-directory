@@ -172,20 +172,24 @@ export default function VendorOnboardingPage() {
         <Header />
       </div>
 
-      <div className="container mx-auto px-4 py-8 max-w-3xl">
+      {/* Ambient Brand Glows */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[550px] h-[350px] bg-orange/15 dark:bg-orange/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-10 right-10 w-[300px] h-[250px] bg-orange/10 dark:bg-orange/5 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="container mx-auto px-4 py-8 max-w-3xl relative z-10">
         {/* Progress indicator */}
-        <div className="mb-6 bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex items-center justify-between">
+        <div className="mb-6 bg-white dark:bg-darkSurface rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-zinc-800 flex items-center justify-between transition-colors">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-orange/10 flex items-center justify-center text-orange font-bold text-sm">
+            <div className="w-10 h-10 rounded-xl bg-orange/10 dark:bg-orange/20 flex items-center justify-center text-orange font-bold text-sm">
               2/2
             </div>
             <div>
               <p className="text-xs font-semibold uppercase tracking-wider text-orange">Final Step</p>
-              <h2 className="text-base font-bold text-gray-900">Set Up Your Business Profile</h2>
+              <h2 className="text-base font-bold text-gray-900 dark:text-zinc-100">Set Up Your Business Profile</h2>
             </div>
           </div>
-          <div className="hidden sm:flex items-center gap-2 text-xs text-gray-400 font-medium">
-            <span className="flex items-center gap-1 text-emerald-600 font-semibold">
+          <div className="hidden sm:flex items-center gap-2 text-xs text-gray-400 dark:text-zinc-500 font-medium">
+            <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-semibold">
               <CheckCircle2 className="w-4 h-4" /> Account Verified
             </span>
             <span>&rarr;</span>
@@ -194,12 +198,15 @@ export default function VendorOnboardingPage() {
         </div>
 
         {/* Main form card */}
-        <div className="bg-white rounded-2xl p-6 sm:p-10 shadow-sm border border-gray-100">
+        <div className="bg-white dark:bg-darkSurface rounded-3xl p-6 sm:p-10 shadow-xl dark:shadow-[0_8px_30px_rgb(0,0,0,0.5)] border border-orange/20 dark:border-zinc-800 transition-colors">
           <div className="text-center max-w-lg mx-auto mb-8">
-            <h1 className="text-2xl sm:text-3xl font-bold font-title text-gray-900">
+            <div className="w-12 h-12 bg-orange/10 dark:bg-orange/20 rounded-full flex items-center justify-center mx-auto mb-3 text-orange">
+              <Building2 className="w-6 h-6 text-orange" />
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-bold font-title text-gray-900 dark:text-zinc-100">
               Tell couples about your business
             </h1>
-            <p className="text-sm text-gray-500 mt-2">
+            <p className="text-sm text-gray-600 dark:text-zinc-400 mt-2">
               These details help couples find, recognize, and connect with your services on Say I Do.
             </p>
           </div>
@@ -207,8 +214,8 @@ export default function VendorOnboardingPage() {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Business Name */}
             <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
-                Business / Brand Name <span className="text-orange">*</span>
+              <label className="block text-xs font-semibold text-gray-700 dark:text-zinc-300 uppercase tracking-wider mb-2">
+                Business / Brand Name <span className="text-orange font-bold">*</span>
               </label>
               <div className="relative">
                 <Input
@@ -216,11 +223,11 @@ export default function VendorOnboardingPage() {
                   placeholder="e.g. Royal Blooms Floral Design"
                   value={busname}
                   onChange={(e) => setBusname(e.target.value)}
-                  className="h-12 pl-3 pr-3 text-sm rounded-xl border-2 border-gray-200 focus:border-orange focus-visible:ring-0 focus-visible:ring-offset-0 focus:outline-none font-medium transition-colors"
+                  className="h-12 px-4 text-base rounded-xl bg-white dark:bg-darkElevated border-2 border-gray-200 dark:border-zinc-700/80 text-gray-900 dark:text-zinc-100 placeholder:text-gray-400 dark:placeholder:text-zinc-500 outline-none focus:ring-0 focus:border-orange dark:focus:border-orange transition-colors"
                   required
                 />
               </div>
-              <p className="text-[11px] text-gray-400 mt-1">
+              <p className="text-[11px] text-gray-500 dark:text-zinc-400 mt-1">
                 This is the primary name that couples will see on your packages and listings.
               </p>
             </div>
@@ -228,28 +235,28 @@ export default function VendorOnboardingPage() {
             {/* Owner Names */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
-                  First Name <span className="text-orange">*</span>
+                <label className="block text-xs font-semibold text-gray-700 dark:text-zinc-300 uppercase tracking-wider mb-2">
+                  First Name <span className="text-orange font-bold">*</span>
                 </label>
                 <Input
                   type="text"
                   placeholder="First name"
                   value={fname}
                   onChange={(e) => setFname(e.target.value)}
-                  className="h-12 pl-3 pr-3 text-sm rounded-xl border-2 border-gray-200 focus:border-orange focus-visible:ring-0 focus-visible:ring-offset-0 focus:outline-none transition-colors"
+                  className="h-12 px-4 text-base rounded-xl bg-white dark:bg-darkElevated border-2 border-gray-200 dark:border-zinc-700/80 text-gray-900 dark:text-zinc-100 placeholder:text-gray-400 dark:placeholder:text-zinc-500 outline-none focus:ring-0 focus:border-orange dark:focus:border-orange transition-colors"
                   required
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
-                  Last Name <span className="text-orange">*</span>
+                <label className="block text-xs font-semibold text-gray-700 dark:text-zinc-300 uppercase tracking-wider mb-2">
+                  Last Name <span className="text-orange font-bold">*</span>
                 </label>
                 <Input
                   type="text"
                   placeholder="Last name"
                   value={lname}
                   onChange={(e) => setLname(e.target.value)}
-                  className="h-12 pl-3 pr-3 text-sm rounded-xl border-2 border-gray-200 focus:border-orange focus-visible:ring-0 focus-visible:ring-offset-0 focus:outline-none transition-colors"
+                  className="h-12 px-4 text-base rounded-xl bg-white dark:bg-darkElevated border-2 border-gray-200 dark:border-zinc-700/80 text-gray-900 dark:text-zinc-100 placeholder:text-gray-400 dark:placeholder:text-zinc-500 outline-none focus:ring-0 focus:border-orange dark:focus:border-orange transition-colors"
                   required
                 />
               </div>
@@ -257,46 +264,46 @@ export default function VendorOnboardingPage() {
 
             {/* Phone Number */}
             <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
-                Business Phone Number <span className="text-orange">*</span>
+              <label className="block text-xs font-semibold text-gray-700 dark:text-zinc-300 uppercase tracking-wider mb-2">
+                Business Phone Number <span className="text-orange font-bold">*</span>
               </label>
               <Input
                 type="tel"
                 placeholder="e.g. 077 123 4567"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="h-12 pl-3 pr-3 text-sm rounded-xl border-2 border-gray-200 focus:border-orange focus-visible:ring-0 focus-visible:ring-offset-0 focus:outline-none transition-colors"
+                className="h-12 px-4 text-base rounded-xl bg-white dark:bg-darkElevated border-2 border-gray-200 dark:border-zinc-700/80 text-gray-900 dark:text-zinc-100 placeholder:text-gray-400 dark:placeholder:text-zinc-500 outline-none focus:ring-0 focus:border-orange dark:focus:border-orange transition-colors"
                 required
               />
-              <p className="text-[11px] text-gray-400 mt-1">
+              <p className="text-[11px] text-gray-500 dark:text-zinc-400 mt-1">
                 Used for account notifications and booking alerts.
               </p>
             </div>
 
             {/* Primary Base District (Required) */}
             <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
-                Primary Base District <span className="text-orange">*</span>
+              <label className="block text-xs font-semibold text-gray-700 dark:text-zinc-300 uppercase tracking-wider mb-2">
+                Primary Base District <span className="text-orange font-bold">*</span>
               </label>
               <div>
                 <CityInput
                   placeholder={city || "Select your primary operational district"}
                   value={city}
                   onCityChange={(selectedCity) => setCity(selectedCity)}
-                  className="w-full h-12 px-4 border-2 border-gray-200 rounded-xl bg-white hover:border-orange transition-colors text-base font-normal"
+                  className="border-2 border-gray-200 dark:border-zinc-700/80 rounded-xl bg-white dark:bg-darkElevated text-gray-900 dark:text-zinc-100 hover:border-orange dark:hover:border-orange transition-colors h-12 px-4 text-base font-normal"
                 />
               </div>
-              <p className="text-[11px] text-gray-400 mt-1">
+              <p className="text-[11px] text-gray-500 dark:text-zinc-400 mt-1">
                 Your main operational district in Sri Lanka. You can add specific locations and interactive map pins for each individual service later in your dashboard.
               </p>
             </div>
 
             {/* Buttons */}
-            <div className="pt-4 border-t border-gray-100 flex flex-col gap-3">
+            <div className="pt-4 border-t border-gray-100 dark:border-zinc-800 flex flex-col gap-3">
               <Button
                 type="submit"
                 disabled={isSubmitting || isSavingDraft}
-                className="w-full h-12 rounded-xl text-white font-semibold hover:bg-orange/90 bg-orange text-base shadow-sm shadow-orange/20 transition-all active:scale-[0.99] flex items-center justify-center gap-2"
+                className="w-full h-12 rounded-xl text-white font-semibold hover:bg-orange/90 bg-orange text-base shadow-sm shadow-orange/20 transition-all active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer"
               >
                 {isSubmitting ? (
                   <span>Saving details...</span>
@@ -312,7 +319,7 @@ export default function VendorOnboardingPage() {
                 type="button"
                 onClick={handleSaveAndFinishLater}
                 disabled={isSubmitting || isSavingDraft}
-                className="w-full py-2.5 text-sm font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-50 rounded-xl transition-all disabled:opacity-50 text-center"
+                className="w-full py-2.5 text-sm font-medium text-gray-500 dark:text-zinc-400 hover:text-gray-800 dark:hover:text-zinc-200 hover:bg-gray-50 dark:hover:bg-darkElevated rounded-xl transition-all disabled:opacity-50 text-center cursor-pointer"
               >
                 {isSavingDraft ? 'Saving progress...' : 'Save and finish later'}
               </button>
