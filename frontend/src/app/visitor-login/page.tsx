@@ -55,7 +55,7 @@ const LoginPage = () => {
         toast.success('Login successful! Redirecting...', {
           style: { background: '#333', color: '#fff' },
         });
-        const target = response.isOnboarded === false ? '/visitor-onboarding' : '/visitor-dashboard';
+        const target = !response.isOnboarded ? '/visitor-onboarding' : '/visitor-dashboard';
         window.location.href = target;
       } else {
         setError('No token received. Please try again.');

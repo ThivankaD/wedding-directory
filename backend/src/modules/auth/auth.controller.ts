@@ -77,7 +77,8 @@ export class AuthController {
       visitor.visitor_fname === 'Visitor';
     const isOnboarded =
       visitor.isOnboarded === true ||
-      (!isMissingName &&
+      (visitor.isOnboarded !== false &&
+        !isMissingName &&
         !!(
           visitor.city ||
           visitor.phone ||
