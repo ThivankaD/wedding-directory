@@ -77,7 +77,7 @@ const VendorHeader = () => {
   // Query approval requests with polling for real-time notification
   const { data: approvalData } = useQuery(GET_VENDOR_APPROVAL_REQUESTS, {
     variables: { vendorId: vendor?.id },
-    skip: !vendor?.id,
+    skip: !vendor?.id || isSignupForm,
     pollInterval: 10000,
     fetchPolicy: "network-only",
     nextFetchPolicy: "cache-first",
@@ -255,22 +255,31 @@ const VendorHeader = () => {
 
             {/* Notification bell dropdown */}
             <div className="relative" ref={notificationMenuRef}>
-              <button
-                type="button"
-                onClick={() => setShowNotificationMenu((prev) => !prev)}
-                className="relative p-2 rounded-xl hover:bg-orange/10 dark:hover:bg-zinc-800 transition-colors flex items-center justify-center text-gray-700 dark:text-zinc-300 hover:text-orange"
-                title={pendingCount > 0 ? `${pendingCount} new notification${pendingCount === 1 ? "" : "s"}` : "Notifications"}
-                aria-label="Notifications"
-              >
-                <IoIosNotificationsOutline className="w-[28px] h-[28px]" />
-                {pendingCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-pulse shadow-xs">
-                    {pendingCount > 9 ? "9+" : pendingCount}
-                  </span>
-                )}
-              </button>
+              {isSignupForm ? (
+                <span
+                  className="relative p-2 rounded-xl transition-all flex items-center justify-center text-gray-400 dark:text-zinc-500 hover:text-gray-600 dark:hover:text-zinc-400 hover:bg-gray-100/80 dark:hover:bg-zinc-800/60 font-semibold cursor-not-allowed select-none"
+                  title="Complete setup to access"
+                >
+                  <IoIosNotificationsOutline className="w-[28px] h-[28px]" />
+                </span>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setShowNotificationMenu((prev) => !prev)}
+                  className="relative p-2 rounded-xl hover:bg-orange/10 dark:hover:bg-zinc-800 transition-colors flex items-center justify-center text-gray-700 dark:text-zinc-300 hover:text-orange cursor-pointer"
+                  title={pendingCount > 0 ? `${pendingCount} new notification${pendingCount === 1 ? "" : "s"}` : "Notifications"}
+                  aria-label="Notifications"
+                >
+                  <IoIosNotificationsOutline className="w-[28px] h-[28px]" />
+                  {pendingCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-pulse shadow-xs">
+                      {pendingCount > 9 ? "9+" : pendingCount}
+                    </span>
+                  )}
+                </button>
+              )}
 
-              {showNotificationMenu && (
+              {!isSignupForm && showNotificationMenu && (
                 <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white dark:bg-darkSurface shadow-2xl rounded-2xl py-2 z-50 border border-gray-100 dark:border-zinc-800 animate-in fade-in slide-in-from-top-2 duration-150">
                   <div className="px-4 py-3 border-b border-gray-100 dark:border-zinc-800 flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -368,18 +377,32 @@ const VendorHeader = () => {
 
                   {/* Menu items */}
                   <div className="p-1.5 space-y-1">
-                    <Link
-                      href="/vendor-dashboard/settings"
-                      onClick={() => setShowProfileMenu(false)}
-                      className="flex items-center gap-3 px-3 py-2 rounded-xl text-gray-700 dark:text-zinc-200 hover:text-orange hover:bg-orange/5 dark:hover:bg-orange/15 transition-all group"
-                    >
-                      <div className="w-8 h-8 rounded-lg bg-orange/10 dark:bg-orange/20 border border-orange/20 text-orange flex items-center justify-center transition-colors group-hover:bg-orange group-hover:text-white flex-shrink-0">
-                        <FiSettings size={15} />
+                    {isSignupForm ? (
+                      <div
+                        className="flex items-center gap-3 px-3 py-2 rounded-xl text-gray-400 dark:text-zinc-500 opacity-60 cursor-not-allowed select-none"
+                        title="Complete setup to access settings"
+                      >
+                        <div className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-zinc-800 text-gray-400 dark:text-zinc-500 flex items-center justify-center flex-shrink-0">
+                          <FiSettings size={15} />
+                        </div>
+                        <span className="font-title text-sm font-semibold text-gray-400 dark:text-zinc-500">
+                          Settings
+                        </span>
                       </div>
-                      <span className="font-title text-sm font-semibold text-gray-900 dark:text-zinc-100 group-hover:text-orange transition-colors">
-                        Settings
-                      </span>
-                    </Link>
+                    ) : (
+                      <Link
+                        href="/vendor-dashboard/settings"
+                        onClick={() => setShowProfileMenu(false)}
+                        className="flex items-center gap-3 px-3 py-2 rounded-xl text-gray-700 dark:text-zinc-200 hover:text-orange hover:bg-orange/5 dark:hover:bg-orange/15 transition-all group"
+                      >
+                        <div className="w-8 h-8 rounded-lg bg-orange/10 dark:bg-orange/20 border border-orange/20 text-orange flex items-center justify-center transition-colors group-hover:bg-orange group-hover:text-white flex-shrink-0">
+                          <FiSettings size={15} />
+                        </div>
+                        <span className="font-title text-sm font-semibold text-gray-900 dark:text-zinc-100 group-hover:text-orange transition-colors">
+                          Settings
+                        </span>
+                      </Link>
+                    )}
 
                     <button
                       type="button"
