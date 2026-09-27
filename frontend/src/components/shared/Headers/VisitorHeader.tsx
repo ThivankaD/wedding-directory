@@ -91,7 +91,7 @@ const VisitorHeader = () => {
   // Query visitor approval requests with polling for real-time notifications
   const { data: approvalData } = useQuery(GET_VISITOR_APPROVAL_REQUESTS, {
     variables: { visitorId: visitor?.id },
-    skip: !visitor?.id,
+    skip: !visitor?.id || isSignupForm,
     pollInterval: 10000,
     fetchPolicy: "network-only",
     nextFetchPolicy: "cache-first",

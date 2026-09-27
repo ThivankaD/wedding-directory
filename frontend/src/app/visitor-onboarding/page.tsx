@@ -16,11 +16,9 @@ import { sendVisitorOnboardingWelcome } from '@/api/auth/signup-otp.api';
 import {
   Heart,
   User,
-  Phone,
   Calendar,
   CheckCircle2,
   ArrowRight,
-  MapPin,
   Sparkles,
 } from 'lucide-react';
 
@@ -61,6 +59,7 @@ export default function VisitorOnboardingPage() {
 
   useEffect(() => {
     if (data?.findVisitorById) {
+      const v = data.findVisitorById;
       const isAlreadyOnboarded =
         v.isOnboarded === true ||
         (v.visitor_fname &&
