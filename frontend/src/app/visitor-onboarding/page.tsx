@@ -126,6 +126,8 @@ export default function VisitorOnboardingPage() {
           id: visitor.id,
           input: inputToSave,
         },
+        refetchQueries: [{ query: GET_VISITOR_BY_ID, variables: { id: visitor.id } }],
+        awaitRefetchQueries: true,
       });
 
       if (weddingDate) {
@@ -157,7 +159,7 @@ export default function VisitorOnboardingPage() {
         style: { background: '#333', color: '#fff' },
       });
 
-      router.replace('/visitor-dashboard');
+      window.location.href = '/visitor-dashboard';
     } catch (err: any) {
       console.error('Failed to complete onboarding:', err);
       toast.error(err?.message || 'Failed to save profile details. Please try again.');
