@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException, UnauthorizedException, Logger } from '@nestjs/common';
 import { VisitorService } from '../visitor/visitor.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
@@ -22,6 +22,8 @@ import { isValidEmail, normalizeEmail } from '../../utils/email-validator.util';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     private readonly visitorService: VisitorService,
     private readonly vendorService: VendorService,
@@ -342,22 +344,34 @@ export class AuthService {
       throw new BadRequestException('Google ID token is required.');
     }
 
-    const webClientId = process.env.GOOGLE_CLIENT_ID;
-    const androidClientId = process.env.GOOGLE_ANDROID_CLIENT_ID;
+    const webClientId = process.env.GOOGLE_CLIENT_ID?.trim();
+    const androidClientId = process.env.GOOGLE_ANDROID_CLIENT_ID?.trim();
+    const iosClientId = process.env.GOOGLE_IOS_CLIENT_ID?.trim();
+
+    const audiences = [webClientId, androidClientId, iosClientId].filter(Boolean) as string[];
+
+    if (audiences.length === 0) {
+      this.logger.error(
+        'Google OAuth configuration error: GOOGLE_CLIENT_ID is not configured in server environment variables!',
+      );
+      throw new UnauthorizedException(
+        'Server misconfiguration: Google OAuth is not configured.',
+      );
+    }
+
     const client = new OAuth2Client(webClientId);
 
     let payload: TokenPayload | undefined;
     try {
       const ticket = await client.verifyIdToken({
         idToken,
-        audience: [
-          webClientId,
-          androidClientId,
-          process.env.GOOGLE_IOS_CLIENT_ID,
-        ].filter(Boolean) as string[],
+        audience: audiences,
       });
       payload = ticket.getPayload();
-    } catch {
+    } catch (err: any) {
+      this.logger.error(
+        `Google ID token verification failed: ${err?.message || err}. Expected audience(s): [${audiences.join(', ')}]`,
+      );
       throw new UnauthorizedException('Invalid Google ID token');
     }
 
