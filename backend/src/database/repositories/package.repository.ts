@@ -1,4 +1,4 @@
-﻿import { DataSource } from "typeorm";
+import { DataSource } from "typeorm";
 import { PackageEntity } from "../entities/package.entity";
 import { ServiceEntity } from '../entities/service.entity';
 import { PackageFeatureEntity } from '../entities/package-feature.entity';
@@ -10,7 +10,10 @@ export const PackageRepository = (dataSource: DataSource) =>
       input: Partial<PackageEntity>,
       serviceId: string
     ): Promise<PackageEntity> {
-      const service = await dataSource.getRepository(ServiceEntity).findOne({ where: { id: serviceId } });
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(serviceId);
+      const service = await dataSource.getRepository(ServiceEntity).findOne({
+        where: isUuid ? { id: serviceId } : { slug: serviceId },
+      });
 
       if (!service) {
         throw new Error("No service found");
@@ -100,8 +103,16 @@ export const PackageRepository = (dataSource: DataSource) =>
     },
 
     async findPackageByService(serviceId: string): Promise<PackageEntity[]> {
+        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(serviceId);
+        const service = await dataSource.getRepository(ServiceEntity).findOne({
+          where: isUuid ? { id: serviceId } : { slug: serviceId },
+        });
+        if (!service) {
+          return [];
+        }
+
         const packages = await this.find({
-          where: { service: { id: serviceId } },
+          where: { service: { id: service.id } },
           relations: ['service', 'packageFeatures'],
           order: {
             createdAt: 'ASC',
