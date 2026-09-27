@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import VisitorOnboardingGuard from "@/components/auth/VisitorOnboardingGuard";
 
 export const metadata: Metadata = {
   title: "Wedding Dashboard",
@@ -10,5 +11,5 @@ export default function VisitorDashboardRootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return <VisitorOnboardingGuard>{children}</VisitorOnboardingGuard>;
 }

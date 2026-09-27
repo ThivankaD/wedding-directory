@@ -392,7 +392,8 @@ export class AuthService {
       const isVisitorOnboarded =
         !isNewUser &&
         (visitor.isOnboarded === true ||
-          (!isMissingName &&
+          (visitor.isOnboarded !== false &&
+            !isMissingName &&
             !!(
               visitor.city ||
               visitor.phone ||

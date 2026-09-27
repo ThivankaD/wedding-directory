@@ -89,7 +89,8 @@ const VisitorLogin: React.FC<VisitorLoginProps> = ({ isVisible, onClose }) => {
         
         if (token) {
           login(token);
-          window.location.href = '/visitor-dashboard';
+          const target = !response.isOnboarded ? '/visitor-onboarding' : '/visitor-dashboard';
+          window.location.href = target;
         } else {
           throw new Error('No token received');
         }

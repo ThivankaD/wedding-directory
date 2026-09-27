@@ -74,7 +74,7 @@ export default function GoogleAuthButton({
         );
 
         const shouldOnboard =
-          response.isNewUser || response.isOnboarded === false;
+          response.isNewUser || !response.isOnboarded;
 
         const defaultTarget =
           role === 'vendor'

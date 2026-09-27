@@ -62,7 +62,8 @@ export default function VisitorOnboardingPage() {
       const v = data.findVisitorById;
       const isAlreadyOnboarded =
         v.isOnboarded === true ||
-        (v.visitor_fname &&
+        (v.isOnboarded !== false &&
+          v.visitor_fname &&
           v.visitor_fname !== 'Visitor' &&
           (v.partner_fname || v.city || v.phone || v.wed_date));
       if (isAlreadyOnboarded) {
