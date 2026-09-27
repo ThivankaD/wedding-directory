@@ -524,7 +524,7 @@ export class PaymentService {
         }),
         status: this.mapPaymentStatusToBookingStatus(payment.status),
         location:
-          payment.vendor?.location || payment.vendor?.city || 'Not specified',
+          payment.vendor?.city || 'Not specified',
         serviceProvider: {
           id: payment.vendor?.id,
           name:
