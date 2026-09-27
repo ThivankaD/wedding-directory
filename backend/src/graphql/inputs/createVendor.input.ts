@@ -34,8 +34,4 @@ export class CreateVendorInput {
   @Field()
   @SanitizeString({ maxLength: 100 })
   city: string;
-
-  @Field()
-  @SanitizeString({ maxLength: 200 })
-  location: string;
 }

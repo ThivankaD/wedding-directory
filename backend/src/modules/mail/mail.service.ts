@@ -818,7 +818,6 @@ export class MailService {
     vendorEmail: string;
     phone?: string;
     city?: string;
-    location?: string;
   }): Promise<boolean> {
     const to = options.adminEmail || process.env.ADMIN_EMAIL || process.env.SMTP_USER || 'sayidolk@gmail.com';
     const subject = `New Vendor Signup: ${options.businessName || options.vendorName} - Review Request`;
@@ -857,8 +856,8 @@ export class MailService {
               <td style="padding: 4px 0;">${options.phone || 'Not provided'}</td>
             </tr>
             <tr>
-              <td style="color: #777777; padding: 4px 0;">City / Location:</td>
-              <td style="padding: 4px 0;">${[options.city, options.location].filter(Boolean).join(', ') || 'Not provided'}</td>
+              <td style="color: #777777; padding: 4px 0;">City:</td>
+              <td style="padding: 4px 0;">${options.city || 'Not provided'}</td>
             </tr>
           </table>
         </div>

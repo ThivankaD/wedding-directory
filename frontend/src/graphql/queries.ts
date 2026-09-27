@@ -168,7 +168,6 @@ export const GET_VENDOR_BY_ID = gql`
       about
       phone
       city
-      location
       profile_pic_url
       createdAt
     }
@@ -579,7 +578,7 @@ export const GET_VENDOR_OFFERING_DETAILS = gql`
 export const FIND_VENDOR_BY_SERVICE = gql`
   query FindVendorsByService($service_id: String!) {
     findVendorsByService(service_id: $service_id) {
-      location
+      city
     }
   }
 `;

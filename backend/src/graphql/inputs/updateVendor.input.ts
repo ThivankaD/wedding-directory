@@ -43,10 +43,6 @@ export class UpdateVendorInput {
   city?: string;
 
   @Field({ nullable: true })
-  @SanitizeString({ maxLength: 200, optional: true })
-  location?: string;
-
-  @Field({ nullable: true })
   @SanitizeString({ maxLength: 3000, allowMultiline: true, optional: true })
   about?: string;
 

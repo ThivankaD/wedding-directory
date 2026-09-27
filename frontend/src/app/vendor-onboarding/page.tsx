@@ -24,7 +24,6 @@ export default function VendorOnboardingPage() {
   const [busname, setBusname] = useState('');
   const [phone, setPhone] = useState('');
   const [city, setCity] = useState('');
-  const [location, setLocation] = useState('');
   const [initialized, setInitialized] = useState(false);
 
   // Fetch current vendor info (especially if signed up via Google)
@@ -58,7 +57,6 @@ export default function VendorOnboardingPage() {
       }
       if (v.phone) setPhone(v.phone);
       if (v.city) setCity(v.city);
-      if (v.location) setLocation(v.location);
       setInitialized(true);
     }
   }, [data, initialized]);
@@ -79,7 +77,6 @@ export default function VendorOnboardingPage() {
       if (busname.trim()) inputToSave.busname = busname.trim();
       if (phone.trim()) inputToSave.phone = phone.trim();
       if (city.trim()) inputToSave.city = city.trim();
-      if (location.trim()) inputToSave.location = location.trim();
 
       if (Object.keys(inputToSave).length > 0) {
         await updateVendor({
@@ -130,15 +127,19 @@ export default function VendorOnboardingPage() {
       return;
     }
 
+    if (!city.trim()) {
+      toast.error('Please select your primary base district.');
+      return;
+    }
+
     try {
       const updatePayload: any = {
         fname: fname.trim(),
         lname: lname.trim(),
         busname: busname.trim(),
         phone: phone.trim(),
+        city: city.trim(),
       };
-      if (city.trim()) updatePayload.city = city.trim();
-      if (location.trim()) updatePayload.location = location.trim();
 
       await updateVendor({
         variables: {
@@ -270,14 +271,14 @@ export default function VendorOnboardingPage() {
               </p>
             </div>
 
-            {/* Primary Base District (Optional) */}
+            {/* Primary Base District (Required) */}
             <div>
               <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
-                Primary Base District <span className="text-gray-400 font-normal lowercase">(optional)</span>
+                Primary Base District <span className="text-orange">*</span>
               </label>
               <div>
                 <CityInput
-                  placeholder={city || "Select your primary operational district (optional)"}
+                  placeholder={city || "Select your primary operational district"}
                   value={city}
                   onCityChange={(selectedCity) => setCity(selectedCity)}
                   className="w-full h-12 px-4 border-2 border-gray-200 rounded-xl bg-white hover:border-orange transition-colors text-base font-normal"
