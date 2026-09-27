@@ -5,6 +5,10 @@ import { SanitizeString } from '../../common/decorators/sanitize-string.decorato
 @InputType()
 export class UpdateServiceInput {
   @Field({ nullable: true })
+  @SanitizeString({ maxLength: 200, optional: true })
+  slug?: string;
+
+  @Field({ nullable: true })
   @SanitizeString({ maxLength: 60, optional: true })
   category?: string;
 

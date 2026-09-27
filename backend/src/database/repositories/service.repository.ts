@@ -67,17 +67,24 @@ export const ServiceRepository = (dataSource: DataSource): ServiceRepositoryType
       id: string,
       updateServiceInput: Partial<ServiceEntity>,
     ): Promise<ServiceEntity> {
-      const service = await this.findOne({ where: { id } });
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+      const service = await this.findOne({ where: isUuid ? { id } : { slug: id } });
       if (!service) {
         throw new Error('Service not found');
       }
 
-      let slug = updateServiceInput.slug || service.slug;
-      if (!slug && (updateServiceInput.name || service.name)) {
+      let slug = service.slug;
+      if (updateServiceInput.slug && updateServiceInput.slug !== service.slug) {
+        slug = await (this as any).generateUniqueSlug(
+          updateServiceInput.slug,
+          undefined,
+          service.id,
+        );
+      } else if (!slug && (updateServiceInput.name || service.name)) {
         slug = await (this as any).generateUniqueSlug(
           updateServiceInput.name || service.name,
           updateServiceInput.city || service.city,
-          id,
+          service.id,
         );
       }
 
@@ -89,7 +96,8 @@ export const ServiceRepository = (dataSource: DataSource): ServiceRepositoryType
     },
 
     async deleteService(id: string): Promise<boolean> {
-      const result = await this.delete({ id });
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+      const result = await this.delete(isUuid ? { id } : { slug: id });
       return result.affected > 0;
     },
 
