@@ -25,6 +25,7 @@ export const FIND_SERVICES = gql`
     query GetFilteredServices($filter: ServiceFilterInput) {
         findServices(filter: $filter) {
             id
+            slug
             name
             category
             visible
@@ -53,6 +54,7 @@ export const FIND_SERVICE_BY_ID = gql`
   query FindServiceById($id: String!) {
     findServiceById(id: $id) {
       id
+      slug
       name
       category
       description
@@ -114,6 +116,7 @@ export const FIND_SERVICES_BY_VENDOR = gql`
   query FindServicesByVendor($id: String!) {
     findServicesByVendor(id: $id) {
       id
+      slug
       name
       category
       description
@@ -258,6 +261,7 @@ export const FIND_ALL_MY_VENDORS_BY_CATEGORY = gql`
       id
       service {
         id
+        slug
         name
         category
         vendor {
@@ -276,6 +280,7 @@ export const FIND_ALL_MY_VENDORS = gql`
       id
       service {
         id
+        slug
         name
         category
         vendor {
@@ -509,6 +514,7 @@ export const GET_SERVICE_DETAILS = gql`
   query GetServiceDetails($id: String!) {
     findServiceById(id: $id) {
       id
+      slug
       name
       category
       vendor {

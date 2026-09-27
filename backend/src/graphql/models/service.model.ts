@@ -8,6 +8,9 @@ export class ServiceModel {
   @Field()
   id: string;
 
+  @Field({ nullable: true })
+  slug?: string;
+
   @Field()
   name: string;
 

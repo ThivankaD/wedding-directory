@@ -13,6 +13,7 @@ import { Offering } from "@/types/offeringTypes";
 import { OfferingGridSkeleton } from "@/components/ui/shimmer";
 import { IoClose } from "react-icons/io5";
 import { detectUserDistrict, matchSriLankaDistrict } from "@/utils/geolocation";
+import { getServiceUrl } from "@/utils/serviceUrl";
 import toast from "react-hot-toast";
 
 const ServicesSearchContent: React.FC = () => {
@@ -449,7 +450,7 @@ const ServicesSearchContent: React.FC = () => {
                           : 0
                       }
                       buttonText="View Details"
-                      link={`/services/${offering.id}`}
+                      link={getServiceUrl(offering)}
                       isSaved={savedServiceIds.has(offering.id)}
                     />
                   ))}

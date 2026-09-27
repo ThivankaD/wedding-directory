@@ -4,6 +4,7 @@ import { DataSource } from 'typeorm';
 import { CreatePackageViewTable1707489026321 } from './migrations/1707489026321-CreatePackageViewTable';
 import { AddReviewImagesAndMentions1762000000000 } from './migrations/1762000000000-AddReviewImagesAndMentions';
 import { CreateServiceReviewSummaryTable1762000000004 } from './migrations/1762000000004-CreateServiceReviewSummaryTable';
+import { AddSlugToServiceTable1762000000005 } from './migrations/1762000000005-AddSlugToServiceTable';
 
 dotenv.config({ path: join(__dirname, '..', '..', '.env') });
 
@@ -84,9 +85,14 @@ async function runMigration() {
       console.log('Added is_onboarded column to visitor table');
     }
 
-    await queryRunner.query(
-      `UPDATE "visitor" SET "is_onboarded" = true WHERE "is_onboarded" IS NOT TRUE AND ("city" IS NOT NULL OR "phone" IS NOT NULL OR "wedding_date" IS NOT NULL OR "partner_first_name" IS NOT NULL)`,
-    );
+    const hasServiceSlug = await queryRunner.hasColumn('service', 'slug');
+    if (!hasServiceSlug) {
+      const migration = new AddSlugToServiceTable1762000000005();
+      console.log(`Running migration: ${migration.name}`);
+      await migration.up(queryRunner);
+    } else {
+      console.log('Skipping AddSlugToServiceTable1762000000005 (already applied).');
+    }
 
     console.log('Migration completed successfully!');
     

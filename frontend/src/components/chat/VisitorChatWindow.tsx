@@ -13,6 +13,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ChatWindowSkeleton } from "@/components/ui/shimmer";
 import { sanitizeInput } from "@/lib/sanitize";
+import { getServiceUrl } from "@/utils/serviceUrl";
 
 interface Message {
   content: string;
@@ -172,7 +173,7 @@ const VisitorChatWindow = ({ chatId }: VisitorChatWindowProps) => {
               </h2>
               {offering && (
                 <Link
-                  href={`/services/${offering.id}`}
+                  href={getServiceUrl(offering)}
                   className="hidden sm:inline-flex items-center gap-1 px-3 py-0.5 text-xs bg-orange/10 text-orange hover:bg-orange hover:text-white transition-colors font-semibold rounded-full border border-orange/20 truncate max-w-[220px]"
                 >
                   <span>{offering.name}</span>
@@ -191,7 +192,7 @@ const VisitorChatWindow = ({ chatId }: VisitorChatWindowProps) => {
 
         {offering && (
           <Link
-            href={`/services/${offering.id}`}
+            href={getServiceUrl(offering)}
             className="sm:hidden px-3 py-1 text-xs bg-orange/10 text-orange font-semibold rounded-full border border-orange/20 flex-shrink-0"
           >
             {offering.name}

@@ -23,6 +23,7 @@ import {
   FiExternalLink,
 } from 'react-icons/fi';
 import VendorCard from '@/components/visitor-dashboard/my-vendors/VendorCard';
+import { getServiceUrl } from '@/utils/serviceUrl';
 
 export const getCategoryIcon = (category: string) => {
   switch (category) {
@@ -293,7 +294,7 @@ export const CategoryModal: React.FC<CategoryModalProps> = ({
                     vendor={svc.vendor?.busname || 'Vendor name not available'}
                     city={svc.vendor?.city || 'Location not available'}
                     banner={svc.banner || '/images/bride.webp'}
-                    link={`/services/${svc.id}`}
+                    link={getServiceUrl(svc)}
                   />
                 );
               })}

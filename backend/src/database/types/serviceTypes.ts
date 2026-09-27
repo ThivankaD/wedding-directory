@@ -1,4 +1,4 @@
-﻿import { ServiceEntity } from "src/database/entities/service.entity";
+import { ServiceEntity } from "src/database/entities/service.entity";
 import { VendorEntity } from "src/database/entities/vendor.entity";
 import { Repository } from "typeorm";
 
@@ -20,4 +20,6 @@ export type ServiceRepositoryType = Repository<ServiceEntity> & {
     findServicesByFilters(category?: string, city?: string): Promise<ServiceEntity[]>;
 
     findServicesByVendor(id: string): Promise<ServiceEntity[]>;
+
+    generateUniqueSlug(name: string, city?: string, excludeServiceId?: string): Promise<string>;
 };

@@ -81,10 +81,13 @@ const Service: React.FC = () => {
 
   const queryError = useQuery(FIND_SERVICE_BY_ID, { variables: { id } }).error;
 
+  const canonicalServiceId = data?.findServiceById?.id || id;
+
   const { data: packagesData, refetch: refetchPackages } = useQuery(
     FIND_PACKAGES_BY_OFFERING,
     {
-      variables: { serviceId: id },
+      variables: { serviceId: canonicalServiceId },
+      skip: !canonicalServiceId,
       fetchPolicy: "network-only",
     },
   );
@@ -119,9 +122,9 @@ const Service: React.FC = () => {
     {
       variables: {
         visitorId: visitor?.id,
-        serviceId: id,
+        serviceId: canonicalServiceId,
       },
-      skip: !visitor,
+      skip: !visitor || !canonicalServiceId,
     },
   );
 
