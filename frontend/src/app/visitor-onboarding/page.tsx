@@ -250,7 +250,7 @@ export default function VisitorOnboardingPage() {
 
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 dark:text-zinc-300 mb-1.5">
-                    Last Name <span className="text-gray-400 font-normal">(Optional)</span>
+                    Last Name <span className="text-gray-400 dark:text-zinc-500 font-normal">(Optional)</span>
                   </label>
                   <Input
                     type="text"
@@ -268,14 +268,14 @@ export default function VisitorOnboardingPage() {
               <div className="flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-orange" />
                 <h3 className="text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-zinc-300">
-                  Partner&apos;s Information <span className="text-gray-400 font-normal lowercase">(optional)</span>
+                  Partner&apos;s Information <span className="text-gray-400 dark:text-zinc-500 font-normal lowercase">(optional)</span>
                 </h3>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 dark:text-zinc-300 mb-1.5">
-                    Partner&apos;s First Name <span className="text-gray-400 font-normal">(Optional)</span>
+                    Partner&apos;s First Name <span className="text-gray-400 dark:text-zinc-500 font-normal">(Optional)</span>
                   </label>
                   <Input
                     type="text"
@@ -288,7 +288,7 @@ export default function VisitorOnboardingPage() {
 
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 dark:text-zinc-300 mb-1.5">
-                    Partner&apos;s Last Name <span className="text-gray-400 font-normal">(Optional)</span>
+                    Partner&apos;s Last Name <span className="text-gray-400 dark:text-zinc-500 font-normal">(Optional)</span>
                   </label>
                   <Input
                     type="text"
@@ -306,21 +306,21 @@ export default function VisitorOnboardingPage() {
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-orange" />
                 <h3 className="text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-zinc-300">
-                  Important Dates <span className="text-gray-400 font-normal lowercase">(optional)</span>
+                  Important Dates <span className="text-gray-400 dark:text-zinc-500 font-normal lowercase">(optional)</span>
                 </h3>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 dark:text-zinc-300 mb-1.5">
-                    Wedding Date <span className="text-gray-400 font-normal">(Optional)</span>
+                    Wedding Date <span className="text-gray-400 dark:text-zinc-500 font-normal">(Optional)</span>
                   </label>
                   <Input
                     type="date"
                     min={new Date().toISOString().split('T')[0]}
                     value={weddingDate}
                     onChange={(e) => setWeddingDate(e.target.value)}
-                    className="h-12 px-4 rounded-xl text-base bg-white dark:bg-darkElevated border-2 border-gray-200 dark:border-zinc-700/80 text-gray-900 dark:text-zinc-100 outline-none focus:ring-0 focus:border-orange dark:focus:border-orange transition-colors"
+                    className="h-12 px-4 rounded-xl text-base bg-white dark:bg-darkElevated border-2 border-gray-200 dark:border-zinc-700/80 text-gray-900 dark:text-zinc-100 outline-none focus:ring-0 focus:border-orange dark:focus:border-orange transition-colors dark:[color-scheme:dark]"
                   />
                   <p className="text-[11px] text-gray-500 dark:text-zinc-400 mt-1">
                     Setting this automatically creates your wedding checklist tasks.
@@ -329,13 +329,13 @@ export default function VisitorOnboardingPage() {
 
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 dark:text-zinc-300 mb-1.5">
-                    Engagement Date <span className="text-gray-400 font-normal">(Optional)</span>
+                    Engagement Date <span className="text-gray-400 dark:text-zinc-500 font-normal">(Optional)</span>
                   </label>
                   <Input
                     type="date"
                     value={engagedDate}
                     onChange={(e) => setEngagedDate(e.target.value)}
-                    className="h-12 px-4 rounded-xl text-base bg-white dark:bg-darkElevated border-2 border-gray-200 dark:border-zinc-700/80 text-gray-900 dark:text-zinc-100 outline-none focus:ring-0 focus:border-orange dark:focus:border-orange transition-colors"
+                    className="h-12 px-4 rounded-xl text-base bg-white dark:bg-darkElevated border-2 border-gray-200 dark:border-zinc-700/80 text-gray-900 dark:text-zinc-100 outline-none focus:ring-0 focus:border-orange dark:focus:border-orange transition-colors dark:[color-scheme:dark]"
                   />
                   <p className="text-[11px] text-gray-500 dark:text-zinc-400 mt-1">
                     You can always update this later from your profile.
@@ -348,7 +348,7 @@ export default function VisitorOnboardingPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-gray-700 dark:text-zinc-300 mb-1.5">
-                  Wedding District <span className="text-gray-400 font-normal">(Optional)</span>
+                  Wedding District <span className="text-gray-400 dark:text-zinc-500 font-normal">(Optional)</span>
                 </label>
                 <div>
                   <CityInput
@@ -365,7 +365,7 @@ export default function VisitorOnboardingPage() {
 
               <div>
                 <label className="block text-xs font-semibold text-gray-700 dark:text-zinc-300 mb-1.5">
-                  Phone Number <span className="text-gray-400 font-normal">(Optional)</span>
+                  Phone Number <span className="text-gray-400 dark:text-zinc-500 font-normal">(Optional)</span>
                 </label>
                 <Input
                   type="tel"
