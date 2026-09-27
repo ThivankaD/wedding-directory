@@ -6,6 +6,7 @@ import Image from "next/image";
 import VendorHeader from "@/components/shared/Headers/VendorHeader";
 import Footer from "@/components/shared/Footer";
 import VendorPageHeader from "@/components/vendor-dashboard/VendorPageHeader";
+import { getServiceUrl } from "@/utils/serviceUrl";
 import { useVendorAuth } from "@/contexts/VendorAuthContext";
 import { useQuery } from "@apollo/client";
 import { GET_VENDOR_BY_ID, FIND_SERVICES_BY_VENDOR } from "@/graphql/queries";
@@ -310,7 +311,7 @@ const VendorServicesPage: React.FC = () => {
                           </Link>
 
                           <Link
-                            href={`/services/${service.id}`}
+                            href={getServiceUrl(service)}
                             className="inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-lightYellow dark:bg-darkElevated hover:bg-orange/10 dark:hover:bg-darkElevated/80 border border-orange/15 dark:border-zinc-700 text-gray-700 dark:text-zinc-300 text-xs font-semibold transition-all"
                             title="View public visitor page"
                           >

@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany, Index } from 'typeorm';
 import { VendorEntity } from './vendor.entity';
 import { ReviewEntity } from './review.entity';
 import { MyVendorsEntity } from './myVendors.entity';
@@ -9,6 +9,10 @@ import { ServiceMediaEntity } from './service-media.entity';
 export class ServiceEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string;
+
+    @Index({ unique: true })
+    @Column({ type: 'varchar', length: 200, unique: true, nullable: true })
+    slug: string;
 
     @Column({ type: 'varchar', length: 100 })
     name: string;
