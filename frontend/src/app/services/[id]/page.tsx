@@ -470,7 +470,7 @@ const Service: React.FC = () => {
               </div>
             </div>
             <Link
-              href={`/services/edit/${offering?.id}`}
+              href={`/services/edit/${offering?.slug || offering?.id}`}
               className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-orange hover:bg-orange/90 active:scale-[0.99] rounded-xl shadow-sm shadow-orange/20 transition-all whitespace-nowrap w-full sm:w-auto"
             >
               <FiEdit className="text-base" />
@@ -563,7 +563,7 @@ const Service: React.FC = () => {
                     </h2>
                     {isVendorsOffering && (
                       <Link
-                        href={`/services/edit/${offering?.id}?section=packages&action=add`}
+                        href={`/services/edit/${offering?.slug || offering?.id}?section=packages&action=add`}
                       >
                         <button className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-orange hover:bg-orange/90 active:scale-[0.99] rounded-xl shadow-sm shadow-orange/20 transition-all">
                           <FiPlus className="text-sm" />
@@ -652,7 +652,7 @@ const Service: React.FC = () => {
                                   return (
                                     <div className="w-full flex flex-col items-center gap-1.5">
                                       <Link
-                                        href={`/services/edit/${offering?.id}?section=packages&action=edit&packageId=${pkg.id}`}
+                                        href={`/services/edit/${offering?.slug || offering?.id}?section=packages&action=edit&packageId=${pkg.id}`}
                                         className="w-full py-2.5 px-4 rounded-xl font-semibold text-sm text-white bg-orange hover:bg-orange/90 active:scale-[0.99] shadow-sm shadow-orange/20 transition-all flex items-center justify-center gap-2"
                                       >
                                         <FiEdit className="text-base" />

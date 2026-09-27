@@ -89,6 +89,7 @@ export const UPDATE_SERVICE_PROFILE = gql`
   mutation UpdateService($id: String!, $input: UpdateServiceInput!) {
     updateService(id: $id, input: $input) {
       id
+      slug
       name
       category
       description

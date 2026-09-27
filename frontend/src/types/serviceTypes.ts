@@ -1,4 +1,6 @@
 export interface ProfileData {
+  name?: string;
+  slug?: string;
   category: string;
   businessPhone: string;
   businessEmail: string;

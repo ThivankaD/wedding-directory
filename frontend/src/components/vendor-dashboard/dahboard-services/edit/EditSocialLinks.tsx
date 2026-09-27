@@ -75,14 +75,16 @@ const EditSocialLinks: React.FC = () => {
     }));
   };
 
+  const targetId = serviceData?.id || id;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!id) return;
+    if (!targetId) return;
 
     try {
       await updateSocials({
         variables: {
-          id,
+          id: targetId,
           input: {
             website: form.website.trim(),
             x: form.x.trim(),

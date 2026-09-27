@@ -3,7 +3,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import { Switch } from "@/components/ui/switch";
 import toast from "react-hot-toast";
 import { useMutation, useQuery } from "@apollo/client";
-import { FIND_PACKAGES_BY_OFFERING } from "@/graphql/queries";
+import { FIND_PACKAGES_BY_OFFERING, FIND_SERVICE_BY_ID } from "@/graphql/queries";
 import {
   UPDATE_PACKAGE,
   DELETE_PACKAGE,
@@ -62,10 +62,17 @@ const EditPackages: React.FC = () => {
   const router = useRouter();
   const offeringId = params.id as string;
 
+  const { data: serviceData } = useQuery(FIND_SERVICE_BY_ID, {
+    variables: { id: offeringId },
+    skip: !offeringId,
+  });
+  const canonicalServiceId = serviceData?.findServiceById?.id || offeringId;
+  const currentSlugOrId = serviceData?.findServiceById?.slug || offeringId;
+
   const { loading, error, data, refetch } = useQuery(
     FIND_PACKAGES_BY_OFFERING,
     {
-      variables: { serviceId: offeringId },
+      variables: { serviceId: canonicalServiceId },
       fetchPolicy: "network-only",
     },
   );
@@ -84,7 +91,7 @@ const EditPackages: React.FC = () => {
     refetchQueries: [
       {
         query: FIND_PACKAGES_BY_OFFERING,
-        variables: { serviceId: offeringId },
+        variables: { serviceId: canonicalServiceId },
       },
     ],
   });
@@ -92,7 +99,7 @@ const EditPackages: React.FC = () => {
     refetchQueries: [
       {
         query: FIND_PACKAGES_BY_OFFERING,
-        variables: { serviceId: offeringId },
+        variables: { serviceId: canonicalServiceId },
       },
     ],
   });
@@ -100,7 +107,7 @@ const EditPackages: React.FC = () => {
     refetchQueries: [
       {
         query: FIND_PACKAGES_BY_OFFERING,
-        variables: { serviceId: offeringId },
+        variables: { serviceId: canonicalServiceId },
       },
     ],
   });
@@ -114,7 +121,7 @@ const EditPackages: React.FC = () => {
       const packageId = searchParams.get("packageId");
 
       if (action === "add") {
-        setFormPackage(createEmptyPackage(offeringId, fetched.length));
+        setFormPackage(createEmptyPackage(canonicalServiceId, fetched.length));
         setViewMode("add");
       } else if (action === "edit" && packageId) {
         const target = fetched.find((p) => p.id === packageId);
@@ -127,11 +134,11 @@ const EditPackages: React.FC = () => {
         }
       }
     }
-  }, [data, searchParams, offeringId]);
+  }, [data, searchParams, canonicalServiceId]);
 
   // Handlers for switching views
   const handleOpenAdd = () => {
-    setFormPackage(createEmptyPackage(offeringId, packages.length));
+    setFormPackage(createEmptyPackage(canonicalServiceId, packages.length));
     setViewMode("add");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -147,7 +154,7 @@ const EditPackages: React.FC = () => {
 
   const handleBackToList = () => {
     setViewMode("list");
-    router.replace(`/services/edit/${offeringId}?section=packages`, {
+    router.replace(`/services/edit/${currentSlugOrId}?section=packages`, {
       scroll: false,
     });
   };
@@ -289,7 +296,7 @@ const EditPackages: React.FC = () => {
               requiresApproval: Boolean(formPackage.requiresApproval),
               image: formPackage.image || null,
             },
-            serviceId: offeringId,
+            serviceId: canonicalServiceId,
           },
         });
 
@@ -297,7 +304,7 @@ const EditPackages: React.FC = () => {
           toast.success("Package created successfully!");
           await refetch();
           setViewMode("list");
-          router.replace(`/services/edit/${offeringId}?section=packages`, {
+          router.replace(`/services/edit/${currentSlugOrId}?section=packages`, {
             scroll: false,
           });
         }
@@ -322,7 +329,7 @@ const EditPackages: React.FC = () => {
           toast.success("Package updated successfully!");
           await refetch();
           setViewMode("list");
-          router.replace(`/services/edit/${offeringId}?section=packages`, {
+          router.replace(`/services/edit/${currentSlugOrId}?section=packages`, {
             scroll: false,
           });
         }

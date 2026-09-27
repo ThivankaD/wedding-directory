@@ -61,12 +61,19 @@ export class ServiceService {
     return this.serviceRepository.findServicesByVendor(vendorId);
   }
 
+  private async findServiceEntity(idOrSlug: string): Promise<ServiceEntity | null> {
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(idOrSlug);
+    return this.serviceRepository.findOne({
+      where: isUuid ? { id: idOrSlug } : { slug: idOrSlug },
+    });
+  }
+
   async updateServiceBanner(
     id: string,
     fileUrl: string
   ): Promise<ServiceEntity> {
-    // Find the service by ID
-    const service = await this.serviceRepository.findOne({ where: { id } });
+    // Find the service by ID or slug
+    const service = await this.findServiceEntity(id);
     if (!service) {
       throw new Error("Service not found");
     }
@@ -80,7 +87,7 @@ export class ServiceService {
     fileUrls: string[],
     slotIndex?: number,
   ): Promise<ServiceEntity> {
-    const service = await this.serviceRepository.findOne({ where: { id } });
+    const service = await this.findServiceEntity(id);
     if (!service) {
       throw new Error("Service not found");
     }
@@ -88,7 +95,7 @@ export class ServiceService {
     // Read current photos directly from service_media (source of truth)
     const mediaRepo = this.dataSource.getRepository(ServiceMediaEntity);
     const existingPhotoRows = await mediaRepo.find({
-      where: { service: { id }, mediaType: 'photo' },
+      where: { service: { id: service.id }, mediaType: 'photo' },
       order: { slotIndex: 'ASC' },
     });
     const existingShowcaseImages = existingPhotoRows.map(r => r.url);
@@ -120,7 +127,7 @@ export class ServiceService {
     id: string,
     fileUrls: string[]
   ): Promise<ServiceEntity> {
-    const service = await this.serviceRepository.findOne({ where: { id } });
+    const service = await this.findServiceEntity(id);
     if (!service) {
       throw new Error("Service not found");
     }
@@ -128,7 +135,7 @@ export class ServiceService {
     // Read current videos directly from service_media (source of truth)
     const mediaRepo = this.dataSource.getRepository(ServiceMediaEntity);
     const existingVideoRows = await mediaRepo.find({
-      where: { service: { id }, mediaType: 'video' },
+      where: { service: { id: service.id }, mediaType: 'video' },
       order: { slotIndex: 'ASC' },
     });
     const updatedVideos = [...existingVideoRows.map(r => r.url), ...fileUrls];
@@ -140,7 +147,7 @@ export class ServiceService {
   }
 
   async deleteServiceBanner(id: string): Promise<boolean> {
-    const service = await this.serviceRepository.findOne({ where: { id } });
+    const service = await this.findServiceEntity(id);
     if (!service) {
       throw new NotFoundException(`Service with ID ${id} not found`);
     }
@@ -158,7 +165,7 @@ export class ServiceService {
     id: string,
     index: number
   ): Promise<boolean> {
-    const service = await this.serviceRepository.findOne({ where: { id } });
+    const service = await this.findServiceEntity(id);
     if (!service) {
       throw new NotFoundException(`Service with ID ${id} not found`);
     }
@@ -167,7 +174,7 @@ export class ServiceService {
       // Read from service_media (source of truth)
       const mediaRepo = this.dataSource.getRepository(ServiceMediaEntity);
       const existingPhotoRows = await mediaRepo.find({
-        where: { service: { id }, mediaType: 'photo' },
+        where: { service: { id: service.id }, mediaType: 'photo' },
         order: { slotIndex: 'ASC' },
       });
       const photos = existingPhotoRows.map(r => r.url);
@@ -188,7 +195,7 @@ export class ServiceService {
   }
 
   async deleteServiceVideo(id: string): Promise<boolean> {
-    const service = await this.serviceRepository.findOne({ where: { id } });
+    const service = await this.findServiceEntity(id);
     if (!service) {
       throw new NotFoundException(`Service with ID ${id} not found`);
     }

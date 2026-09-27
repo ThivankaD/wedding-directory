@@ -88,10 +88,12 @@ const EditPortfolio: React.FC = () => {
   if (loading) return <MediaSkeleton />;
   if (error) return <p className="p-4 text-red-500">Error: {error.message}</p>;
 
+  const targetId = portfolio?.id || id;
+
   // Handle Banner File Selection & Auto-upload
   const handleBannerChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file || !id) return;
+    if (!file || !targetId) return;
 
     const previewUrl = URL.createObjectURL(file);
     setBannerPreview(previewUrl);
@@ -99,7 +101,7 @@ const EditPortfolio: React.FC = () => {
     setIsBannerUploading(true);
 
     try {
-      await uploadOfferingBanner(file, id);
+      await uploadOfferingBanner(file, targetId);
       await refetchPortfolio();
       setBannerFile(null);
       toast.success("Banner updated successfully!");
@@ -113,10 +115,10 @@ const EditPortfolio: React.FC = () => {
 
   // Handle Save Banner
   const handleSaveBanner = async () => {
-    if (!bannerFile || !id) return;
+    if (!bannerFile || !targetId) return;
     setIsBannerUploading(true);
     try {
-      await uploadOfferingBanner(bannerFile, id);
+      await uploadOfferingBanner(bannerFile, targetId);
       await refetchPortfolio();
       setBannerFile(null);
       toast.success("Banner saved successfully!");
@@ -132,7 +134,7 @@ const EditPortfolio: React.FC = () => {
   const handleShowcaseChange =
     (index: number) => async (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
-      if (!file || !id) return;
+      if (!file || !targetId) return;
 
       const newPreviews = [...showcasePreviews];
       newPreviews[index] = URL.createObjectURL(file);
@@ -140,7 +142,7 @@ const EditPortfolio: React.FC = () => {
       setUploadingSlot(index);
 
       try {
-        await uploadOfferingImageShowcase([file], id, index);
+        await uploadOfferingImageShowcase([file], targetId, index);
         await refetchPortfolio();
         toast.success(`Image ${index + 1} uploaded successfully!`);
       } catch (err) {
@@ -155,7 +157,7 @@ const EditPortfolio: React.FC = () => {
   // Handle Video File Selection
   const handleVideoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file || !id) return;
+    if (!file || !targetId) return;
 
     const previewUrl = URL.createObjectURL(file);
     setVideoPreview(previewUrl);
@@ -163,7 +165,7 @@ const EditPortfolio: React.FC = () => {
     setIsVideoUploading(true);
 
     try {
-      await uploadOfferingVideoShowcase([file], id);
+      await uploadOfferingVideoShowcase([file], targetId);
       await refetchPortfolio();
       setVideoFile(null);
       toast.success("Video uploaded successfully!");
@@ -176,10 +178,10 @@ const EditPortfolio: React.FC = () => {
   };
 
   const handleSaveVideo = async () => {
-    if (!videoFile || !id) return;
+    if (!videoFile || !targetId) return;
     setIsVideoUploading(true);
     try {
-      await uploadOfferingVideoShowcase([videoFile], id);
+      await uploadOfferingVideoShowcase([videoFile], targetId);
       await refetchPortfolio();
       setVideoFile(null);
       toast.success("Video saved successfully!");
@@ -194,10 +196,10 @@ const EditPortfolio: React.FC = () => {
   // Handle Delete Showcase Image
   const handleDeleteShowcase = async (index: number, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
-    if (!id) return;
+    if (!targetId) return;
     try {
       await deleteShowcaseImage({
-        variables: { id, index },
+        variables: { id: targetId, index },
       });
       await refetchPortfolio();
       toast.success("Image removed successfully!");
@@ -210,10 +212,10 @@ const EditPortfolio: React.FC = () => {
   // Handle Delete Banner
   const handleDeleteBanner = async (e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
-    if (!id) return;
+    if (!targetId) return;
     try {
       await deleteBannerImage({
-        variables: { id },
+        variables: { id: targetId },
       });
       await refetchPortfolio();
       setBannerPreview(null);
@@ -228,10 +230,10 @@ const EditPortfolio: React.FC = () => {
   // Handle Delete Video
   const handleDeleteVideo = async (e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
-    if (!id) return;
+    if (!targetId) return;
     try {
       await deleteShowcaseVideo({
-        variables: { id },
+        variables: { id: targetId },
       });
       await refetchPortfolio();
       setVideoPreview(null);
