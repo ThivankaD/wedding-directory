@@ -40,11 +40,17 @@ export class SanitizePayloadInterceptor implements NestInterceptor {
   private deepSanitize(target: any, keyName = ''): any {
     if (target === null || target === undefined) return target;
 
-    // Do NOT alter password / token / secret strings
+    // Separate password cap (prevent bcrypt CPU exhaustion) vs tokens (JWTs / OAuth tokens can be several KB)
+    if (keyName && /password/i.test(keyName)) {
+      if (typeof target === 'string' && target.length > 256) {
+        return target.slice(0, 256);
+      }
+      return target;
+    }
+
     if (keyName && SENSITIVE_KEY_REGEX.test(keyName)) {
-      if (typeof target === 'string' && target.length > 1024) {
-        // Safe cap for tokens/passwords to prevent bcrypt DoS
-        return target.slice(0, 1024);
+      if (typeof target === 'string' && target.length > HARD_SAFETY_CEILING) {
+        return target.slice(0, HARD_SAFETY_CEILING);
       }
       return target;
     }
