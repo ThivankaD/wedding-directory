@@ -50,7 +50,7 @@ export const POSTS_QUERY = `*[_type == "post" && defined(slug.current)] | order(
   excerpt
 }`;
 
-export const POST_BY_SLUG_QUERY = `*[_type == "post" && slug.current == $slug][0] {
+export const POST_BY_SLUG_QUERY = `*[_type == "post" && (slug.current == $slug || slug.current == $decodedSlug || slug.current == $encodedSlug)][0] {
   _id,
   title,
   "slug": slug.current,
@@ -95,17 +95,19 @@ export async function getBlogPosts(categorySlug?: string): Promise<SanityPost[]>
   return [];
 }
 
-export async function getBlogPostBySlug(slug: string): Promise<SanityPost | null> {
+export async function getBlogPostBySlug(rawSlug: string): Promise<SanityPost | null> {
   if (isSanityConfigured && client) {
     try {
+      const decodedSlug = decodeURIComponent(rawSlug);
+      const encodedSlug = encodeURIComponent(rawSlug);
       const post = await client.fetch<SanityPost | null>(
         POST_BY_SLUG_QUERY,
-        { slug },
-        { next: { revalidate: 60, tags: [`post-${slug}`] } }
+        { slug: rawSlug, decodedSlug, encodedSlug },
+        { next: { revalidate: 60, tags: [`post-${rawSlug}`] } }
       );
       if (post) return post;
     } catch (err) {
-      console.warn(`Sanity fetch for slug ${slug} failed:`, err);
+      console.warn(`Sanity fetch for slug ${rawSlug} failed:`, err);
     }
   }
 
