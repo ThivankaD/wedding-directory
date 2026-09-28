@@ -5,8 +5,7 @@ export const dataset =
   process.env.NEXT_PUBLIC_SANITY_DATASET || "production";
 
 export const projectId =
-  process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || "demo-project-id";
+  process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || "mvs919rt";
 
 export const isSanityConfigured =
-  Boolean(process.env.NEXT_PUBLIC_SANITY_PROJECT_ID) &&
-  process.env.NEXT_PUBLIC_SANITY_PROJECT_ID !== "demo-project-id";
+  Boolean(projectId) && projectId !== "demo-project-id";
