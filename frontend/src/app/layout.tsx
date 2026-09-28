@@ -184,6 +184,7 @@ export default function RootLayout({
                   var isDashboard = path === '/' ||
                     path.indexOf('/visitor-') === 0 ||
                     path.indexOf('/vendor-') === 0 ||
+                    path.indexOf('/vendors') === 0 ||
                     path.indexOf('/guest-list') === 0 ||
                     path.indexOf('/services') === 0 ||
                     path.indexOf('/login') === 0 ||

@@ -816,6 +816,7 @@ export const FIND_VENDOR_BY_SLUG = gql`
       city
       about
       phone
+      email
       profile_pic_url
       createdAt
     }

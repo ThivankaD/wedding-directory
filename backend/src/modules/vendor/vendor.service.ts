@@ -57,14 +57,42 @@ export class VendorService {
     if (!id) {
       throw new Error('Invalid ID');
     }
-    return this.vendorRepository.findVendorById(id);
+    const vendor = await this.vendorRepository.findVendorById(id);
+    if (vendor && !vendor.slug && vendor.busname) {
+      const generatedSlug = await this.generateUniqueVendorSlug(vendor.busname, vendor.id);
+      await this.vendorRepository.update(vendor.id, { slug: generatedSlug });
+      vendor.slug = generatedSlug;
+    }
+    return vendor;
   }
 
   async findVendorBySlug(slug: string): Promise<VendorEntity | null> {
     if (!slug) {
       throw new Error('Invalid slug');
     }
-    return this.vendorRepository.findVendorBySlug(slug);
+    const cleanSlug = slug.trim().toLowerCase();
+    // Try exact or case-insensitive slug lookup
+    let vendor = await this.vendorRepository
+      .createQueryBuilder('vendor')
+      .leftJoinAndSelect('vendor.service', 'service')
+      .where('LOWER(vendor.slug) = :slug', { slug: cleanSlug })
+      .getOne();
+
+    if (!vendor) {
+      // Fallback: check all vendors that might not have a slug yet or match slugified busname
+      const allVendors = await this.vendorRepository.find({ relations: ['service'] });
+      for (const v of allVendors) {
+        if (v.busname && slugify(v.busname) === cleanSlug) {
+          if (!v.slug) {
+            const generatedSlug = await this.generateUniqueVendorSlug(v.busname, v.id);
+            await this.vendorRepository.update(v.id, { slug: generatedSlug });
+            v.slug = generatedSlug;
+          }
+          return v;
+        }
+      }
+    }
+    return vendor;
   }
 
   async deleteVendor(id: string): Promise<void> {
@@ -147,6 +175,13 @@ export class VendorService {
 
     // Remove currentPassword so TypeORM doesn't attempt to update a non-existent column
     delete updateVendorInput.currentPassword;
+
+    if (updateVendorInput.busname) {
+      const existingVendor = await this.vendorRepository.findOne({ where: { id } });
+      if (existingVendor && (!existingVendor.slug || existingVendor.busname !== updateVendorInput.busname)) {
+        (updateVendorInput as any).slug = await this.generateUniqueVendorSlug(updateVendorInput.busname, id);
+      }
+    }
 
     await this.vendorRepository.update(id, updateVendorInput);
     return this.vendorRepository.findOne({ where: { id } });
