@@ -18,14 +18,16 @@ function PaymentPendingSkeleton() {
   );
 }
 
-export default function PaymentPendingPage({
+export default async function PaymentPendingPage({
   searchParams,
 }: {
-  searchParams?: { order_id?: string | string[] };
+  searchParams?: Promise<{ order_id?: string | string[] }>;
 }) {
+  const resolvedSearchParams = await searchParams;
+
   return (
     <Suspense fallback={<PaymentPendingSkeleton />}>
-      <PaymentSuccess searchParams={searchParams} />
+      <PaymentSuccess searchParams={resolvedSearchParams} />
     </Suspense>
   );
 }

@@ -37,7 +37,7 @@ const visitorAuthRoutes = ["/visitor-login", "/visitor-signup"];
 const vendorAuthRoutes = ["/login", "/sign-up"];
 
 // Middleware to handle role-based authentication redirection
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Allow access to public routes

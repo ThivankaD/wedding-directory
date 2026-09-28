@@ -3,12 +3,13 @@ import { getBlogPostBySlug } from "@/sanity/client";
 import { urlForImage } from "@/sanity/image";
 
 interface Props {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
   children: React.ReactNode;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const rawSlug = params?.slug || "";
+  const resolvedParams = await params;
+  const rawSlug = resolvedParams?.slug || "";
   const slug = rawSlug ? decodeURIComponent(rawSlug) : "";
   const post = await getBlogPostBySlug(slug);
 
