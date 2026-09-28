@@ -114,8 +114,8 @@ const GeneralHeader = () => {
               {/* Navigation Links */}
               {[
                 { name: "home", path: "/" },
-                { name: "blog", path: "/blog" },
                 { name: "services", path: "/services" },
+                { name: "blog", path: "/blog" },
                 { name: "about", path: "/about" },
                 { name: "contact", path: "/contact" },
                 { name: "help", path: "/help" },
