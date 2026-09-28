@@ -16,7 +16,7 @@ const HelpPage: React.FC = () => {
     <div className="min-h-screen flex flex-col bg-lightYellow dark:bg-darkBg text-gray-900 dark:text-zinc-100 font-body transition-colors duration-200">
       <Header />
       <Suspense fallback={<HelpCenterSkeleton />}>
-        <HelpCenter />
+        <HelpCenter isPublic={true} />
       </Suspense>
       <Footer />
     </div>

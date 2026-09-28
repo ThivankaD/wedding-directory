@@ -229,9 +229,10 @@ const VISITOR_FAQS: FAQItem[] = [
 
 interface HelpCenterProps {
   initialRole?: "vendor" | "visitor";
+  isPublic?: boolean;
 }
 
-export const HelpCenter: React.FC<HelpCenterProps> = ({ initialRole }) => {
+export const HelpCenter: React.FC<HelpCenterProps> = ({ initialRole, isPublic }) => {
   const searchParams = useSearchParams();
   const { vendor } = useVendorAuth();
   const { visitor } = useVisitorAuth();
@@ -311,17 +312,19 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ initialRole }) => {
   return (
     <div className="flex-grow flex flex-col font-body">
       <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 w-full">
-        {/* Minimized Header Banner */}
-        <div className="mb-6 pb-4 border-b border-orange/15 dark:border-zinc-800">
-          <h1 className="font-title text-2xl sm:text-3xl font-bold text-gray-900 dark:text-zinc-100">
-            {activeRole === "vendor" ? "Vendor Help & Support" : "Couple Help & Support"}
-          </h1>
-          <p className="text-gray-500 dark:text-zinc-400 font-body text-xs sm:text-sm mt-1 max-w-2xl">
-            {activeRole === "vendor"
-              ? "Everything you need to know about managing your storefront, services, booking calendar, payments, and client communications."
-              : "Find answers and guidance for finding the best vendors, planning your wedding budget, managing your guest list, and booking securely."}
-          </p>
-        </div>
+        {/* Minimized Header Banner (hidden on public site) */}
+        {!isPublic && (
+          <div className="mb-6 pb-4 border-b border-orange/15 dark:border-zinc-800">
+            <h1 className="font-title text-2xl sm:text-3xl font-bold text-gray-900 dark:text-zinc-100">
+              {activeRole === "vendor" ? "Vendor Help & Support" : "Couple Help & Support"}
+            </h1>
+            <p className="text-gray-500 dark:text-zinc-400 font-body text-xs sm:text-sm mt-1 max-w-2xl">
+              {activeRole === "vendor"
+                ? "Everything you need to know about managing your storefront, services, booking calendar, payments, and client communications."
+                : "Find answers and guidance for finding the best vendors, planning your wedding budget, managing your guest list, and booking securely."}
+            </p>
+          </div>
+        )}
 
         {/* Search Bar Card */}
         <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-orange/20 dark:border-zinc-800 p-5 sm:p-6 mb-6">
