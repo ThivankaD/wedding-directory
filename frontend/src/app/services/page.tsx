@@ -437,6 +437,8 @@ const ServicesSearchContent: React.FC = () => {
                       id={offering.id}
                       name={offering.name}
                       vendor={offering.vendor?.busname || "N/A"}
+                      vendorId={offering.vendor?.id}
+                      vendorSlug={offering.vendor?.slug}
                       city={offering.vendor?.city || "N/A"}
                       banner={
                         offering.banner || "/images/offeringPlaceholder.webp"

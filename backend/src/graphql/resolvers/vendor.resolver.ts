@@ -1,4 +1,4 @@
-﻿import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { VendorModel } from '../models/vendor.model';
 import { VendorEntity } from '../../database/entities/vendor.entity';
 import { VendorService } from '../../modules/vendor/vendor.service';
@@ -19,6 +19,13 @@ export class VendorResolver {
   @Query(() => [VendorModel])
   async findAllVendors(): Promise<VendorEntity[]> {
     return this.vendorService.findAllVendors();
+  }
+
+  @Query(() => VendorModel, { nullable: true })
+  async findVendorBySlug(
+    @Args('slug', { type: () => String }) slug: string,
+  ): Promise<VendorEntity | null> {
+    return this.vendorService.findVendorBySlug(slug);
   }
 
   @Query(() => [String])
@@ -73,5 +80,11 @@ export class VendorResolver {
   ): Promise<boolean> {
     await this.vendorService.registerPushToken(vendorId, pushToken);
     return true;
+  }
+
+  /** One-time mutation: backfill slugs for all vendors that have none. Returns count updated. */
+  @Mutation(() => Number)
+  async backfillVendorSlugs(): Promise<number> {
+    return this.vendorService.backfillVendorSlugs();
   }
 }

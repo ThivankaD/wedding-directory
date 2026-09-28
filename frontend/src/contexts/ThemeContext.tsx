@@ -32,6 +32,7 @@ export const isDashboardRoute = (pathname: string | null): boolean => {
     pathname === "/" ||
     pathname.startsWith("/visitor-") ||
     pathname.startsWith("/vendor-") ||
+    pathname.startsWith("/vendors") ||
     pathname.startsWith("/guest-list") ||
     pathname.startsWith("/services") ||
     pathname.startsWith("/login") ||

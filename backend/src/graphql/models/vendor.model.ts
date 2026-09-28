@@ -21,6 +21,9 @@ export class VendorModel {
   @Field()
   busname: string;
 
+  @Field({ nullable: true })
+  slug: string;
+
   @Field()
   city: string;
 
