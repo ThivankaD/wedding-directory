@@ -149,18 +149,24 @@ const BlogList: React.FC = () => {
         <div className="bg-white dark:bg-darkSurface rounded-2xl p-12 text-center shadow-sm border border-gray-100 dark:border-zinc-800 my-8">
           <div className="text-5xl mb-4">✍️</div>
           <h3 className="text-xl font-bold font-title text-gray-900 dark:text-zinc-100 mb-2">
-            No articles found in this category
+            {allPosts.length === 0
+              ? "There are no blogs yet"
+              : "No articles found in this category"}
           </h3>
-          <p className="text-gray-500 dark:text-zinc-400 mb-6 font-body text-sm">
-            Check back soon or select another category above for wedding inspiration and tips.
+          <p className="text-gray-500 dark:text-zinc-400 mb-6 font-body text-sm max-w-md mx-auto">
+            {allPosts.length === 0
+              ? "Check back soon for wedding guides, expert tips, and inspiration."
+              : "Check back soon or select another category above for wedding inspiration and tips."}
           </p>
-          <button
-            type="button"
-            onClick={() => setSelectedCategory("all")}
-            className="px-4 py-2 bg-orange text-white rounded-xl text-sm font-semibold hover:bg-orange/90 transition-colors cursor-pointer"
-          >
-            Show All Articles
-          </button>
+          {allPosts.length > 0 && selectedCategory !== "all" && (
+            <button
+              type="button"
+              onClick={() => setSelectedCategory("all")}
+              className="px-4 py-2 bg-orange text-white rounded-xl text-sm font-semibold hover:bg-orange/90 transition-colors cursor-pointer"
+            >
+              Show All Articles
+            </button>
+          )}
         </div>
       )}
     </section>
