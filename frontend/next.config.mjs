@@ -1,3 +1,8 @@
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   async rewrites() {
@@ -61,7 +66,7 @@ const nextConfig = {
     ],
   },
   turbopack: {
-    root: ".",
+    root: __dirname,
   },
   output: "standalone",
   typescript: {

@@ -49,6 +49,7 @@ const PlanningSteps = () => {
                 alt="Wedding Planning"
                 className="object-cover"
                 fill
+                sizes="(max-width: 1024px) 100vw, 360px"
               />
             </div>
           </div>
@@ -66,6 +67,7 @@ const PlanningSteps = () => {
                     alt={card.title}
                     className="object-cover"
                     fill
+                    sizes="(max-width: 640px) 64px, 80px"
                   />
                 </div>
                 <div className="flex flex-col text-left flex-1 min-w-0">
