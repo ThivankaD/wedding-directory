@@ -1,4 +1,4 @@
-﻿import { Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { ConfigModule } from '@nestjs/config';
@@ -62,7 +62,6 @@ import { PackageApprovalModule } from './modules/package-approval/package-approv
     UploadModule,
     BudgetToolModule,
     BudgetItemModule,
-    UploadModule,
     ChecklistModule,
     MyVendorsModule,
     ReviewModule,

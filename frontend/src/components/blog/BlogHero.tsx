@@ -1,30 +1,29 @@
 import React from "react";
 import Link from "next/link";
+import { FiArrowDown } from "react-icons/fi";
 
 const BlogHero: React.FC = () => {
   return (
-    <div className="relative bg-orange/10 dark:bg-orange/5 rounded-3xl overflow-hidden mb-8 sm:mb-12 md:mb-16 border border-orange/15 dark:border-zinc-800 shadow-inner">
-      <div className="absolute inset-0 z-0 opacity-20">
+    <div className="relative bg-orange/10 dark:bg-orange/5 rounded-2xl overflow-hidden mb-6 sm:mb-8 border border-orange/15 dark:border-zinc-800 shadow-xs">
+      <div className="absolute inset-0 z-0 opacity-20 pointer-events-none">
         <div className="absolute inset-0 bg-[url('/images/blog-pattern.png')] bg-repeat bg-center"></div>
       </div>
       
-      <div className="relative z-10 px-4 sm:px-6 py-10 sm:py-16 md:py-20 max-w-4xl mx-auto text-center">
-        <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-title font-bold text-gray-900 dark:text-zinc-100 mb-3 sm:mb-6 tracking-tight">
+      <div className="relative z-10 px-4 sm:px-6 py-6 sm:py-8 md:py-9 max-w-3xl mx-auto text-center">
+        <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-title font-bold text-gray-900 dark:text-zinc-100 mb-2 sm:mb-3 tracking-tight">
           Wedding Inspiration <span className="text-orange">&</span> Expert Advice
         </h1>
-        <p className="text-sm sm:text-base md:text-lg text-gray-700 dark:text-zinc-300 mb-6 sm:mb-8 max-w-2xl mx-auto font-light leading-relaxed">
+        <p className="text-xs sm:text-sm md:text-base text-gray-600 dark:text-zinc-300 mb-4 sm:mb-5 max-w-xl mx-auto font-body leading-relaxed">
           Explore curated bridal trends, venue guides, budgeting breakdowns, and planning tips from industry professionals.
         </p>
         
         <div className="flex justify-center">
           <Link
             href="#expert-articles"
-            className="px-8 py-3.5 bg-orange text-white rounded-full font-semibold hover:bg-orange-600 transition-all shadow-md hover:shadow-orange/30 text-center text-sm sm:text-base inline-flex items-center gap-2"
+            className="px-5 py-2 sm:py-2.5 bg-orange hover:bg-orange/90 text-white rounded-xl font-semibold text-xs sm:text-sm inline-flex items-center gap-2 transition-all shadow-xs active:scale-[0.98]"
           >
             <span>Explore Articles</span>
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-            </svg>
+            <FiArrowDown className="text-sm" />
           </Link>
         </div>
       </div>
