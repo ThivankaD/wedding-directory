@@ -137,12 +137,25 @@ const marckScriptFont = localFont({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://sayido.lk"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://sayido.lk"),
   title: {
-    default: "Say I Do",
+    default: "Say I Do | Sri Lanka's Premier Wedding Directory & Planning Platform",
     template: "%s | Say I Do",
   },
-  description: "Your central hub for all things wedding",
+  description:
+    "Plan your dream wedding in Sri Lanka with Say I Do. Discover verified venues, photographers, florists, bridal styling, decor, budgeting tools, and more.",
+  keywords: [
+    "wedding directory Sri Lanka",
+    "wedding vendors Sri Lanka",
+    "wedding venues Colombo",
+    "wedding photographers Sri Lanka",
+    "bridal dressing",
+    "wedding planner Sri Lanka",
+    "Say I Do",
+  ],
+  authors: [{ name: "Say I Do" }],
+  creator: "Say I Do",
+  publisher: "Say I Do",
   icons: {
     icon: "/favicon.ico",
   },
@@ -153,17 +166,25 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://sayido.lk",
-    title: "Say I Do",
-    description: "Your central hub for all things wedding-related",
     siteName: "Say I Do",
+    title: "Say I Do | Sri Lanka's Premier Wedding Directory & Planning Platform",
+    description:
+      "Find and book the finest wedding vendors in Sri Lanka — venues, photographers, bridal styling, decor, budgeting tools, and more.",
     images: [
       {
         url: "/images/hero.webp",
         width: 1200,
         height: 630,
-        alt: "Say I Do - Your central hub for all things wedding-related",
+        alt: "Say I Do - Sri Lanka Wedding Directory",
       },
     ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Say I Do | Sri Lanka's Premier Wedding Directory",
+    description:
+      "Plan your dream wedding in Sri Lanka with Say I Do. Discover verified venues, photographers, bridal styling, and wedding planning tools.",
+    images: ["/images/hero.webp"],
   },
 };
 
