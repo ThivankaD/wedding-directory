@@ -14,6 +14,9 @@ interface OfferingProps {
   id?: string;
   name: string;
   vendor: string;
+  vendorId?: string;
+  vendorSlug?: string | null;
+  hideVendor?: boolean;
   city: string;
   rating?: number;
   banner: string;
@@ -27,6 +30,9 @@ const OfferingCard: React.FC<OfferingProps> = ({
   id,
   name,
   vendor,
+  vendorId,
+  vendorSlug,
+  hideVendor = false,
   city,
   rating = 0,
   banner,
@@ -154,9 +160,12 @@ const OfferingCard: React.FC<OfferingProps> = ({
         </div>
 
         <div className="flex flex-col mb-3 flex-1">
-          <h3 className="font-title text-lg font-bold text-gray-900 dark:text-zinc-100 mb-1 line-clamp-1 group-hover:text-orange transition-colors">
+          <Link
+            href={link}
+            className="font-title text-lg font-bold text-gray-900 dark:text-zinc-100 mb-1 line-clamp-1 hover:text-orange transition-colors"
+          >
             {name}
-          </h3>
+          </Link>
           <div className="flex items-center gap-1 mb-1.5">
             <div className="flex items-center text-sm">
               {renderStars(numericRating)}
@@ -165,9 +174,21 @@ const OfferingCard: React.FC<OfferingProps> = ({
               ({numericRating.toFixed(1)})
             </span>
           </div>
-          <p className="text-gray-700 dark:text-zinc-300 text-sm font-medium font-body truncate">
-            {vendor}
-          </p>
+          {!hideVendor && (
+            (vendorId || vendorSlug) ? (
+              <Link
+                href={`/vendors/${vendorSlug || vendorId}`}
+                onClick={(e) => e.stopPropagation()}
+                className="text-gray-700 dark:text-zinc-300 text-sm font-medium font-body truncate hover:text-orange dark:hover:text-orange transition-colors underline-offset-2 hover:underline"
+              >
+                {vendor}
+              </Link>
+            ) : (
+              <p className="text-gray-700 dark:text-zinc-300 text-sm font-medium font-body truncate">
+                {vendor}
+              </p>
+            )
+          )}
           <p className="text-gray-400 dark:text-zinc-500 text-xs mt-0.5 font-body">
             {city}
           </p>

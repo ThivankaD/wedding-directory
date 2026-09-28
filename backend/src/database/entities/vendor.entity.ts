@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  Index,
 } from 'typeorm';
 import { ServiceEntity } from './service.entity';
 import { PaymentEntity } from './payment.entity';
@@ -36,6 +37,10 @@ export class VendorEntity {
 
   @Column({ name: 'business_name', type: 'varchar', length: 50 })
   busname: string;
+
+  @Index({ unique: true })
+  @Column({ type: 'varchar', length: 200, unique: true, nullable: true })
+  slug: string;
 
   @Column({ type: 'varchar', length: 12 })
   phone: string;

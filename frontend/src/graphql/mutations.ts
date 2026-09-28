@@ -443,3 +443,9 @@ export const DELETE_SERVICE = gql`
   }
 `;
 export const DELETE_OFFERING = DELETE_SERVICE;
+
+export const BACKFILL_VENDOR_SLUGS = gql`
+  mutation BackfillVendorSlugs {
+    backfillVendorSlugs
+  }
+`;

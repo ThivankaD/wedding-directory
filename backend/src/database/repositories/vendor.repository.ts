@@ -1,4 +1,4 @@
-﻿import { DataSource } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { VendorEntity } from '../entities/vendor.entity';
 import { VendorRepositoryType } from 'src/database/types/vendorTypes';
 
@@ -9,6 +9,10 @@ export const VendorRepository = (
   dataSource.getRepository(VendorEntity).extend({
     findVendorById(id: string): Promise<VendorEntity | null> {
       return this.findOne({ where: { id }, relations: ['service'] });
+    },
+
+    findVendorBySlug(slug: string): Promise<VendorEntity | null> {
+      return this.findOne({ where: { slug }, relations: ['service'] });
     },
 
     findAllVendors(): Promise<VendorEntity[]> {

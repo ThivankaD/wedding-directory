@@ -32,6 +32,7 @@ interface Review {
 
 export interface Offering {
     id: string;
+    slug?: string | null;
     name: string;
     category: string;
     visible: boolean;
@@ -46,6 +47,7 @@ export interface Offering {
     longitude?: number;
     vendor: {
         id: string;
+        slug?: string | null;
         busname: string;
         city: string;
         phone: string;

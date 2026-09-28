@@ -42,6 +42,7 @@ export const FIND_SERVICES = gql`
             }
             vendor {
                 id
+                slug
                 busname
                 city
                 phone
@@ -75,6 +76,7 @@ export const FIND_SERVICE_BY_ID = gql`
       longitude
       vendor {
         id
+        slug
         busname
         city
         about
@@ -130,6 +132,7 @@ export const FIND_SERVICES_BY_VENDOR = gql`
       }
       vendor {
         id
+        slug
         busname
         city
       }
@@ -161,6 +164,7 @@ export const GET_VENDOR_BY_ID = gql`
   query GetVendorById($id: String!) {
     findVendorById(id: $id) {
       id
+      slug
       email
       fname
       lname
@@ -800,3 +804,46 @@ export const CHECK_REVIEW_ELIGIBILITY = gql`
     }
   }
 `;
+
+export const FIND_VENDOR_BY_SLUG = gql`
+  query FindVendorBySlug($slug: String!) {
+    findVendorBySlug(slug: $slug) {
+      id
+      slug
+      fname
+      lname
+      busname
+      city
+      about
+      phone
+      profile_pic_url
+      createdAt
+    }
+  }
+`;
+
+export const FIND_VENDOR_SERVICES_BY_ID = gql`
+  query FindServicesByVendorPublic($id: String!) {
+    findServicesByVendor(id: $id) {
+      id
+      slug
+      name
+      category
+      description
+      banner
+      city
+      location
+      visible
+      reviews {
+        rating
+      }
+      vendor {
+        id
+        slug
+        busname
+        city
+      }
+    }
+  }
+`;
+

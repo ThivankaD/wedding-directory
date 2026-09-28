@@ -485,9 +485,12 @@ const Service: React.FC = () => {
             <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 p-6 mb-4">
               <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                 <div className="flex-1">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-orange bg-orange/10 px-2.5 py-1 rounded-md inline-block mb-2">
+                  <Link
+                    href={`/vendors/${offering?.vendor?.slug || offering?.vendor?.id}`}
+                    className="text-xs font-semibold uppercase tracking-wider text-orange bg-orange/10 px-2.5 py-1 rounded-md inline-block mb-2 hover:bg-orange/20 transition-colors"
+                  >
                     {offering?.vendor.busname || "Vendor name not available"}
-                  </span>
+                  </Link>
                   <div className="flex items-center gap-3 flex-wrap">
                     <h1 className="text-3xl font-title font-bold text-gray-900 dark:text-zinc-100">
                       {offering?.name}
