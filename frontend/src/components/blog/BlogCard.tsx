@@ -32,6 +32,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ post }) => {
 
   const title = post.title || post.Title || "Wedding Planning Article";
   const slug = post.slug || post.Slug || "";
+  const encodedSlug = encodeURIComponent(slug);
   const author = post.author || post.Author || "Wedding Expert";
   const publishedDate = post.publishedAt || post.createdAt || new Date().toISOString();
   const categoryTitle = post.category?.title;
@@ -97,7 +98,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ post }) => {
           </p>
 
           <h2 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 font-title text-gray-900 dark:text-zinc-100 line-clamp-2 group-hover:text-orange transition-colors">
-            <Link href={`/blog/${slug}`}>
+            <Link href={`/blog/${encodedSlug}`}>
               {title}
             </Link>
           </h2>
@@ -112,7 +113,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ post }) => {
             By {author}
           </span>
           <Link
-            href={`/blog/${slug}`}
+            href={`/blog/${encodedSlug}`}
             className="text-orange hover:text-orange/80 transition-colors font-semibold text-xs sm:text-sm flex items-center group/btn"
           >
             Read More

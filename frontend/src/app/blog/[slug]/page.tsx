@@ -14,7 +14,8 @@ import { urlForImage } from "@/sanity/image";
 
 export default function BlogPostPage() {
   const params = useParams();
-  const slug = params?.slug as string;
+  const rawSlug = (params?.slug as string) || "";
+  const slug = rawSlug ? decodeURIComponent(rawSlug) : "";
   const [post, setPost] = useState<SanityPost | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);

@@ -18,6 +18,14 @@ export const post = defineType({
       options: {
         source: "title",
         maxLength: 96,
+        slugify: (input) =>
+          input
+            .toLowerCase()
+            .trim()
+            .replace(/[^\w\s-]/g, "")
+            .replace(/[\s_-]+/g, "-")
+            .replace(/^-+|-+$/g, "")
+            .slice(0, 96),
       },
       validation: (rule) => rule.required(),
     }),
