@@ -60,11 +60,10 @@ const nextConfig = {
       },
     ],
   },
-  optimizeFonts: false,
-  output: "standalone",
-  eslint: {
-    ignoreDuringBuilds: true,
+  turbopack: {
+    root: ".",
   },
+  output: "standalone",
   typescript: {
     ignoreBuildErrors: true,
   },

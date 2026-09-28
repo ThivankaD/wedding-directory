@@ -31,14 +31,16 @@ function PaymentSuccessSkeleton() {
   );
 }
 
-export default function SuccessPage({
+export default async function SuccessPage({
   searchParams,
 }: {
-  searchParams?: { order_id?: string | string[]; session_id?: string | string[] };
+  searchParams?: Promise<{ order_id?: string | string[]; session_id?: string | string[] }>;
 }) {
+  const resolvedSearchParams = await searchParams;
+
   return (
     <Suspense fallback={<PaymentSuccessSkeleton />}>
-      <PaymentSuccess searchParams={searchParams} />
+      <PaymentSuccess searchParams={resolvedSearchParams} />
     </Suspense>
   );
 }
