@@ -82,6 +82,7 @@ export class RecommendationService {
       .map((service) =>
         this.toRankedVendor(service, ratingMap.get(service.id) || 0, normalized),
       )
+      .filter((item): item is RankedVendor => item !== null)
       .sort((left, right) => right.deterministicScore - left.deterministicScore)
       .slice(0, Math.min(12, Math.max(normalized.limit, normalized.limit + 2)));
 
@@ -153,7 +154,8 @@ export class RecommendationService {
 
     return servicesAfterCategoryFilter.filter((service) => {
       const minPackagePrice = this.getMinVisiblePackagePrice(service.packages || []);
-      return minPackagePrice === null || minPackagePrice <= input.budget * 1.3;
+      // If user provided a budget, service MUST have at least one visible package within the total budget
+      return minPackagePrice !== null && minPackagePrice <= input.budget;
     });
   }
 
@@ -185,11 +187,16 @@ export class RecommendationService {
   ): PackageEntity | null {
     const visiblePackages = (packages || []).filter((pkg) => pkg.visible !== false);
     if (visiblePackages.length === 0) {
-      return packages && packages.length > 0 ? packages[0] : null;
+      return null;
     }
 
     if (budget && budget > 0) {
-      const withinBudget = visiblePackages.filter((pkg) => Number(pkg.pricing) <= budget);
+      // Strictly consider only packages whose full price is within the user's total budget
+      const withinBudget = visiblePackages.filter((pkg) => {
+        const p = Number(pkg.pricing);
+        return Number.isFinite(p) && p > 0 && p <= budget;
+      });
+
       if (withinBudget.length > 0) {
         withinBudget.sort((a, b) => Number(b.pricing) - Number(a.pricing));
         if (notes) {
@@ -199,10 +206,8 @@ export class RecommendationService {
         return withinBudget[0];
       }
 
-      const sortedByPrice = [...visiblePackages].sort(
-        (a, b) => Number(a.pricing) - Number(b.pricing),
-      );
-      return sortedByPrice[0];
+      // If no package is within budget, return null so this service is not recommended
+      return null;
     }
 
     if (notes) {
@@ -233,12 +238,18 @@ export class RecommendationService {
     service: ServiceEntity,
     rating: number,
     input: { location: string; budget: number | null; categories: string[]; notes: string },
-  ): RankedVendor {
+  ): RankedVendor | null {
     const relevantPackage = this.findMostRelevantPackage(
       service.packages || [],
       input.budget,
       input.notes,
     );
+
+    // If user specified a budget and this service has no package within that budget, exclude it
+    if (input.budget && !relevantPackage) {
+      return null;
+    }
+
     const minPackagePrice = this.getMinVisiblePackagePrice(service.packages || []);
     const targetPrice = relevantPackage ? Number(relevantPackage.pricing) : minPackagePrice;
     const lowerCategory = (service.category || '').toLowerCase();
@@ -272,12 +283,10 @@ export class RecommendationService {
       if (targetPrice <= input.budget) {
         score += 5;
         if (relevantPackage) {
-          reasons.push(`"${relevantPackage.name}" fits budget`);
+          reasons.push(`"${relevantPackage.name}" fits budget (LKR ${Math.round(targetPrice).toLocaleString()})`);
         } else {
           reasons.push('within your budget');
         }
-      } else {
-        reasons.push('slightly above your budget');
       }
     }
 
@@ -628,7 +637,8 @@ export class RecommendationService {
       recommendedPackage: {
         id: c.packageId,
         name: c.packageName,
-        price: c.packagePrice,
+        fullPrice: c.packagePrice,
+        advanceDeposit20Percent: c.packagePrice ? Math.round(c.packagePrice * 0.2) : null,
         features: c.packageFeatures,
       },
       category: c.category,
@@ -638,13 +648,13 @@ export class RecommendationService {
       reviews: (c.reviews || []).slice(0, 3),
     }));
 
-    return `You are ranking wedding vendor packages and services.
+    return `You are ranking wedding vendor packages and services for couples.
   Return ONLY valid JSON (no markdown), following this schema:
   {"ranked_ids":["serviceId1","serviceId2"],"reasons":{"serviceId1":"short reason explaining why this package fits","serviceId2":"short reason explaining why this package fits"},"short_review":{"serviceId1":"one-line summary of package and vendor sentiment","serviceId2":"one-line summary of package and vendor sentiment"}}
 
   User preferences:
   - location: ${input.location || 'not specified'}
-  - budget: ${input.budget ?? 'not specified'}
+  - total_budget: ${input.budget ? `LKR ${input.budget.toLocaleString()} (FULL budget for the package, NOT the advance deposit)` : 'not specified'}
   - categories: ${input.categories.join(', ') || 'not specified'}
   - notes: ${input.notes || 'not specified'}
   - top_limit: ${input.limit}
@@ -652,13 +662,21 @@ export class RecommendationService {
   Candidates:
   ${JSON.stringify(candidateSummary, null, 2)}
 
-  Rules:
+  CRITICAL PRICING & BUDGET RULES:
+  - 'total_budget' is the user's budget for the TOTAL FULL PRICE of the service package in LKR.
+  - In our wedding platform, couples pay a 20% advance booking deposit ('advanceDeposit20Percent') to lock in the reservation, and pay the remaining 80% to the vendor later.
+  - DO NOT confuse the 20% advance deposit with the package price! The true package price is 'fullPrice'.
+  - A package's affordability MUST be evaluated using 'fullPrice' <= total_budget.
+  - NEVER rank or say a package "fits budget" based on its 20% advance deposit.
+  - Candidates whose 'fullPrice' exceeds total_budget must NOT be praised as fitting the budget.
+
+  General Rules:
   - Prioritize category and location fit.
-  - Highlight why the recommended package matches the user's budget and style.
+  - Highlight why the recommended package matches the user's budget (fullPrice) and style.
   - Keep reasons under 20 words.
   - For each candidate return a separate 'short_review' (one-line, max 20 words) that summarizes the package highlight and overall sentiment.
   - Do NOT copy any review text verbatim; always paraphrase and avoid repeating exact reviewer words or punctuation.
-  - If no reviews exist for a candidate, summarize from attributes (category, package name, rating, price, location, and how well it matches preferences).
+  - If no reviews exist for a candidate, summarize from attributes (category, package name, rating, fullPrice, location, and how well it matches preferences).
   - 'short_review' must be concise and factual; avoid invented details and do not include markdown.
   - ranked_ids must contain only provided serviceId values.`;
   }

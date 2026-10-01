@@ -137,11 +137,21 @@ const RecommendedPackageCard: React.FC<RecommendedPackageCardProps> = ({ item, s
         </div>
 
         {/* Pricing Block */}
-        <div className="bg-orange/[0.05] dark:bg-orange/[0.10] border border-orange/20 dark:border-zinc-800 rounded-xl px-4 py-2.5 flex items-baseline justify-between">
-          <span className="text-xs font-semibold text-gray-600 dark:text-zinc-400 uppercase tracking-wider font-body">
-            Package Price
-          </span>
-          <div className="text-2xl font-bold font-title text-orange flex items-baseline gap-1">
+        <div className="bg-orange/[0.05] dark:bg-orange/[0.10] border border-orange/20 dark:border-zinc-800 rounded-xl px-4 py-2.5 flex items-center justify-between gap-3">
+          <div>
+            <span className="text-xs font-semibold text-gray-600 dark:text-zinc-400 uppercase tracking-wider font-body block">
+              Package Price
+            </span>
+            {price !== null && price !== undefined && Number(price) > 0 && (
+              <span className="text-[11px] text-gray-500 dark:text-zinc-400 font-medium font-body">
+                20% Advance to Reserve:{' '}
+                <span className="font-semibold text-gray-700 dark:text-zinc-200">
+                  LKR {Math.round(Number(price) * 0.2).toLocaleString()}
+                </span>
+              </span>
+            )}
+          </div>
+          <div className="text-2xl font-bold font-title text-orange flex items-baseline gap-1 shrink-0">
             <span className="text-xs font-normal text-gray-500 dark:text-zinc-400 font-body">LKR</span>
             <span>{price !== null && price !== undefined ? Number(price).toLocaleString() : 'Contact for Quote'}</span>
           </div>
