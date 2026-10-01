@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { FiMapPin, FiSearch, FiCrosshair, FiX, FiCheck, FiLoader } from 'react-icons/fi';
 import cities from '@/utils/city.json';
 
-interface LocationResult {
+export interface LocationResult {
   address: string;
   city: string;
   lat: number;

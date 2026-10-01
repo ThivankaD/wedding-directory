@@ -87,6 +87,7 @@ const CityInput: React.FC<CityProps> = ({
           </div>
           {/* All Districts Option */}
           <DropdownMenuItem
+            onSelect={() => handleCitySelect("")}
             onClick={() => handleCitySelect("")}
             className="px-3 py-2 text-gray-500 dark:text-zinc-400 italic hover:bg-orange/10 dark:hover:bg-orange/20 hover:text-orange rounded-lg cursor-pointer transition duration-150 text-xs sm:text-sm"
           >
@@ -99,6 +100,7 @@ const CityInput: React.FC<CityProps> = ({
               filteredDistricts.map((district, districtIndex) => (
                 <DropdownMenuItem
                   key={districtIndex}
+                  onSelect={() => handleCitySelect(district)}
                   onClick={() => handleCitySelect(district)}
                   className={`px-3 py-2 text-sm rounded-lg cursor-pointer transition duration-150 ${
                     selectedCity === district
