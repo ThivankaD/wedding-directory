@@ -61,7 +61,7 @@ const RecommendationPage = () => {
           budget: budget ? Number(budget) : undefined,
           categories: selectedCategories,
           notes,
-          limit: 8,
+          limit: 9,
         },
         accessToken,
       );
@@ -270,7 +270,7 @@ const RecommendationPage = () => {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {recommendations.map((item, index) => {
               const itemId = item.packageId || item.serviceId || item.offeringId || `rec-${index}`;
               return (
