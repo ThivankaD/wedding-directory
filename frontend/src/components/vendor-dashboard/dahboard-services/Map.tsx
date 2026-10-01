@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FIND_VENDOR_BY_SERVICE, FIND_SERVICE_BY_ID } from "@/graphql/queries";
 import { useQuery } from "@apollo/client";
@@ -8,65 +8,101 @@ import axios from "axios";
 import dynamic from "next/dynamic";
 import { FiMapPin, FiExternalLink } from "react-icons/fi";
 
-// Dynamic import for Leaflet to ensure it only renders on client side
+// Dynamic Leaflet map component with robust lifecycle and cleanup management
 const LeafletMap = dynamic(
   () =>
-    import("react-leaflet").then((mod) => {
-      const { MapContainer, TileLayer, Marker, Popup } = mod;
-      return function DynamicMap({
-        lat,
-        lng,
-        address,
-        businessName,
-      }: {
-        lat: number;
-        lng: number;
-        address: string;
-        businessName?: string;
-      }) {
-        const [icon, setIcon] = useState<any>(null);
+    Promise.resolve(function DynamicMap({
+      lat,
+      lng,
+      address,
+      businessName,
+    }: {
+      lat: number;
+      lng: number;
+      address: string;
+      businessName?: string;
+    }) {
+      const containerRef = useRef<HTMLDivElement>(null);
+      const mapInstanceRef = useRef<any>(null);
 
-        useEffect(() => {
-          // Configure Leaflet custom marker icon
-          import("leaflet").then((L) => {
-            const customIcon = L.icon({
-              iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-              iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-              shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-              iconSize: [25, 41],
-              iconAnchor: [12, 41],
-              popupAnchor: [1, -34],
-              shadowSize: [41, 41],
-            });
-            setIcon(customIcon);
+      useEffect(() => {
+        let isMounted = true;
+
+        import("leaflet").then((L) => {
+          if (!isMounted || !containerRef.current) return;
+
+          // If map instance already exists, safely remove it
+          if (mapInstanceRef.current) {
+            mapInstanceRef.current.remove();
+            mapInstanceRef.current = null;
+          }
+
+          // Clean up any stale leaflet ID left on the DOM element (Strict Mode / Fast Refresh)
+          if ((containerRef.current as any)._leaflet_id != null) {
+            (containerRef.current as any)._leaflet_id = null;
+          }
+
+          const map = L.map(containerRef.current, {
+            center: [lat, lng],
+            zoom: 15,
+            scrollWheelZoom: false,
           });
-        }, []);
 
-        if (!icon) return <Skeleton className="h-[400px] w-full rounded-2xl" />;
+          L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution:
+              '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+          }).addTo(map);
 
-        return (
-          <MapContainer
-            center={[lat, lng]}
-            zoom={15}
-            scrollWheelZoom={false}
-            style={{ width: "100%", height: "400px", borderRadius: "1rem", zIndex: 0 }}
-            className="z-0"
-          >
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            <Marker position={[lat, lng]} icon={icon}>
-              <Popup>
-                <div className="font-body text-xs space-y-1">
-                  {businessName && <p className="font-bold text-gray-900">{businessName}</p>}
-                  <p className="text-gray-600">{address}</p>
-                </div>
-              </Popup>
-            </Marker>
-          </MapContainer>
-        );
-      };
+          const customIcon = L.icon({
+            iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+            iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+            shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41],
+          });
+
+          const marker = L.marker([lat, lng], { icon: customIcon }).addTo(map);
+
+          const popupEl = document.createElement("div");
+          popupEl.className = "font-body text-xs space-y-1";
+          if (businessName) {
+            const nameEl = document.createElement("p");
+            nameEl.className = "font-bold text-gray-900";
+            nameEl.textContent = businessName;
+            popupEl.appendChild(nameEl);
+          }
+          if (address) {
+            const addrEl = document.createElement("p");
+            addrEl.className = "text-gray-600";
+            addrEl.textContent = address;
+            popupEl.appendChild(addrEl);
+          }
+          marker.bindPopup(popupEl);
+
+          mapInstanceRef.current = map;
+        });
+
+        return () => {
+          isMounted = false;
+          if (mapInstanceRef.current) {
+            mapInstanceRef.current.remove();
+            mapInstanceRef.current = null;
+          }
+          if (containerRef.current && (containerRef.current as any)._leaflet_id != null) {
+            (containerRef.current as any)._leaflet_id = null;
+          }
+        };
+      }, [lat, lng, address, businessName]);
+
+      return (
+        <div
+          ref={containerRef}
+          style={{ width: "100%", height: "400px", borderRadius: "1rem", zIndex: 0 }}
+          className="z-0"
+        />
+      );
     }),
   {
     ssr: false,
