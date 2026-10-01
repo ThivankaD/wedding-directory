@@ -1,3 +1,8 @@
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   async rewrites() {
@@ -60,11 +65,10 @@ const nextConfig = {
       },
     ],
   },
-  optimizeFonts: false,
-  output: "standalone",
-  eslint: {
-    ignoreDuringBuilds: true,
+  turbopack: {
+    root: __dirname,
   },
+  output: "standalone",
   typescript: {
     ignoreBuildErrors: true,
   },

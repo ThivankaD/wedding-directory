@@ -18,17 +18,19 @@ function PaymentFailedSkeleton() {
   );
 }
 
-export default function PaymentFailedPage({
+export default async function PaymentFailedPage({
   searchParams,
 }: {
-  searchParams?: {
+  searchParams?: Promise<{
     order_id?: string | string[];
     service_id?: string | string[];
-  };
+  }>;
 }) {
+  const resolvedSearchParams = await searchParams;
+
   return (
     <Suspense fallback={<PaymentFailedSkeleton />}>
-      <PaymentSuccess searchParams={searchParams} cancelOnLoad />
+      <PaymentSuccess searchParams={resolvedSearchParams} cancelOnLoad />
     </Suspense>
   );
 }
