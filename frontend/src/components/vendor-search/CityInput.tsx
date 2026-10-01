@@ -11,8 +11,15 @@ import cities from "../../utils/city.json";
 import { CityProps } from "@/types/signupInput";
 import { useState, useEffect, useMemo } from "react";
 import { ChevronDown, Search } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-const CityInput: React.FC<CityProps> = ({ onCityChange, value }) => {
+const CityInput: React.FC<CityProps> = ({
+  onCityChange,
+  value,
+  placeholder,
+  className,
+  contentClassName,
+}) => {
   const [selectedCity, setSelectedCity] = useState<string | null>(value || null);
   const [searchTerm, setSearchTerm] = useState<string>("");
 
@@ -42,15 +49,29 @@ const CityInput: React.FC<CityProps> = ({ onCityChange, value }) => {
         <DropdownMenuTrigger asChild>
           <button
             type="button"
-            className="flex justify-between items-center w-full text-left px-2 py-0 text-gray-800 dark:text-zinc-100 bg-transparent hover:bg-transparent transition duration-150 font-medium text-xs sm:text-sm h-7 focus:outline-none focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-none dark:focus:ring-0 dark:focus:ring-offset-0 dark:focus-visible:ring-0 dark:focus-visible:ring-offset-0 dark:focus-visible:outline-none border-none rounded-none shadow-none outline-none ring-0 cursor-pointer"
+            className={
+              className ||
+              "flex justify-between items-center w-full text-left px-2 py-0 text-gray-800 dark:text-zinc-100 bg-transparent hover:bg-transparent transition duration-150 font-medium text-xs sm:text-sm h-7 focus:outline-none focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-none dark:focus:ring-0 dark:focus:ring-offset-0 dark:focus-visible:ring-0 dark:focus-visible:ring-offset-0 dark:focus-visible:outline-none border-none rounded-none shadow-none outline-none ring-0 cursor-pointer"
+            }
           >
-            <span className="font-body font-medium truncate">
-              {selectedCity || "Select District"}
+            <span
+              className={cn(
+                "font-body truncate",
+                !selectedCity && className ? "text-gray-400 dark:text-zinc-500 font-normal" : ""
+              )}
+            >
+              {selectedCity || placeholder || "Select District"}
             </span>
             <ChevronDown className="ml-1 h-3.5 w-3.5 text-gray-400 dark:text-zinc-500 shrink-0" />
           </button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-56 bg-white/95 dark:bg-darkElevated/95 backdrop-blur-sm rounded-xl shadow-lg font-body z-10 border border-orange/15 dark:border-zinc-700 p-1">
+        <DropdownMenuContent
+          align="start"
+          className={cn(
+            "w-56 min-w-[var(--radix-dropdown-menu-trigger-width)] bg-white/95 dark:bg-darkElevated/95 backdrop-blur-sm rounded-xl shadow-lg font-body z-50 border border-orange/15 dark:border-zinc-700 p-1",
+            contentClassName
+          )}
+        >
           {/* Quick Search */}
           <div className="p-2 border-b border-gray-100 dark:border-zinc-700/60 flex items-center gap-1.5">
             <Search className="w-3.5 h-3.5 text-gray-400 shrink-0" />

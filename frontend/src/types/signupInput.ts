@@ -5,8 +5,9 @@ export interface CategoryProps {
 
 export interface CityProps {
     onCityChange: (category: string) => void;
-    placeholder: string;
+    placeholder?: string;
     className?: string;
+    contentClassName?: string;
     value?: string;
 }
 
