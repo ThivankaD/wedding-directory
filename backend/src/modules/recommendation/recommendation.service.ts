@@ -12,12 +12,22 @@ import { RecommendationRequestDto } from './dto/recommendation-request.dto';
 type RankedVendor = {
   serviceId: string;
   serviceName: string;
+  serviceSlug?: string;
+  serviceBanner?: string | null;
   category: string;
   vendorName: string;
   city: string;
   location: string;
   rating: number;
   minPackagePrice: number | null;
+  packageId?: string | null;
+  packageName?: string;
+  packagePrice?: number | null;
+  packageDescription?: string;
+  packageImage?: string | null;
+  packageFeatures?: string[];
+  requiresReservation?: boolean;
+  requiresApproval?: boolean;
   deterministicScore: number;
   reason: string;
   aiReview?: string;
@@ -72,8 +82,9 @@ export class RecommendationService {
       .map((service) =>
         this.toRankedVendor(service, ratingMap.get(service.id) || 0, normalized),
       )
+      .filter((item): item is RankedVendor => item !== null)
       .sort((left, right) => right.deterministicScore - left.deterministicScore)
-      .slice(0, 20);
+      .slice(0, Math.min(12, Math.max(normalized.limit, normalized.limit + 2)));
 
     const aiResult = await this.rankWithGroq(deterministicRanked, normalized);
     const aiRanked = aiResult.ranked;
@@ -116,6 +127,7 @@ export class RecommendationService {
       .createQueryBuilder('service')
       .leftJoinAndSelect('service.vendor', 'vendor')
       .leftJoinAndSelect('service.packages', 'pkg')
+      .leftJoinAndSelect('pkg.packageFeatures', 'pkgFeature')
       .where('service.visible = :visible', { visible: true });
 
     if (input.location) {
@@ -142,7 +154,8 @@ export class RecommendationService {
 
     return servicesAfterCategoryFilter.filter((service) => {
       const minPackagePrice = this.getMinVisiblePackagePrice(service.packages || []);
-      return minPackagePrice === null || minPackagePrice <= input.budget * 1.3;
+      // If user provided a budget, service MUST have at least one visible package within the total budget
+      return minPackagePrice !== null && minPackagePrice <= input.budget;
     });
   }
 
@@ -167,12 +180,78 @@ export class RecommendationService {
     return ratingMap;
   }
 
+  private findMostRelevantPackage(
+    packages: PackageEntity[],
+    budget: number | null,
+    notes: string,
+  ): PackageEntity | null {
+    const visiblePackages = (packages || []).filter((pkg) => pkg.visible !== false);
+    if (visiblePackages.length === 0) {
+      return null;
+    }
+
+    if (budget && budget > 0) {
+      // Strictly consider only packages whose full price is within the user's total budget
+      const withinBudget = visiblePackages.filter((pkg) => {
+        const p = Number(pkg.pricing);
+        return Number.isFinite(p) && p > 0 && p <= budget;
+      });
+
+      if (withinBudget.length > 0) {
+        withinBudget.sort((a, b) => Number(b.pricing) - Number(a.pricing));
+        if (notes) {
+          const notesMatched = withinBudget.find((pkg) => this.packageMatchesNotes(pkg, notes));
+          if (notesMatched) return notesMatched;
+        }
+        return withinBudget[0];
+      }
+
+      // If no package is within budget, return null so this service is not recommended
+      return null;
+    }
+
+    if (notes) {
+      const notesMatched = visiblePackages.find((pkg) => this.packageMatchesNotes(pkg, notes));
+      if (notesMatched) return notesMatched;
+    }
+
+    const sorted = [...visiblePackages].sort(
+      (a, b) => Number(a.pricing) - Number(b.pricing),
+    );
+    return sorted[0];
+  }
+
+  private packageMatchesNotes(pkg: PackageEntity, notes: string): boolean {
+    const keywords = notes
+      .toLowerCase()
+      .split(/[\s,]+/)
+      .map((value) => value.trim())
+      .filter((value) => value.length > 3);
+
+    const featureText = (pkg.packageFeatures || []).map((f) => f.text).join(' ');
+    const haystack = `${pkg.name} ${pkg.description || ''} ${featureText}`.toLowerCase();
+
+    return keywords.some((keyword) => haystack.includes(keyword));
+  }
+
   private toRankedVendor(
     service: ServiceEntity,
     rating: number,
     input: { location: string; budget: number | null; categories: string[]; notes: string },
-  ): RankedVendor {
+  ): RankedVendor | null {
+    const relevantPackage = this.findMostRelevantPackage(
+      service.packages || [],
+      input.budget,
+      input.notes,
+    );
+
+    // If user specified a budget and this service has no package within that budget, exclude it
+    if (input.budget && !relevantPackage) {
+      return null;
+    }
+
     const minPackagePrice = this.getMinVisiblePackagePrice(service.packages || []);
+    const targetPrice = relevantPackage ? Number(relevantPackage.pricing) : minPackagePrice;
     const lowerCategory = (service.category || '').toLowerCase();
     const city = service.vendor?.city || '';
     const location = service.vendor?.city || '';
@@ -197,15 +276,17 @@ export class RecommendationService {
       reasons.push('close to preferred location');
     }
 
-    if (input.budget && minPackagePrice !== null) {
-      const budgetDiff = Math.abs(minPackagePrice - input.budget) / input.budget;
+    if (input.budget && targetPrice !== null) {
+      const budgetDiff = Math.abs(targetPrice - input.budget) / input.budget;
       score += Math.max(0, 25 - budgetDiff * 25);
 
-      if (minPackagePrice <= input.budget) {
+      if (targetPrice <= input.budget) {
         score += 5;
-        reasons.push('within your budget');
-      } else {
-        reasons.push('slightly above your budget');
+        if (relevantPackage) {
+          reasons.push(`"${relevantPackage.name}" fits budget (LKR ${Math.round(targetPrice).toLocaleString()})`);
+        } else {
+          reasons.push('within your budget');
+        }
       }
     }
 
@@ -214,20 +295,39 @@ export class RecommendationService {
       reasons.push(`${rating.toFixed(1)}★ average rating`);
     }
 
-    if (input.notes && this.matchesNotes(input.notes, service)) {
-      score += 8;
-      reasons.push('matches your style preferences');
+    if (input.notes) {
+      const serviceMatches = this.matchesNotes(input.notes, service);
+      const packageMatches = relevantPackage ? this.packageMatchesNotes(relevantPackage, input.notes) : false;
+      if (serviceMatches || packageMatches) {
+        score += 8;
+        reasons.push('matches your style preferences');
+      }
     }
+
+    const features = (relevantPackage?.packageFeatures || [])
+      .map((f) => f.text)
+      .filter(Boolean)
+      .slice(0, 4);
 
     return {
       serviceId: service.id,
       serviceName: service.name,
+      serviceSlug: service.slug || service.id,
+      serviceBanner: service.banner || null,
       category: service.category,
       vendorName: service.vendor?.busname || 'Unknown Vendor',
       city,
       location,
       rating: Number(rating.toFixed(2)),
       minPackagePrice,
+      packageId: relevantPackage?.id || null,
+      packageName: relevantPackage?.name || 'Standard Package',
+      packagePrice: targetPrice,
+      packageDescription: relevantPackage?.description || service.description || '',
+      packageImage: relevantPackage?.image || service.banner || null,
+      packageFeatures: features,
+      requiresReservation: relevantPackage?.requiresReservation || false,
+      requiresApproval: relevantPackage?.requiresApproval || false,
       deterministicScore: Number(score.toFixed(2)),
       reason: reasons.slice(0, 3).join(', ') || 'recommended by availability and profile quality',
     };
@@ -276,15 +376,27 @@ export class RecommendationService {
     const rawModel = this.configService.get<string>('GROQ_RECOMMENDER_MODEL');
     const rawEndpoint = this.configService.get<string>('GROQ_RECOMMENDER_ENDPOINT');
 
-    const configuredModel = (rawModel || 'openai/gpt-oss-20b')
+    let configuredModel = (rawModel || 'qwen/qwen3.8-27b')
       .toString()
       .trim()
       .replace(/^['"]+|['"]+$/g, '');
 
-    const endpointUrl = (rawEndpoint || 'https://api.groq.com/openai/v1/chat/completions')
+    // If deprecated llama3 models are configured, fallback to active working models
+    if (configuredModel === 'llama3-8b-8192') {
+      configuredModel = 'qwen/qwen3.8-27b';
+    } else if (configuredModel === 'llama3-70b-8192') {
+      configuredModel = 'openai/gpt-oss-120b';
+    }
+
+    let endpointUrl = (rawEndpoint || 'https://api.groq.com/openai/v1/chat/completions')
       .toString()
       .trim()
       .replace(/^['"]+|['"]+$/g, '');
+
+    // Ensure endpoint points to /chat/completions even if configured with base URL
+    if (!endpointUrl.endsWith('/chat/completions')) {
+      endpointUrl = endpointUrl.replace(/\/+$/, '') + '/chat/completions';
+    }
 
     if (!groqKey) {
       this.logger.warn('Groq ranking disabled: missing GROQ_API_KEY');
@@ -370,13 +482,14 @@ export class RecommendationService {
 
     try {
       const response = await firstValueFrom(
-  this.httpService.post(
-    endpointUrl,
+        this.httpService.post(
+          endpointToUse,
     {
       model: configuredModel,
       messages: [{ role: 'user', content: prompt }],
-      max_tokens: 1500, // bumped up — see reasoning-token note below
+      max_tokens: 3500,
       temperature: 0.0,
+      ...(configuredModel.includes('gpt-oss') ? { reasoning_effort: 'low' } : {}),
     },
     {
       headers: {
@@ -518,29 +631,52 @@ export class RecommendationService {
       limit: number;
     },
   ) {
-    return `You are ranking wedding vendor services.
+    const candidateSummary = candidates.map((c) => ({
+      serviceId: c.serviceId,
+      serviceName: c.serviceName,
+      recommendedPackage: {
+        id: c.packageId,
+        name: c.packageName,
+        fullPrice: c.packagePrice,
+        advanceDeposit20Percent: c.packagePrice ? Math.round(c.packagePrice * 0.2) : null,
+        features: c.packageFeatures,
+      },
+      category: c.category,
+      vendorName: c.vendorName,
+      city: c.city,
+      rating: c.rating,
+      reviews: (c.reviews || []).slice(0, 3),
+    }));
+
+    return `You are ranking wedding vendor packages and services for couples.
   Return ONLY valid JSON (no markdown), following this schema:
-  {"ranked_ids":["serviceId1","serviceId2"],"reasons":{"serviceId1":"short reason","serviceId2":"short reason"},"short_review":{"serviceId1":"one-line summary","serviceId2":"one-line summary"}}
+  {"ranked_ids":["serviceId1","serviceId2"],"reasons":{"serviceId1":"short reason explaining why this package fits","serviceId2":"short reason explaining why this package fits"},"short_review":{"serviceId1":"one-line summary of package and vendor sentiment","serviceId2":"one-line summary of package and vendor sentiment"}}
 
   User preferences:
   - location: ${input.location || 'not specified'}
-  - budget: ${input.budget ?? 'not specified'}
+  - total_budget: ${input.budget ? `LKR ${input.budget.toLocaleString()} (FULL budget for the package, NOT the advance deposit)` : 'not specified'}
   - categories: ${input.categories.join(', ') || 'not specified'}
   - notes: ${input.notes || 'not specified'}
   - top_limit: ${input.limit}
 
-  Candidates (each candidate may include 'reviews' - an array of recent review comments):
-  ${JSON.stringify(candidates, null, 2)}
+  Candidates:
+  ${JSON.stringify(candidateSummary, null, 2)}
 
-  Rules:
+  CRITICAL PRICING & BUDGET RULES:
+  - 'total_budget' is the user's budget for the TOTAL FULL PRICE of the service package in LKR.
+  - In our wedding platform, couples pay a 20% advance booking deposit ('advanceDeposit20Percent') to lock in the reservation, and pay the remaining 80% to the vendor later.
+  - DO NOT confuse the 20% advance deposit with the package price! The true package price is 'fullPrice'.
+  - A package's affordability MUST be evaluated using 'fullPrice' <= total_budget.
+  - NEVER rank or say a package "fits budget" based on its 20% advance deposit.
+  - Candidates whose 'fullPrice' exceeds total_budget must NOT be praised as fitting the budget.
+
+  General Rules:
   - Prioritize category and location fit.
-  - Prefer options within budget.
-  - Consider rating.
+  - Highlight why the recommended package matches the user's budget (fullPrice) and style.
   - Keep reasons under 20 words.
-  - For each candidate return a separate 'short_review' (one-line, max 20 words) that summarizes overall sentiment and key facts.
-  - You MAY use vendor review comments provided in the 'reviews' field to inform the short_review (for example, if reviews say "bad" summarize as "multiple guests reported poor experience").
+  - For each candidate return a separate 'short_review' (one-line, max 20 words) that summarizes the package highlight and overall sentiment.
   - Do NOT copy any review text verbatim; always paraphrase and avoid repeating exact reviewer words or punctuation.
-  - If no reviews exist for a candidate, summarize from attributes (category, rating, price, location, and how well it matches preferences).
+  - If no reviews exist for a candidate, summarize from attributes (category, package name, rating, fullPrice, location, and how well it matches preferences).
   - 'short_review' must be concise and factual; avoid invented details and do not include markdown.
   - ranked_ids must contain only provided serviceId values.`;
   }

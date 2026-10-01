@@ -16,25 +16,11 @@ import {
   FiFeather,
   FiSliders,
   FiAlertCircle,
-  FiArrowRight,
-  FiStar,
 } from 'react-icons/fi';
 
-type RecommendationItem = {
-  serviceId?: string;
-  offeringId?: string;
-  serviceName?: string;
-  offeringName?: string;
-  category: string;
-  vendorName: string;
-  city: string;
-  location: string;
-  rating: number;
-  minPackagePrice: number | null;
-  deterministicScore: number;
-  reason: string;
-  aiReview?: string;
-};
+import RecommendedPackageCard, {
+  RecommendedPackageItem,
+} from '@/components/visitor-dashboard/RecommendedPackageCard';
 
 const categoryOptions = categories;
 
@@ -47,7 +33,7 @@ const RecommendationPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [source, setSource] = useState<'rules' | 'ai' | 'ai+rules' | null>(null);
-  const [recommendations, setRecommendations] = useState<RecommendationItem[]>([]);
+  const [recommendations, setRecommendations] = useState<RecommendedPackageItem[]>([]);
 
   const canRequest = useMemo(() => isAuthenticated && !!accessToken, [isAuthenticated, accessToken]);
 
@@ -75,7 +61,7 @@ const RecommendationPage = () => {
           budget: budget ? Number(budget) : undefined,
           categories: selectedCategories,
           notes,
-          limit: 8,
+          limit: 9,
         },
         accessToken,
       );
@@ -252,13 +238,13 @@ const RecommendationPage = () => {
         </div>
       </form>
 
-      {/* 3. Recommended Vendors */}
+      {/* 3. Recommended Packages */}
       <div className="space-y-4 pb-12">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-2.5 h-2.5 rounded-full bg-orange animate-pulse" />
             <h2 className="text-xl sm:text-2xl font-bold font-title text-gray-900 dark:text-zinc-100">
-              Recommended Vendors
+              Recommended Packages
             </h2>
           </div>
           {source && (
@@ -280,88 +266,19 @@ const RecommendationPage = () => {
               No recommendations yet
             </h3>
             <p className="text-xs sm:text-sm text-gray-500 dark:text-zinc-400 font-body max-w-md mx-auto">
-              Fill in your wedding preferences above and click &quot;Get Recommendations&quot; to discover matched vendors.
+              Fill in your wedding preferences above and click &quot;Get Recommendations&quot; to discover matched packages tailored to your budget and style.
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {recommendations.map((item, index) => {
-              const itemId = item.serviceId || item.offeringId || `rec-${index}`;
-              const itemName = item.serviceName || item.offeringName || 'Wedding Service';
-
+              const itemId = item.packageId || item.serviceId || item.offeringId || `rec-${index}`;
               return (
-                <div
+                <RecommendedPackageCard
                   key={itemId}
-                  className="bg-white dark:bg-darkSurface rounded-2xl p-6 shadow-sm border border-orange/20 dark:border-zinc-800 hover:border-orange/40 hover:shadow-md transition-all flex flex-col justify-between group"
-                >
-                  <div>
-                    <div className="flex items-start justify-between gap-3 pb-3 border-b border-orange/10 dark:border-zinc-800">
-                      <div>
-                        <h3 className="font-bold font-title text-lg text-gray-900 dark:text-zinc-100 group-hover:text-orange transition-colors">
-                          {itemName}
-                        </h3>
-                        <p className="text-xs sm:text-sm text-gray-500 dark:text-zinc-400 font-body mt-0.5">
-                          {item.vendorName}
-                        </p>
-                      </div>
-                      <span className="text-xs px-3 py-1 rounded-full bg-orange/10 dark:bg-orange/20 text-orange border border-orange/20 font-semibold shrink-0">
-                        {item.category}
-                      </span>
-                    </div>
-
-                    <div className="mt-4 space-y-2 text-xs sm:text-sm text-gray-700 dark:text-zinc-300 font-body">
-                      <div className="flex items-center gap-2">
-                        <FiMapPin className="text-orange shrink-0" size={15} />
-                        <span className="text-gray-500 dark:text-zinc-400">Location:</span>
-                        <span className="font-medium text-gray-900 dark:text-zinc-100">
-                          {item.city || item.location || 'N/A'}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        <FiStar className="text-amber-500 fill-amber-400 shrink-0" size={15} />
-                        <span className="text-gray-500 dark:text-zinc-400">Rating:</span>
-                        <span className="font-medium text-gray-900 dark:text-zinc-100">
-                          {item.rating > 0 ? `${item.rating.toFixed(1)} / 5.0` : 'N/A'}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        <FiDollarSign className="text-orange shrink-0" size={15} />
-                        <span className="text-gray-500 dark:text-zinc-400">Starting Price:</span>
-                        <span className="font-bold text-orange font-title">
-                          {item.minPackagePrice !== null
-                            ? `LKR ${Number(item.minPackagePrice).toLocaleString()}`
-                            : 'Contact vendor'}
-                        </span>
-                      </div>
-
-                      {item.reason && (
-                        <div className="mt-2 pt-2 border-t border-orange/10 dark:border-zinc-800 text-xs text-gray-600 dark:text-zinc-400">
-                          <span className="font-semibold text-gray-800 dark:text-zinc-200">Highlight: </span>
-                          {item.reason}
-                        </div>
-                      )}
-
-                      {source === 'ai' && item.aiReview && (
-                        <div className="mt-2 p-2.5 rounded-xl bg-orange/[0.04] dark:bg-orange/[0.08] border border-orange/15 dark:border-zinc-800 text-xs text-gray-600 dark:text-zinc-300">
-                          <span className="font-semibold text-orange block mb-0.5">AI Review:</span>
-                          {item.aiReview}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="mt-5 pt-3 border-t border-orange/10 dark:border-zinc-800 flex items-center justify-between">
-                    <Link
-                      href={`/services/${itemId}`}
-                      className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-orange hover:text-orange/80 transition-colors"
-                    >
-                      <span>View vendor details</span>
-                      <FiArrowRight size={14} />
-                    </Link>
-                  </div>
-                </div>
+                  item={item}
+                  source={source}
+                />
               );
             })}
           </div>
