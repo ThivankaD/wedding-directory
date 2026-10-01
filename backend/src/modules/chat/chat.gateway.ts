@@ -44,6 +44,8 @@ const isOriginAllowed = (origin: string | undefined): boolean => {
   if (PRIVATE_LAN_ORIGIN_REGEX.test(origin)) return true;
   if (origin.endsWith('.vercel.app')) return true;
   if (origin.endsWith('.easycase.site')) return true;
+  if (origin.endsWith('.sayido.lk') || origin === 'https://sayido.lk') return true;
+  if (origin.endsWith('.duckdns.org')) return true;
 
   return false;
 };
@@ -93,15 +95,20 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() data: { userId: string; userType: 'visitor' | 'vendor' },
     @ConnectedSocket() client: Socket,
   ) {
-    this.userSockets.set(data.userId, client.id);
-    
-    // Join user-specific room
-    client.join(`user:${data.userId}`);
-    
-    // Get initial unread count and return it
-    const unreadCount = await this.chatService.getUnreadCount(data.userId, data.userType);
-    
-    return { success: true, unreadCount };
+    try {
+      this.userSockets.set(data.userId, client.id);
+      
+      // Join user-specific room
+      client.join(`user:${data.userId}`);
+      
+      // Get initial unread count and return it
+      const unreadCount = await this.chatService.getUnreadCount(data.userId, data.userType);
+      
+      return { success: true, unreadCount };
+    } catch (error) {
+      console.error('Error handling register in chat gateway:', error);
+      return { success: false, unreadCount: 0, error: error?.message };
+    }
   }
 
   @SubscribeMessage('sendMessage')
