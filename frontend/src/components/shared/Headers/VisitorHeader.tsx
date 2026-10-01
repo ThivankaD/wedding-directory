@@ -46,12 +46,13 @@ const VisitorHeader = () => {
     onError: (err) => {
       console.warn("Failed to load visitor profile picture:", err.message);
     },
-    onCompleted: (data) => {
-      if (data?.findVisitorById?.profile_pic_url) {
-        setProfilePic(data.findVisitorById.profile_pic_url);
-      }
-    },
   });
+
+  useEffect(() => {
+    if (visitorProfileData?.findVisitorById?.profile_pic_url) {
+      setProfilePic(visitorProfileData.findVisitorById.profile_pic_url);
+    }
+  }, [visitorProfileData?.findVisitorById?.profile_pic_url]);
 
   const visitorInfo = visitorProfileData?.findVisitorById;
   const visitorDistrict = matchSriLankaDistrict(

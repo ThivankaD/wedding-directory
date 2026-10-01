@@ -242,38 +242,63 @@ const VisitorCoupleBanner: React.FC<VisitorCoupleBannerProps> = ({
           {navigationItems.map((item) => {
             const Icon = item.icon;
             const isActive = item.isActive;
+            const isSmartPicks = item.title === "Smart Picks";
 
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`group flex items-center justify-between p-2.5 sm:p-3 rounded-xl border transition-all ${
+                className={`relative group flex items-center justify-between p-2.5 sm:p-3 rounded-xl border transition-all overflow-hidden ${
                   isActive
-                    ? "bg-orange text-white border-orange shadow-sm"
-                    : "border-gray-100 dark:border-zinc-800 hover:border-orange/30 hover:bg-orange/5 dark:hover:bg-zinc-800/60 text-gray-700 dark:text-zinc-300 hover:text-orange"
+                    ? isSmartPicks
+                      ? "bg-gradient-to-r from-orange via-orange to-amber-600 text-white border-orange shadow-[0_0_20px_rgba(252,123,84,0.6)]"
+                      : "bg-orange text-white border-orange shadow-sm"
+                    : isSmartPicks
+                      ? "bg-gradient-to-r from-orange/[0.08] via-amber-500/[0.06] to-orange/[0.10] dark:from-orange/[0.18] dark:via-darkElevated dark:to-orange/[0.14] border-orange/50 dark:border-orange/60 animate-pulse-glow hover:border-orange text-gray-800 dark:text-zinc-100"
+                      : "border-gray-100 dark:border-zinc-800 hover:border-orange/30 hover:bg-orange/5 dark:hover:bg-zinc-800/60 text-gray-700 dark:text-zinc-300 hover:text-orange"
                 }`}
               >
-                <div className="flex items-center gap-3 min-w-0">
+                {/* Continuous subtle shimmer light sweep for Smart Picks AI */}
+                {isSmartPicks && (
+                  <div className="absolute inset-0 overflow-hidden pointer-events-none rounded-xl">
+                    <div className="w-1/2 h-full bg-gradient-to-r from-transparent via-white/25 dark:via-white/10 to-transparent skew-x-[-25deg] animate-shimmer" />
+                  </div>
+                )}
+
+                <div className="flex items-center gap-3 min-w-0 relative z-10">
                   <div
-                    className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors ${
+                    className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all ${
                       isActive
                         ? "bg-white/20 text-white"
-                        : "bg-orange/10 dark:bg-orange/20 text-orange group-hover:bg-orange group-hover:text-white"
+                        : isSmartPicks
+                          ? "bg-gradient-to-br from-orange to-amber-500 text-white shadow-sm shadow-orange/40 group-hover:scale-105"
+                          : "bg-orange/10 dark:bg-orange/20 text-orange group-hover:bg-orange group-hover:text-white"
                     }`}
                   >
-                    <Icon size={16} />
+                    <Icon size={16} className={isSmartPicks ? "animate-pulse" : ""} />
                   </div>
                   <div className="min-w-0">
                     <div
-                      className={`text-xs sm:text-sm font-semibold truncate ${
-                        isActive ? "text-white" : "text-gray-900 dark:text-zinc-200 group-hover:text-orange"
+                      className={`text-xs sm:text-sm font-semibold truncate flex items-center gap-1.5 ${
+                        isActive
+                          ? "text-white"
+                          : isSmartPicks
+                            ? "text-gray-900 dark:text-zinc-100 font-bold group-hover:text-orange"
+                            : "text-gray-900 dark:text-zinc-200 group-hover:text-orange"
                       }`}
                     >
-                      {item.title}
+                      <span>{item.title}</span>
+                      {isSmartPicks && !isActive && (
+                        <span className="w-1.5 h-1.5 rounded-full bg-orange animate-ping" />
+                      )}
                     </div>
                     <div
                       className={`text-[11px] truncate ${
-                        isActive ? "text-white/80" : "text-gray-400 dark:text-zinc-500"
+                        isActive
+                          ? "text-white/80"
+                          : isSmartPicks
+                            ? "text-orange dark:text-orange/90 font-medium"
+                            : "text-gray-400 dark:text-zinc-500"
                       }`}
                     >
                       {item.subtitle}
@@ -281,23 +306,28 @@ const VisitorCoupleBanner: React.FC<VisitorCoupleBannerProps> = ({
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
+                <div className="flex items-center gap-1.5 flex-shrink-0 ml-2 relative z-10">
                   {item.badge && (
                     <span
-                      className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
+                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 ${
                         isActive
-                          ? "bg-white text-orange"
-                          : "bg-orange/10 dark:bg-orange/20 text-orange group-hover:bg-orange group-hover:text-white"
+                          ? "bg-white text-orange shadow-xs"
+                          : isSmartPicks
+                            ? "bg-gradient-to-r from-orange to-amber-500 text-white shadow-[0_0_10px_rgba(252,123,84,0.6)] animate-pulse"
+                            : "bg-orange/10 dark:bg-orange/20 text-orange group-hover:bg-orange group-hover:text-white"
                       }`}
                     >
-                      {item.badge}
+                      {isSmartPicks && <Sparkles size={10} className="text-amber-100" />}
+                      <span>{item.badge}</span>
                     </span>
                   )}
                   <FiChevronRight
                     className={`transition-transform duration-200 group-hover:translate-x-0.5 ${
                       isActive
                         ? "text-white"
-                        : "text-gray-300 dark:text-zinc-600 group-hover:text-orange"
+                        : isSmartPicks
+                          ? "text-orange dark:text-orange/80 group-hover:text-orange"
+                          : "text-gray-300 dark:text-zinc-600 group-hover:text-orange"
                     }`}
                     size={14}
                   />
