@@ -73,10 +73,10 @@ export class RecommendationService {
       )
       .filter((item): item is RankedVendor => item !== null)
       .filter((item) => {
-        // Enforce strictly that if user set a budget, only packages whose full price <= budget are kept
-        if (!normalized.budget || normalized.budget <= 0) return true;
+        // Enforce strictly that if user set a budget, only packages whose full price <= per-category budget are kept
+        if (!normalized.perCategoryBudget || normalized.perCategoryBudget <= 0) return true;
         const price = Number(item.packagePrice);
-        return Number.isFinite(price) && price > 0 && price <= normalized.budget;
+        return Number.isFinite(price) && price > 0 && price <= normalized.perCategoryBudget;
       })
       .sort((left, right) => right.deterministicScore - left.deterministicScore)
       .slice(0, Math.min(12, Math.max(normalized.limit, normalized.limit + 2)));
@@ -101,11 +101,20 @@ export class RecommendationService {
       .map((val) => val.trim().toLowerCase())
       .filter(Boolean);
 
+    const totalBudget = Number(input.budget) > 0 ? Number(input.budget) : null;
+
+    // Budget is the TOTAL the user wants to spend across ALL selected services.
+    // Divide by the number of selected categories to get per-category budget.
+    // If no categories are selected, treat the full budget as per-category.
+    const categoryCount = categories.length > 0 ? categories.length : 1;
+    const perCategoryBudget = totalBudget ? Math.round(totalBudget / categoryCount) : null;
+
     return {
       location: input.location?.trim().toLowerCase() || '',
-      budget: Number(input.budget) > 0 ? Number(input.budget) : null,
+      totalBudget,
+      perCategoryBudget,
       categories,
-      notes: input.notes?.trim() || '',
+      categoryCount,
       limit:
         Number(input.limit) > 0
           ? Math.min(Number(input.limit), 12)
@@ -116,7 +125,7 @@ export class RecommendationService {
   private async findCandidateServices(input: {
     location: string;
     categories: string[];
-    budget: number | null;
+    perCategoryBudget: number | null;
   }) {
     const query = this.serviceRepository
       .createQueryBuilder('service')
@@ -136,6 +145,7 @@ export class RecommendationService {
 
     const services = await query.getMany();
 
+    // When categories are selected, strictly filter to only matching categories
     const servicesAfterCategoryFilter =
       input.categories.length > 0
         ? services.filter((service) =>
@@ -143,14 +153,14 @@ export class RecommendationService {
           )
         : services;
 
-    if (!input.budget) {
+    if (!input.perCategoryBudget) {
       return servicesAfterCategoryFilter;
     }
 
     return servicesAfterCategoryFilter.filter((service) => {
       const minPackagePrice = this.getMinVisiblePackagePrice(service.packages || []);
-      // If user provided a budget, service MUST have at least one visible package within the total budget
-      return minPackagePrice !== null && minPackagePrice <= input.budget;
+      // Service must have at least one visible package within the per-category budget
+      return minPackagePrice !== null && minPackagePrice <= input.perCategoryBudget!;
     });
   }
 
@@ -178,7 +188,6 @@ export class RecommendationService {
   private findMostRelevantPackage(
     packages: PackageEntity[],
     budget: number | null,
-    notes: string,
   ): PackageEntity | null {
     const visiblePackages = (packages || []).filter((pkg) => pkg.visible !== false);
     if (visiblePackages.length === 0) {
@@ -194,20 +203,11 @@ export class RecommendationService {
 
       if (withinBudget.length > 0) {
         withinBudget.sort((a, b) => Number(b.pricing) - Number(a.pricing));
-        if (notes) {
-          const notesMatched = withinBudget.find((pkg) => this.packageMatchesNotes(pkg, notes));
-          if (notesMatched) return notesMatched;
-        }
         return withinBudget[0];
       }
 
       // If no package is within budget, return null so this service is not recommended
       return null;
-    }
-
-    if (notes) {
-      const notesMatched = visiblePackages.find((pkg) => this.packageMatchesNotes(pkg, notes));
-      if (notesMatched) return notesMatched;
     }
 
     const sorted = [...visiblePackages].sort(
@@ -216,38 +216,31 @@ export class RecommendationService {
     return sorted[0];
   }
 
-  private packageMatchesNotes(pkg: PackageEntity, notes: string): boolean {
-    const keywords = notes
-      .toLowerCase()
-      .split(/[\s,]+/)
-      .map((value) => value.trim())
-      .filter((value) => value.length > 3);
-
-    const featureText = (pkg.packageFeatures || []).map((f) => f.text).join(' ');
-    const haystack = `${pkg.name} ${pkg.description || ''} ${featureText}`.toLowerCase();
-
-    return keywords.some((keyword) => haystack.includes(keyword));
-  }
 
   private toRankedVendor(
     service: ServiceEntity,
     rating: number,
-    input: { location: string; budget: number | null; categories: string[]; notes: string },
+    input: { location: string; perCategoryBudget: number | null; categories: string[] },
   ): RankedVendor | null {
+    const lowerCategory = (service.category || '').toLowerCase();
+
+    // When categories are selected, strictly exclude services that don't match
+    if (input.categories.length > 0 && !this.matchesCategoryPreference(lowerCategory, input.categories)) {
+      return null;
+    }
+
     const relevantPackage = this.findMostRelevantPackage(
       service.packages || [],
-      input.budget,
-      input.notes,
+      input.perCategoryBudget,
     );
 
-    // If user specified a budget and this service has no package within that budget, exclude it
-    if (input.budget && !relevantPackage) {
+    // If user specified a budget and this service has no package within the per-category budget, exclude it
+    if (input.perCategoryBudget && !relevantPackage) {
       return null;
     }
 
     const minPackagePrice = this.getMinVisiblePackagePrice(service.packages || []);
     const targetPrice = relevantPackage ? Number(relevantPackage.pricing) : minPackagePrice;
-    const lowerCategory = (service.category || '').toLowerCase();
     const city = service.vendor?.city || '';
     const location = service.vendor?.city || '';
 
@@ -271,11 +264,11 @@ export class RecommendationService {
       reasons.push('close to preferred location');
     }
 
-    if (input.budget && targetPrice !== null) {
-      const budgetDiff = Math.abs(targetPrice - input.budget) / input.budget;
+    if (input.perCategoryBudget && targetPrice !== null) {
+      const budgetDiff = Math.abs(targetPrice - input.perCategoryBudget) / input.perCategoryBudget;
       score += Math.max(0, 25 - budgetDiff * 25);
 
-      if (targetPrice <= input.budget) {
+      if (targetPrice <= input.perCategoryBudget) {
         score += 5;
         if (relevantPackage) {
           reasons.push(`"${relevantPackage.name}" fits budget (LKR ${Math.round(targetPrice).toLocaleString()})`);
@@ -290,14 +283,6 @@ export class RecommendationService {
       reasons.push(`${rating.toFixed(1)}★ average rating`);
     }
 
-    if (input.notes) {
-      const serviceMatches = this.matchesNotes(input.notes, service);
-      const packageMatches = relevantPackage ? this.packageMatchesNotes(relevantPackage, input.notes) : false;
-      if (serviceMatches || packageMatches) {
-        score += 8;
-        reasons.push('matches your style preferences');
-      }
-    }
 
     const features = (relevantPackage?.packageFeatures || [])
       .map((f) => f.text)
@@ -328,16 +313,6 @@ export class RecommendationService {
     };
   }
 
-  private matchesNotes(notes: string, service: ServiceEntity) {
-    const haystack = `${service.name} ${service.description || ''} ${service.category}`.toLowerCase();
-    const keywords = notes
-      .toLowerCase()
-      .split(/[\s,]+/)
-      .map((value) => value.trim())
-      .filter((value) => value.length > 3);
-
-    return keywords.some((keyword) => haystack.includes(keyword));
-  }
 
   private getMinVisiblePackagePrice(packages: PackageEntity[]) {
     const visiblePackages = packages.filter((pkg) => pkg.visible);
@@ -360,9 +335,10 @@ export class RecommendationService {
     deterministicRanked: RankedVendor[],
     input: {
       location: string;
-      budget: number | null;
+      totalBudget: number | null;
+      perCategoryBudget: number | null;
       categories: string[];
-      notes: string;
+      categoryCount: number;
       limit: number;
     },
   ): Promise<{ ranked: RankedVendor[] | null; reason: string }> {
@@ -404,11 +380,11 @@ export class RecommendationService {
       this.logger.debug(`Groq API key present (masked): ${visible}, length: ${groqKey.length}`);
     } catch {}
 
-    // Filter out any candidates whose package price exceeds the budget so they are never sent to Groq
+    // Filter out any candidates whose package price exceeds the per-category budget so they are never sent to Groq
     const candidatesWithinBudget = deterministicRanked.filter((item) => {
-      if (!input.budget || input.budget <= 0) return true;
+      if (!input.perCategoryBudget || input.perCategoryBudget <= 0) return true;
       const price = Number(item.packagePrice);
-      return Number.isFinite(price) && price > 0 && price <= input.budget;
+      return Number.isFinite(price) && price > 0 && price <= input.perCategoryBudget;
     });
 
     if (candidatesWithinBudget.length === 0) {
@@ -606,17 +582,18 @@ export class RecommendationService {
     candidates: Array<RankedVendor & { reviews?: string[] }>,
     input: {
       location: string;
-      budget: number | null;
+      totalBudget: number | null;
+      perCategoryBudget: number | null;
       categories: string[];
-      notes: string;
+      categoryCount: number;
       limit: number;
     },
   ) {
-    // Strictly filter out any candidates whose package price is higher than the budget
+    // Strictly filter out any candidates whose package price is higher than the per-category budget
     const affordableCandidates = candidates.filter((c) => {
-      if (!input.budget || input.budget <= 0) return true;
+      if (!input.perCategoryBudget || input.perCategoryBudget <= 0) return true;
       const price = Number(c.packagePrice);
-      return Number.isFinite(price) && price > 0 && price <= input.budget;
+      return Number.isFinite(price) && price > 0 && price <= input.perCategoryBudget;
     });
 
     const candidateSummary = affordableCandidates.map((c) => ({
@@ -626,7 +603,6 @@ export class RecommendationService {
         id: c.packageId,
         name: c.packageName,
         fullPrice: c.packagePrice,
-        advanceDeposit20Percent: c.packagePrice ? Math.round(Number(c.packagePrice) * 0.2) : null,
         features: c.packageFeatures,
       },
       category: c.category,
@@ -636,32 +612,33 @@ export class RecommendationService {
       reviews: (c.reviews || []).slice(0, 3),
     }));
 
+    const budgetExplanation = input.totalBudget
+      ? `LKR ${input.totalBudget.toLocaleString()} total across ${input.categoryCount} service category(s), so each service should cost at most LKR ${input.perCategoryBudget!.toLocaleString()} (fullPrice)`
+      : 'not specified';
+
     return `You are ranking wedding vendor packages and services for couples.
   Return ONLY valid JSON (no markdown), following this schema:
   {"ranked_ids":["serviceId1","serviceId2"],"reasons":{"serviceId1":"short reason explaining why this package fits","serviceId2":"short reason explaining why this package fits"},"short_review":{"serviceId1":"one-line summary of package and vendor sentiment","serviceId2":"one-line summary of package and vendor sentiment"}}
 
   User preferences:
   - location: ${input.location || 'not specified'}
-  - total_budget: ${input.budget ? `LKR ${input.budget.toLocaleString()} (FULL budget for the package, NOT the advance deposit)` : 'not specified'}
+  - budget: ${budgetExplanation}
   - categories: ${input.categories.join(', ') || 'not specified'}
-  - notes: ${input.notes || 'not specified'}
   - top_limit: ${input.limit}
 
   Candidates:
   ${JSON.stringify(candidateSummary, null, 2)}
 
   CRITICAL PRICING & BUDGET RULES:
-  - All candidates provided in the JSON have been strictly pre-filtered so that 'fullPrice' <= total_budget.
-  - Any packages exceeding the user's total budget have been completely excluded and were not sent to you.
-  - 'total_budget' is the user's budget for the TOTAL FULL PRICE of the service package in LKR.
-  - In our wedding platform, couples pay a 20% advance booking deposit ('advanceDeposit20Percent') to lock in the reservation, and pay the remaining 80% to the vendor later.
-  - DO NOT confuse the 20% advance deposit with the package price! The true package price is 'fullPrice'.
-  - A package's affordability MUST be evaluated using 'fullPrice' <= total_budget.
-  - NEVER rank or say a package "fits budget" based on its 20% advance deposit.
+  - All candidates have been strictly pre-filtered so that 'fullPrice' <= the per-category budget.
+  - 'fullPrice' is the FULL PRICE the couple pays for the service. This is the number to evaluate affordability against.
+  - In our platform couples pay a 20% advance deposit to reserve, then the remaining 80% later. But the budget and affordability MUST always be evaluated against the FULL PRICE, not the 20% advance.
+  - NEVER confuse the advance deposit with the package price.
 
   General Rules:
+  - Only recommend services whose category matches what the user asked for.
   - Prioritize category and location fit.
-  - Highlight why the recommended package matches the user's budget (fullPrice) and style.
+  - Highlight why the recommended package matches the user's budget (fullPrice).
   - Keep reasons under 20 words.
   - For each candidate return a separate 'short_review' (one-line, max 20 words) that summarizes the package highlight and overall sentiment.
   - Do NOT copy any review text verbatim; always paraphrase and avoid repeating exact reviewer words or punctuation.

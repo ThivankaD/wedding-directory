@@ -4,7 +4,6 @@ export type VendorRecommendationRequest = {
   location?: string;
   budget?: number;
   categories?: string[];
-  notes?: string;
   limit?: number;
 };
 

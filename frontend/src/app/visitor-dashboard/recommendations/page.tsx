@@ -13,7 +13,6 @@ import {
   FiMapPin,
   FiDollarSign,
   FiLayers,
-  FiFeather,
   FiSliders,
   FiAlertCircle,
 } from 'react-icons/fi';
@@ -28,7 +27,6 @@ const RecommendationPage = () => {
   const { accessToken, isAuthenticated } = useAuth();
   const [location, setLocation] = useState('');
   const [budget, setBudget] = useState('');
-  const [notes, setNotes] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -60,7 +58,6 @@ const RecommendationPage = () => {
           location,
           budget: budget ? Number(budget) : undefined,
           categories: selectedCategories,
-          notes,
           limit: 9,
         },
         accessToken,
@@ -157,16 +154,19 @@ const RecommendationPage = () => {
           <div>
             <label className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-2 font-body flex items-center gap-1.5">
               <FiDollarSign className="text-orange" size={14} />
-              <span>Target Budget (LKR)</span>
+              <span>Total Budget (LKR) — optional</span>
             </label>
             <input
               type="number"
               min="0"
               value={budget}
               onChange={(event) => setBudget(event.target.value)}
-              placeholder="Ex: 250000"
+              placeholder="Max spend across all services, e.g. 500000"
               className="w-full h-11 border border-orange/25 dark:border-zinc-700 dark:bg-darkElevated dark:text-zinc-100 dark:placeholder:text-zinc-500 rounded-xl px-4 text-sm font-body focus:border-orange focus:ring-2 focus:ring-orange/20 focus:outline-none transition-all"
             />
+            <p className="mt-1 text-[11px] text-gray-400 dark:text-zinc-500 font-body">
+              Maximum total you want to spend across all selected services combined.
+            </p>
           </div>
         </div>
 
@@ -196,19 +196,6 @@ const RecommendationPage = () => {
           </div>
         </div>
 
-        <div>
-          <label className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-2 font-body flex items-center gap-1.5">
-            <FiFeather className="text-orange" size={14} />
-            <span>Style Notes (optional)</span>
-          </label>
-          <textarea
-            rows={3}
-            value={notes}
-            onChange={(event) => setNotes(event.target.value)}
-            placeholder="Ex: candid photography, elegant decor, live acoustic music"
-            className="w-full border border-orange/25 dark:border-zinc-700 dark:bg-darkElevated dark:text-zinc-100 dark:placeholder:text-zinc-500 rounded-xl p-3.5 text-sm font-body focus:border-orange focus:ring-2 focus:ring-orange/20 focus:outline-none transition-all"
-          />
-        </div>
 
         {error && (
           <div className="flex items-center gap-2 p-3.5 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 text-sm font-body">
