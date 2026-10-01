@@ -33,17 +33,6 @@ type RankedVendor = {
   aiReview?: string;
 };
 
-const CATEGORY_ALIASES: Record<string, string[]> = {
-  photo: ['photography', 'photographer', 'photographers'],
-  video: ['videography', 'videographer', 'videographers'],
-  venue: ['venue', 'venues'],
-  suit: ['suit', 'suits', 'dress', 'dresses', 'suits and dresses'],
-  jewel: ['jewellery', 'jewelry', 'jewelery'],
-  makeup: ['makeup', 'hair and makeup'],
-  music: ['music', 'dj', 'band'],
-  decor: ['decor', 'decoration', 'florist', 'florists'],
-};
-
 @Injectable()
 export class RecommendationService {
   private readonly logger = new Logger(RecommendationService.name);
@@ -83,6 +72,12 @@ export class RecommendationService {
         this.toRankedVendor(service, ratingMap.get(service.id) || 0, normalized),
       )
       .filter((item): item is RankedVendor => item !== null)
+      .filter((item) => {
+        // Enforce strictly that if user set a budget, only packages whose full price <= budget are kept
+        if (!normalized.budget || normalized.budget <= 0) return true;
+        const price = Number(item.packagePrice);
+        return Number.isFinite(price) && price > 0 && price <= normalized.budget;
+      })
       .sort((left, right) => right.deterministicScore - left.deterministicScore)
       .slice(0, Math.min(12, Math.max(normalized.limit, normalized.limit + 2)));
 
@@ -103,7 +98,7 @@ export class RecommendationService {
 
   private normalizeInput(input: RecommendationRequestDto) {
     const categories = (input.categories || [])
-      .flatMap((value) => this.expandCategoryTerms(value))
+      .map((val) => val.trim().toLowerCase())
       .filter(Boolean);
 
     return {
@@ -409,8 +404,20 @@ export class RecommendationService {
       this.logger.debug(`Groq API key present (masked): ${visible}, length: ${groqKey.length}`);
     } catch {}
 
+    // Filter out any candidates whose package price exceeds the budget so they are never sent to Groq
+    const candidatesWithinBudget = deterministicRanked.filter((item) => {
+      if (!input.budget || input.budget <= 0) return true;
+      const price = Number(item.packagePrice);
+      return Number.isFinite(price) && price > 0 && price <= input.budget;
+    });
+
+    if (candidatesWithinBudget.length === 0) {
+      this.logger.debug('No candidates within budget for Groq ranking');
+      return { ranked: null, reason: 'no_candidates_within_budget' };
+    }
+
     // Fetch recent review comments for candidates so the model can summarize sentiment
-    const serviceIds = deterministicRanked.map((d) => d.serviceId);
+    const serviceIds = candidatesWithinBudget.map((d) => d.serviceId);
     let commentsRows: Array<{ serviceId: string; comment: string | null }> = [];
     if (serviceIds.length > 0) {
       try {
@@ -435,7 +442,7 @@ export class RecommendationService {
       commentsMap.set(r.serviceId, list);
     }
 
-    const enrichedCandidates = deterministicRanked.map((item) => ({
+    const enrichedCandidates = candidatesWithinBudget.map((item) => ({
       ...item,
       reviews: commentsMap.get(item.serviceId) || [],
     }));
@@ -511,10 +518,10 @@ export class RecommendationService {
         return { ranked: null, reason: 'invalid_groq_response' };
       }
 
-      const rankMap = new Map(deterministicRanked.map((item) => [item.serviceId, item]));
+      const rankMap = new Map(candidatesWithinBudget.map((item) => [item.serviceId, item]));
 
       // Debug: log candidate IDs and compare with parsed ids
-      const candidateIds = deterministicRanked.map((d) => d.serviceId);
+      const candidateIds = candidatesWithinBudget.map((d) => d.serviceId);
       this.logger.debug(`Groq candidates count: ${candidateIds.length}`, { candidateIds: candidateIds.slice(0, 50) });
       this.logger.debug(`Groq parsed ranked_ids: ${parsed.ranked_ids.slice(0, 50)}`);
 
@@ -541,7 +548,7 @@ export class RecommendationService {
         return { ranked: null, reason: 'empty_groq_ranking' };
       }
 
-      const remaining = deterministicRanked.filter(
+      const remaining = candidatesWithinBudget.filter(
         (item) => !ranked.some((rankedItem) => rankedItem.serviceId === item.serviceId),
       );
 
@@ -583,42 +590,16 @@ export class RecommendationService {
       .trim();
   }
 
-  private expandCategoryTerms(value: string) {
-    const normalized = this.normalizeCategory(value);
-    if (!normalized) {
-      return [];
-    }
-
-    const expanded = new Set<string>([normalized]);
-    const singular = normalized.endsWith('s') ? normalized.slice(0, -1) : normalized;
-    expanded.add(singular);
-
-    for (const aliasList of Object.values(CATEGORY_ALIASES)) {
-      if (aliasList.some((alias) => normalized.includes(alias) || alias.includes(normalized))) {
-        for (const alias of aliasList) {
-          expanded.add(alias);
-          if (alias.endsWith('s')) {
-            expanded.add(alias.slice(0, -1));
-          }
-        }
-      }
-    }
-
-    return Array.from(expanded);
-  }
-
   private matchesCategoryPreference(category: string, preferences: string[]) {
     const normalizedCategory = this.normalizeCategory(category);
-    const expandedCategory = this.expandCategoryTerms(normalizedCategory);
-
-    return preferences.some((preference) =>
-      expandedCategory.some(
-        (candidate) =>
-          candidate.includes(preference) ||
-          preference.includes(candidate) ||
-          normalizedCategory.includes(preference),
-      ),
-    );
+    return preferences.some((preference) => {
+      const normPref = this.normalizeCategory(preference);
+      return (
+        normalizedCategory === normPref ||
+        normalizedCategory.includes(normPref) ||
+        normPref.includes(normalizedCategory)
+      );
+    });
   }
 
   private buildRankingPrompt(
@@ -631,14 +612,21 @@ export class RecommendationService {
       limit: number;
     },
   ) {
-    const candidateSummary = candidates.map((c) => ({
+    // Strictly filter out any candidates whose package price is higher than the budget
+    const affordableCandidates = candidates.filter((c) => {
+      if (!input.budget || input.budget <= 0) return true;
+      const price = Number(c.packagePrice);
+      return Number.isFinite(price) && price > 0 && price <= input.budget;
+    });
+
+    const candidateSummary = affordableCandidates.map((c) => ({
       serviceId: c.serviceId,
       serviceName: c.serviceName,
       recommendedPackage: {
         id: c.packageId,
         name: c.packageName,
         fullPrice: c.packagePrice,
-        advanceDeposit20Percent: c.packagePrice ? Math.round(c.packagePrice * 0.2) : null,
+        advanceDeposit20Percent: c.packagePrice ? Math.round(Number(c.packagePrice) * 0.2) : null,
         features: c.packageFeatures,
       },
       category: c.category,
@@ -663,12 +651,13 @@ export class RecommendationService {
   ${JSON.stringify(candidateSummary, null, 2)}
 
   CRITICAL PRICING & BUDGET RULES:
+  - All candidates provided in the JSON have been strictly pre-filtered so that 'fullPrice' <= total_budget.
+  - Any packages exceeding the user's total budget have been completely excluded and were not sent to you.
   - 'total_budget' is the user's budget for the TOTAL FULL PRICE of the service package in LKR.
   - In our wedding platform, couples pay a 20% advance booking deposit ('advanceDeposit20Percent') to lock in the reservation, and pay the remaining 80% to the vendor later.
   - DO NOT confuse the 20% advance deposit with the package price! The true package price is 'fullPrice'.
   - A package's affordability MUST be evaluated using 'fullPrice' <= total_budget.
   - NEVER rank or say a package "fits budget" based on its 20% advance deposit.
-  - Candidates whose 'fullPrice' exceeds total_budget must NOT be praised as fitting the budget.
 
   General Rules:
   - Prioritize category and location fit.

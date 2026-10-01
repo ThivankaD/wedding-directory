@@ -29,16 +29,20 @@ export const getCategoryIcon = (category: string) => {
   switch (category) {
     case 'Venues':
       return FiHome;
+    case 'Bridal Wear':
     case 'Suits and Dresses':
       return FiScissors;
     case 'Catering':
       return FiCoffee;
+    case 'Photography':
     case 'Photographers':
       return FiCamera;
     case 'Videographers':
       return FiVideo;
+    case 'Jewellery':
     case 'Jewelery':
       return FiAward;
+    case 'Hair & Makeup':
     case 'Hair and Makeup':
       return FiSmile;
     case 'Cakes':
@@ -47,10 +51,14 @@ export const getCategoryIcon = (category: string) => {
       return FiMail;
     case 'Music':
       return FiMusic;
+    case 'Wedding Cars':
     case 'Transportation':
       return FiTruck;
+    case 'Wedding Planning':
+      return FiGlobe;
     case 'Travel Agents':
       return FiGlobe;
+    case 'Decor & Flowers':
     case 'Florists':
       return FiSun;
     case 'Resin Artists':
@@ -64,16 +72,20 @@ export const getCategoryDescription = (category: string) => {
   switch (category) {
     case 'Venues':
       return 'Banquet halls, castles, lawns & reception spaces';
+    case 'Bridal Wear':
     case 'Suits and Dresses':
       return 'Bridal gowns, groom suits, tuxedos & attire';
     case 'Catering':
       return 'Buffets, custom menus, drinks & wedding dinners';
+    case 'Photography':
     case 'Photographers':
       return 'Portraits, candid shoots & timeless wedding memories';
     case 'Videographers':
       return 'Cinematic wedding highlight reels & teasers';
+    case 'Jewellery':
     case 'Jewelery':
       return 'Wedding rings, accessories & fine jewelry';
+    case 'Hair & Makeup':
     case 'Hair and Makeup':
       return 'Bridal glow, makeup artists, styling & salon';
     case 'Cakes':
@@ -82,10 +94,14 @@ export const getCategoryDescription = (category: string) => {
       return 'Custom stationery, wedding cards & e-invites';
     case 'Music':
       return 'Live wedding bands, DJs, acoustic artists & sound';
+    case 'Wedding Cars':
     case 'Transportation':
       return 'Luxury limousines, classic vintage cars & shuttles';
+    case 'Wedding Planning':
+      return 'Full-service wedding planning, coordinators & day-of management';
     case 'Travel Agents':
       return 'Honeymoon packages, exotic destinations & flights';
+    case 'Decor & Flowers':
     case 'Florists':
       return 'Bouquets, floral arches, centerpieces & decor';
     case 'Resin Artists':
