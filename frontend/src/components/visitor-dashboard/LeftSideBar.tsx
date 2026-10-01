@@ -83,30 +83,42 @@ const LeftSideBar: React.FC<LeftSideBarProps> = ({ isCollapsed, onToggleCollapse
       >
         <nav className="p-4 space-y-1">
           {menuItems.map((item) => {
+            const isSmartPicks = item.label === "Smart Picks";
             const isActive =
               pathname === item.href ||
               (item.label === "Chats" && pathname.startsWith("/visitor-dashboard/chats")) ||
-              (item.label === "Smart Picks" && pathname.startsWith("/visitor-dashboard/recommendations"));
+              (isSmartPicks && pathname.startsWith("/visitor-dashboard/recommendations"));
 
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 className={`
-                  flex items-center px-3 py-3 rounded-xl
-                  transition-colors duration-200 ease-in-out font-body text-sm
+                  relative flex items-center px-3 py-3 rounded-xl overflow-hidden
+                  transition-all duration-200 ease-in-out font-body text-sm
                   ${isActive
-                  ? "bg-orange text-white shadow-xs font-semibold"
-                  : "text-gray-700 dark:text-zinc-300 hover:bg-orange/5 dark:hover:bg-darkElevated hover:text-orange dark:hover:text-orange"
-                }
+                    ? isSmartPicks
+                      ? "bg-gradient-to-r from-orange to-amber-600 text-white shadow-[0_0_18px_rgba(252,123,84,0.55)] font-semibold"
+                      : "bg-orange text-white shadow-xs font-semibold"
+                    : isSmartPicks
+                      ? "bg-gradient-to-r from-orange/[0.08] via-amber-500/[0.06] to-orange/[0.08] dark:from-orange/[0.18] dark:via-darkElevated dark:to-orange/[0.14] border border-orange/45 dark:border-orange/55 animate-pulse-glow text-gray-800 dark:text-zinc-100 hover:border-orange"
+                      : "text-gray-700 dark:text-zinc-300 hover:bg-orange/5 dark:hover:bg-darkElevated hover:text-orange dark:hover:text-orange"
+                  }
                   ${isCollapsed ? 'justify-center' : 'justify-start'}
                   group
                 `}
                 title={isCollapsed ? item.label : undefined}
               >
+                {/* Shimmer sweep for Smart Picks */}
+                {isSmartPicks && (
+                  <div className="absolute inset-0 overflow-hidden pointer-events-none rounded-xl">
+                    <div className="w-1/2 h-full bg-gradient-to-r from-transparent via-white/20 dark:via-white/10 to-transparent skew-x-[-25deg] animate-shimmer" />
+                  </div>
+                )}
+
                 <span className={`
-                  flex-shrink-0
-                  ${isActive ? "text-white" : "text-gray-500 dark:text-zinc-400 group-hover:text-orange"}
+                  flex-shrink-0 relative z-10
+                  ${isActive ? "text-white" : isSmartPicks ? "text-orange animate-pulse" : "text-gray-500 dark:text-zinc-400 group-hover:text-orange"}
                   ${isCollapsed ? 'mr-0' : 'mr-3'}
                   transition-all duration-200
                 `}>
@@ -114,15 +126,27 @@ const LeftSideBar: React.FC<LeftSideBarProps> = ({ isCollapsed, onToggleCollapse
                 </span>
 
                 {!isCollapsed && (
-                  <span className="text-sm font-medium transition-all duration-200">
-                    {item.label}
+                  <span className={`text-sm font-medium transition-all duration-200 relative z-10 flex items-center justify-between flex-1 ${isSmartPicks ? 'font-semibold' : ''}`}>
+                    <span>{item.label}</span>
+                    {isSmartPicks && (
+                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full flex items-center gap-0.5 ${
+                        isActive
+                          ? "bg-white text-orange shadow-xs"
+                          : "bg-gradient-to-r from-orange to-amber-500 text-white shadow-[0_0_8px_rgba(252,123,84,0.6)] animate-pulse"
+                      }`}>
+                        AI
+                      </span>
+                    )}
                   </span>
                 )}
 
                 {/* Tooltip for collapsed state */}
                 {isCollapsed && (
-                  <div className="absolute left-full ml-2 px-2.5 py-1 bg-gray-900 dark:bg-zinc-800 text-white text-xs rounded-lg shadow-md opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-20 border border-zinc-700 font-body">
-                    {item.label}
+                  <div className="absolute left-full ml-2 px-2.5 py-1 bg-gray-900 dark:bg-zinc-800 text-white text-xs rounded-lg shadow-md opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-20 border border-zinc-700 font-body flex items-center gap-1.5">
+                    <span>{item.label}</span>
+                    {isSmartPicks && (
+                      <span className="text-[9px] font-bold px-1 py-0.2 rounded-full bg-orange text-white">AI</span>
+                    )}
                   </div>
                 )}
               </Link>

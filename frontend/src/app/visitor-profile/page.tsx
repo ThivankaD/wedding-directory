@@ -4,7 +4,7 @@ import VisitorHeader from "@/components/shared/Headers/VisitorHeader";
 import WeddingDetails from "@/components/visitor-profile/WeddingDetails";
 import AccountDetails from "@/components/visitor-profile/AccountDetails";
 import ProfileMenu from "@/components/visitor-profile/ProfileMenu";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Footer from "@/components/shared/Footer";
 import WeddingCoupleCard from '@/components/visitor-dashboard/WeddingCoupleCard';
 import { useAuth } from '@/contexts/VisitorAuthContext';
@@ -19,12 +19,14 @@ const VisitorProfile = () => {
   const { data } = useQuery(GET_VISITOR_BY_ID, {
     variables: { id: visitor?.id },
     skip: !visitor?.id,
-    onCompleted: (data) => {
-      if (data?.findVisitorById?.profile_pic_url) {
-        setProfilePic(data.findVisitorById.profile_pic_url);
-      }
-    },
   });
+
+  useEffect(() => {
+    if (data?.findVisitorById?.profile_pic_url) {
+      setProfilePic(data.findVisitorById.profile_pic_url);
+    }
+  }, [data?.findVisitorById?.profile_pic_url]);
+
   const visitorData = data?.findVisitorById;
 
   const [activeSection, setActiveSection] = useState("weddingDetails");

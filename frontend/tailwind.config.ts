@@ -63,6 +63,16 @@ const config = {
             transform: "translateX(100%)",
           },
         },
+        "pulse-glow": {
+          "0%, 100%": {
+            boxShadow: "0 0 12px 1px rgba(252, 123, 84, 0.35), inset 0 0 10px 1px rgba(252, 123, 84, 0.12)",
+            borderColor: "rgba(252, 123, 84, 0.45)",
+          },
+          "50%": {
+            boxShadow: "0 0 24px 5px rgba(252, 123, 84, 0.65), inset 0 0 16px 2px rgba(252, 123, 84, 0.22)",
+            borderColor: "rgba(252, 123, 84, 0.9)",
+          },
+        },
         "accordion-down": {
           from: {
             height: "0",
@@ -81,7 +91,8 @@ const config = {
         },
       },
       animation: {
-        shimmer: "shimmer 2s infinite linear",
+        shimmer: "shimmer 2.5s infinite linear",
+        "pulse-glow": "pulse-glow 2.4s ease-in-out infinite",
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
