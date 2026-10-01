@@ -24,11 +24,81 @@ const SOCKET_URL = getSocketUrl();
 
 // Global singleton socket per userId so all components share the same connection
 const globalSockets: Map<string, Socket> = new Map();
-const globalListeners: Map<string, Set<(data: any) => void>> = new Map();
+const globalMessageListeners: Map<string, Set<(data: any) => void>> = new Map();
+const globalUnreadListeners: Map<string, Set<(count: number) => void>> = new Map();
+const globalStatusListeners: Map<string, Set<(connected: boolean) => void>> = new Map();
+const globalUnreadCounts: Map<string, number> = new Map();
+const globalConnectedStatus: Map<string, boolean> = new Map();
+
+function getOrCreateSocket(userId: string, getUserType: () => 'visitor' | 'vendor'): Socket {
+  let socket = globalSockets.get(userId);
+
+  if (!socket) {
+    socket = io(`${SOCKET_URL}/chat`, {
+      transports: ['polling', 'websocket'],
+      withCredentials: true,
+      reconnection: true,
+      reconnectionAttempts: Infinity,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
+      timeout: 20000,
+      autoConnect: true,
+    });
+
+    globalSockets.set(userId, socket);
+
+    socket.on('connect', () => {
+      console.log('Socket connected:', socket!.id, 'for user:', userId);
+      globalConnectedStatus.set(userId, true);
+      globalStatusListeners.get(userId)?.forEach((cb) => cb(true));
+
+      socket!.emit('register', { userId, userType: getUserType() }, (response: any) => {
+        if (response?.success && typeof response.unreadCount === 'number') {
+          globalUnreadCounts.set(userId, response.unreadCount);
+          globalUnreadListeners.get(userId)?.forEach((cb) => cb(response.unreadCount));
+        }
+      });
+    });
+
+    socket.on('disconnect', (reason) => {
+      console.log('Socket disconnected for user:', userId, reason);
+      globalConnectedStatus.set(userId, false);
+      globalStatusListeners.get(userId)?.forEach((cb) => cb(false));
+    });
+
+    socket.on('connect_error', (err: any) => {
+      // Log as warning rather than error to avoid polluting console during transient auto-reconnections
+      console.warn('Chat socket connection retry for user:', userId, err?.message || err);
+    });
+
+    socket.on('unreadCount', (data: { count: number }) => {
+      if (typeof data?.count === 'number') {
+        globalUnreadCounts.set(userId, data.count);
+        globalUnreadListeners.get(userId)?.forEach((cb) => cb(data.count));
+      }
+    });
+
+    socket.on('newMessage', (data: any) => {
+      const listeners = globalMessageListeners.get(userId);
+      if (listeners) {
+        listeners.forEach((cb) => cb(data));
+      }
+    });
+  } else if (socket.disconnected && !socket.active) {
+    socket.connect();
+  }
+
+  return socket;
+}
 
 export const useChatSocket = (userId: string | undefined, userType: 'visitor' | 'vendor') => {
-  const [connected, setConnected] = useState(false);
-  const [unreadCount, setUnreadCount] = useState(0);
+  const [connected, setConnected] = useState<boolean>(() => {
+    return userId ? !!globalConnectedStatus.get(userId) : false;
+  });
+  const [unreadCount, setUnreadCount] = useState<number>(() => {
+    return userId ? globalUnreadCounts.get(userId) || 0 : 0;
+  });
+
   const userIdRef = useRef(userId);
   const userTypeRef = useRef(userType);
 
@@ -38,80 +108,52 @@ export const useChatSocket = (userId: string | undefined, userType: 'visitor' | 
   }, [userId, userType]);
 
   useEffect(() => {
-    if (!userId) return;
-
-    // Reuse existing socket if already connected for this user
-    let socket = globalSockets.get(userId);
-
-    if (!socket || !socket.connected) {
-      console.log('useChatSocket: Connecting to', `${SOCKET_URL}/chat`, 'for', { userId, userType });
-
-      if (socket) {
-        socket.disconnect();
-      }
-
-      socket = io(`${SOCKET_URL}/chat`, {
-        transports: ['websocket', 'polling'],
-        withCredentials: true,
-      });
-
-      globalSockets.set(userId, socket);
-
-      socket.on('connect', () => {
-        console.log('Socket connected:', socket!.id, 'for user:', userId, userType);
-        socket!.emit('register', { userId, userType }, (response: any) => {
-          console.log('Registration complete:', response);
-          if (response?.success) {
-            setUnreadCount(response.unreadCount || 0);
-          }
-          setConnected(true);
-        });
-      });
-
-      socket.on('connect_error', (err: any) => {
-        console.error('Socket connect_error for user:', userId, err?.message || err);
-      });
-
-      socket.on('disconnect', () => {
-        console.log('Socket disconnected for user:', userId);
-        setConnected(false);
-      });
-
-      socket.on('unreadCount', (data: { count: number }) => {
-        console.log('Received unreadCount update:', data, 'for user:', userId);
-        setUnreadCount(data.count);
-      });
-
-      socket.on('newMessage', (data: any) => {
-        const listeners = globalListeners.get(userId) || new Set();
-        listeners.forEach(cb => cb(data));
-      });
-    } else {
-      // Socket already exists and connected - just update state
-      console.log('useChatSocket: Reusing existing socket for', userId);
-      setConnected(socket.connected);
+    if (!userId) {
+      setConnected(false);
+      setUnreadCount(0);
+      return;
     }
 
-    // Sync unreadCount from socket's current state when component mounts
+    // Initialize subscriber sets if needed
+    if (!globalStatusListeners.has(userId)) {
+      globalStatusListeners.set(userId, new Set());
+    }
+    if (!globalUnreadListeners.has(userId)) {
+      globalUnreadListeners.set(userId, new Set());
+    }
+
+    const statusListeners = globalStatusListeners.get(userId)!;
+    const unreadListeners = globalUnreadListeners.get(userId)!;
+
+    statusListeners.add(setConnected);
+    unreadListeners.add(setUnreadCount);
+
+    // Sync current values immediately
+    if (globalConnectedStatus.has(userId)) {
+      setConnected(!!globalConnectedStatus.get(userId));
+    }
+    if (globalUnreadCounts.has(userId)) {
+      setUnreadCount(globalUnreadCounts.get(userId) || 0);
+    }
+
+    const socket = getOrCreateSocket(userId, () => userTypeRef.current);
+
+    // If socket is already connected, fetch fresh unread count
     if (socket.connected) {
-      socket.emit('getUnreadCount', { userId, userType }, (response: any) => {
-        if (response?.success) setUnreadCount(response.count);
+      setConnected(true);
+      socket.emit('getUnreadCount', { userId, userType: userTypeRef.current }, (response: any) => {
+        if (response?.success && typeof response.count === 'number') {
+          globalUnreadCounts.set(userId, response.count);
+          unreadListeners.forEach((cb) => cb(response.count));
+        }
       });
     }
 
     return () => {
-      // Don't disconnect - keep singleton alive. Other components may still use it.
+      statusListeners.delete(setConnected);
+      unreadListeners.delete(setUnreadCount);
     };
-  }, [userId, userType]);
-
-  // Re-sync connected state if socket already exists
-  useEffect(() => {
-    if (!userId) return;
-    const socket = globalSockets.get(userId);
-    if (socket?.connected && !connected) {
-      setConnected(true);
-    }
-  });
+  }, [userId]);
 
   const sendMessage = useCallback((data: {
     chatId: string;
@@ -120,11 +162,12 @@ export const useChatSocket = (userId: string | undefined, userType: 'visitor' | 
     senderType: 'visitor' | 'vendor';
   }) => {
     return new Promise((resolve, reject) => {
-      const socket = globalSockets.get(userIdRef.current || '');
+      const uid = userIdRef.current;
+      const socket = uid ? globalSockets.get(uid) : null;
       if (socket?.connected) {
         socket.emit('sendMessage', data, (response: any) => {
-          if (response.success) resolve(response.message);
-          else reject(new Error(response.error));
+          if (response?.success) resolve(response.message);
+          else reject(new Error(response?.error || 'Failed to send message'));
         });
       } else {
         reject(new Error('Socket not connected'));
@@ -133,40 +176,45 @@ export const useChatSocket = (userId: string | undefined, userType: 'visitor' | 
   }, []);
 
   const joinChat = useCallback((chatId: string) => {
-    const socket = globalSockets.get(userIdRef.current || '');
+    const uid = userIdRef.current;
+    const socket = uid ? globalSockets.get(uid) : null;
     if (socket?.connected) {
-      console.log('Joining chat room:', chatId);
-      socket.emit('joinChat', { chatId, userId: userIdRef.current });
+      socket.emit('joinChat', { chatId, userId: uid });
     }
   }, []);
 
   const leaveChat = useCallback((chatId: string) => {
-    const socket = globalSockets.get(userIdRef.current || '');
+    const uid = userIdRef.current;
+    const socket = uid ? globalSockets.get(uid) : null;
     if (socket?.connected) {
       socket.emit('leaveChat', { chatId });
     }
   }, []);
 
   const markAsRead = useCallback((chatId: string) => {
-    const socket = globalSockets.get(userIdRef.current || '');
     const uid = userIdRef.current;
+    const socket = uid ? globalSockets.get(uid) : null;
     const utype = userTypeRef.current;
     if (socket?.connected && uid) {
       socket.emit('markAsRead', { chatId, userId: uid, userType: utype }, (response: any) => {
-        console.log('Mark as read response:', response);
+        if (response?.success && typeof response.unreadCount === 'number') {
+          globalUnreadCounts.set(uid, response.unreadCount);
+          globalUnreadListeners.get(uid)?.forEach((cb) => cb(response.unreadCount));
+        }
       });
     }
   }, []);
 
   const onNewMessage = useCallback((callback: (data: any) => void) => {
     const uid = userIdRef.current;
-    if (!uid) return;
-    if (!globalListeners.has(uid)) {
-      globalListeners.set(uid, new Set());
+    if (!uid) return () => {};
+    if (!globalMessageListeners.has(uid)) {
+      globalMessageListeners.set(uid, new Set());
     }
-    globalListeners.get(uid)!.add(callback);
+    const listeners = globalMessageListeners.get(uid)!;
+    listeners.add(callback);
     return () => {
-      globalListeners.get(uid)?.delete(callback);
+      listeners.delete(callback);
     };
   }, []);
 
