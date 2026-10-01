@@ -6,6 +6,7 @@ import { AddReviewImagesAndMentions1762000000000 } from './migrations/1762000000
 import { CreateServiceReviewSummaryTable1762000000004 } from './migrations/1762000000004-CreateServiceReviewSummaryTable';
 import { AddSlugToServiceTable1762000000005 } from './migrations/1762000000005-AddSlugToServiceTable';
 import { DropVendorLocationColumn1762000000006 } from './migrations/1762000000006-DropVendorLocationColumn';
+import { AlignServiceCategories1762000000008 } from './migrations/1762000000008-AlignServiceCategories';
 
 dotenv.config({ path: join(__dirname, '..', '..', '.env') });
 
@@ -103,6 +104,10 @@ async function runMigration() {
     } else {
       console.log('Skipping DropVendorLocationColumn1762000000006 (already applied).');
     }
+
+    const alignCategoriesMigration = new AlignServiceCategories1762000000008();
+    console.log(`Running migration: ${alignCategoriesMigration.name}`);
+    await alignCategoriesMigration.up(queryRunner);
 
     console.log('Migration completed successfully!');
     
