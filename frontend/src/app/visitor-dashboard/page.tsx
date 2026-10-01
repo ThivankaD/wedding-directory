@@ -69,12 +69,13 @@ const VisitorDashboardContent: React.FC = () => {
   const { data, loading, error } = useQuery(GET_VISITOR_BY_ID, {
     variables: { id: visitor?.id },
     skip: !visitor?.id,
-    onCompleted: (data) => {
-      if (data?.findVisitorById?.profile_pic_url) {
-        setProfilePic(data.findVisitorById.profile_pic_url);
-      }
-    },
   });
+
+  useEffect(() => {
+    if (data?.findVisitorById?.profile_pic_url) {
+      setProfilePic(data.findVisitorById.profile_pic_url);
+    }
+  }, [data?.findVisitorById?.profile_pic_url]);
 
   const visitorData = data?.findVisitorById;
   const isMissingName =
